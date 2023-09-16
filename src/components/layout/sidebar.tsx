@@ -1,4 +1,4 @@
-import { ExpandLess,SettingsRemoteSharp,Apps, PrecisionManufacturing, ExpandMore,Dashboard, SettingsTwoTone, Wifi, WifiLock} from '@mui/icons-material';
+import { ExpandLess,SettingsRemoteSharp,Apps, PrecisionManufacturing, ExpandMore,Dashboard, SettingsTwoTone, Wifi, WifiLock, Logout, HelpCenter} from '@mui/icons-material';
 import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, SxProps, Theme, Typography} from '@mui/material';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
@@ -21,7 +21,7 @@ const NavItem = ({location,path, icon,text}:{location:string,path:string, icon:R
         <ListItemIcon>
             {icon}
         </ListItemIcon>
-        <ListItemText primary={text} />
+        <ListItemText sx={{fontSize:1}} primary={text} />
     </ListItemButton>
 )
 function Sidebar() {
@@ -62,11 +62,21 @@ function Sidebar() {
                 </Collapse>
                 <NavItem location={location} path={'/apps'} icon={<Apps sx={{...IconStyle,color:location==='/apps'?'black':'white'}} />} text={'Apps'} />
             </List>
-            <Box position={'absolute'} mx={'auto'} bottom={0} width={'100%'} display={'flex'} alignItems={'center'} >
-                <Box component={'img'} sx={{objectFit:'contain',borderRadius:25}} src={'https://picsum.photos/200/300'} width={50} height={50} />
-                <Box>
-                    <Typography>John Doe</Typography>
-                    <Typography fontSize={13} >johndoe@waziup.org</Typography>
+            <Box position={'absolute'} alignItems={'center'} bottom={0} width={'100%'} >
+                <Box display={'flex'} px={'10%'} py={1} alignItems={'center'}>
+                    <HelpCenter sx={{color:'white'}} />
+                    <Typography sx={{color:'white'}}>Help and feedback</Typography>
+                </Box>
+                <Box py={.5} px={'10%'} borderBottom={'1px solid white'} borderTop={'1px solid white'} display={'flex'} alignItems={'center'}>
+                    <Box component={'img'} sx={{objectFit:'contain',borderRadius:25}} src={'https://picsum.photos/200/300'} width={50} height={50} />
+                    <Box>
+                        <Typography>John Doe</Typography>
+                        <Typography fontSize={13} >johndoe@waziup.org</Typography>
+                    </Box>
+                </Box>
+                <Box px={'10%'} display={'flex'} py={1} alignItems={'center'}>
+                    <Logout sx={{color:'white'}} />
+                    <Typography sx={{color:'white'}}>Logout</Typography>
                 </Box>
             </Box>
         </Box>
