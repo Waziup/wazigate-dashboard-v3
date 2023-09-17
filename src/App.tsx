@@ -6,8 +6,14 @@ import Devices from './pages/devices'
 import Automation from './pages/automation'
 import Apps from './pages/apps'
 import Settings from './pages/settings'
+import Login from './pages/login'
+import Device from './pages/device'
 function App() {
   const router = createBrowserRouter([
+    {
+      path:'/auth',
+      element:<Login/>
+    },
     {
       element: <Layout/>,
       children: [
@@ -18,6 +24,10 @@ function App() {
         {
           path:'/devices',
           element: <Devices/>
+        },
+        {
+          path:'/devices/:id',
+          element:<Device/>
         },
         {
           path: '*',
