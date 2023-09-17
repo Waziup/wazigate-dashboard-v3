@@ -3,10 +3,10 @@ import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, SxProp
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { DEFAULT_COLORS } from '../../constants';
-const IconStyle: SxProps<Theme> = {
+export const IconStyle: SxProps<Theme> = {
     color:'inherit',
 }
-const ListItemButtonStyle:SxProps<Theme> ={
+export const ListItemButtonStyle:SxProps<Theme> ={
     color:'#fff',
     borderRadius:1,
     ":hover":{
@@ -16,7 +16,7 @@ const ListItemButtonStyle:SxProps<Theme> ={
         // borderWidth:'100%',
     },
 }
-const NavItem = ({location,path, icon,text}:{location:string,path:string, icon:React.ReactNode,text:string}) => (
+export const NavItem = ({location,path, icon,text}:{location:string,path:string, icon:React.ReactNode,text:string}) => (
     <ListItemButton href={path} sx={{...ListItemButtonStyle,color:location===path?DEFAULT_COLORS.primary_black:'#fff', bgcolor:location===path?'white':'', }}>
         <ListItemIcon>
             {icon}
@@ -31,7 +31,7 @@ function Sidebar() {
     };
     const location = useLocation().pathname;
     return (
-        <Box sx={{position:'relative',height:'100%'}} display={'flex'}  flexDirection={'column'} alignItems={'center'}  >
+        <Box sx={{position:'relative',height:'100%'}} display={'flex'}  flexDirection={'column'} alignItems={'center'}>
             <Box component={'img'} src={'/wazigate.svg'} width={'80%'} height={100} />
             <List sx={{ width: '87%', maxWidth: 360,}} component="nav" aria-labelledby="nested-list-subheader">
                 <NavItem location={location} path={'/'} icon={<Dashboard sx={{...IconStyle,color:location==='/'?'black':'white'}} />} text={'Dashboard'} />
