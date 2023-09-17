@@ -1,9 +1,9 @@
-import { Box, Grid, Stack, Typography } from "@mui/material";
+import { Box, Grid, Stack, SxProps, Theme, Typography } from "@mui/material";
 import {Router, CloudOff,Wifi, WaterDrop, WifiTethering} from '@mui/icons-material';
 import BasicTable from "../components/table";
 import React from "react";
 import { DEFAULT_COLORS } from "../constants";
-const Item=({more,color,children, title}:{more:string,children:React.ReactNode, color:string,title:string})=>(
+export const Item=({more,color,children, title}:{more:string,children:React.ReactNode, color:string,title:string})=>(
     <Box width={'25%'} mx={2} sx={{ height: '100%', bgcolor: 'white', p: 2 }}>
         {children}
         <NormalText title={title} />
@@ -16,8 +16,8 @@ const DeviceStatus = ()=>(
         <BasicTable/>
     </Box>
 );
-export const RowContainerBetween = ({children}:{children:React.ReactNode})=>(
-    <Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
+export const RowContainerBetween = ({children,additionStyles}:{children:React.ReactNode,additionStyles?:SxProps<Theme>})=>(
+    <Box display={'flex'} sx={{...additionStyles}} flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
         {children}   
     </Box>
 );
@@ -67,7 +67,7 @@ function Dashboard() {
                 <Item color="#CCC400" title="Cloud Synchronization" more="Last active 3h ago" >
                     <CloudOff sx={{ fontSize: 50,color:'#D9D9D9' }} />
                 </Item>
-                <Item color={DEFAULT_COLORS.secondary_black} title="Cloud Synchronization" more="Last active 3h ago" >
+                <Item color={DEFAULT_COLORS.secondary_black} title="Access point mode" more="Wifi Name: 'Wazigate E55344'" >
                     <Wifi sx={{ fontSize: 50,color:'black' }} />
                 </Item>
             </Stack>

@@ -2,10 +2,13 @@ import { Box, Button,Grid,CardContent,Typography, SxProps, Theme } from '@mui/ma
 import { RowContainerBetween } from './dashboard';
 import { Add,DeviceThermostat, Sensors } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
+import { useNavigate } from 'react-router-dom';
 const IconStyle: SxProps<Theme> = {
     cursor:'pointer',
+    color:'black',
 }
 function Devices() {
+    const navigate = useNavigate();
     return (
         <Box p={3} sx={{ height:'100%'}}>
             <RowContainerBetween>
@@ -17,7 +20,7 @@ function Devices() {
             </RowContainerBetween>
             <Grid container my={2} spacing={2}>
                 <Grid item xs={4}>
-                    <Box sx={{ height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
+                    <Box onClick={()=>{navigate('/devices/3')}} sx={{cursor:'pointer',":hover":{bgcolor:'rgba(0,0,0,.1)'}, height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
                         <Box sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
                             <Sensors sx={{fontSize:15, color:'#fff'}}/>
                             <Typography fontSize={10} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
