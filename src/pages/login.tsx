@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { DEFAULT_COLORS } from '../constants';
 import { LockOpen } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -14,9 +14,12 @@ const TextInput = ({type,placeholder,label}:TextInputProps)=>(
 function Login() {
     const navigate = useNavigate();
     const handleNavigate = ()=>{navigate('/')}
+
+    const theme = useTheme();
+    const matches = useMediaQuery(theme.breakpoints.up('sm'));
     return (
         <Box height={'100vh'} position={'relative'} width={'100%'} bgcolor={'#F4F7F6'}>
-            <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:'50%',left:'50%',borderRadius:2, bgcolor:'white',width:'40%'}}>
+            <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:'50%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'40%':'95%'}}>
                 <Box display={'flex'} justifyContent={'center'} py={2} width={'100%'} borderBottom={'1px solid #D5D6D8'} alignItems={'center'}>
                     <Box component={'img'}  src='/wazilogo.svg' mx={2} />
                     <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>Login to Wazigate Dashboard</Typography>
