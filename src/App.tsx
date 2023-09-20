@@ -8,6 +8,7 @@ import Apps from './pages/apps'
 import Settings from './pages/settings'
 import Login from './pages/login'
 import Device from './pages/device'
+import User from './pages/user'
 function App() {
   const router = createBrowserRouter([
     {
@@ -44,6 +45,18 @@ function App() {
         {
           path:'/settings',
           element: <Settings/>
+        },
+        {
+          path:'/settings/networking',
+          element: <Settings/>
+        },
+        {
+          path:'/settings/maintenance',
+          element: <Settings/>
+        },
+        {
+          path:'/user',
+          element: <User/>
         }
       ]
     }
