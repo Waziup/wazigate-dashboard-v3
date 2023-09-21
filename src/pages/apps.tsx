@@ -3,8 +3,9 @@ import { NormalText, RowContainerBetween } from './dashboard';
 import { DEFAULT_COLORS } from '../constants';
 import { DeleteForever, MoreVert, SettingsTwoTone, Terminal } from '@mui/icons-material';
 import React from 'react';
-const DropDown = ({handleChange,age}:{handleChange:()=>void,age: string})=>(
-    <FormControl sx={{ border:'none', width: '25%', }}>
+import { useOutletContext } from 'react-router-dom';
+const DropDown = ({handleChange,matches, age}:{matches:boolean, handleChange:()=>void,age: string})=>(
+    <FormControl sx={{ border:'none', width: matches?'25%':'50%', }}>
         <InputLabel id="demo-simple-select-helper-label">Install App</InputLabel>
         <Select labelId="demo-simple-select-helper-label"
             id="demo-simple-select-helper" value={age} label="Age" onChange={handleChange}>
@@ -18,6 +19,7 @@ const DropDown = ({handleChange,age}:{handleChange:()=>void,age: string})=>(
     </FormControl>
 );
 function Apps() {
+    const [matches] = useOutletContext<[matches: boolean]>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -26,17 +28,18 @@ function Apps() {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
     return (
         <Box p={3} sx={{ height:'100%'}}>
             <RowContainerBetween>
-                <Box>
+                <Box maxWidth={'50%'}>
                     <Typography fontWeight={700} color={'black'}>Devices</Typography>
-                    <Typography sx={{color:DEFAULT_COLORS.secondary_black}}>Setup your Wazigate Edge Apps</Typography>
+                    <Typography fontSize={matches?15:10} sx={{color:DEFAULT_COLORS.secondary_black}}>Setup your Wazigate Edge Apps</Typography>
                 </Box>
-                <DropDown handleChange={()=>{}} age={''} />
+                <DropDown matches={matches} handleChange={()=>{}} age={''} />
             </RowContainerBetween>
             <Grid container spacing={2} py={2}>
-                <Grid item minHeight={100} px={1} xs={4}>
+                <Grid item minHeight={100} my={1} px={1} xs={matches?4:12}>
                     <Box minHeight={100} sx={{px:2, py:1, position:'relative', bgcolor: 'white', borderRadius:2, }}>
                         <Box px={.4} display={'flex'} alignItems={'center'} sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
                             <Box component={'img'} src='/wazi_sig.svg' />
@@ -91,7 +94,7 @@ function Apps() {
                         <Button sx={{fontWeight:'700'}}>OPEN</Button>
                     </Box>
                 </Grid>
-                <Grid item minHeight={100} px={1} xs={4}>
+                <Grid item minHeight={100} my={1} px={1} xs={matches?4:12}>
                     <Box minHeight={100} sx={{px:2, py:1, position:'relative', bgcolor: 'white', borderRadius:2, }}>
                         <Box px={.4} display={'flex'} alignItems={'center'} sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.orange}>
                             <Terminal />

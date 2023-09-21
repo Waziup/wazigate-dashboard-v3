@@ -3,6 +3,8 @@ import {Router, CloudOff,Wifi, WaterDrop, WifiTethering} from '@mui/icons-materi
 import BasicTable from "../components/table";
 import React from "react";
 import { DEFAULT_COLORS } from "../constants";
+import { useOutletContext } from "react-router-dom";
+import MobileDashboard from "../components/layout/mobile-dashboard";
 export const Item=({more,color,children, title}:{more:string,children:React.ReactNode, color:string,title:string})=>(
     <Box width={'25%'} mx={2} sx={{ height: '100%', bgcolor: 'white', p: 2 }}>
         {children}
@@ -21,8 +23,8 @@ export const RowContainerBetween = ({children,additionStyles}:{children:React.Re
         {children}   
     </Box>
 );
-const RowContainerNormal= ({children}:{children:React.ReactNode})=>(
-    <Box flexDirection={'row'} my={2} width={'100%'}display={'flex'} >
+export const RowContainerNormal= ({children,additionStyles}:{children:React.ReactNode,additionStyles?:SxProps<Theme>})=>(
+    <Box flexDirection={'row'} sx={{...additionStyles}} my={2} width={'100%'}display={'flex'} >
         {children}
     </Box>
 )
@@ -57,29 +59,41 @@ const AppStatus = ()=>(
 );
 export const NormalText= ({title}:{title:string})=>(<Typography color={'black'}>{title}</Typography>)
 function Dashboard() {
+
+    const [matches] = useOutletContext<[matches: boolean]>();
     return (
-        <Box p={3} sx={{ height:'100%'}}>
-            <Typography color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
-            <Stack direction={'row'} mt={2} spacing={2}>
-                <Item color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
-                    <Router sx={{ fontSize: 50,color:'black' }} />
-                </Item>
-                <Item color="#CCC400" title="Cloud Synchronization" more="Last active 3h ago" >
-                    <CloudOff sx={{ fontSize: 50,color:'#D9D9D9' }} />
-                </Item>
-                <Item color={DEFAULT_COLORS.secondary_black} title="Access point mode" more="Wifi Name: 'Wazigate E55344'" >
-                    <Wifi sx={{ fontSize: 50,color:'black' }} />
-                </Item>
-            </Stack>
-            <Grid height={'100%'} mt={2} container spacing={2}>
-                <Grid item xs={8}>
-                    <DeviceStatus />
-                </Grid>
-                <Grid item xs={4}>
-                    <AppStatus />
-                </Grid>
-            </Grid>
-        </Box>
+        <>
+            {
+                matches?(
+                    <Box p={3} sx={{ height:'100%'}}>
+                        <Typography color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
+                        <Stack direction={'row'} mt={2} spacing={2}>
+                            <Item color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
+                                <Router sx={{ fontSize: 50,color:'black' }} />
+                            </Item>
+                            <Item color="#CCC400" title="Cloud Synchronization" more="Last active 3h ago" >
+                                <CloudOff sx={{ fontSize: 50,color:'#D9D9D9' }} />
+                            </Item>
+                            <Item color={DEFAULT_COLORS.secondary_black} title="Access point mode" more="Wifi Name: 'Wazigate E55344'" >
+                                <Wifi sx={{ fontSize: 50,color:'black' }} />
+                            </Item>
+                        </Stack>
+                        <Grid height={'100%'} mt={2} container spacing={2}>
+                            <Grid item xs={8}>
+                                <DeviceStatus />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <AppStatus />
+                            </Grid>
+                        </Grid>
+                    </Box>
+                ):(
+                    <>
+                        <MobileDashboard/>
+                    </>
+                )
+            }
+        </>
     );
 }
 

@@ -2,6 +2,7 @@ import { ExpandMore, Home, SettingsTwoTone } from "@mui/icons-material";
 import { Box, Typography, Button, Chip, emphasize, styled, Breadcrumbs } from "@mui/material";
 import { RowContainerBetween } from "./dashboard";
 import EnhancedTable from "../components/devicetable";
+import { useNavigate } from "react-router-dom";
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
     const backgroundColor =
       theme.palette.mode === 'light'
@@ -23,11 +24,12 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   }) as typeof Chip; // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
   
 function Device() {
-
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
         console.info('You clicked a breadcrumb.');
     }
+    const navigate = useNavigate();
+    const handleNav = (path:string)=>{navigate(path)}
     return (
         <Box p={3} sx={{ height:'100%'}}>
             <RowContainerBetween>
@@ -41,7 +43,7 @@ function Device() {
                                 label="Devices"
                                 icon={<Home fontSize="small" />}
                             />
-                            <StyledBreadcrumb component="a" href="#" label="Device 1" />
+                            <StyledBreadcrumb component="a" href="/device/3" label="Device 1" />
                             <StyledBreadcrumb
                                 label="Sensors"
                                 deleteIcon={<ExpandMore />}
@@ -50,7 +52,7 @@ function Device() {
                         </Breadcrumbs>
                     </div>
                 </Box>
-                <Button variant={'contained'}>
+                <Button onClick={()=>handleNav('/devices/3/setting')} variant={'contained'}>
                     <SettingsTwoTone/>
                     SETTINGS
                 </Button>
