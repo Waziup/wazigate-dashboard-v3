@@ -17,7 +17,7 @@ function User() {
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     return (
         <Box position={'relative'} width={'100%'} bgcolor={'#F4F7F6'} p={3} sx={{ height:'100%',overflowY:'scroll'}}>
-            <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:'60%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'40%':'95%'}}>
+            <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:matches?'60%':'40%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'40%':'95%'}}>
                 <Box display={'flex'}  py={2} width={'100%'} borderBottom={'1px solid #D5D6D8'} alignItems={'center'}>
                     <Box component={'img'}  src='/wazilogo.svg' mx={2} />
                     <Box>
