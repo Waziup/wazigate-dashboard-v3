@@ -9,6 +9,8 @@ import Settings from './pages/settings'
 import Login from './pages/login'
 import Device from './pages/device'
 import User from './pages/user'
+import DeviceSettings from './pages/device-settings'
+import Docspage from './pages/docspage'
 function App() {
   const router = createBrowserRouter([
     {
@@ -29,6 +31,10 @@ function App() {
         {
           path:'/devices/:id',
           element:<Device/>
+        },
+        {
+          path:'/devices/:id/setting',
+          element: <DeviceSettings/>
         },
         {
           path: '*',
@@ -57,6 +63,10 @@ function App() {
         {
           path:'/user',
           element: <User/>
+        },
+        {
+          path:'/help',
+          element: <Docspage/>
         }
       ]
     }
