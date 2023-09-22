@@ -30,11 +30,11 @@ function App() {
         },
         {
           path:'/devices/:id',
-          element:<Device/>
+          element:<DeviceSettings/>
         },
         {
           path:'/devices/:id/setting',
-          element: <DeviceSettings/>
+          element: <Device/>
         },
         {
           path: '*',
