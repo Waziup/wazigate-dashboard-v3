@@ -11,7 +11,7 @@ interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> 
     conditions:string[] | number[], 
     value: string
 }
-const SelectElement = ({handleChange,title,conditions, value}:HTMLSelectProps)=>(
+export const SelectElement = ({handleChange,title,conditions, value}:HTMLSelectProps)=>(
     <Box minWidth={120} mx={2}>
         <Typography fontSize={12} color={DEFAULT_COLORS.secondary_black}>{title}</Typography>
         <FormControl fullWidth>
