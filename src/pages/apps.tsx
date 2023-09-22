@@ -1,21 +1,43 @@
 import {Box, Button, FormControl,  Grid,  InputLabel, ListItemIcon, ListItemText, Menu, MenuItem, Select, Typography} from '@mui/material';
 import { NormalText, RowContainerBetween } from './dashboard';
 import { DEFAULT_COLORS } from '../constants';
-import { DeleteForever, MoreVert, SettingsTwoTone, Terminal } from '@mui/icons-material';
+import { DeleteForever, Download, FiberNew, MoreVert, SettingsTwoTone, Terminal } from '@mui/icons-material';
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
 const DropDown = ({handleChange,matches, age}:{matches:boolean, handleChange:()=>void,age: string})=>(
-    <FormControl sx={{ border:'none', width: matches?'25%':'50%', }}>
+    <FormControl sx={{ border:'none', width: matches?'35%':'50%', }}>
         <InputLabel id="demo-simple-select-helper-label">Install App</InputLabel>
-        <Select labelId="demo-simple-select-helper-label"
+        <Select sx={{width:'100%'}} labelId="demo-simple-select-helper-label"
             id="demo-simple-select-helper" value={age} label="Age" onChange={handleChange}>
             <MenuItem value="">
                 <em>None</em>
             </MenuItem>
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
-            </Select>
+            <MenuItem value={10} sx={{display:'flex',py:1,width:'100%', justifyContent:'space-between'}}>
+                <Box display={'flex'} alignItems={'center'}>
+                    <Box component={'img'} sx={{width:20,mx:1, height:20}} src='/wazilogo.svg' />
+                    <Typography color={'#325460'} fontSize={15}>Wazigate System</Typography>
+                </Box>
+                <Box display={'flex'} alignItems={'center'}>
+                    <Download sx={{fontSize:20,mx:1,color:'#325460'}} />
+                    <Typography sx={{textTransform:'uppercase', color:'#325460', fontSize:15}}>
+                        Install
+                    </Typography>
+                </Box>
+            </MenuItem>
+            <MenuItem value={20} sx={{display:'flex',py:1,width:'100%', justifyContent:'space-between'}}>
+                <Box display={'flex'} alignItems={'center'}>
+                    <FiberNew sx={{fontSize:20,mx:1,color:'#F48652'}}/>
+                    <Typography color={'#325460'} fontSize={15}>Install Custom App</Typography>
+                </Box>
+                <Box display={'flex'} alignItems={'center'}>
+                    <Download sx={{fontSize:20,mx:1,color:'#325460'}} />
+                    <Typography sx={{textTransform:'uppercase', color:'#325460', fontSize:15}}>
+                        Install
+                    </Typography>
+                </Box>
+            </MenuItem>
+            
+        </Select>
     </FormControl>
 );
 function Apps() {
