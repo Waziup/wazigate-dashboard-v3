@@ -1,27 +1,8 @@
-import { ExpandMore, Home, SettingsTwoTone } from "@mui/icons-material";
-import { Box, Typography, Button, Chip, emphasize, styled, Breadcrumbs } from "@mui/material";
-import { RowContainerBetween } from "./dashboard";
+import { SettingsTwoTone } from "@mui/icons-material";
+import { Box, Typography, Button, Link,  Breadcrumbs } from "@mui/material";
+import RowContainerBetween from "../components/rowcontainerbetween";
 import EnhancedTable from "../components/devicetable";
 import { useNavigate } from "react-router-dom";
-export const StyledBreadcrumb = styled(Chip)(({ theme }) => {
-    const backgroundColor =
-      theme.palette.mode === 'light'
-        ? theme.palette.grey[100]
-        : theme.palette.grey[800];
-    return {
-      backgroundColor,
-      height: theme.spacing(3),
-      color: theme.palette.text.primary,
-      fontWeight: theme.typography.fontWeightRegular,
-      '&:hover, &:focus': {
-        backgroundColor: emphasize(backgroundColor, 0.06),
-      },
-      '&:active': {
-        boxShadow: theme.shadows[1],
-        backgroundColor: emphasize(backgroundColor, 0.12),
-      },
-    };
-  }) as typeof Chip; // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
 import Chart from 'react-apexcharts';  
 function Device() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
@@ -37,18 +18,17 @@ function Device() {
                     <Typography fontWeight={700} color={'black'}>Device 1</Typography>
                     <div role="presentation" onClick={handleClick}>
                         <Breadcrumbs aria-label="breadcrumb">
-                            <StyledBreadcrumb
-                                component="a"
-                                href="/devices"
-                                label="Devices"
-                                icon={<Home fontSize="small" />}
-                            />
-                            <StyledBreadcrumb component="a" href="/device/3" label="Device 1" />
-                            <StyledBreadcrumb
-                                label="Sensors"
-                                deleteIcon={<ExpandMore />}
-                                onDelete={handleClick}
-                            />
+                            <Link underline="hover" color="inherit" href="/">
+                                Devices
+                            </Link>
+                            <Link
+                                underline="hover"
+                                color="inherit"
+                                href="/material-ui/getting-started/installation/"
+                            >
+                                Device 1
+                            </Link>
+                            <Typography color="text.primary">Settings</Typography>
                         </Breadcrumbs>
                     </div>
                 </Box>
