@@ -1,15 +1,17 @@
-import { Box, Grid, Stack, SxProps, Theme, Typography } from "@mui/material";
+import { Box, Grid, Stack, Typography } from "@mui/material";
 import {Router, CloudOff,Wifi, WaterDrop, WifiTethering} from '@mui/icons-material';
 import BasicTable from "../components/table";
 import React from "react";
 import { DEFAULT_COLORS } from "../constants";
 import { useOutletContext } from "react-router-dom";
 import MobileDashboard from "../components/layout/mobile-dashboard";
+import RowContainerNormal from "../components/rowcontainernormal";
+import RowContainerBetween from "../components/rowcontainerbetween";
 export const Item=({more,color,children, title}:{more:string,children:React.ReactNode, color:string,title:string})=>(
     <Box width={'25%'} mx={2} sx={{ height: '100%', bgcolor: 'white', p: 2 }}>
         {children}
         <NormalText title={title} />
-        <Typography color={color} fontWeight={300}>{more}</Typography>
+        <Typography fontSize={14} color={color} fontWeight={300}>{more}</Typography>
     </Box>
 );
 const DeviceStatus = ()=>(
@@ -18,16 +20,6 @@ const DeviceStatus = ()=>(
         <BasicTable/>
     </Box>
 );
-export const RowContainerBetween = ({children,additionStyles}:{children:React.ReactNode,additionStyles?:SxProps<Theme>})=>(
-    <Box display={'flex'} sx={{...additionStyles}} flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
-        {children}   
-    </Box>
-);
-export const RowContainerNormal= ({children,additionStyles}:{children:React.ReactNode,additionStyles?:SxProps<Theme>})=>(
-    <Box flexDirection={'row'} sx={{...additionStyles}} my={2} width={'100%'}display={'flex'} >
-        {children}
-    </Box>
-)
 const AppStatus = ()=>(
     <Box sx={{ height: '100%', bgcolor: 'white', borderRadius:2, p: 2}}>
         <NormalText title="App Status" />

@@ -1,7 +1,7 @@
 import { Box, Grid, Typography } from '@mui/material';
 import { DEFAULT_COLORS } from '../constants';
 import { CellTower, CheckCircle } from '@mui/icons-material';
-import { RowContainerBetween,} from './dashboard';
+import RowContainerBetween from '../components/rowcontainerbetween';
 function Settings() {
     return (
         <Box p={3} sx={{ height:'100%'}}>

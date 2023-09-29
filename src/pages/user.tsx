@@ -1,7 +1,8 @@
 import { Check, Save } from "@mui/icons-material";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DEFAULT_COLORS } from "../constants";
-import { RowContainerBetween, RowContainerNormal } from "./dashboard";
+import RowContainerBetween from "../components/rowcontainerbetween";
+import RowContainerNormal from "../components/rowcontainernormal";
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
 }
@@ -17,12 +18,13 @@ function User() {
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     return (
         <Box position={'relative'} width={'100%'} bgcolor={'#F4F7F6'} p={3} sx={{ height:'100%',overflowY:'scroll'}}>
-            <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:matches?'60%':'40%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'40%':'95%'}}>
+            <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:matches?'56%':'40%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'40%':'95%'}}>
                 <Box display={'flex'}  py={2} width={'100%'} borderBottom={'1px solid #D5D6D8'} alignItems={'center'}>
                     <Box component={'img'}  src='/wazilogo.svg' mx={2} />
+                    {/*  */}
                     <Box>
                         <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>John Doe</Typography>
-                        <Typography fontWeight={200} fontSize={13} color={DEFAULT_COLORS.third_dark}>johndoe@waziup.org</Typography>
+                        {/* <Typography fontWeight={200} fontSize={13} color={DEFAULT_COLORS.third_dark}>johndoe@waziup.org</Typography> */}
                     </Box>
                 </Box>
                 <Box py={.5} px={1} width={'100%'} borderBottom={'1px solid #D5D6D8'}>
@@ -30,7 +32,8 @@ function User() {
                     <Box m={.5}>
                         <RowContainerBetween additionStyles={{alignItems:'center',bgcolor:'#D4',":hover":{bgcolor:'#499DFF'},cursor:'pointer', borderRadius:1, }}>
                             <RowContainerNormal>
-                                <Box component={'img'} sx={{objectFit:'contain',width:20,height:20, borderRadius:'50%'}} src={'https://picsum.photos/200/300'}  />
+                                <Box sx={{objectFit:'contain',width:30,height:30,mx:1, bgcolor:DEFAULT_COLORS.primary_blue, borderRadius:'50%'}}></Box>
+                                {/* <Box component={'img'} sx={{objectFit:'contain',width:20,height:20, borderRadius:'50%'}} src={'https://picsum.photos/200/300'}  /> */}
                                 <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>John Doe</Typography>
                             </RowContainerNormal>
                             <Check sx={{color:DEFAULT_COLORS.primary_black,mx:1}} />
@@ -39,7 +42,8 @@ function User() {
                     <Box m={.5}>
                         <RowContainerBetween additionStyles={{alignItems:'center',borderRadius:1, }}>
                             <RowContainerNormal>
-                                <Box component={'img'} sx={{objectFit:'contain',width:20,height:20, borderRadius:'50%'}} src={'https://picsum.photos/200/300'}  />
+                                <Box sx={{objectFit:'contain',width:30,height:30,mx:1, bgcolor:DEFAULT_COLORS.primary_blue, borderRadius:'50%'}}></Box>
+                                {/* <Box component={'img'} sx={{objectFit:'contain',width:20,height:20, borderRadius:'50%'}} src={'https://picsum.photos/200/300'}  /> */}
                                 <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>William Smith</Typography>
                             </RowContainerNormal>
                             {/* <Check sx={{color:DEFAULT_COLORS.primary_blue,mx:1}} /> */}

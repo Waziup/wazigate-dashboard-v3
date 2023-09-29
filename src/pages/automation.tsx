@@ -1,10 +1,10 @@
 import { Add,Check,Clear,Mode, MoreVert, } from "@mui/icons-material";
 import { Box, Button,FormControl,NativeSelect,Stack,Typography } from "@mui/material";
-import { RowContainerBetween } from "./dashboard";
 import { DEFAULT_COLORS } from "../constants";
 import React, { ChangeEvent, } from "react";
 import { useOutletContext } from "react-router-dom";
 import { IconStyle } from "../components/layout/sidebar";
+import RowContainerBetween from "../components/rowcontainerbetween";
 interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange:(event: ChangeEvent<HTMLSelectElement>)=>void,
     title:string,
@@ -65,7 +65,7 @@ function Automation() {
                                     <Box component={'img'} src={'/do.svg'} height={25} width={'10%'} />
                                     <SelectElement title={'Actuator'} handleChange={()=>{}} conditions={['WaterPump','<','==']} value={''} />
                                     <SelectElement title={'Action'} handleChange={()=>{}} conditions={['on','off']} value={''} />
-                                    <Box>
+                                    <Box display={'flex'}>
                                         <Mode sx={{color:'black',mx:1}}/>
                                         <MoreVert sx={{color:'black',mx:1}}/>
                                     </Box>

@@ -1,9 +1,10 @@
 import { CloudOff,Router, WaterDrop, Wifi, WifiTethering } from "@mui/icons-material";
 import { Box, Stack, Typography } from "@mui/material";
 import { DEFAULT_COLORS } from "../../constants";
-import { RowContainerBetween, RowContainerNormal } from "../../pages/dashboard";
+import RowContainerBetween from "../rowcontainerbetween";
+import RowContainerNormal from "../rowcontainernormal";
 const Item = ({more,color,children, title}:{more:string,children:React.ReactNode, color:string,title:string})=>(
-    <Box width={'30%'} minWidth={190} mx={1} sx={{ borderRadius:1,border:'1px solid #ccc', height: '100%', bgcolor: 'white', p: 2 }}>
+    <Box width={'30%'} minWidth={220} mx={1} sx={{ borderRadius:1,border:'1px solid #ccc', height: '100%', bgcolor: 'white', p: 2 }}>
         {children}
         <Typography fontSize={13} color={'black'}>{title}</Typography>
         <Typography color={color} fontSize={13} fontWeight={300}>{more}</Typography>
