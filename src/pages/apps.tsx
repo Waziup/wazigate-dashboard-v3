@@ -6,13 +6,11 @@ import { DeleteForever, Download, FiberNew, MoreVert, SettingsTwoTone, Terminal 
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
 const DropDown = ({handleChange,matches, age}:{matches:boolean, handleChange:()=>void,age: string})=>(
-    <FormControl sx={{ border:'none', width: matches?'35%':'50%', }}>
+    <FormControl sx={{p:0, border:'none', width: matches?'35%':'50%', }}>
         <InputLabel id="demo-simple-select-helper-label">Install App</InputLabel>
         <Select sx={{width:'100%'}} labelId="demo-simple-select-helper-label"
             id="demo-simple-select-helper" value={age} label="Age" onChange={handleChange}>
-            <MenuItem value="">
-                <em>None</em>
-            </MenuItem>
+            
             <MenuItem value={10} sx={{display:'flex',py:1,width:'100%', justifyContent:'space-between'}}>
                 <Box display={'flex'} alignItems={'center'}>
                     <Box component={'img'} sx={{width:20,mx:1, height:20}} src='/wazilogo.svg' />

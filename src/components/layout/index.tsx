@@ -33,7 +33,7 @@ function Layout() {
                                 <Menu onClick={handleToggle}  sx={{mx:2,color:'white', cursor:'pointer'}}/>
                                 <Typography color={'white'} fontWeight={'600'}>{capitalizeFirstLetter(location).length>0?capitalizeFirstLetter(location):'Dashboard'}</Typography>
                             </Box>
-                            <Search sx={{color:'white'}} />
+                            <Search sx={{color:'white',mx:1}} />
                         </RowContainerBetween>
                         <Box display={open?'flex':'none'} position={'absolute'} sx={{height:'100%',width:'100%'}} bgcolor={'rgba(0,0,0,.5)'} zIndex={99}>
                             <Box bgcolor={DEFAULT_COLORS.navbar_dark} display={'flex'} flexDirection={'column'} alignItems={'center'}  sx={{height:'100%',width:'60%'}}>
