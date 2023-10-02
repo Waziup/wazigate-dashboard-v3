@@ -2,7 +2,7 @@ import { Box,  Grid, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Outlet, useLocation,  } from 'react-router-dom';
 import Sidebar from './sidebar';
 import { Search,Menu,} from '@mui/icons-material';
-import {  RowContainerBetween } from '../../pages/dashboard';
+import RowContainerBetween from '../rowcontainerbetween';
 import { DEFAULT_COLORS } from '../../constants';
 import { useState } from 'react';
 const capitalizeFirstLetter = (string:string):string=>{
