@@ -24,9 +24,9 @@ export default function MobileDashboard() {
                     <Wifi sx={{ fontSize: 20,color:'black' }} />
                 </Item>
             </Stack>
-            <Box mt={5} px={1}>
+            <Box mt={2} px={1}>
                 <Typography color={'#666666'}>Device status</Typography>
-                <Box display={'flex'} flexDirection={'column'} mt={2} py={1}  alignItems={'center'}>
+                <Box display={'flex'} flexDirection={'column'} mt={1} py={1}  alignItems={'center'}>
                     <Box onClick={()=>{}} sx={{cursor:'pointer',my:1, ":hover":{bgcolor:'rgba(0,0,0,.1)'},width:'95%', height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
                         <Box sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
                             <Typography fontSize={10} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
@@ -59,7 +59,7 @@ export default function MobileDashboard() {
                     </Box>
                 </Box>
             </Box>
-            <Box mt={5} px={1}>
+            <Box mt={1} px={1}>
                 <Typography color={'#666666'}>App status</Typography>
                 <Box display={'flex'} flexDirection={'column'} mt={1} borderRadius={2} bgcolor={'#fff'}  alignItems={'center'}>
                     <Box onClick={()=>{}} sx={{cursor:'pointer',":hover":{bgcolor:'rgba(0,0,0,.1)'},borderBottom:'1px solid #E2E2E2', width:'95%', height: '100%',position:'relative',px:1, bgcolor: 'white',  }}>

@@ -8,7 +8,7 @@ import MobileDashboard from "../components/layout/mobile-dashboard";
 import RowContainerNormal from "../components/rowcontainernormal";
 import RowContainerBetween from "../components/rowcontainerbetween";
 export const Item=({more,color,children, title}:{more:string,children:React.ReactNode, color:string,title:string})=>(
-    <Box width={'25%'} mx={2} sx={{ height: '100%', bgcolor: 'white', p: 2 }}>
+    <Box width={'25%'} mx={2} sx={{ height: '100%',borderRadius:2, bgcolor: 'white', p: 2 }}>
         {children}
         <NormalText title={title} />
         <Typography fontSize={14} color={color} fontWeight={300}>{more}</Typography>
@@ -70,11 +70,11 @@ function Dashboard() {
                                 <Wifi sx={{ fontSize: 50,color:'black' }} />
                             </Item>
                         </Stack>
-                        <Grid height={'100%'} mt={2} container spacing={2}>
-                            <Grid item xs={8}>
+                        <Grid mt={2} container spacing={2}>
+                            <Grid item py={6} xs={8}>
                                 <DeviceStatus />
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid py={6} item xs={4}>
                                 <AppStatus />
                             </Grid>
                         </Grid>
