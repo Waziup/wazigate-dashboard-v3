@@ -3,6 +3,7 @@ import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/rowcontainerbetween";
 import RowContainerNormal from "../components/rowcontainernormal";
+import NoImageProfile from "../components/noimageprofile";
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
 }
@@ -42,11 +43,9 @@ function User() {
                     <Box m={.5}>
                         <RowContainerBetween additionStyles={{alignItems:'center',borderRadius:1, }}>
                             <RowContainerNormal>
-                                <Box sx={{objectFit:'contain',width:30,height:30,mx:1, bgcolor:DEFAULT_COLORS.primary_blue, borderRadius:'50%'}}></Box>
-                                {/* <Box component={'img'} sx={{objectFit:'contain',width:20,height:20, borderRadius:'50%'}} src={'https://picsum.photos/200/300'}  /> */}
+                                <NoImageProfile/>
                                 <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>William Smith</Typography>
                             </RowContainerNormal>
-                            {/* <Check sx={{color:DEFAULT_COLORS.primary_blue,mx:1}} /> */}
                         </RowContainerBetween>
                     </Box>
                     

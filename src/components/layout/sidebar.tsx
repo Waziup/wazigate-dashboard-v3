@@ -3,6 +3,7 @@ import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, SxProp
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { DEFAULT_COLORS } from '../../constants';
+import NoImageProfile from '../noimageprofile';
 export const IconStyle: SxProps<Theme> = {
     color:'inherit',
 }
@@ -78,7 +79,7 @@ function Sidebar() {
                     <Typography sx={{color:'white'}}>Help and feedback</Typography>
                 </Box>
                 <Box py={.5} px={'10%'} href='/user' sx={{textDecoration:'none',color:'#fff'}} component={'a'} borderBottom={'1px solid white'} borderTop={'1px solid white'} display={'flex'} alignItems={'center'}>
-                    <Box component={'img'} sx={{objectFit:'contain',width:20,height:20, borderRadius:'50%'}} src={'https://picsum.photos/200/300'}  />
+                    <NoImageProfile/>
                     <Box>
                         <Typography>John Doe</Typography>
                         <Typography fontSize={13} >johndoe@waziup.org</Typography>
