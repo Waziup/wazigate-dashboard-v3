@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -19,19 +20,19 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { visuallyHidden } from '@mui/utils';
-import { Download, Tune } from '@mui/icons-material';
+import { Download, HorizontalRule, TrendingDown, TrendingUp, Tune } from '@mui/icons-material';
 
 interface Data {
     name: string;
     values: number;
-    sos: number;
+    sos: JSX.Element;
   
 }
 
 function createData(
   name: string,
   values: number,
-  sos: number,
+  sos: JSX.Element,
 
 ): Data {
   return {
@@ -42,19 +43,9 @@ function createData(
 }
 
 const rows = [
-  createData('Cupcake', 305, 3.7),
-  createData('Donut', 452, 25.0),
-//   createData('Eclair', 262, 16.0, 24, 6.0),
-//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//   createData('Gingerbread', 356, 16.0, 49, 3.9),
-//   createData('Honeycomb', 408, 3.2, 87, 6.5),
-//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//   createData('Jelly Bean', 375, 0.0, 94, 0.0),
-//   createData('KitKat', 518, 26.0, 65, 7.0),
-//   createData('Lollipop', 392, 0.2, 98, 0.0),
-//   createData('Marshmallow', 318, 0, 81, 2.0),
-//   createData('Nougat', 360, 19.0, 9, 37.0),
-//   createData('Oreo', 437, 18.0, 63, 4.0),
+  createData('just now 2023-04-02 13:56', 305, <TrendingUp sx={{color:'#7E9B08'}}/>),
+  createData('just now 2023-04-03 13:56', 422, <TrendingDown sx={{color:'#ff0000'}}/>),
+  createData('just now 2023-04-04 13:56', 452, <HorizontalRule sx={{color:'#000000'}}/>),
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -213,8 +204,10 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         <Typography
           sx={{ flex: '1 1 100%' }}
           variant="h6"
+          fontSize={16}
           id="tableTitle"
           component="div"
+          color={'#00000099'}
         >
           Sensor Data
         </Typography>
