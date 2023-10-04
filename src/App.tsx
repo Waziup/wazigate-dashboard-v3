@@ -1,16 +1,17 @@
 // import './App.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Layout from './components/layout'
-import Dashboard from './pages/dashboard'
-import Devices from './pages/devices'
-import Automation from './pages/automation'
-import Apps from './pages/apps'
-import Settings from './pages/settings'
-import Login from './pages/login'
-import Device from './pages/device'
-import User from './pages/user'
+import Dashboard from './pages/Dashboard'
+import Devices from './pages/Devices'
+import Automation from './pages/Automation'
+import Apps from './pages/Apps'
+import Settings from './pages/Settings'
+import Login from './pages/Login'
+import Device from './pages/Device'
+import User from './pages/User'
 import DeviceSettings from './pages/device-settings'
-import Docspage from './pages/docspage'
+import Docspage from './pages/Docspage'
+import DeviceSensorSettings from './pages/device-sensor-settings'
 function App() {
   const router = createBrowserRouter([
     {
@@ -35,6 +36,10 @@ function App() {
         {
           path:'/devices/:id/setting',
           element: <Device/>
+        },
+        {
+          path:'/devices/:id/sensor/setting',
+          element: <DeviceSensorSettings/>
         },
         {
           path: '*',

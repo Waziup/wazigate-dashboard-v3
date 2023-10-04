@@ -4,7 +4,7 @@ import BasicTable from "../components/table";
 import React from "react";
 import { DEFAULT_COLORS } from "../constants";
 import { useOutletContext } from "react-router-dom";
-import MobileDashboard from "../components/layout/mobile-dashboard";
+import MobileDashboard from "../components/layout/MobileDashboard";
 import RowContainerNormal from "../components/rowcontainernormal";
 import RowContainerBetween from "../components/rowcontainerbetween";
 export const Item=({more,color,children, title}:{more:string,children:React.ReactNode, color:string,title:string})=>(
