@@ -12,7 +12,7 @@ const Item = ({more,color,children, title}:{more:string,children:React.ReactNode
 )
 export default function MobileDashboard() {
     return (
-        <Box>
+        <Box overflow={'auto'}>
             <Stack direction={'row'} overflow={'scroll'} m={2} spacing={1}>
                 <Item color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
                     <Router sx={{ fontSize: 20,color:'black' }} />
