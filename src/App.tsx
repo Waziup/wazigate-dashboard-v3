@@ -9,9 +9,9 @@ import Settings from './pages/Settings'
 import Login from './pages/Login'
 import Device from './pages/Device'
 import User from './pages/User'
-import DeviceSettings from './pages/device-settings'
+import DeviceSettings from './pages/DeviceSettings'
 import Docspage from './pages/Docspage'
-import DeviceSensorSettings from './pages/device-sensor-settings'
+import DeviceSensorSettings from './pages/DevicesensorSettings'
 function App() {
   const router = createBrowserRouter([
     {
