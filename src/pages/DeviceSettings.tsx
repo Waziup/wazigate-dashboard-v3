@@ -1,6 +1,6 @@
 import { Router, Add, MoreVert } from "@mui/icons-material";
 import { Box, Breadcrumbs, Button,Link, Grid, Typography, } from "@mui/material";
-import RowContainerBetween from "../components/rowcontainerbetween";
+import RowContainerBetween from "../components/RowContainerBetween";
 import { SelectElement } from "./Automation";
 function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {

@@ -1,8 +1,8 @@
 import { CloudOff,Router, WaterDrop, Wifi, WifiTethering } from "@mui/icons-material";
 import { Box, Stack, Typography } from "@mui/material";
 import { DEFAULT_COLORS } from "../../constants";
-import RowContainerBetween from "../rowcontainerbetween";
-import RowContainerNormal from "../rowcontainernormal";
+import RowContainerBetween from "../RowContainerBetween";
+import RowContainerNormal from "../RowContainerNormal";
 const Item = ({more,color,children, title}:{more:string,children:React.ReactNode, color:string,title:string})=>(
     <Box width={'30%'} minWidth={220} mx={1} sx={{ borderRadius:1,border:'1px solid #ccc', height: '100%', bgcolor: 'white', p: 2 }}>
         {children}

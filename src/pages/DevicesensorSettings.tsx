@@ -2,10 +2,10 @@ import { Box, Breadcrumbs, Button, FormControl, Link, NativeSelect, Typography }
 import { useOutletContext } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import { HTMLSelectProps } from "./Automation";
-import RowContainerBetween from "../components/rowcontainerbetween";
+import RowContainerBetween from "../components/RowContainerBetween";
 import { Save,  Sensors,  ToggleOff, ToggleOn,  } from "@mui/icons-material";
-import RowContainerNormal from "../components/rowcontainernormal";
-import DiscreteSliderMarks from "../components/discretemarks";
+import RowContainerNormal from "../components/RowContainerNormal";
+import DiscreteSliderMarks from "../components/DiscreteMarks";
 export const SelectElement = ({handleChange,title,conditions,isDisabled,matches, value}:HTMLSelectProps)=>(
     <Box minWidth={120} mx={2}>
         <Typography  fontSize={12} color={DEFAULT_COLORS.secondary_black}>{title}</Typography>

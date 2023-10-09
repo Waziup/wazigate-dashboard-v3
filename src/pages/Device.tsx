@@ -1,7 +1,7 @@
 import { SettingsTwoTone, ToggleOff } from "@mui/icons-material";
 import { Box, Typography, Button, Link,  Breadcrumbs } from "@mui/material";
-import RowContainerBetween from "../components/rowcontainerbetween";
-import EnhancedTable from "../components/devicetable";
+import RowContainerBetween from "../components/RowContainerBetween";
+import EnhancedTable from "../components/DeviceTable";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import Chart from 'react-apexcharts';  
 import { DEFAULT_COLORS } from "../constants";

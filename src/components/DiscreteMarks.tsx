@@ -41,7 +41,7 @@ function valuetext(value: number) {
   return `${value}°C`;
 }
 
-export default function DiscreteSliderMarks({matches}:{matches:boolean}) {
+export default function DiscreteMarks({matches}:{matches:boolean}) {
   return (
     <Box sx={{ width: matches?'35%':'90%',mx:matches?2:'auto' }}>
       <Slider
