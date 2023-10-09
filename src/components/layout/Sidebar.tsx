@@ -3,7 +3,7 @@ import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, SxProp
 import React, { CSSProperties } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { DEFAULT_COLORS } from '../../constants';
-import NoImageProfile from '../noimageprofile';
+import NoImageProfile from '../NoImageProfile';
 import { NavLink } from 'react-router-dom';
 export const IconStyle: SxProps<Theme> = {
     color:'inherit',

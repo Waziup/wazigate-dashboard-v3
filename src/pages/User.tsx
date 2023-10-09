@@ -1,9 +1,9 @@
 import { Check, Save } from "@mui/icons-material";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DEFAULT_COLORS } from "../constants";
-import RowContainerBetween from "../components/rowcontainerbetween";
-import RowContainerNormal from "../components/rowcontainernormal";
-import NoImageProfile from "../components/noimageprofile";
+import RowContainerBetween from "../components/RowContainerBetween";
+import RowContainerNormal from "../components/RowContainerNormal";
+import NoImageProfile from "../components/NoImageProfile";
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
 }

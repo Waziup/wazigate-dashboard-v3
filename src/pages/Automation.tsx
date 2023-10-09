@@ -3,8 +3,8 @@ import { Box, Button,FormControl,NativeSelect,Stack,Typography } from "@mui/mate
 import { DEFAULT_COLORS } from "../constants";
 import React, { ChangeEvent, } from "react";
 import { useOutletContext } from "react-router-dom";
-import { IconStyle } from "../components/layout/sidebar";
-import RowContainerBetween from "../components/rowcontainerbetween";
+import { IconStyle } from "../components/layout/Sidebar";
+import RowContainerBetween from "../components/RowContainerBetween";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange:(event: ChangeEvent<HTMLSelectElement>)=>void,
     title:string,

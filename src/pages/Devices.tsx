@@ -1,5 +1,5 @@
 import { Box, Button,Grid,CardContent,Typography, SxProps, Theme } from '@mui/material';
-import RowContainerBetween from '../components/rowcontainerbetween';
+import RowContainerBetween from '../components/RowContainerBetween';
 import { Add,DeviceThermostat, Sensors } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
 import { useNavigate, useOutletContext } from 'react-router-dom';
