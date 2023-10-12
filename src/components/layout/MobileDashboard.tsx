@@ -42,13 +42,13 @@ export default function MobileDashboard() {
                             </RowContainerBetween>
                         </Box>
                     </Box>
-                    <Box onClick={()=>{}} sx={{cursor:'pointer',my:2, ":hover":{bgcolor:'rgba(0,0,0,.1)'},width:'95%', height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
-                        <Box sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
+                    <Box onClick={()=>{}} sx={{cursor:'pointer',my:2, ":hover":{bgcolor:'rgba(0,0,0,.1)'},width:'95%', height: '100%',position:'relative', bgcolor: 'white', borderRadius:2}}>
+                        <Box sx={{position:'absolute',top:-5,my:-1,borderRadius:1,mx:1,bgcolor:DEFAULT_COLORS.primary_blue}}>
                             <Typography fontSize={10} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
                         </Box>
                         <Box sx={{py:1.5, px:2,}}>
                             <RowContainerBetween>
-                                <Typography color={'black'} fontSize={18} fontWeight={500}>Block 1</Typography>
+                                <Typography sx={{color:'black',fontSize:18,fontWeight:500}} >Block 1</Typography>
                                 <Typography color={DEFAULT_COLORS.primary_blue} lineHeight={.8} fontWeight={300}>active</Typography> 
                             </RowContainerBetween>
                             <RowContainerBetween>

@@ -18,8 +18,8 @@ function Layout() {
         <>
             {
                 matches?(
-                    <Grid overflow={'hidden'} height={'100vh'} container sx={{background: '#F0F2F5', scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}}}>
-                        <Grid item bgcolor={DEFAULT_COLORS.navbar_dark} height={'100%'}  xs={2.5} >
+                    <Grid container sx={{background: '#F0F2F5',height:'100vh',overflow:'hidden', scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}}}>
+                        <Grid item sx={{height:'100%',bgcolor:DEFAULT_COLORS.navbar_dark}}  xs={2.5} >
                             <Sidebar />
                         </Grid>
                         <Grid item xs={9.5} md={9.5} height={'100%'}>
@@ -27,15 +27,15 @@ function Layout() {
                         </Grid>
                     </Grid>
                 ):(
-                    <Box height={'100vh'} bgcolor={'#F0F2F5'} overflow={'hidden'}>
+                    <Box sx={{height:'100vh',bgcolor:'#F0F2F5',overflow:'hidden'}}>
                         <RowContainerBetween additionStyles={{bgcolor:'#292F3F'}} >
-                            <Box display={'flex'} py={2} alignItems={'center'}>
+                            <Box sx={{display:'flex',py:2,alignItems:'center'}} >
                                 <Menu onClick={handleToggle}  sx={{mx:2,color:'white', cursor:'pointer'}}/>
                                 <Typography color={'white'} fontWeight={'600'}>{capitalizeFirstLetter(location).length>0?capitalizeFirstLetter(location):'Dashboard'}</Typography>
                             </Box>
                             <Search sx={{color:'white',mx:1}} />
                         </RowContainerBetween>
-                        <Box display={open?'flex':'none'} position={'absolute'} sx={{height:'100%',width:'100%'}} bgcolor={'rgba(0,0,0,.5)'} zIndex={99}>
+                        <Box onClick={handleToggle} sx={{position:'absolute', display:open?'flex':'none', height:'100%',width:'100%',bgcolor:'rgba(0,0,0,.5)',zIndex:99}}>
                             <Box bgcolor={DEFAULT_COLORS.navbar_dark} display={'flex'} flexDirection={'column'} alignItems={'center'}  sx={{height:'100%',width:'60%'}}>
                                 <Sidebar/>
                             </Box>
