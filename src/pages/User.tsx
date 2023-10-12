@@ -18,14 +18,13 @@ function User() {
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     return (
-        <Box position={'relative'} width={'100%'} bgcolor={'#F4F7F6'} p={3} sx={{ height:'100%',overflowY:'scroll'}}>
-            <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:matches?'56%':'40%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'40%':'95%'}}>
-                <Box display={'flex'}  py={2} width={'100%'} borderBottom={'1px solid #D5D6D8'} alignItems={'center'}>
+        <Box sx={{width:'100%', p:3,position:'relative',bgcolor:'#F4F7F6', height:'100%',overflowY:'scroll'}}>
+            <Box sx={{position:'absolute', transform:'translate(-50%,-50%)',top:matches?'56%':'40%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'40%':'95%'}}>
+                <Box sx={{display:'flex',py:2,width:'100%',borderBottom:'1px solid #D5D6D8', alignItems:'center',}}>
                     <Box component={'img'}  src='/wazilogo.svg' mx={2} />
                     {/*  */}
                     <Box>
-                        <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>John Doe</Typography>
-                        {/* <Typography fontWeight={200} fontSize={13} color={DEFAULT_COLORS.third_dark}>johndoe@waziup.org</Typography> */}
+                        <Typography sx={{fontWeight:500,color:DEFAULT_COLORS.third_dark}}>John Doe</Typography>
                     </Box>
                 </Box>
                 <Box py={.5} px={1} width={'100%'} borderBottom={'1px solid #D5D6D8'}>
@@ -51,8 +50,7 @@ function User() {
                     
                 </Box>
                 <form>
-                    <Typography fontWeight={200} fontSize={13}  color={DEFAULT_COLORS.third_dark}>GENERAL</Typography>
-
+                    <Typography sx={{fontWeight:200,fontSize:13,color:DEFAULT_COLORS.third_dark}}>GENERAL</Typography>
                     <Box p={2}>
                         <Box py={1}>
                             <TextInput label='Name' type="text" placeholder="admin" />
