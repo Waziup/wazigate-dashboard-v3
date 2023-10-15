@@ -28,7 +28,7 @@ export default function MobileDashboard() {
                 <Typography color={'#666666'}>Device status</Typography>
                 <Box display={'flex'} flexDirection={'column'} mt={1} py={1}  alignItems={'center'}>
                     <Box onClick={()=>{}} sx={{cursor:'pointer',my:1, ":hover":{bgcolor:'rgba(0,0,0,.1)'},width:'95%', height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
-                        <Box sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
+                        <Box sx={{position:'absolute',top:-5,my:-1,borderRadius:1,mx:1,bgcolor:DEFAULT_COLORS.primary_blue}}>
                             <Typography fontSize={10} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
                         </Box>
                         <Box sx={{py:1.5, px:2,}}>
