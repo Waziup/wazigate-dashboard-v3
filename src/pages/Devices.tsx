@@ -1,9 +1,9 @@
-import { Box, Button,Grid,CardContent,Typography, SxProps, Theme } from '@mui/material';
+import { Box, Button,Grid,CardContent,Typography, } from '@mui/material';
 import RowContainerBetween from '../components/RowContainerBetween';
 import { Add,DeviceThermostat, Sensors } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-const IconStyle: SxProps<Theme> = {
+const IconStyle = {
     cursor:'pointer',
     color:'black',
 }
@@ -11,7 +11,7 @@ function Devices() {
     const navigate = useNavigate();
     const [matches] = useOutletContext<[matches:boolean]>()
     return (
-        <Box p={3} sx={{ height:'100%'}}>
+        <Box sx={{p:3, height:'100%'}}>
             <RowContainerBetween>
                 <Typography fontWeight={700} color={'black'}>Devices</Typography>
                 <Button variant={'contained'}>
@@ -22,7 +22,7 @@ function Devices() {
             <Grid container my={2} spacing={2}>
                 <Grid item xs={matches?4:12}>
                     <Box onClick={()=>{navigate('/devices/3')}} sx={{cursor:'pointer',":hover":{bgcolor:'rgba(0,0,0,.1)'}, height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
-                        <Box sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
+                        <Box sx={{position:'absolute',top:-5,my:-1,borderRadius:1,mx:1,bgcolor:DEFAULT_COLORS.primary_blue}}>
                             <Sensors sx={{fontSize:15, color:'#fff'}}/>
                             <Typography fontSize={10} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
                         </Box>
@@ -38,7 +38,7 @@ function Devices() {
                         <CardContent sx={{py:2}}>
                             <Box>
                                 <RowContainerBetween>
-                                    <Box display={'flex'} justifyContent={'space-between'} width={'50%'}>
+                                    <Box sx={{display:'flex',justifyContent:'space-between',width:'50%'}}>
                                         <DeviceThermostat sx={{ fontSize: 20,color:DEFAULT_COLORS.primary_black }} />
                                         <Typography color={'black'} fontWeight={300}>Room_1 Temp</Typography>
                                     </Box>
