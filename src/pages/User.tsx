@@ -8,7 +8,7 @@ interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
 }
 const TextInput = ({type,placeholder,label}:TextInputProps)=>(
-    <Box>
+    <Box py={1}>
         <p style={{color:DEFAULT_COLORS.third_dark,fontWeight:'300'}}>{label} <span style={{color:DEFAULT_COLORS.orange}}>*</span></p>
         <input type={type} placeholder={placeholder} style={{width:'100%',fontSize:18, border:'none',background:'none',color:DEFAULT_COLORS.third_dark,padding:2, borderBottom:'1px solid #D5D6D8', outline:'none'}} />
     </Box>
@@ -52,21 +52,11 @@ function User() {
                 <form>
                     <Typography sx={{fontWeight:200,fontSize:13,color:DEFAULT_COLORS.third_dark}}>GENERAL</Typography>
                     <Box p={2}>
-                        <Box py={1}>
-                            <TextInput label='Name' type="text" placeholder="admin" />
-                        </Box>
-                        <Box py={1}>
-                            <TextInput label='username' type="password" placeholder="......" />
-                        </Box>
-                        <Box py={1}>
-                            <TextInput label='Password' type="text" placeholder="admin" />
-                        </Box>
-                        <Box py={1}>
-                            <TextInput label='New Password' type="text" placeholder="admin" />
-                        </Box>
-                        <Box py={1}>
-                            <TextInput label='Confirm new Password' type="password" placeholder="......" />
-                        </Box>
+                        <TextInput label='Name' type="text" placeholder="admin" />
+                        <TextInput label='username' type="password" placeholder="......" />
+                        <TextInput label='Password' type="text" placeholder="admin" />
+                        <TextInput label='New Password' type="text" placeholder="admin" />
+                        <TextInput label='Confirm new Password' type="password" placeholder="......" />
                         <Box display={'flex'} justifyContent={'center'} py={1}>
                             <button onClick={handleNavigate} style={{width:'50%',border:'none',justifyContent:'center', display:'flex',alignItems:'center', borderRadius:5, outline:'none', padding:10, backgroundColor:'#2BBBAD', color:'white'}}>
                                 <Save sx={{fontSize:20}} />
