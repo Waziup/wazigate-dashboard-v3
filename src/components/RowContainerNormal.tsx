@@ -1,5 +1,4 @@
-import { Theme } from "@emotion/react";
-import { SxProps, Box } from "@mui/material";
+import { SxProps,Theme, Box } from "@mui/material";
 
 export default function RowContainerNormal({children,additionStyles}:{children:React.ReactNode,additionStyles?:SxProps<Theme>}){
     return(

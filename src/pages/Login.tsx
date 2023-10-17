@@ -18,18 +18,18 @@ interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 const TextInput = ({type,placeholder,label,...rest}:TextInputProps)=>(
     <Box py={1}>
-        <p style={{color:DEFAULT_COLORS.third_dark,fontWeight:'300'}}>{label} <span style={{color:DEFAULT_COLORS.orange}}>*</span></p>
+        <Box component={'p'} sx={{color:DEFAULT_COLORS.third_dark,fontWeight:'300'}}>{label} <Box component={'p'} sx={{color:DEFAULT_COLORS.orange}}>*</Box></Box>
         <input {...rest} type={type} placeholder={placeholder} style={{width:'100%',fontSize:18, border:'none',background:'none',color:DEFAULT_COLORS.third_dark,padding:2, borderBottom:'1px solid #D5D6D8', outline:'none'}} />
     </Box>
-)
-function Login() {
+);
+export default function Login() {
     const navigate = useNavigate();
     const handleNavigate = () => { navigate('/') }
     const { handleSubmit, register } = useForm<RegistrationInput>({
         resolver: yupResolver(schema),
     });
     const onSubmit: SubmitHandler<RegistrationInput> = async (data: { username: string, password: string }) => {
-        const userData = {
+        const userData: RegistrationInput = {
             username: data.username,
             password: data.password,
         }
@@ -46,7 +46,7 @@ function Login() {
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     return (
         <Box height={'100vh'} position={'relative'} width={'100%'} bgcolor={'#F4F7F6'}>
-            <Box position={'absolute'} sx={{ transform: 'translate(-50%,-50%)', top: '50%', left: '50%', borderRadius: 2, bgcolor: 'white', width: matches ? '40%' : '95%' }}>
+            <Box sx={{position:'absolute', transform: 'translate(-50%,-50%)', top: '50%', left: '50%', borderRadius: 2, bgcolor: 'white', width: matches ? '40%' : '95%' }}>
                 <Box display={'flex'} justifyContent={'center'} py={2} width={'100%'} borderBottom={'1px solid #D5D6D8'} alignItems={'center'}>
                     <Box component={'img'} src='/wazilogo.svg' mx={2} />
                     <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>Login to Wazigate Dashboard</Typography>
@@ -64,12 +64,10 @@ function Login() {
                     </Box>
                 </form>
                 <Box px={2} py={2}>
-                    <p style={{ color: DEFAULT_COLORS.third_dark, fontWeight: '300', fontStyle: 'oblique' }}>Default Username: admin </p>
-                    <p style={{ color: DEFAULT_COLORS.third_dark, fontWeight: '300' }}>Default Password: loragateway </p>
+                    <Box component={'p'} sx={{ color: DEFAULT_COLORS.third_dark, fontWeight: '300', fontStyle: 'oblique' }}>Default Username: admin </Box>
+                    <Box component={'p'} sx={{ color: DEFAULT_COLORS.third_dark, fontWeight: '300' }}>Default Password: loragateway </Box>
                 </Box>
             </Box>
         </Box>
     );
 }
-
-export default Login;

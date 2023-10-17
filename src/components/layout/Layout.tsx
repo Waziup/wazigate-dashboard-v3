@@ -16,7 +16,6 @@ function Layout() {
     const location = useLocation().pathname;
     return (
         <>
-        <h1>gfgfgfg</h1>
             {
                 matches?(
                     <Grid container sx={{background: '#F0F2F5',height:'100vh',overflow:'hidden', scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}}}>

@@ -6,7 +6,7 @@ import Devices from './pages/Devices'
 import Automation from './pages/Automation'
 import Apps from './pages/Apps'
 import Settings from './pages/Settings'
-import Login from './pages/Login'
+import Login from './pages/Login';
 import Device from './pages/Device'
 import User from './pages/User'
 import DeviceSettings from './pages/DeviceSettings'
