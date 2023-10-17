@@ -1,47 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
+import {Box,Table,TableBody,TableCell,
+  TableContainer,TableHead,
+  TableSortLabel,Toolbar,Typography,Paper,
+  TablePagination,TableRow,
+  Checkbox,IconButton,Tooltip,FormControlLabel,Switch
+} 
+from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { visuallyHidden } from '@mui/utils';
 import { Download, HorizontalRule, TrendingDown, TrendingUp, Tune } from '@mui/icons-material';
-
 interface Data {
     name: string;
     values: number;
-    sos: JSX.Element;
-  
+    sos: JSX.Element; 
 }
 
 function createData(
-  name: string,
-  values: number,
-  sos: JSX.Element,
+	name: string,
+	values: number,
+	sos: JSX.Element,
 
 ): Data {
-  return {
-    name,
-    values,
-    sos,
-  };
+	return {
+		name,
+		values,
+		sos,
+	};
 }
-
 const rows = [
   createData('just now 2023-04-02 13:56', 305, <TrendingUp sx={{color:'#7E9B08'}}/>),
   createData('just now 2023-04-03 13:56', 422, <TrendingDown sx={{color:'#ff0000'}}/>),
@@ -49,23 +36,23 @@ const rows = [
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
+	if (b[orderBy] < a[orderBy]) {
+		return -1;
+	}
+	if (b[orderBy] > a[orderBy]) {
+		return 1;
+	}
+	return 0;
 }
 
 type Order = 'asc' | 'desc';
 
 function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key,
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string },
+	order: Order,
+	orderBy: Key,
+	): (
+	a: { [key in Key]: number | string },
+	b: { [key in Key]: number | string },
 ) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
@@ -230,7 +217,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   );
 }
 
-export default function EnhancedTable() {
+export default function DeviceTable() {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('values');
   const [selected, setSelected] = React.useState<readonly string[]>([]);

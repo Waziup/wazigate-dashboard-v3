@@ -1,8 +1,8 @@
 import { CloudOff,Router, WaterDrop, Wifi, WifiTethering } from "@mui/icons-material";
 import { Box, Stack, Typography } from "@mui/material";
 import { DEFAULT_COLORS } from "../../constants";
-import RowContainerBetween from "../rowcontainerbetween";
-import RowContainerNormal from "../rowcontainernormal";
+import RowContainerBetween from "../RowContainerBetween";
+import RowContainerNormal from "../RowContainerNormal";
 const Item = ({more,color,children, title}:{more:string,children:React.ReactNode, color:string,title:string})=>(
     <Box width={'30%'} minWidth={220} mx={1} sx={{ borderRadius:1,border:'1px solid #ccc', height: '100%', bgcolor: 'white', p: 2 }}>
         {children}
@@ -12,7 +12,7 @@ const Item = ({more,color,children, title}:{more:string,children:React.ReactNode
 )
 export default function MobileDashboard() {
     return (
-        <Box>
+        <Box overflow={'auto'}>
             <Stack direction={'row'} overflow={'scroll'} m={2} spacing={1}>
                 <Item color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
                     <Router sx={{ fontSize: 20,color:'black' }} />
@@ -28,7 +28,7 @@ export default function MobileDashboard() {
                 <Typography color={'#666666'}>Device status</Typography>
                 <Box display={'flex'} flexDirection={'column'} mt={1} py={1}  alignItems={'center'}>
                     <Box onClick={()=>{}} sx={{cursor:'pointer',my:1, ":hover":{bgcolor:'rgba(0,0,0,.1)'},width:'95%', height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
-                        <Box sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
+                        <Box sx={{position:'absolute',top:-5,my:-1,borderRadius:1,mx:1,bgcolor:DEFAULT_COLORS.primary_blue}}>
                             <Typography fontSize={10} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
                         </Box>
                         <Box sx={{py:1.5, px:2,}}>
@@ -42,13 +42,13 @@ export default function MobileDashboard() {
                             </RowContainerBetween>
                         </Box>
                     </Box>
-                    <Box onClick={()=>{}} sx={{cursor:'pointer',my:2, ":hover":{bgcolor:'rgba(0,0,0,.1)'},width:'95%', height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
-                        <Box sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
+                    <Box onClick={()=>{}} sx={{cursor:'pointer',my:2, ":hover":{bgcolor:'rgba(0,0,0,.1)'},width:'95%', height: '100%',position:'relative', bgcolor: 'white', borderRadius:2}}>
+                        <Box sx={{position:'absolute',top:-5,my:-1,borderRadius:1,mx:1,bgcolor:DEFAULT_COLORS.primary_blue}}>
                             <Typography fontSize={10} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
                         </Box>
                         <Box sx={{py:1.5, px:2,}}>
                             <RowContainerBetween>
-                                <Typography color={'black'} fontSize={18} fontWeight={500}>Block 1</Typography>
+                                <Typography sx={{color:'black',fontSize:18,fontWeight:500}} >Block 1</Typography>
                                 <Typography color={DEFAULT_COLORS.primary_blue} lineHeight={.8} fontWeight={300}>active</Typography> 
                             </RowContainerBetween>
                             <RowContainerBetween>

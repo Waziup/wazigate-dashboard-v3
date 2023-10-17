@@ -16,10 +16,10 @@ const schema = yup.object({
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
 }
-const TextInput = ({ type, placeholder, label, ...rest }: TextInputProps) => (
-    <Box>
-        <p style={{ color: DEFAULT_COLORS.third_dark, fontWeight: '300' }}>{label} <span style={{ color: DEFAULT_COLORS.orange }}>*</span></p>
-        <input {...rest} type={type} placeholder={placeholder} style={{ width: '100%', fontSize: 18, border: 'none', background: 'none', color: DEFAULT_COLORS.third_dark, padding: 2, borderBottom: '1px solid #D5D6D8', outline: 'none' }} />
+const TextInput = ({type,placeholder,label,...rest}:TextInputProps)=>(
+    <Box py={1}>
+        <p style={{color:DEFAULT_COLORS.third_dark,fontWeight:'300'}}>{label} <span style={{color:DEFAULT_COLORS.orange}}>*</span></p>
+        <input {...rest} type={type} placeholder={placeholder} style={{width:'100%',fontSize:18, border:'none',background:'none',color:DEFAULT_COLORS.third_dark,padding:2, borderBottom:'1px solid #D5D6D8', outline:'none'}} />
     </Box>
 )
 function Login() {
@@ -53,12 +53,8 @@ function Login() {
                 </Box>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Box p={2}>
-                        <Box py={1}>
-                            <TextInput {...register('username')} label='Username' type="text" placeholder="admin" />
-                        </Box>
-                        <Box py={1}>
-                            <TextInput {...register('password')} label='Password' type="password" placeholder="......" />
-                        </Box>
+                        <TextInput {...register('username')} label='Username' type="text" placeholder="admin" />
+                        <TextInput {...register('password')} label='Password' type="password" placeholder="......" />
                         <Box borderBottom={'1px solid #D5D6D8'} display={'flex'} justifyContent={'center'} py={1}>
                             <button onClick={handleNavigate} style={{ width: '70%', border: 'none', borderRadius: 5, outline: 'none', padding: 10, backgroundColor: '#2BBBAD', color: 'white' }}>
                                 <LockOpen sx={{ fontSize: 20 }} />

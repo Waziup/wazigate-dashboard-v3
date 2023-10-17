@@ -3,14 +3,15 @@ import { Box, Button,FormControl,NativeSelect,Stack,Typography } from "@mui/mate
 import { DEFAULT_COLORS } from "../constants";
 import React, { ChangeEvent, } from "react";
 import { useOutletContext } from "react-router-dom";
-import { IconStyle } from "../components/layout/sidebar";
-import RowContainerBetween from "../components/rowcontainerbetween";
-interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+import { IconStyle } from "../components/layout/Sidebar";
+import RowContainerBetween from "../components/RowContainerBetween";
+export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange:(event: ChangeEvent<HTMLSelectElement>)=>void,
     title:string,
     conditions:string[] | number[], 
     value: string
     isDisabled?:boolean
+    matches?:boolean
 }
 export const SelectElement = ({handleChange,title,conditions,isDisabled, value}:HTMLSelectProps)=>(
     <Box minWidth={120} mx={2}>

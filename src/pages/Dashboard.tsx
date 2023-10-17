@@ -1,12 +1,12 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import {Router, CloudOff,Wifi, WaterDrop, WifiTethering} from '@mui/icons-material';
-import BasicTable from "../components/table";
+import BasicTable from "../components/BasicTable";
 import React from "react";
 import { DEFAULT_COLORS } from "../constants";
 import { useOutletContext } from "react-router-dom";
-import MobileDashboard from "../components/layout/mobile-dashboard";
-import RowContainerNormal from "../components/rowcontainernormal";
-import RowContainerBetween from "../components/rowcontainerbetween";
+import MobileDashboard from "../components/layout/MobileDashboard";
+import RowContainerNormal from "../components/RowContainerNormal";
+import RowContainerBetween from "../components/RowContainerBetween";
 export const Item=({more,color,children, title}:{more:string,children:React.ReactNode, color:string,title:string})=>(
     <Box width={'25%'} mx={2} sx={{ height: '100%',borderRadius:2, bgcolor: 'white', p: 2 }}>
         {children}
