@@ -1,4 +1,4 @@
-import { Box,  Grid, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box,  Grid, Typography, useMediaQuery,useTheme } from '@mui/material';
 import { Outlet, useLocation,  } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { Search,Menu,} from '@mui/icons-material';
@@ -16,13 +16,14 @@ function Layout() {
     const location = useLocation().pathname;
     return (
         <>
+        <h1>gfgfgfg</h1>
             {
                 matches?(
                     <Grid container sx={{background: '#F0F2F5',height:'100vh',overflow:'hidden', scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}}}>
-                        <Grid item sx={{height:'100%',bgcolor:DEFAULT_COLORS.navbar_dark}}  xs={2.5} >
+                        <Grid item sx={{height:'100%',bgcolor:DEFAULT_COLORS.navbar_dark}} md={3}  xs={2.5} >
                             <Sidebar />
                         </Grid>
-                        <Grid item xs={9.5} md={9.5} height={'100%'}>
+                        <Grid item xs={9.5} md={9} height={'100%'}>
                             <Outlet context={[matches]} />
                         </Grid>
                     </Grid>
@@ -36,7 +37,7 @@ function Layout() {
                             <Search sx={{color:'white',mx:1}} />
                         </RowContainerBetween>
                         <Box onClick={handleToggle} sx={{position:'absolute', display:open?'flex':'none', height:'100%',width:'100%',bgcolor:'rgba(0,0,0,.5)',zIndex:99}}>
-                            <Box bgcolor={DEFAULT_COLORS.navbar_dark} sx={{bgcolor:DEFAULT_COLORS.navbar_dark,display:'flex',flexDirection:'column',alignItems:'center', height:'100%',width:'60%'}}>
+                            <Box sx={{bgcolor:DEFAULT_COLORS.navbar_dark,display:'flex',flexDirection:'column',alignItems:'center', height:'100%',width:'60%'}}>
                                 <Sidebar/>
                             </Box>
                         </Box>
