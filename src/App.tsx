@@ -13,72 +13,72 @@ import DeviceSettings from './pages/DeviceSettings'
 import Docspage from './pages/Docspage'
 import DeviceSensorSettings from './pages/DevicesensorSettings'
 function App() {
-  const router = createBrowserRouter([
-    {
-      path:'/auth',
-      element:<Login/>
-    },
-    {
-      element: <Layout/>,
-      children: [
+    const router = createBrowserRouter([
         {
-          path: '/',
-          element: <Dashboard/>
+            path:'/auth',
+            element:<Login/>
         },
         {
-          path:'/devices',
-          element: <Devices/>
-        },
-        {
-          path:'/devices/:id',
-          element:<DeviceSettings/>
-        },
-        {
-          path:'/devices/:id/setting',
-          element: <Device/>
-        },
-        {
-          path:'/devices/:id/sensor/setting',
-          element: <DeviceSensorSettings/>
-        },
-        {
-          path: '*',
-          element: <div>Not Found</div>
-        },
-        {
-          path: '/automation',
-          element: <Automation/>
-        },
-        {
-          path:'/apps',
-          element:<Apps/>
-        },
-        {
-          path:'/settings',
-          element: <Settings/>
-        },
-        {
-          path:'/settings/networking',
-          element: <Settings/>
-        },
-        {
-          path:'/settings/maintenance',
-          element: <Settings/>
-        },
-        {
-          path:'/user',
-          element: <User/>
-        },
-        {
-          path:'/help',
-          element: <Docspage/>
+            element: <Layout/>,
+            children: [
+                {
+                    path: '/',
+                    element: <Dashboard/>
+                },
+                {
+                    path:'/devices',
+                    element: <Devices/>
+                },
+                {
+                    path:'/devices/:id',
+                    element:<DeviceSettings/>
+                },
+                {
+                    path:'/devices/:id/setting',
+                    element: <Device/>
+                },
+                {
+                    path:'/devices/:id/sensor/setting',
+                    element: <DeviceSensorSettings/>
+                },
+                {
+                    path: '*',
+                    element: <div>Not Found</div>
+                },
+                {
+                    path: '/automation',
+                    element: <Automation/>
+                },
+                {
+                    path:'/apps',
+                    element:<Apps/>
+                },
+                {
+                    path:'/settings',
+                    element: <Settings/>
+                },
+                {
+                    path:'/settings/networking',
+                    element: <Settings/>
+                },
+                {
+                    path:'/settings/maintenance',
+                    element: <Settings/>
+                },
+                {
+                    path:'/user',
+                    element: <User/>
+                },
+                {
+                    path:'/help',
+                    element: <Docspage/>
+                }
+            ]
         }
-      ]
-    }
-  ])
-  return (
-    <RouterProvider router={router}/>
-  )
+    ])
+    return (
+        <RouterProvider router={router}/>
+    )
 }
 
 export default App
