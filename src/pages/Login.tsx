@@ -3,11 +3,11 @@ import { DEFAULT_COLORS } from '../constants';
 import { LockOpen } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import {useForm,SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup';
-interface RegistrationInput {
-    username: string
-    password: string
+interface RegistrationInput{
+    username:string
+    password:string
 }
 const schema = yup.object({
     username: yup.string().required(),
@@ -24,31 +24,31 @@ const TextInput = ({type,placeholder,label,...rest}:TextInputProps)=>(
 );
 export default function Login() {
     const navigate = useNavigate();
-    const handleNavigate = () => { navigate('/') }
-    const { handleSubmit, register } = useForm<RegistrationInput>({
+    const handleNavigate = ()=>{navigate('/')}
+    const {handleSubmit,register} = useForm<RegistrationInput>({
         resolver: yupResolver(schema),
     });
-    const onSubmit: SubmitHandler<RegistrationInput> = async (data: { username: string, password: string }) => {
-        const userData: RegistrationInput = {
+    const onSubmit:SubmitHandler<RegistrationInput> = async (data: {username:string,password:string}) => {
+        const userData = {
             username: data.username,
             password: data.password,
         }
         console.log(userData);
         try {
-
+            
             navigate('/home');
-        } catch (error) {
+        } catch (error ) {
             // const err = error as ErrorType
-            console.log('Error encountered: ', error)
+            console.log('Error encountered: ',error)
         }
     }
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     return (
         <Box height={'100vh'} position={'relative'} width={'100%'} bgcolor={'#F4F7F6'}>
-            <Box sx={{position:'absolute', transform: 'translate(-50%,-50%)', top: '50%', left: '50%', borderRadius: 2, bgcolor: 'white', width: matches ? '40%' : '95%' }}>
+            <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:'50%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'40%':'95%'}}>
                 <Box display={'flex'} justifyContent={'center'} py={2} width={'100%'} borderBottom={'1px solid #D5D6D8'} alignItems={'center'}>
-                    <Box component={'img'} src='/wazilogo.svg' mx={2} />
+                    <Box component={'img'}  src='/wazilogo.svg' mx={2} />
                     <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>Login to Wazigate Dashboard</Typography>
                 </Box>
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -56,8 +56,8 @@ export default function Login() {
                         <TextInput {...register('username')} label='Username' type="text" placeholder="admin" />
                         <TextInput {...register('password')} label='Password' type="password" placeholder="......" />
                         <Box borderBottom={'1px solid #D5D6D8'} display={'flex'} justifyContent={'center'} py={1}>
-                            <button onClick={handleNavigate} style={{ width: '70%', border: 'none', borderRadius: 5, outline: 'none', padding: 10, backgroundColor: '#2BBBAD', color: 'white' }}>
-                                <LockOpen sx={{ fontSize: 20 }} />
+                            <button onClick={handleNavigate} style={{width:'70%',border:'none', borderRadius:5, outline:'none', padding:10, backgroundColor:'#2BBBAD', color:'white'}}>
+                                <LockOpen sx={{fontSize:20}} />
                                 LOGIN
                             </button>
                         </Box>
