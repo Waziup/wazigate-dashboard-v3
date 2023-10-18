@@ -1,5 +1,5 @@
 import { ExpandLess,SettingsRemoteSharp,Apps, PrecisionManufacturing, ExpandMore,Dashboard, SettingsTwoTone, Wifi, WifiLock, Logout, HelpCenter} from '@mui/icons-material';
-import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, SxProps, Theme, Typography} from '@mui/material';
+import { Box, Collapse, List,  ListItemIcon, ListItemText, SxProps, Theme, Typography} from '@mui/material';
 import React, { CSSProperties } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { DEFAULT_COLORS } from '../../constants';
@@ -41,16 +41,6 @@ const NavigationItem = ({path,otherItem,icon,onClick, text}:{location:string,oth
         </NavLink>
     )
 }
-export const NavItem = ({location,path, icon,text}:{location:string,path:string, icon:React.ReactNode,text:string}) => {
-    return(
-        <ListItemButton href={path} sx={{...ListItemButtonStyle,color:location.includes(path)?DEFAULT_COLORS.primary_black:'#fff', bgcolor:location.includes(path)?'white':'', }}>
-            <ListItemIcon>
-                {icon}
-            </ListItemIcon>
-            <ListItemText sx={{fontSize:1}} primary={text} />
-        </ListItemButton>
-    )
-}
 function Sidebar() {
     const [open, setOpen] = React.useState(true);
     const handleClick = () => {
@@ -90,13 +80,13 @@ function Sidebar() {
                         <NavigationItem 
                             location={location} 
                             path={'/settings/networking'} 
-                            icon={<Wifi sx={{...IconStyle,pl:2, color:location.includes('/settings')?'black':'white'}} />} 
+                            icon={<Wifi sx={{...IconStyle,ml:2, color:location.includes('/settings')?'black':'white'}} />} 
                             text={'Networking'}
                         />
                         <NavigationItem
                             location={location}
                             path={'/settings/maintenance'}
-                            icon={<WifiLock sx={{...IconStyle,pl:2, color:location.includes('/settings')?'black':'white'}} />}
+                            icon={<WifiLock sx={{...IconStyle,ml:2, color:location.includes('/settings')?'black':'white'}} />}
                             text={'Maintenance'}
                         />
                     </List>
@@ -104,17 +94,16 @@ function Sidebar() {
                 <NavigationItem location={location} path={'/apps'} icon={<Apps sx={{...IconStyle,color:location==='/apps'?'black':'white'}} />} text={'Apps'} />
             </List>
             <Box position={'absolute'} alignItems={'center'} bottom={0} width={'100%'} >
-                <NavLink style={{margin:'5px 10px',textDecoration:'none'}} to={'/help'}>
+                <NavLink style={{textDecoration:'none',}} to={'/help'}>
                     <Box display={'flex'} alignItems={'center'}>
                         <ListItemIcon>  
-
                             <HelpCenter sx={{color:'white'}} />
                         </ListItemIcon>
                         <ListItemText sx={{color:'white'}} primary={'Help and feedback'} />
                         {/* <Typography sx={{color:'white'}}>Help and feedback</Typography> */}
                     </Box>
                 </NavLink>
-                <Link style={{margin:'5px 10px',textDecoration:'none', borderBottom:'1px solid white'}} to={'/user'}>
+                <Link style={{textDecoration:'none',borderBottom:'1px solid white'}} to={'/user'}>
                     <Box display={'flex'} >
                         <NoImageProfile/>
                         <Box>
