@@ -1,6 +1,6 @@
 import { Box, Button,Grid,CardContent,Typography, } from '@mui/material';
 import RowContainerBetween from '../components/RowContainerBetween';
-import { Add,DeviceThermostat, Sensors } from '@mui/icons-material';
+import { Add,DeviceThermostat, OnlinePrediction, Sensors } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 const IconStyle = {
@@ -36,13 +36,24 @@ function Devices() {
                             </RowContainerBetween>
                         </Box>
                         <CardContent sx={{py:2}}>
-                            <Box>
-                                <RowContainerBetween>
+                            <Button variant="text" sx={{bgcolor:'#F7F7F7',textTransform:'full-width', color:DEFAULT_COLORS.primary_black}} startIcon={<Add />}>
+                                New Interface
+                            </Button>
+                            <Box >
+                                <RowContainerBetween additionStyles={{my:1}}>
                                     <Box sx={{display:'flex',justifyContent:'space-between',width:'50%'}}>
                                         <DeviceThermostat sx={{ fontSize: 20,color:DEFAULT_COLORS.primary_black }} />
                                         <Typography color={'black'} fontWeight={300}>Room_1 Temp</Typography>
                                     </Box>
                                     <Typography color={DEFAULT_COLORS.primary_blue} fontWeight={300}>25&deg;C </Typography>
+                                </RowContainerBetween>
+                                <RowContainerBetween additionStyles={{my:1}}>
+                                    
+                                    <Box sx={{display:'flex',justifyContent:'space-between',width:'50%'}}>
+                                        <OnlinePrediction sx={{ fontSize: 20,color:DEFAULT_COLORS.primary_black }} />
+                                        <Typography color={'black'} fontWeight={300}>Object Detector</Typography>
+                                    </Box>
+                                    <Typography color={DEFAULT_COLORS.primary_blue} fontWeight={300}>On </Typography>
                                 </RowContainerBetween>
                             </Box>
                         </CardContent>

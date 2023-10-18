@@ -8,7 +8,7 @@ import MobileDashboard from "../components/layout/MobileDashboard";
 import RowContainerNormal from "../components/RowContainerNormal";
 import RowContainerBetween from "../components/RowContainerBetween";
 export const Item=({more,color,children, title}:{more:string,children:React.ReactNode, color:string,title:string})=>(
-    <Box width={'25%'} mx={2} sx={{ height: '100%',borderRadius:2, bgcolor: 'white', p: 2 }}>
+    <Box width={'33%'} minWidth={250} mx={2} sx={{ height: '100%',borderRadius:2, bgcolor: 'white', p: 2 }}>
         {children}
         <NormalText title={title} />
         <Typography fontSize={14} color={color} fontWeight={300}>{more}</Typography>
@@ -61,13 +61,13 @@ function Dashboard() {
                         <Typography color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
                         <Stack direction={'row'} mt={2} spacing={2}>
                             <Item color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
-                                <Router sx={{ fontSize: 50,color:'black' }} />
+                                <Router sx={{mb:2, fontSize: 42,color:'black' }} />
                             </Item>
                             <Item color="#CCC400" title="Cloud Synchronization" more="Last active 3h ago" >
-                                <CloudOff sx={{ fontSize: 50,color:'#D9D9D9' }} />
+                                <CloudOff sx={{mb:2, fontSize: 42,color:'#D9D9D9' }} />
                             </Item>
                             <Item color={DEFAULT_COLORS.secondary_black} title="Access point mode" more="Wifi Name: 'Wazigate E55344'" >
-                                <Wifi sx={{ fontSize: 50,color:'black' }} />
+                                <Wifi sx={{mb:2, fontSize: 42,color:'black' }} />
                             </Item>
                         </Stack>
                         <Grid mt={2} container spacing={2}>
