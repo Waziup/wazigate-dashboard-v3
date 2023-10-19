@@ -54,8 +54,8 @@ function Apps() {
         <Box p={3} sx={{ height:'100%'}}>
             <RowContainerBetween>
                 <Box maxWidth={'50%'}>
-                    <Typography fontWeight={700} color={'black'}>Devices</Typography>
-                    <Typography fontSize={matches?15:10} sx={{color:DEFAULT_COLORS.secondary_black}}>Setup your Wazigate Edge Apps</Typography>
+                    <Typography fontWeight={700} color={'black'} sx={{visibility: ["hidden", "visible"]}}>Apps</Typography>
+                    {/* <Typography fontSize={matches?15:10} sx={{color:DEFAULT_COLORS.secondary_black}}>Setup your Wazigate Edge Apps</Typography> */}
                 </Box>
                 <DropDown matches={matches} handleChange={()=>{}} age={''} />
             </RowContainerBetween>
