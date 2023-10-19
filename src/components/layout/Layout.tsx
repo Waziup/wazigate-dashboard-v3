@@ -18,7 +18,7 @@ function Layout() {
         <>
             {
                 matches ? (
-                    <Grid container sx={{ background: '#F0F2F5', height: '100vh', overflow: 'hidden', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' } }}>
+                    <Grid container sx={{ background: '#F0F2F5', height: '100vh', overflow: 'hidden', scrollbarWidth: '.5rem', maxWidth: 1520, "::-webkit-slider-thumb": { backgroundColor: 'transparent' } }}>
                         <Grid item sx={{ height: '100%', bgcolor: DEFAULT_COLORS.navbar_dark }} md={3} xs={2} >
                             <Sidebar />
                         </Grid>
@@ -35,9 +35,9 @@ function Layout() {
                             </Box>
                             <Search sx={{ color: 'white', mx: 1 }} />
                         </RowContainerBetween>
-                        <Box onClick={handleToggle} sx={{position:'absolute', display:open?'flex':'none', height:'100%',width:'100%',bgcolor:'rgba(0,0,0,.5)',zIndex:99}}>
-                            <Box sx={{bgcolor:DEFAULT_COLORS.navbar_dark,display:'flex',flexDirection:'column',alignItems:'center', height:'100%',width:'65%'}}>
-                                <Sidebar/>
+                        <Box onClick={handleToggle} sx={{ position: 'absolute', display: open ? 'flex' : 'none', height: '100%', width: '100%', bgcolor: 'rgba(0,0,0,.5)', zIndex: 99 }}>
+                            <Box sx={{ bgcolor: DEFAULT_COLORS.navbar_dark, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '65%' }}>
+                                <Sidebar />
                             </Box>
                         </Box>
                         <Outlet context={[matches]} />
