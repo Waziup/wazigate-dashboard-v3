@@ -1,131 +1,100 @@
-import { ExpandLess,SettingsRemoteSharp,Apps, PrecisionManufacturing, ExpandMore,Dashboard, SettingsTwoTone, Wifi, WifiLock, Logout, HelpCenter} from '@mui/icons-material';
-import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, SxProps, Theme, Typography} from '@mui/material';
-import React, { CSSProperties } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { DEFAULT_COLORS } from '../../constants';
+import React, { useState } from 'react';
+import { List, ListItemButton, ListItemIcon, ListItemText, Collapse, Box, Typography, SxProps, Theme } from '@mui/material';
+import { ExpandLess, ExpandMore, Dashboard, SettingsRemoteSharp, Apps, PrecisionManufacturing, SettingsTwoTone, Wifi, WifiLock, Logout, HelpCenter, } from '@mui/icons-material';
+import { useLocation, useNavigate } from 'react-router-dom';
 import NoImageProfile from '../NoImageProfile';
-import { NavLink } from 'react-router-dom';
+
 export const IconStyle: SxProps<Theme> = {
-    color:'inherit',
-}
-export const ListItemButtonStyle:SxProps<Theme> ={
-    color:'#fff',
-    borderRadius:1,
-    ":hover":{
-        bgcolor:'#fff',
-        color:'#000',
-    },
-}
-const styleFunc = ({isActive,}:{isActive:boolean}):CSSProperties=>{
-    return{
-        color:isActive?DEFAULT_COLORS.primary_black:'#fff',
-        backgroundColor:isActive?'white':'',
-        display:'flex',
-        alignItems:'center',
-        justifyContent: 'space-between',
-        borderRadius:4,
-        textDecoration:'none',
-        padding:'7px 10px',
-    }
-}
-const NavigationItem = ({path,otherItem,icon,onClick, text}:{location:string,otherItem?:JSX.Element,additionalStyles?:CSSProperties, path:string,onClick?:()=> void, icon:React.ReactNode,text:string}) => {
-    return(
-        <NavLink to={path} onClick={onClick} style={styleFunc}>
-            <Box display='flex' alignItems='center'>
-                <ListItemIcon>
-                    {icon}
-                </ListItemIcon>
-                <ListItemText sx={{fontSize:1}} primary={text} />
-            </Box>
-            {otherItem}
-        </NavLink>
-    )
-}
-export const NavItem = ({location,path, icon,text}:{location:string,path:string, icon:React.ReactNode,text:string}) => {
-    return(
-        <ListItemButton href={path} sx={{...ListItemButtonStyle,color:location.includes(path)?DEFAULT_COLORS.primary_black:'#fff', bgcolor:location.includes(path)?'white':'', }}>
-            <ListItemIcon>
-                {icon}
-            </ListItemIcon>
-            <ListItemText sx={{fontSize:1}} primary={text} />
-        </ListItemButton>
-    )
-}
-function Sidebar() {
-    const [open, setOpen] = React.useState(true);
+    color: 'inherit',
+};
+
+const Sidebar = () => {
+    const navigate = useNavigate();
+    const [open, setOpen] = useState(true);
+    const location = useLocation().pathname;
+
     const handleClick = () => {
         setOpen(!open);
     };
-    const location = useLocation().pathname;
-    console.log(location)
+
+    const listItemButtonStyle = {
+        color: '#fff',
+        borderRadius: 1,
+        pt: 2,
+        pb: 2,
+        ":hover": {
+            bgcolor: '#fff',
+            color: '#000',
+        },
+    };
+
+    const renderNavItem = (path: string, icon: React.ReactNode, text: string) => (
+        <ListItemButton
+            onClick={() => navigate(path)}
+            sx={{
+                ...listItemButtonStyle,
+                color: location === path ? 'black' : '#fff',
+                bgcolor: location === path ? 'white' : '',
+                mb: 1,
+            }}
+        >
+            <ListItemIcon sx={{ color: location === path ? 'black' : 'white' }}>
+                {React.cloneElement(icon as React.ReactElement, {
+                    sx: {
+                        color: 'inherit', // Set the icon's color to inherit
+                    },
+                })}
+            </ListItemIcon>
+            <ListItemText sx={{ fontSize: 1 }} primary={text} />
+        </ListItemButton>
+    );
+
     return (
-        <Box position={'relative'} height={'100%'} display={'flex'}  flexDirection={'column'} alignItems={'center'}>
-            <Box component={'img'} src={'/wazigate.svg'} width={'80%'} height={100} />
-            <List sx={{ width: '87%', maxWidth: 360,}} component="nav" aria-labelledby="nested-list-subheader">
-                <Box my={1} borderBottom={'0.1px solid #ccc'}>
-                    <NavigationItem 
-                        location={location} 
-                        path={'/'} 
-                        icon={<Dashboard sx={{...IconStyle,color:location==='/'?'black':'white'}} />} 
-                        text={'Dashboard'} 
-                    />
-                </Box>
-                <NavigationItem 
-                    location={location} 
-                    path={'/devices'} 
-                    icon={<SettingsRemoteSharp sx={{...IconStyle,color:location==='/devices'?'black':'white'}} />} 
-                    text={'Devices'} 
-                />
-                <NavigationItem location={location} path={'/automation'} icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'black':'white'}} />} text={'Automation'} />
-                <NavigationItem location={location} 
-                    path={'/settings'} 
-                    icon={<SettingsTwoTone sx={{...IconStyle,color:location==='/settings'?'black':'white'}} />} 
-                    text={'Settings'} 
-                    onClick={handleClick} 
-                    otherItem={open ? <ExpandLess /> : <ExpandMore />}
-                />
-                
+        <Box sx={{ position: 'relative', height: '100%', pl: 2, pr: 2 }} display={'flex'} flexDirection={'column'} alignItems={'center'}>
+            <Box component='img' src='/wazigate.svg' height="fit-content" />
+            <List sx={{ width: '100%', }} component="nav" aria-labelledby="nested-list-subheader">
+                {renderNavItem('/', <Dashboard sx={{ color: "inherit" }} />, 'Dashboard')}
+                {renderNavItem('/devices', <SettingsRemoteSharp sx={{ color: "inherit" }} />, 'Devices')}
+                {renderNavItem('/automation', <PrecisionManufacturing sx={{ color: "inherit" }} />, 'Automation')}
+                <ListItemButton
+                    onClick={handleClick}
+                    sx={{
+                        borderTopLeftRadius: 3,
+                        ...listItemButtonStyle,
+                        color: location.includes('/settings') ? 'black' : '#fff',
+                        bgcolor: location.includes('/settings') ? 'white' : '',
+                        mb: 1,
+                    }}
+                >
+                    <ListItemIcon>
+                        <SettingsTwoTone sx={{ color: location.includes('/settings') ? 'black' : 'white', }} />
+                    </ListItemIcon>
+                    <ListItemText primary="Settings" />
+                    {open ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                        <NavigationItem 
-                            location={location} 
-                            path={'/settings/networking'} 
-                            icon={<Wifi sx={{...IconStyle,pl:2, color:location.includes('/settings')?'black':'white'}} />} 
-                            text={'Networking'}
-                        />
-                        <NavigationItem
-                            location={location}
-                            path={'/settings/maintenance'}
-                            icon={<WifiLock sx={{...IconStyle,pl:2, color:location.includes('/settings')?'black':'white'}} />}
-                            text={'Maintenance'}
-                        />
+                        {renderNavItem('/settings/networking', <Wifi sx={{ color: "inherit" }} />, 'Networking')}
+                        {renderNavItem('/settings/maintenance', <WifiLock sx={{ color: "inherit" }} />, 'Maintenance')}
                     </List>
                 </Collapse>
-                <NavigationItem location={location} path={'/apps'} icon={<Apps sx={{...IconStyle,color:location==='/apps'?'black':'white'}} />} text={'Apps'} />
+                {renderNavItem('/apps', <Apps sx={{ color: "inherit" }} />, 'Apps')}
             </List>
-            <Box position={'absolute'} alignItems={'center'} bottom={0} width={'100%'} >
-                <NavLink style={{margin:'5px 10px',textDecoration:'none'}} to={'/help'}>
-                    <Box display={'flex'} alignItems={'center'}>
-                        <ListItemIcon>  
-
-                            <HelpCenter sx={{color:'white'}} />
-                        </ListItemIcon>
-                        <ListItemText sx={{color:'white'}} primary={'Help and feedback'} />
-                        {/* <Typography sx={{color:'white'}}>Help and feedback</Typography> */}
+            <Box position={'absolute'} alignItems={'center'} bottom={0} width={'100%'}>
+                <Box component={'a'} onClick={() => navigate('/help')} display={'flex'} px={'10%'} py={1} alignItems={'center'} sx={{cursor:'pointer'}}>
+                    <HelpCenter sx={{ color: 'white' }} />
+                    <Typography sx={{ color: 'white' }}>Help and feedback</Typography>
+                </Box>
+                <Box py={.5} px={'10%'} onClick={() => navigate('/user')} sx={{ textDecoration: 'none', color: '#fff', cursor:'pointer' }} component={'a'} borderBottom={'1px solid white'} borderTop={'1px solid white'} display={'flex'} alignItems={'center'}>
+                    <NoImageProfile />
+                    <Box>
+                        <Typography>John Doe</Typography>
+                        <Typography fontSize={13}>johndoe@waziup.org</Typography>
                     </Box>
-                </NavLink>
-                <Link style={{margin:'5px 10px',textDecoration:'none', borderBottom:'1px solid white'}} to={'/user'}>
-                    <Box display={'flex'} >
-                        <NoImageProfile/>
-                        <Box>
-                            <Typography>John Doe</Typography>
-                            <Typography fontSize={13} >johndoe@waziup.org</Typography>
-                        </Box>
-                    </Box>
-                </Link>
-                <Box px={'10%'} display={'flex'} py={1} alignItems={'center'}>
-                    <Logout sx={{color:'white'}} />
-                    <Typography sx={{color:'white'}}>Logout</Typography>
+                </Box>
+                <Box px={'10%'} display={'flex'} py={1} alignItems={'center'} sx={{cursor:'pointer'}}>
+                    <Logout sx={{ color: 'white' }} />
+                    <Typography sx={{ color: 'white' }}>Logout</Typography>
                 </Box>
             </Box>
         </Box>
