@@ -12,7 +12,19 @@ import User from './pages/User'
 import DeviceSettings from './pages/DeviceSettings'
 import Docspage from './pages/Docspage'
 import DeviceSensorSettings from './pages/DevicesensorSettings'
+import { Box, createTheme,ThemeProvider } from '@mui/material'
 function App() {
+    const theme = createTheme({
+        palette: {
+            primary: {
+                main:'#499DFF',
+                
+            },
+            secondary: {
+                main: '#f50057',
+            },
+        },
+    })
     const router = createBrowserRouter([
         {
             path:'/auth',
@@ -77,7 +89,11 @@ function App() {
         }
     ])
     return (
-        <RouterProvider router={router}/>
+        <ThemeProvider theme={theme}>
+            <Box bgcolor={'#F0F2F5'} width={'100%'}>
+                <RouterProvider router={router}/>
+            </Box>
+        </ThemeProvider>
     )
 }
 
