@@ -35,9 +35,9 @@ function Layout() {
                             </Box>
                             <Search sx={{ color: 'white', mx: 1 }} />
                         </RowContainerBetween>
-                        <Box onClick={handleToggle} sx={{ position: 'absolute', display: open ? 'flex' : 'none', height: '100%', width: '100%', bgcolor: 'rgba(0,0,0,.5)', zIndex: 99 }}>
-                            <Box sx={{ bgcolor: DEFAULT_COLORS.navbar_dark, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '60%' }}>
-                                <Sidebar />
+                        <Box onClick={handleToggle} sx={{position:'absolute', display:open?'flex':'none', height:'100%',width:'100%',bgcolor:'rgba(0,0,0,.5)',zIndex:99}}>
+                            <Box sx={{bgcolor:DEFAULT_COLORS.navbar_dark,display:'flex',flexDirection:'column',alignItems:'center', height:'100%',width:'65%'}}>
+                                <Sidebar/>
                             </Box>
                         </Box>
                         <Outlet context={[matches]} />
