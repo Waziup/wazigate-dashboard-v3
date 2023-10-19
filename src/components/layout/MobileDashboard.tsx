@@ -77,7 +77,7 @@ export default function MobileDashboard() {
                     <Box onClick={()=>{}} sx={{cursor:'pointer',":hover":{bgcolor:'rgba(0,0,0,.1)'},width:'95%',px:1,borderBottom:'1px solid #E2E2E2', height: '100%',position:'relative', bgcolor: 'white',  }}>
                         <RowContainerBetween>
                             <RowContainerNormal>
-                                <Box sx={{ bgcolor:DEFAULT_COLORS.orange,  borderRadius:'50%',height:35,width:35, }}>
+                                <Box sx={{ bgcolor:'secondary.main',  borderRadius:'50%',height:35,width:35, }}>
                                     <WifiTethering sx={{ textAlign:'center',  color:'#fff', }} />
                                 </Box>
                                 <Box>
