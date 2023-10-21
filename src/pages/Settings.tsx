@@ -65,7 +65,7 @@ const RowContainer = ({children,additionStyles}:{children:React.ReactNode, addit
 function Settings() {
     const [matches] = useOutletContext<[matches: boolean]>();
     return (
-        <Box sx={{p:3, height:'100%'}}>
+        <Box sx={{p:3,overflowY:'scroll', height:'100%'}}>
             <Box>
                 <Typography fontWeight={700} color={'black'}>Devices</Typography>
                 <Typography sx={{color:DEFAULT_COLORS.secondary_black}}>Setup your Wazigate Edge Apps</Typography>
@@ -128,7 +128,7 @@ function Settings() {
                         <Button  variant="contained" sx={{mx:1}} startIcon={<PowerSettingsNew />}>
                             Delete
                         </Button>
-                         <Button variant="contained" sx={{mx:1}} startIcon={<RestartAlt />}>
+                         <Button variant="contained"  sx={{mx:1,bgcolor:'info.main'}} startIcon={<RestartAlt />}>
                             Restart
                         </Button>
                         <Button variant="contained" sx={{mx:1}} startIcon={<Logout/>}>
