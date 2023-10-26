@@ -12,7 +12,7 @@ import User from './pages/User'
 import DeviceSettings from './pages/DeviceSettings'
 import Docspage from './pages/Docspage'
 import DeviceSensorSettings from './pages/DevicesensorSettings';
-import { Box, createTheme, ThemeProvider } from '@mui/material'
+import { Box, createTheme, ThemeProvider, Typography } from '@mui/material'
 function App() {
     const theme = createTheme({
         palette: {
@@ -76,11 +76,11 @@ function App() {
                 },
                 {
                     path:'/settings/networking',
-                    element: <Settings/>
+                    element: <Box><Typography>Coming soon</Typography></Box>
                 },
                 {
                     path:'/settings/maintenance',
-                    element: <Settings/>
+                    element: <Box><Typography>Coming soon</Typography></Box>
                 },
                 {
                     path:'/user',
