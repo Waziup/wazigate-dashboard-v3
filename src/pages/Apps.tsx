@@ -6,12 +6,17 @@ import { DeleteForever, Download, FiberNew, MoreVert, SettingsTwoTone, Terminal 
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
 const DropDown = ({handleChange,matches, age}:{matches:boolean, handleChange:()=>void,age: string})=>(
-    <FormControl sx={{p:0, border:'none', width: matches?'35%':'50%', }}>
+    <FormControl sx={{p:0, border:'none', width: matches?'35%':'45%', }}>
         <InputLabel id="demo-simple-select-helper-label">Install App</InputLabel>
-        <Select sx={{width:'100%'}} labelId="demo-simple-select-helper-label"
-            id="demo-simple-select-helper" value={age} label="Age" onChange={handleChange}>
-            
-            <MenuItem value={10} sx={{display:'flex',py:1,width:'100%', justifyContent:'space-between'}}>
+        <Select sx={{width:'100%',py:0,}} labelId="demo-simple-select-helper-label"
+            id="demo-simple-select-helper" onClose={()=>{
+                setTimeout(() => {
+                    if (document?.activeElement) {
+                        (document.activeElement as HTMLElement).blur();
+                    }
+                }, 0);
+            }} value={age} label="Age" onChange={handleChange}>
+            <MenuItem value={10} sx={{display:'flex',width:'100%', justifyContent:'space-between'}}>
                 <Box display={'flex'} alignItems={'center'}>
                     <Box component={'img'} sx={{width:20,mx:1, height:20}} src='/wazilogo.svg' />
                     <Typography color={'#325460'} fontSize={15}>Wazigate System</Typography>
@@ -37,6 +42,7 @@ const DropDown = ({handleChange,matches, age}:{matches:boolean, handleChange:()=
             </MenuItem>
             
         </Select>
+        
     </FormControl>
 );
 const GridItem=({children}:{children:React.ReactNode})=>(
@@ -62,8 +68,8 @@ function Apps() {
         <Box p={3} sx={{ height:'100%'}}>
             <RowContainerBetween>
                 <Box maxWidth={'50%'}>
-                    <Typography fontWeight={700} color={'black'}>Devices</Typography>
-                    <Typography fontSize={matches?15:10} sx={{color:DEFAULT_COLORS.secondary_black}}>Setup your Wazigate Edge Apps</Typography>
+                    <Typography fontWeight={700} fontSize={20} color={'black'}>Devices</Typography>
+                    <Typography fontSize={matches?15:13} sx={{color:DEFAULT_COLORS.secondary_black}}>Setup your Wazigate Edge Apps</Typography>
                 </Box>
                 <DropDown matches={matches} handleChange={()=>{}} age={''} />
             </RowContainerBetween>
