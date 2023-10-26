@@ -19,7 +19,7 @@ function User() {
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     return (
         <Box sx={{width:'100%', p:3,position:'relative',bgcolor:'#F4F7F6', height:'100%',overflowY:'scroll'}}>
-            <Box sx={{position:'absolute', transform:'translate(-50%,-50%)',top:matches?'56%':'40%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'40%':'95%'}}>
+            <Box sx={{position:'absolute', transform:'translate(-50%,-50%)',top:matches?'56%':'40%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'50%':'95%'}}>
                 <Box sx={{display:'flex',py:2,width:'100%',borderBottom:'1px solid #D5D6D8', alignItems:'center',}}>
                     <Box component={'img'}  src='/wazilogo.svg' mx={2} />
                     {/*  */}
@@ -29,7 +29,7 @@ function User() {
                 </Box>
                 <Box py={.5} px={1} width={'100%'} borderBottom={'1px solid #D5D6D8'}>
                     <Typography fontWeight={200} fontSize={13}  color={DEFAULT_COLORS.third_dark}>OTHER PROFILES</Typography>
-                    <Box m={.5}>
+                    <Box m={.5} sx={{cursor:'pointer'}}>
                         <RowContainerBetween additionStyles={{alignItems:'center',bgcolor:'#D4',":hover":{bgcolor:'#499DFF'},cursor:'pointer', borderRadius:1, }}>
                             <RowContainerNormal>
                                 <Box sx={{objectFit:'contain',width:30,height:30,mx:1, bgcolor:DEFAULT_COLORS.primary_blue, borderRadius:'50%'}}></Box>
@@ -39,8 +39,8 @@ function User() {
                             <Check sx={{color:DEFAULT_COLORS.primary_black,mx:1}} />
                         </RowContainerBetween>
                     </Box>
-                    <Box m={.5}>
-                        <RowContainerBetween additionStyles={{alignItems:'center',borderRadius:1, }}>
+                    <Box sx={{cursor:'pointer'}} m={.5}>
+                        <RowContainerBetween additionStyles={{alignItems:'center',":hover":{bgcolor:'#499DFF'}, borderRadius:1, }}>
                             <RowContainerNormal>
                                 <NoImageProfile/>
                                 <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>William Smith</Typography>

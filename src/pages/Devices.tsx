@@ -1,15 +1,15 @@
 import { Box, Button,Grid,CardContent,Typography, } from '@mui/material';
 import RowContainerBetween from '../components/RowContainerBetween';
-import { Add,DeviceThermostat, OnlinePrediction, Sensors } from '@mui/icons-material';
+import { Add,CompareArrows,DeviceThermostat, OnlinePrediction, Sensors } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate,  } from 'react-router-dom';
 const IconStyle = {
     cursor:'pointer',
     color:'black',
 }
 function Devices() {
     const navigate = useNavigate();
-    const [matches] = useOutletContext<[matches:boolean]>()
+    // const [matches] = useOutletContext<[matches:boolean]>()
     return (
         <Box sx={{p:3, height:'100%'}}>
             <RowContainerBetween>
@@ -20,7 +20,7 @@ function Devices() {
                 </Button>
             </RowContainerBetween>
             <Grid container my={2} spacing={2}>
-                <Grid item xs={matches?4:12}>
+                <Grid item md={6} lg={4} xl={4} sm={8} xs={12} >
                     <Box onClick={()=>{navigate('/devices/3')}} sx={{cursor:'pointer',":hover":{bgcolor:'rgba(0,0,0,.1)'}, height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
                         <Box sx={{position:'absolute',top:-5,my:-1,borderRadius:1,mx:1,bgcolor:DEFAULT_COLORS.primary_blue}}>
                             <Sensors sx={{fontSize:15, color:'#fff'}}/>
@@ -40,20 +40,36 @@ function Devices() {
                                 New Interface
                             </Button>
                             <Box >
-                                <RowContainerBetween additionStyles={{my:1}}>
-                                    <Box sx={{display:'flex',justifyContent:'space-between',width:'50%'}}>
+                                <RowContainerBetween additionStyles={{my:2}}>
+                                    <Box sx={{display:'flex',width:'50%'}}>
                                         <DeviceThermostat sx={{ fontSize: 20,color:DEFAULT_COLORS.primary_black }} />
-                                        <Typography color={'black'} fontWeight={300}>Room_1 Temp</Typography>
+                                        <Typography color={'black'} mx={1} fontSize={12} fontWeight={300}>Room_1 Temp</Typography>
                                     </Box>
-                                    <Typography color={DEFAULT_COLORS.primary_blue} fontWeight={300}>25&deg;C </Typography>
+                                    <Typography color={DEFAULT_COLORS.primary_blue}fontSize={14} fontWeight={300}>25&deg;C </Typography>
                                 </RowContainerBetween>
-                                <RowContainerBetween additionStyles={{my:1}}>
+                                <RowContainerBetween additionStyles={{my:2}}>
                                     
-                                    <Box sx={{display:'flex',justifyContent:'space-between',width:'50%'}}>
+                                    <Box sx={{display:'flex',width:'50%'}}>
                                         <OnlinePrediction sx={{ fontSize: 20,color:DEFAULT_COLORS.primary_black }} />
-                                        <Typography color={'black'} fontWeight={300}>Object Detector</Typography>
+                                        <Typography color={'black'} mx={1} fontSize={12} fontWeight={300}>Object Detector</Typography>
                                     </Box>
-                                    <Typography color={DEFAULT_COLORS.primary_blue} fontWeight={300}>On </Typography>
+                                    <Typography color={DEFAULT_COLORS.primary_blue}fontSize={14} fontWeight={300}>On </Typography>
+                                </RowContainerBetween>
+                                <RowContainerBetween additionStyles={{my:2}}>
+                                    
+                                    <Box sx={{display:'flex',width:'50%'}}>
+                                        <DeviceThermostat sx={{ fontSize: 20,color:DEFAULT_COLORS.primary_black }} />
+                                        <Typography color={'black'} mx={1} fontSize={12} fontWeight={300}>Thermometer</Typography>
+                                    </Box>
+                                    <Typography color={DEFAULT_COLORS.primary_blue}fontSize={14} fontWeight={300}>36&deg;C </Typography>
+                                </RowContainerBetween>
+                                <RowContainerBetween additionStyles={{my:2}}>
+                                    
+                                    <Box sx={{display:'flex',width:'50%'}}>
+                                        <CompareArrows sx={{ fontSize: 20,color:DEFAULT_COLORS.primary_black }} />
+                                        <Typography color={'black'} ml={1} fontSize={12} fontWeight={300}>Soil Pressure Loan</Typography>
+                                    </Box>
+                                    <Typography color={DEFAULT_COLORS.primary_blue}fontSize={14} fontWeight={300}>On </Typography>
                                 </RowContainerBetween>
                             </Box>
                         </CardContent>
