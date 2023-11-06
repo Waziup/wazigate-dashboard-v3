@@ -3,8 +3,9 @@ import { NormalText,  } from './Dashboard';
 import RowContainerBetween from '../components/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
 import { DeleteForever, Download, FiberNew, MoreVert, SettingsTwoTone, Terminal } from '@mui/icons-material';
-import React from 'react';
+import React,{useState, useEffect} from 'react';
 import { useOutletContext } from 'react-router-dom';
+import { type App } from 'waziup';
 const DropDown = ({handleChange,matches, age}:{matches:boolean, handleChange:()=>void,age: string})=>(
     <FormControl sx={{p:0, border:'none', width: matches?'35%':'45%', }}>
         <InputLabel id="demo-simple-select-helper-label">Install App</InputLabel>
@@ -53,7 +54,7 @@ const GridItem=({children}:{children:React.ReactNode})=>(
         </Box>
     </Grid>
 )
-function Apps() {
+export default function Apps() {
     const [matches] = useOutletContext<[matches: boolean]>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -63,7 +64,20 @@ function Apps() {
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const [apps, setApps] = useState<App[]>([]);
+    const [error, setError] = useState<Error | null>(null);
 
+    // var [filter, setFilter] = useState(filter);
+
+    useEffect(() => {
+        window.wazigate.get<App[]>("apps?available").then(setApps, setError);
+        window.wazigate.getApps().then(setApps, setError);
+        
+    }, []);
+    console.log(apps);
+    if (error) {
+        return <div>Error: {error.message}</div>;
+    }
     return (
         <Box p={3} sx={{ height:'100%'}}>
             <RowContainerBetween>
@@ -147,5 +161,3 @@ function Apps() {
         </Box>
     );
 }
-
-export default Apps;
