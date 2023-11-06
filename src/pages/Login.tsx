@@ -1,5 +1,5 @@
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { DEFAULT_COLORS } from '../constants';
+import { BACKEND_URL, DEFAULT_COLORS } from '../constants';
 import { LockOpen } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -34,8 +34,14 @@ export default function Login() {
             password: data.password,
         }
         console.log(userData);
+    
         try {
-            
+            window.wazigate.set(`${BACKEND_URL}/auth/login`, userData)
+            .then((res) => {
+                console.log("Token", res);
+            }).catch(err=>{
+                console.log(err)
+            })
             navigate('/home');
         } catch (error ) {
             // const err = error as ErrorType
