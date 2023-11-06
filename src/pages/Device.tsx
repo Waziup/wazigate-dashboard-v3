@@ -2,18 +2,28 @@ import { SettingsTwoTone, ToggleOff } from "@mui/icons-material";
 import { Box, Typography, Button, Link,  Breadcrumbs } from "@mui/material";
 import RowContainerBetween from "../components/RowContainerBetween";
 import EnhancedTable from "../components/DeviceTable";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Chart from 'react-apexcharts';  
 import { DEFAULT_COLORS } from "../constants";
+import { useEffect,useState } from "react";
+import { Device } from "waziup";
 function Device() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
         console.info('You clicked a breadcrumb.');
     }
+    const [device, setDevice] = useState<Device | null>(null);
     const [matches] = useOutletContext<[matches:boolean]>();
     console.log(matches);
     const navigate = useNavigate();
     const handleNav = (path:string)=>{navigate(path)}
+    const {id} = useParams();
+    useEffect(() => {
+        console.log(id);
+        window.wazigate.getDevice(id).then(setDevice);
+    },[id]);
+    console.log(device);
+    if(!device) return <Box>Loading...</Box>;
     return (
         <Box sx={{height:'100%',overflowY:'scroll'}}>
             <RowContainerBetween additionStyles={{px:2,py:2}}>
