@@ -3,13 +3,19 @@ import RowContainerBetween from '../components/RowContainerBetween';
 import { Add,CompareArrows,DeviceThermostat, OnlinePrediction, Sensors } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
 import { useNavigate,  } from 'react-router-dom';
+import { useEffect,useState } from 'react';
+import { type Device } from 'waziup';
 const IconStyle = {
     cursor:'pointer',
     color:'black',
 }
 function Devices() {
     const navigate = useNavigate();
-    // const [matches] = useOutletContext<[matches:boolean]>()
+    const [devices, setDevices] = useState<Device[]>([]);
+    useEffect(() => {
+        window.wazigate.getDevices().then(setDevices);
+    }, []);
+    console.log(devices);
     return (
         <Box sx={{p:3, height:'100%'}}>
             <RowContainerBetween>
