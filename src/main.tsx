@@ -11,6 +11,9 @@ declare global {
     }
 }
 console.log(waziup);
+window.addEventListener('beforeunload', () => {
+    window.localStorage.removeItem('token');
+});    
 waziup.connect({
     host: BACKEND_URL,
 }).then((wazigate: waziup.Waziup) => {
