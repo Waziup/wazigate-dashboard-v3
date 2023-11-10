@@ -18,12 +18,12 @@ function Device() {
     const navigate = useNavigate();
     const handleNav = (path:string)=>{navigate(path)}
     const {id} = useParams();
-    useEffect(() => {
         console.log(id);
+    useEffect(() => {
         window.wazigate.getDevice(id).then(setDevice);
     },[id]);
     console.log(device);
-    if(!device) return <Box>Loading...</Box>;
+    
     return (
         <Box sx={{height:'100%',overflowY:'scroll'}}>
             <RowContainerBetween additionStyles={{px:2,py:2}}>
