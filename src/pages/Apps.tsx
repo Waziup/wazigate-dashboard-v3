@@ -2,10 +2,13 @@ import {Box, Button, FormControl,  Grid,  InputLabel, ListItemIcon, ListItemText
 import { NormalText,  } from './Dashboard';
 import RowContainerBetween from '../components/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
-import { DeleteForever, Download, FiberNew, MoreVert, SettingsTwoTone, Terminal } from '@mui/icons-material';
-import React,{useState, useEffect} from 'react';
+import { DeleteForever, Download, FiberNew, MoreVert, SettingsTwoTone, } from '@mui/icons-material';
+import React,{useState,useEffect} from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { type App } from 'waziup';
+type App1 =App &{
+    description:string
+} 
 const DropDown = ({handleChange,matches, age}:{matches:boolean, handleChange:()=>void,age: string})=>(
     <FormControl sx={{p:0, border:'none', width: matches?'35%':'45%', }}>
         <InputLabel id="demo-simple-select-helper-label">Install App</InputLabel>
@@ -46,14 +49,14 @@ const DropDown = ({handleChange,matches, age}:{matches:boolean, handleChange:()=
         
     </FormControl>
 );
-const GridItem=({children}:{children:React.ReactNode})=>(
+export const GridItem=({children}:{children:React.ReactNode})=>(
     <Grid item md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={1} >
         <Box minHeight={100} sx={{px:2, py:1, position:'relative', bgcolor: 'white', borderRadius:2, }}>
             {children}
             <Button sx={{fontWeight:'700'}}>OPEN</Button>
         </Box>
     </Grid>
-)
+);
 export default function Apps() {
     const [matches] = useOutletContext<[matches: boolean]>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -65,98 +68,85 @@ export default function Apps() {
         setAnchorEl(null);
     };
     const [apps, setApps] = useState<App[]>([]);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<Error | null | string>(null);
 
     // var [filter, setFilter] = useState(filter);
 
     useEffect(() => {
-        window.wazigate.get<App[]>("apps?available").then(setApps, setError);
         window.wazigate.getApps().then(setApps, setError);
         
     }, []);
-    console.log(apps);
+    console.log(apps,error);
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <div>Error: {(error as Error).message?(error as Error).message:(error as string)}</div>;
     }
     return (
         <Box p={3} sx={{ height:'100%'}}>
             <RowContainerBetween>
                 <Box maxWidth={'50%'}>
-                    <Typography fontWeight={700} fontSize={20} color={'black'}>Devices</Typography>
+                    <Typography fontWeight={700} fontSize={20} color={'black'}>Apps</Typography>
                     <Typography fontSize={matches?15:13} sx={{color:DEFAULT_COLORS.secondary_black}}>Setup your Wazigate Edge Apps</Typography>
                 </Box>
                 <DropDown matches={matches} handleChange={()=>{}} age={''} />
             </RowContainerBetween>
             <Grid container spacing={2} py={2}>
-                <GridItem>
-                    <Box px={.4} display={'flex'} alignItems={'center'} sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
-                        <Box component={'img'} src='/wazi_sig.svg' />
-                        <Typography  mx={1} color={'white'} component={'span'}>Waziup App</Typography>
-                    </Box>
-                    <Box display={'flex'} py={2}  justifyContent={'space-between'}>
-                        <Box>
-                            <NormalText title="Waziup App" />
-                            <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>wazigate-edge</Typography>
-                        </Box>
-                        <Box>
-                            <Button id="demo-positioned-button"
-                                aria-controls={open ? 'demo-positioned-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={open ? 'true' : undefined}
-                                onClick={handleClick}
-                                >
-                                <MoreVert sx={{color:'black'}}/>
-                            </Button>
-                            <Menu
-                                id="demo-positioned-menu"
-                                aria-labelledby="demo-positioned-button"
-                                anchorEl={anchorEl}
-                                open={open}
-                                onClose={handleClose}
-                                anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                                }}
-                                transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                                }}
-                            >
-                                <MenuItem onClick={handleClose}>
-                                    <ListItemIcon>
-                                        <SettingsTwoTone fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText>Settings</ListItemText>
-                                </MenuItem>
-                                <MenuItem onClick={handleClose}>
-                                    <ListItemIcon>
-                                        <DeleteForever fontSize="small" />
-                                    </ListItemIcon>
-                                    <ListItemText>Uninstall</ListItemText>
-                                </MenuItem>
-                            </Menu>
-                        </Box>
-                    </Box>
-                    <Typography color={DEFAULT_COLORS.secondary_black}>Status: <span color='red'>Running</span></Typography>
-                    <Typography color={DEFAULT_COLORS.secondary_black}>Waziup firmware for Edge Computing</Typography>
-                   
-                </GridItem>
-                <GridItem>
-                    <Box px={.4} display={'flex'} alignItems={'center'} sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.orange}>
-                        <Terminal />
-                        <Typography  mx={1} color={'white'} component={'span'}>Custom App</Typography>
-                    </Box>
-                    <Box display={'flex'} py={2}  justifyContent={'space-between'}>
-                        <Box>
-                            <NormalText title="Waziup App" />
-                            <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>wazigate-edge</Typography>
-                        </Box>
-                        <MoreVert sx={{color:'black'}}/>
-                    </Box>
-                    <Typography color={DEFAULT_COLORS.secondary_black}>Status: <span color='red'>Running</span></Typography>
-                    <Typography color={DEFAULT_COLORS.secondary_black}>Waziup firmware for Edge Computing</Typography>
-                    
-                </GridItem>
+                {
+                    apps.map((app)=>(
+                        <GridItem key={app.id}>
+                            <Box px={.4} display={'flex'} alignItems={'center'} sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
+                                <Box component={'img'} src='/wazi_sig.svg' />
+                                <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
+                            </Box>
+                            <Box display={'flex'} py={2}  justifyContent={'space-between'}>
+                                <Box>
+                                    <NormalText title={app.name} />
+                                    <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>{app.id}</Typography>
+                                </Box>
+                                <Box>
+                                    <Button id="demo-positioned-button"
+                                        aria-controls={open ? 'demo-positioned-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={open ? 'true' : undefined}
+                                        onClick={handleClick}
+                                        >
+                                        <MoreVert sx={{color:'black'}}/>
+                                    </Button>
+                                    <Menu
+                                        id="demo-positioned-menu"
+                                        aria-labelledby="demo-positioned-button"
+                                        anchorEl={anchorEl}
+                                        open={open}
+                                        onClose={handleClose}
+                                        anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'left',
+                                        }}
+                                    >
+                                        <MenuItem onClick={handleClose}>
+                                            <ListItemIcon>
+                                                <SettingsTwoTone fontSize="small" />
+                                            </ListItemIcon>
+                                            <ListItemText>Settings</ListItemText>
+                                        </MenuItem>
+                                        <MenuItem onClick={handleClose}>
+                                            <ListItemIcon>
+                                                <DeleteForever fontSize="small" />
+                                            </ListItemIcon>
+                                            <ListItemText>Uninstall</ListItemText>
+                                        </MenuItem>
+                                    </Menu>
+                                </Box>
+                            </Box>
+                            <Typography fontSize={15} color={DEFAULT_COLORS.secondary_black}>Status: <Typography component={'span'} fontSize={15} color={'red'}>Running</Typography></Typography>
+                            <Typography color={DEFAULT_COLORS.secondary_black}>{(app as App1).description}</Typography>
+                        
+                        </GridItem>
+                    ))
+                }
             </Grid>
         </Box>
     );
