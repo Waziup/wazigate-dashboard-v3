@@ -82,8 +82,8 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                             <Box my={1} borderBottom={'0.1px solid #ccc'}>
                                 <NavigationItem 
                                     location={location} 
-                                    path={'/'} 
-                                    icon={<Dashboard sx={{...IconStyle,color:location==='/'?'black':'white'}} />} 
+                                    path={'/dashboard'} 
+                                    icon={<Dashboard sx={{...IconStyle,color:location==='/dashboard'?'black':'white'}} />} 
                                     text={'Dashboard'} 
                                 />
                             </Box>
