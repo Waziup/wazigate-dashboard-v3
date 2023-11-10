@@ -14,6 +14,8 @@ import Docspage from './pages/Docspage'
 import DeviceSensorSettings from './pages/DevicesensorSettings';
 import { Box, createTheme, ThemeProvider, Typography } from '@mui/material'
 function App() {
+    
+
     const theme = createTheme({
         palette: {
             primary: {
@@ -29,17 +31,17 @@ function App() {
                 main:'#499DFF'
             }
         },
-    })
+    });
     const router = createBrowserRouter([
         {
-            path:'/auth',
+            path:'/',
             element:<Login/>
         },
         {
             element: <Layout/>,
             children: [
                 {
-                    path: '/',
+                    path: '/dashboard',
                     element: <Dashboard/>
                 },
                 {
