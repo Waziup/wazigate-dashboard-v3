@@ -52,7 +52,6 @@ export default function Login() {
             window.wazigate.set(`auth/token`,userData)
             .then((res) => {
                 console.log("Token", res);
-                window.wazigate.setToken(res as unknown as string);
                 window.localStorage.setItem('token',res as unknown as string);
                 navigate('/dashboard')
             }).catch(err=>{
