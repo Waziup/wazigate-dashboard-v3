@@ -1,4 +1,4 @@
-import {Box, Button, FormControl,  Grid,  InputLabel, ListItemIcon, ListItemText, Menu, MenuItem, Select, Typography} from '@mui/material';
+import {Box, Button, FormControl,  Grid,  InputLabel, ListItemIcon, ListItemText, Menu, MenuItem, Select, Tooltip, Typography} from '@mui/material';
 import { NormalText,  } from './Dashboard';
 import RowContainerBetween from '../components/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
@@ -9,7 +9,7 @@ import { type App } from 'waziup';
 type App1 =App &{
     description:string
 } 
-const DropDown = ({handleChange,matches, age}:{matches:boolean, handleChange:()=>void,age: string})=>(
+const DropDown = ({handleChange,matches,recommendedApps, age}:{matches:boolean,recommendedApps:RecomendedApp[], handleChange:()=>void,age: string})=>(
     <FormControl sx={{p:0, border:'none', width: matches?'35%':'45%', }}>
         <InputLabel id="demo-simple-select-helper-label">Install App</InputLabel>
         <Select sx={{width:'100%',py:0,}} labelId="demo-simple-select-helper-label"
@@ -20,19 +20,25 @@ const DropDown = ({handleChange,matches, age}:{matches:boolean, handleChange:()=
                     }
                 }, 0);
             }} value={age} label="Age" onChange={handleChange}>
-            <MenuItem value={10} sx={{display:'flex',width:'100%', justifyContent:'space-between'}}>
-                <Box display={'flex'} alignItems={'center'}>
-                    <Box component={'img'} sx={{width:20,mx:1, height:20}} src='/wazilogo.svg' />
-                    <Typography color={'#325460'} fontSize={15}>Wazigate System</Typography>
-                </Box>
-                <Box display={'flex'} alignItems={'center'}>
-                    <Download sx={{fontSize:20,mx:1,color:'#325460'}} />
-                    <Typography sx={{textTransform:'uppercase', color:'#325460', fontSize:15}}>
-                        Install
-                    </Typography>
-                </Box>
-            </MenuItem>
-            <MenuItem value={20} sx={{display:'flex',py:1,width:'100%', justifyContent:'space-between'}}>
+            {
+                recommendedApps.map((app)=>(
+                    <MenuItem key={app.id} value={app.id} sx={{display:'flex',width:'100%', justifyContent:'space-between'}}>
+                        <Box display={'flex'} alignItems={'center'}>
+                            <Box component={'img'} sx={{width:20,mx:1, height:20}} src='/wazilogo.svg' />
+                            <Tooltip color='black' followCursor  title={app.description} placement="top-start">
+                                <Typography fontSize={14} color={'#325460'} >{app.description.slice(0,30)+'...'}</Typography>
+                            </Tooltip>
+                        </Box>
+                        <Box display={'flex'} alignItems={'center'}>
+                            <Download sx={{fontSize:15,mx:1,color:'#325460'}} />
+                            <Typography sx={{textTransform:'uppercase', color:'#325460', fontSize:11}}>
+                                Install
+                            </Typography>
+                        </Box>
+                    </MenuItem>
+                ))
+            }
+            <MenuItem value={20} sx={{display:'flex',py:1,width:'100%',borderTop:'1px solid black', justifyContent:'space-between'}}>
                 <Box display={'flex'} alignItems={'center'}>
                     <FiberNew sx={{fontSize:20,mx:1,color:'#F48652'}}/>
                     <Typography color={'#325460'} fontSize={15}>Install Custom App</Typography>
@@ -57,6 +63,11 @@ export const GridItem=({children}:{children:React.ReactNode})=>(
         </Box>
     </Grid>
 );
+type RecomendedApp={
+    description:string,
+    id:string,
+    image:string,
+}
 export default function Apps() {
     const [matches] = useOutletContext<[matches: boolean]>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -68,13 +79,17 @@ export default function Apps() {
         setAnchorEl(null);
     };
     const [apps, setApps] = useState<App[]>([]);
+    const [recommendedApps,setRecommendedApps] = useState<RecomendedApp[]>([])
     const [error, setError] = useState<Error | null | string>(null);
 
     // var [filter, setFilter] = useState(filter);
 
     useEffect(() => {
         window.wazigate.getApps().then(setApps, setError);
-        
+        window.wazigate.get<RecomendedApp[]>('apps?available').then((appsr)=>{
+            setRecommendedApps(appsr);
+        }
+        , setError);
     }, []);
     console.log(apps,error);
     if (error) {
@@ -87,7 +102,7 @@ export default function Apps() {
                     <Typography fontWeight={700} fontSize={20} color={'black'}>Apps</Typography>
                     <Typography fontSize={matches?15:13} sx={{color:DEFAULT_COLORS.secondary_black}}>Setup your Wazigate Edge Apps</Typography>
                 </Box>
-                <DropDown matches={matches} handleChange={()=>{}} age={''} />
+                <DropDown recommendedApps={recommendedApps} matches={matches} handleChange={()=>{}} age={''} />
             </RowContainerBetween>
             <Grid container spacing={2} py={2}>
                 {
