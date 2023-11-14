@@ -97,9 +97,8 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                             <NavigationItem location={location} 
                                 path={'/settings'} 
                                 icon={<SettingsTwoTone sx={{...IconStyle,color:location==='/settings'?'black':'white'}} />} 
-                                text={'Settings'} 
-                                onClick={handleClick} 
-                                otherItem={open ? <ExpandLess /> : <ExpandMore />}
+                                text={'Settings'}
+                                otherItem={open ? <ExpandLess onClick={handleClick} /> : <ExpandMore onClick={handleClick} />}
                             />
                             
                             <Collapse in={open} timeout="auto" unmountOnExit>
