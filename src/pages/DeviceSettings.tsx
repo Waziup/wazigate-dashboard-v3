@@ -48,13 +48,14 @@ export default function DeviceSettings(){
                     <Typography fontWeight={700} color={'black'}>fdfd</Typography>
                     <div role="presentation" onClick={handleClick}>
                         <Breadcrumbs aria-label="breadcrumb">
-                            <Link style={{color:'black'}} color="inherit" to="/devices">
+                            <Link style={{color:'black'}} state={{title:'Devices'}} color="inherit" to="/devices">
                                 Devices
                             </Link>
                             
                             <Link
                                 color="inherit"
-                                to="/material-ui/getting-started/installation/"
+                                state={{title:state.name}}
+                                to={`/devices/${state.id}`}
                             >
                                 {state.name?state.name.slice(0,10)+'...':''}
                             </Link>
