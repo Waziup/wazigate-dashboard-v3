@@ -4,14 +4,21 @@ import RowContainerBetween from "../components/RowContainerBetween";
 // import { SelectElement } from "./Automation";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useEffect,useState } from "react";
+import { Sensor } from "waziup";
 function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
         console.info('You clicked a breadcrumb.');
     }
+    
     const {state} = useLocation();
-    const navigate = useNavigate()
-    console.log(state);
+    const navigate = useNavigate();
+    const [sensors, setSensors] = useState<Sensor[]>([]);
+    useEffect(() => {
+        // console.log(state);
+        window.wazigate.getSensors(state.id).then(setSensors);
+    }, [state])
     return (
         <Box p={3} sx={{ height:'100%'}}>
             <RowContainerBetween>
@@ -19,7 +26,7 @@ function DeviceSettings() {
                     <Typography fontWeight={700} color={'black'}>{state.name}</Typography>
                     <div role="presentation" onClick={handleClick}>
                         <Breadcrumbs aria-label="breadcrumb">
-                            <Link style={{color:'black'}} color="inherit" to="/devices">
+                            <Link style={{color:'black'}} state={{title:'Devices'}} color="inherit" to="/devices">
                                 Devices
                             </Link>
                             {/* <Link
@@ -40,7 +47,17 @@ function DeviceSettings() {
                     <Typography color={'#fff'}>Settings</Typography>
                 </Button>
             </RowContainerBetween>
-            <Typography>Device page</Typography>
+            <Typography>{state.name}</Typography>
+            <Typography>Sensors</Typography>
+            {
+                sensors.length>0? sensors.map((sensor)=>(
+                    <Box>
+                        <Typography>{sensor.name}</Typography>
+                    </Box>
+                )):(
+                    <Typography>No sensors found</Typography>
+                )
+            }
         </Box>
     );
 }
