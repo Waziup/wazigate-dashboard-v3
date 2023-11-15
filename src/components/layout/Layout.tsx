@@ -4,16 +4,13 @@ import Sidebar from './Sidebar';
 import { Search, Menu, } from '@mui/icons-material';
 import RowContainerBetween from '../RowContainerBetween';
 import { useState } from 'react';
-const capitalizeFirstLetter = (string: string): string => {
-    return string.charAt(1).toUpperCase() + string.slice(2);
-}
 function Layout() {
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const matchesMd = useMediaQuery(theme.breakpoints.between('sm','md'));
     const [open,setOpen] = useState(false);
     const handleToggle=()=>{setOpen(!open)}
-    const location = useLocation().pathname;
+    const {state} = useLocation();
     return (
         <>
             {
@@ -31,7 +28,7 @@ function Layout() {
                         <RowContainerBetween additionStyles={{bgcolor:'primary.main'}} >
                             <Box sx={{display:'flex',py:2,alignItems:'center'}} >
                                 <Menu onClick={handleToggle}  sx={{mx:2,color:'white', cursor:'pointer'}}/>
-                                <Typography color={'white'} fontWeight={'600'}>{capitalizeFirstLetter(location).length>0?capitalizeFirstLetter(location):'Dashboard'}</Typography>
+                                <Typography color={'white'} fontWeight={'600'}>{state.title}</Typography>
                             </Box>
                             <Search sx={{ color: 'white', mx: 1 }} />
                         </RowContainerBetween>
