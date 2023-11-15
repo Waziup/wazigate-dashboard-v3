@@ -15,7 +15,6 @@ function Devices() {
     useEffect(() => {
         window.wazigate.getDevices().then(setDevices);
     }, []);
-    console.log(devices);
     return (
         <Box sx={{p:3, height:'100%'}}>
             <RowContainerBetween>
@@ -29,7 +28,7 @@ function Devices() {
                 {
                     devices.map((device)=>(
                         <Grid item md={6} lg={4} xl={4} sm={8} xs={12} >
-                            <Box onClick={()=>{navigate(`/devices/${device.id}`,{state:device})}} sx={{cursor:'pointer',":hover":{bgcolor:'#fffff1'}, height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
+                            <Box onClick={()=>{navigate(`/devices/${device.id}`,{state:{...device,title:device.name}})}} sx={{cursor:'pointer',":hover":{bgcolor:'#fffff1'}, height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
                                 <Box sx={{display:'flex',alignItems:'center', position:'absolute',top:-5,my:-1,borderRadius:1,mx:1,bgcolor:DEFAULT_COLORS.primary_blue}}>
                                     <Sensors sx={{fontSize:15, color:'#fff'}}/>
                                     <Typography fontSize={13} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
