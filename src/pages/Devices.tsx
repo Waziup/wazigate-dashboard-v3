@@ -29,16 +29,16 @@ function Devices() {
                 {
                     devices.map((device)=>(
                         <Grid item md={6} lg={4} xl={4} sm={8} xs={12} >
-                            <Box onClick={()=>{navigate('/devices/3')}} sx={{cursor:'pointer',":hover":{bgcolor:'#fffff1'}, height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
-                                <Box sx={{position:'absolute',top:-5,my:-1,borderRadius:1,mx:1,bgcolor:DEFAULT_COLORS.primary_blue}}>
+                            <Box onClick={()=>{navigate(`/devices/${device.id}`,{state:device})}} sx={{cursor:'pointer',":hover":{bgcolor:'#fffff1'}, height: '100%',position:'relative', bgcolor: 'white', borderRadius:2, }}>
+                                <Box sx={{display:'flex',alignItems:'center', position:'absolute',top:-5,my:-1,borderRadius:1,mx:1,bgcolor:DEFAULT_COLORS.primary_blue}}>
                                     <Sensors sx={{fontSize:15, color:'#fff'}}/>
-                                    <Typography fontSize={10} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
+                                    <Typography fontSize={13} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
                                 </Box>
                                 <Box sx={{borderBottom:'1px solid black',py:1.5, px:2,}}>
                                     <RowContainerBetween>
                                         <Box>
-                                            <Typography color={'black'} fontWeight={700}>{device.name}</Typography>
-                                            <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>Last updated: 10 seconds</Typography>
+                                            <Typography color={'black'} fontWeight={700}>{device.name.slice(0,10)+'....'}</Typography>
+                                            <Typography color={DEFAULT_COLORS.secondary_black} fontSize={15} fontWeight={300}>Last updated: 10 seconds</Typography>
                                         </Box>
                                         <Add sx={IconStyle} />
                                     </RowContainerBetween>
