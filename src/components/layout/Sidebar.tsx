@@ -40,9 +40,9 @@ const styleFuncSmall = ({isActive,}:{isActive:boolean}):CSSProperties=>{
         padding:'7px 10px',
     }
 }
-const NavigationItem = ({path,otherItem,icon,onClick, text}:{location:string,otherItem?:JSX.Element,additionalStyles?:CSSProperties, path:string,onClick?:()=> void, icon:React.ReactNode,text:string}) => {
+const NavigationItem = ({path,otherItem,icon,onClick, text}:{location:string,  otherItem?:JSX.Element,additionalStyles?:CSSProperties, path:string,onClick?:()=> void, icon:React.ReactNode,text:string}) => {
     return(
-        <NavLink to={path} onClick={onClick} style={styleFunc}>
+        <NavLink state={{title:text}} to={path} onClick={onClick} style={styleFunc}>
             <Box display='flex' alignItems='center'>
                 <ListItemIcon>
                     {icon}
@@ -53,7 +53,7 @@ const NavigationItem = ({path,otherItem,icon,onClick, text}:{location:string,oth
         </NavLink>
     )
 }
-const NavigationSmall = ({path,otherItem,icon,onClick, }:{location:string,otherItem?:JSX.Element,additionalStyles?:CSSProperties, path:string,onClick?:()=> void, icon:React.ReactNode,}) => {
+const NavigationSmall = ({path,otherItem,icon,onClick, }:{location:string,otherItem?:JSX.Element,additionalStyles?:CSSProperties,title:string, path:string,onClick?:()=> void, icon:React.ReactNode,}) => {
     return(
         <NavLink to={path} onClick={onClick} style={styleFuncSmall}>
             <Box display='flex' alignItems='center'>
@@ -66,7 +66,7 @@ const NavigationSmall = ({path,otherItem,icon,onClick, }:{location:string,otherI
     )
 }
 function Sidebar({matchesMd}:{matchesMd:boolean}) {
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
     const handleClick = () => {
         setOpen(!open);
     };
@@ -82,8 +82,8 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                             <Box my={1} borderBottom={'0.1px solid #ccc'}>
                                 <NavigationItem 
                                     location={location} 
-                                    path={'/'} 
-                                    icon={<Dashboard sx={{...IconStyle,color:location==='/'?'black':'white'}} />} 
+                                    path={'/dashboard'} 
+                                    icon={<Dashboard sx={{...IconStyle,color:location==='/dashboard'?'black':'white'}} />} 
                                     text={'Dashboard'} 
                                 />
                             </Box>
@@ -97,9 +97,8 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                             <NavigationItem location={location} 
                                 path={'/settings'} 
                                 icon={<SettingsTwoTone sx={{...IconStyle,color:location==='/settings'?'black':'white'}} />} 
-                                text={'Settings'} 
-                                onClick={handleClick} 
-                                otherItem={open ? <ExpandLess /> : <ExpandMore />}
+                                text={'Settings'}
+                                otherItem={open ? <ExpandLess onClick={handleClick} /> : <ExpandMore onClick={handleClick} />}
                             />
                             
                             <Collapse in={open} timeout="auto" unmountOnExit>
@@ -149,20 +148,29 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                         <Box my={1} >
                             <NavigationSmall 
                                 location={location} 
-                                path={'/'} 
+                                path={'/'}
+                                title='Dashboard'
                                 icon={<Dashboard sx={{...IconStyle,color:location==='/'?'black':'white'}} />} 
                             />
                         </Box>
                         <NavigationSmall 
                             location={location} 
-                            path={'/devices'} 
+                            path={'/devices'}
+                            title='Devices'
                             icon={<SettingsRemoteSharp sx={{...IconStyle,color:location==='/devices'?'black':'white'}} />} 
                         />
-                        <NavigationSmall location={location} path={'/automation'} icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'black':'white'}} />} />
-                        <NavigationSmall location={location} 
+                        <NavigationSmall 
+                            location={location} 
+                            path={'/automation'} 
+                            title='Automation'
+                            icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'black':'white'}} />} 
+                        />
+                        <NavigationSmall 
+                            location={location} 
                             path={'/settings'} 
                             icon={<SettingsTwoTone sx={{...IconStyle,color:location==='/settings'?'black':'white'}} />} 
                             onClick={handleClick} 
+                            title='Settings'
                             // otherItem={open ? <ExpandLess /> : <ExpandMore />}
                         />
                         
@@ -170,17 +178,24 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                             <List component="div" disablePadding>
                                 <NavigationSmall 
                                     location={location} 
+                                    title='Networking'
                                     path={'/settings/networking'} 
                                     icon={<Wifi sx={{...IconStyle,ml:1, color:location.includes('/settings')?'black':'white'}} />} 
                                 />
                                 <NavigationSmall
                                     location={location}
+                                    title='Maintenance'
                                     path={'/settings/maintenance'}
                                     icon={<WifiLock sx={{...IconStyle,ml:1, color:location.includes('/settings')?'black':'white'}} />}
                                 />
                             </List>
                         </Collapse>
-                        <NavigationSmall location={location} path={'/apps'} icon={<Apps sx={{...IconStyle,color:location==='/apps'?'black':'white'}} />} />
+                        <NavigationSmall 
+                            location={location} 
+                            path={'/apps'} 
+                            title='Apps'
+                            icon={<Apps sx={{...IconStyle,color:location==='/apps'?'black':'white'}} />} 
+                        />
                         <Box position={'absolute'} display={'flex'} flexDirection={'column'} alignItems={'center'} bottom={0} width={'100%'} >
                             <Link style={{textDecoration:'none',margin:'5px 0' }} to={'/help'}>
                                 <Box display={'flex'} alignItems={'center'}>

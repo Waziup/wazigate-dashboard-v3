@@ -1,97 +1,65 @@
-import { SettingsTwoTone, ToggleOff } from "@mui/icons-material";
-import { Box, Typography, Button, Link,  Breadcrumbs } from "@mui/material";
+import {  SettingsTwoTone } from "@mui/icons-material";
+import { Box, Breadcrumbs, Button,  Typography, } from "@mui/material";
 import RowContainerBetween from "../components/RowContainerBetween";
-import EnhancedTable from "../components/DeviceTable";
-import { useNavigate, useOutletContext } from "react-router-dom";
-import Chart from 'react-apexcharts';  
-import { DEFAULT_COLORS } from "../constants";
-function Device() {
+// import { SelectElement } from "./Automation";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useEffect,useState } from "react";
+import { Sensor } from "waziup";
+function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
         console.info('You clicked a breadcrumb.');
     }
-    const [matches] = useOutletContext<[matches:boolean]>();
-    console.log(matches);
+    
+    const {state} = useLocation();
     const navigate = useNavigate();
-    const handleNav = (path:string)=>{navigate(path)}
+    const [sensors, setSensors] = useState<Sensor[]>([]);
+    useEffect(() => {
+        // console.log(state);
+        window.wazigate.getSensors(state.id).then(setSensors);
+    }, [state])
     return (
-        <Box sx={{height:'100%',overflowY:'scroll'}}>
-            <RowContainerBetween additionStyles={{px:2,py:2}}>
+        <Box p={3} sx={{ height:'100%'}}>
+            <RowContainerBetween>
                 <Box>
-                    <Typography fontWeight={500} fontSize={18} color={'black'}>Device 1</Typography>
+                    <Typography fontWeight={700} color={'black'}>{state.name}</Typography>
                     <div role="presentation" onClick={handleClick}>
                         <Breadcrumbs aria-label="breadcrumb">
-                            <Link fontSize={14} underline="hover" color="inherit" href="/">
+                            <Link style={{color:'black'}} state={{title:'Devices'}} color="inherit" to="/devices">
                                 Devices
                             </Link>
-                            <Link
-                                fontSize={14}
+                            {/* <Link
                                 underline="hover"
                                 color="inherit"
-                                href="/device"
+                                href="/material-ui/getting-started/installation/"
                             >
                                 Device 1
-                            </Link>
-                            <Typography fontSize={14} color="text.primary">Settings</Typography>
+                            </Link> */}
+                            <Typography color="text.primary">
+                                {state.name?state.name.slice(0,10)+'...':''}
+                            </Typography>
                         </Breadcrumbs>
                     </div>
                 </Box>
-                {
-                    matches?(
-                        <Button onClick={()=>handleNav('/devices/3/setting')} variant={'contained'}>
-                            <SettingsTwoTone/>
-                            SETTINGS
-                        </Button>
-                    ):null
-                }
+                <Button onClick={()=>{navigate(`/devices/${state.id}/settings`,{state})}} color="info" variant={'contained'}>
+                    <SettingsTwoTone sx={{color:'#fff'}}/>
+                    <Typography color={'#fff'}>Settings</Typography>
+                </Button>
             </RowContainerBetween>
-            <Box bgcolor={'#fff'} display={'flex'} width={'100%'} pt={matches?5:2} flexDirection={'column'} alignItems={'center'}  justifyContent={'center'}>
-                <Box width={matches?'85%':'95%'} mb={3}>
-                    <Box sx={{width:'100%',display:'flex',alignItems:'center', justifyContent:'space-between'}}>
-                        <Typography color={'#1D2129'} fontSize={18} fontWeight={500}>Current Temperature</Typography>
-                        <Box sx={{display:'flex',alignItems:'center'}}>
-                            <Typography fontWeight={100} fontSize={18} color={'#949494'}>°F</Typography>
-                            <ToggleOff sx={{color:DEFAULT_COLORS.secondary_gray,fontSize:40, }} />
-                            <Typography fontWeight={100} fontSize={18} color={'#949494'}>°C</Typography>
-                        </Box>
+            <Typography>{state.name}</Typography>
+            <Typography>Sensors</Typography>
+            {
+                sensors.length>0? sensors.map((sensor)=>(
+                    <Box>
+                        <Typography>{sensor.name}</Typography>
                     </Box>
-                    <Chart
-                        options={{
-                            chart: {
-                                id: "basic-bar",
-                                
-                            },
-                            xaxis: {
-                                categories: [1,2,3,4,5,6,7,8,9,10],
-                                type: 'numeric',
-                                
-                            },
-                            stroke:{
-                                curve:'smooth',
-                                width:2
-                            },
-                            legend:{
-                                show:false
-                            },
-                            labels: ['Temperature', 'Humidity', 'Pressure', 'Wind Speed', 'Wind Direction', 'Rainfall', 'Soil Moisture', 'Soil Temperature', 'Soil Conductivity', 'Soil PH']
-                        }}
-                        series={[
-                            {
-                                name: "series-1",
-                                data: [30,40,45,50,49,60,70,91,125,100]
-                            }
-                        ]}
-                        type="line"
-                        width={'100%'}
-                        height={matches?350:290}
-                    />
-                </Box>
-                <Box bgcolor={'#fff'} width={matches?'80%':'90%'}>
-                    <EnhancedTable  />
-                </Box>
-            </Box>
+                )):(
+                    <Typography>No sensors found</Typography>
+                )
+            }
         </Box>
     );
 }
 
-export default Device;
+export default DeviceSettings;

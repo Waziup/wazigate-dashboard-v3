@@ -7,7 +7,7 @@ interface TextElement extends React.HTMLAttributes<HTMLSpanElement> {
     text: string;
 }
 const TextEL = ({children,text}:TextElement)=>(
-    <Typography fontWeight={500} mt={.5} alignItems={'center'} fontSize={15} color={DEFAULT_COLORS.primary_blue}>
+    <Typography fontWeight={500} mt={.5} display={'flex'} alignItems={'center'} fontSize={15} color={DEFAULT_COLORS.primary_blue}>
         {children}
         {text}
     </Typography>
