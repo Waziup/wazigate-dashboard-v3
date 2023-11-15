@@ -7,12 +7,13 @@ import Automation from './pages/Automation'
 import Apps from './pages/Apps'
 import Settings from './pages/Settings'
 import Login from './pages/Login';
-import Device from './pages/Device'
+import DeviceSensor from './pages/DeviceSensor'
 import User from './pages/User'
-import DeviceSettings from './pages/DeviceSettings'
+import Device from './pages/Device'
 import Docspage from './pages/Docspage'
 import DeviceSensorSettings from './pages/DevicesensorSettings';
 import { Box, createTheme, ThemeProvider, Typography } from '@mui/material'
+import DeviceSettings from './pages/DeviceSettings'
 function App() {
     
 
@@ -50,14 +51,18 @@ function App() {
                 },
                 {
                     path:'/devices/:id',
+                    element:<Device/>
+                },
+                {
+                    path:'/devices/:id/settings',
                     element:<DeviceSettings/>
                 },
                 {
-                    path:'/devices/:id/setting',
-                    element: <Device/>
+                    path:'/devices/:id/sensors/:sensorId',
+                    element: <DeviceSensor/>
                 },
                 {
-                    path:'/devices/:id/sensor/setting',
+                    path:'/devices/:id/sensors/:sensorId/setting',
                     element: <DeviceSensorSettings/>
                 },
                 {
