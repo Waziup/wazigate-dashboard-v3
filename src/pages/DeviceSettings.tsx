@@ -2,7 +2,7 @@ import { AddCircleOutline, MoreVert,Router, SettingsTwoTone } from "@mui/icons-m
 import { Box,Breadcrumbs,Button,FormControl,Grid,  NativeSelect,  Typography } from "@mui/material";
 import RowContainerBetween from "../components/RowContainerBetween";
 import { Link, useLocation } from "react-router-dom";
-import { ChangeEvent } from "react";
+import { ChangeEvent,useEffect,useState } from "react";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange:(event: ChangeEvent<HTMLSelectElement>)=>void,
     title:string,
@@ -47,8 +47,17 @@ export default function DeviceSettings(){
         console.info('You clicked a breadcrumb.');
     }
     const {state} = useLocation();
-    // const navigate = useNavigate()
-    console.log(state);
+    const [codecsList, setCodecsList] = useState<{id:string,name:string}[] | null>(null);
+    const loadCodecsList = () => {
+        window.wazigate.get('/codecs').then(res => {
+            setCodecsList(res as {id:string,name:string}[]);
+        }, (err: Error) => {
+            console.error("There was an error loading codecs:\n" + err)
+        });
+    }
+    useEffect(()=>{
+        loadCodecsList();
+    },[])
     return(
         <Box mx={2} m={2}>
             <RowContainerBetween additionStyles={{mx:2}}>
@@ -105,9 +114,11 @@ export default function DeviceSettings(){
                     </RowContainerBetween>
                     <Box my={2}>
                         <SelectElement title={'Application Type'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} />
-                        <AddTextShow text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got 0'} />
-                        <AddTextShow text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got 0'} />
-                        <AddTextShow text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
+                        {
+                            codecsList? codecsList.map((codec,id)=>(
+                                <AddTextShow text={codec.name}  placeholder={`${id===0?'8':'32'}digits required, got 0`} />
+                            )):null
+                        }
                     </Box>
                 </Grid>
             </Grid>
