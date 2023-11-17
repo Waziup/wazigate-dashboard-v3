@@ -30,7 +30,7 @@ function App() {
             },
             info:{
                 main:'#499DFF'
-            }
+            },
         },
     });
     const router = createBrowserRouter([

@@ -10,7 +10,6 @@ import { Device } from "waziup";
 function Device() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
-        console.info('You clicked a breadcrumb.');
     }
     const [device, setDevice] = useState<Device | null>(null);
     const [matches] = useOutletContext<[matches:boolean]>();
