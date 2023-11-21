@@ -2,11 +2,11 @@ import { SettingsTwoTone, ToggleOff } from "@mui/icons-material";
 import { Box, Typography, Button, Link,  Breadcrumbs } from "@mui/material";
 import RowContainerBetween from "../components/RowContainerBetween";
 import EnhancedTable from "../components/DeviceTable";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Chart from 'react-apexcharts';  
 import { DEFAULT_COLORS } from "../constants";
 import { useEffect,useState } from "react";
-import { Device } from "waziup";
+import type { Device } from "waziup";
 function Device() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
@@ -22,7 +22,8 @@ function Device() {
         window.wazigate.getDevice(id).then(setDevice);
     },[id]);
     console.log(device);
-    
+    const {state} = useLocation();
+    console.log(state);
     return (
         <Box sx={{height:'100%',overflowY:'scroll'}}>
             <RowContainerBetween additionStyles={{px:2,py:2}}>
@@ -30,24 +31,16 @@ function Device() {
                     <Typography fontWeight={500} fontSize={18} color={'black'}>Device 1</Typography>
                     <div role="presentation" onClick={handleClick}>
                         <Breadcrumbs aria-label="breadcrumb">
-                            <Link fontSize={14} underline="hover" color="inherit" href="/">
-                                Devices
+                            <Link fontSize={14} underline="hover" color="inherit" href={`/devices/${state.deviceId}`}>
+                                {state.devicename}
                             </Link>
-                            <Link
-                                fontSize={14}
-                                underline="hover"
-                                color="inherit"
-                                href="/device"
-                            >
-                                Device 1
-                            </Link>
-                            <Typography fontSize={14} color="text.primary">Settings</Typography>
+                            <Typography fontSize={14} color="text.primary">Sensors / {state.sensorname}</Typography>
                         </Breadcrumbs>
                     </div>
                 </Box>
                 {
                     matches?(
-                        <Button onClick={()=>handleNav('/devices/3/setting')} variant={'contained'}>
+                        <Button onClick={()=>handleNav(`/devices/${state.deviceId}/sensors/${state.sensorId}/settings`)} variant={'contained'}>
                             <SettingsTwoTone/>
                             SETTINGS
                         </Button>
@@ -68,7 +61,6 @@ function Device() {
                         options={{
                             chart: {
                                 id: "basic-bar",
-                                
                             },
                             xaxis: {
                                 categories: [1,2,3,4,5,6,7,8,9,10],
