@@ -1,4 +1,4 @@
-import {Box, Button, FormControl,  Grid,  InputLabel, ListItemIcon, ListItemText, Menu, MenuItem, Select, TextField, Tooltip, Typography} from '@mui/material';
+import {Box, Button, FormControl,  Grid,  InputLabel, ListItemIcon, ListItemText, Menu, MenuItem, Select,Tooltip, Typography} from '@mui/material';
 import { NormalText,  } from './Dashboard';
 import RowContainerBetween from '../components/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
@@ -23,7 +23,7 @@ const DropDown = ({handleChange,matches,recommendedApps,customAppInstallHandler,
             }} value={age} label="Age" onChange={handleChange}>
             {
                 recommendedApps.map((app)=>(
-                    <MenuItem onClick={()=>installApp(app.id)} key={app.id} value={app.id} sx={{display:'flex',width:'100%', justifyContent:'space-between'}}>
+                    <MenuItem onClick={()=>installApp(app.image)} key={app.id} value={app.id} sx={{display:'flex',width:'100%', justifyContent:'space-between'}}>
                         <Box display={'flex'} alignItems={'center'}>
                             <Box component={'img'} sx={{width:20,mx:1, height:20}} src='/wazilogo.svg' />
                             <Tooltip color='black' followCursor  title={app.description} placement="top-start">
@@ -81,8 +81,17 @@ export default function Apps() {
         setAnchorEl(null);
     };
     const [apps, setApps] = useState<App[]>([]);
-    const [recommendedApps,setRecommendedApps] = useState<RecomendedApp[]>([])
+    const [recommendedApps,setRecommendedApps] = useState<RecomendedApp[]>([]);
+    const [logs,setLogs] = useState<string>('');
     const [error, setError] = useState<Error | null | string>(null);
+    function installAppFunction(id:string){
+        window.wazigate.installApp(id).then((res)=>{
+            console.log(res);
+        }).catch((err)=>{
+            console.log(err);
+        })
+        setInterval(()=>fetchInstallLogs(id),1000);
+    }
     useEffect(() => {
         window.wazigate.getApps().then(setApps, setError);
         window.wazigate.get<RecomendedApp[]>('apps?available').then((appsr)=>{
@@ -90,26 +99,30 @@ export default function Apps() {
         }
         , setError);
     }, []);
-    console.log(apps,error);
+    const handleCustomAppIdChange = (e:React.ChangeEvent<HTMLInputElement>)=>{console.log(e.target.value); setCustomAppId(e.target.value)}
     function handleInstallAppModal(){
         setModalProps({open:true, title:'Install App', children:<>
             <Box  width={'100%'}  bgcolor={'#fff'}>
-                <Box borderBottom={'1px solid black'} px={2} py={2}>
-                    <TextField fullWidth id="outlined-basic" required label="Full docker  image name and associated tag(image_name:tag)" variant="outlined" />
-                </Box>
-                <Box py={2}>
-                    <Button variant={'contained'} sx={{mx:2}} color={'primary'}>Install</Button>
-                    <Button onClick={closeModal} variant={'contained'} sx={{mx:2}} color={'error'}>Cancel</Button>
-                </Box>
+                <form onSubmit={(e)=>{e.preventDefault(); handleLogsModal(customAppId)}}>
+                    <Box borderBottom={'1px solid black'} px={2} py={2}>
+                        <input style={{width:'100%',padding:'8px 4px',borderRadius:5, outline:'none',border:'1px solid  black'}} value={customAppId} onChange={handleCustomAppIdChange}  id="outlined-basic" required placeholder="Full docker  image name and associated tag(image_name:tag)" />
+                    </Box>
+                    <Box py={2}>
+                        <Button type='submit' variant={'contained'} sx={{mx:2}} color={'primary'}>Install</Button>
+                        <Button onClick={closeModal} variant={'contained'} sx={{mx:2}} color={'error'}>Cancel</Button>
+                    </Box>
+                </form>
             </Box>
         </>});
     }
+    const [customAppId,setCustomAppId] = useState<string>('');
     function handleLogsModal(id:string){
         console.log(id);
         
         setModalProps({open:true, title:'Installing waizgate-j....', children:<>
             <Box  width={'100%'} bgcolor={'#fff'}>
                 <Box borderBottom={'1px solid black'} bgcolor={'black'} width={'100%'} mb={1} height={200} px={2} py={2}>
+                    <Typography color={'#fff'}>{logs}</Typography>
                 </Box>
                 <Box  px={2} py={1}>
                     <Button variant={'contained'} sx={{mx:2}} color={'primary'}>DOWNLOAD</Button>
@@ -117,6 +130,14 @@ export default function Apps() {
                 </Box>
             </Box>
         </>});
+        installAppFunction(id)
+    }
+    function fetchInstallLogs(id:string){
+        window.wazigate.get(`apps/${id}?install_logs`).then((logs)=>{
+            setLogs(logs as string);
+        }).catch((err)=>{
+            console.log(err);
+        })
     }
     function closeModal(){
         setModalProps({open:false, title:'', children:null});
@@ -140,7 +161,7 @@ export default function Apps() {
                 </Backdrop>
             }
             
-            <Box p={3} sx={{ height:'100%'}}>
+            <Box p={3} sx={{overflowY:'scroll',my:2, height:'100%'}}>
                 <RowContainerBetween>
                     <Box maxWidth={'50%'}>
                         <Typography fontWeight={700} fontSize={20} color={'black'}>Apps</Typography>
@@ -201,8 +222,7 @@ export default function Apps() {
                                     </Box>
                                 </Box>
                                 <Typography fontSize={15} color={DEFAULT_COLORS.secondary_black}>Status: <Typography component={'span'} fontSize={15} color={'red'}>Running</Typography></Typography>
-                                <Typography color={DEFAULT_COLORS.secondary_black}>{(app as App1).description}</Typography>
-                            
+                                <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black}>{(app as App1).description}</Typography>
                             </GridItem>
                         ))
                     }
