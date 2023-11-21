@@ -39,7 +39,7 @@ const reToken = () => {
 setInterval(reToken, 1000 * 60 * 8); // Referesh the token every 10-2 minutes
 export default function Login() {
     const navigate = useNavigate();
-    const [showErrSnackbar, setShowErrSnackbar] = useState<boolean>(true);
+    const [showErrSnackbar, setShowErrSnackbar] = useState<boolean>(false);
     // const handleNavigate = ()=>{navigate('/')}
     const {handleSubmit,register} = useForm<RegistrationInput>({
         resolver: yupResolver(schema),
