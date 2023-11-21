@@ -1,5 +1,5 @@
-import { AddCircleOutline, MoreVert,Router, SettingsTwoTone } from "@mui/icons-material";
-import { Box,Breadcrumbs,Button,FormControl,Grid,  NativeSelect,  Typography } from "@mui/material";
+import { AddCircleOutline, MoreVert,Router,} from "@mui/icons-material";
+import { Box,Breadcrumbs,FormControl,Grid,  NativeSelect,  Typography } from "@mui/material";
 import RowContainerBetween from "../components/RowContainerBetween";
 import { Link, useLocation } from "react-router-dom";
 import { ChangeEvent,useEffect,useState } from "react";
@@ -65,7 +65,7 @@ export default function DeviceSettings(){
                     <Typography fontWeight={700} color={'black'}>{state.name}</Typography>
                     <div role="presentation" onClick={handleClick}>
                         <Breadcrumbs aria-label="breadcrumb">
-                            <Link style={{color:'#292F3F',textDecoration:'none'}} state={{title:'Devices'}} color="inherit" to="/devices">
+                            <Link style={{color:'#292F3F', fontSize:15, textDecoration:'none'}} state={{title:'Devices'}} color="inherit" to="/devices">
                                 Devices
                             </Link>
                             
@@ -73,23 +73,20 @@ export default function DeviceSettings(){
                                 color="inherit"
                                 state={{title:state.name}}
                                 to={`/devices/${state.id}`}
-                                style={{color:'#292F3F',textDecoration:'none'}}
+                                style={{color:'#292F3F',fontSize:15, textDecoration:'none'}}
                             >
                                 {state.name?state.name.slice(0,10)+'...':''}
                             </Link>
-                            <Typography color="text.primary">
-                                Settings
+                            <Typography fontSize={15} color="text.primary">
+                                settings
                             </Typography>
                         </Breadcrumbs>
                     </div>
                 </Box>
-                <Button  color="info" variant={'contained'}>
-                    <SettingsTwoTone sx={{color:'#fff'}}/>
-                    <Typography color={'#fff'}>Settings</Typography>
-                </Button>
+                
             </RowContainerBetween>
             <Grid m={2} container >
-                <Grid bgcolor={'#fff'} mx={2} item md={6} px={2} py={2} borderRadius={2} lg={5} xl={5} sm={8} xs={11}>
+                <Grid bgcolor={'#fff'} mx={2} my={1} item md={6} px={2} py={2} borderRadius={2} lg={5} xl={5} sm={8} xs={11}>
                     <RowContainerBetween>
                         <Box display={'flex'} my={1} alignItems={'center'}>
                             <Router sx={{ fontSize: 20, color:'#292F3F' }} />
@@ -104,7 +101,7 @@ export default function DeviceSettings(){
                         <AddTextShow text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
                     </Box>
                 </Grid>
-                <Grid bgcolor={'#fff'} mx={2} item md={6} px={2} py={2} borderRadius={2} lg={5} xl={5} sm={8} xs={11}>
+                <Grid bgcolor={'#fff'} mx={2} my={1} item md={6} px={2} py={2} borderRadius={2} lg={5} xl={5} sm={8} xs={11}>
                     <RowContainerBetween>
                         <Box display={'flex'} my={1} alignItems={'center'}>
                             <Box component={'img'} src={'/box_download.svg'} width={20} height={20} />
