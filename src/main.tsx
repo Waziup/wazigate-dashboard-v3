@@ -4,7 +4,7 @@ import App from './App.tsx'
 import './index.css';
 import * as waziup from 'waziup';
 import { BACKEND_URL } from './constants/index.ts';
-
+import 'material-icons/iconfont/material-icons.css';
 declare global {
     interface Window {
         wazigate: waziup.Waziup;

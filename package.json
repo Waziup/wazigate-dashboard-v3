@@ -19,6 +19,7 @@
     "@mui/x-date-pickers": "^6.16.2",
     "apexcharts": "^3.42.0",
     "dayjs": "^1.11.10",
+    "material-icons": "^1.13.12",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",
     "react-dom": "^18.2.0",
