@@ -62,7 +62,7 @@ function App() {
                     element: <DeviceSensor/>
                 },
                 {
-                    path:'/devices/:id/sensors/:sensorId/setting',
+                    path:'/devices/:id/sensors/:sensorId/settings',
                     element: <DeviceSensorSettings/>
                 },
                 {
