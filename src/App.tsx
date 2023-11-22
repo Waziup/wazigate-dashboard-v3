@@ -14,6 +14,7 @@ import Docspage from './pages/Docspage'
 import DeviceSensorSettings from './pages/DevicesensorSettings';
 import { Box, createTheme, ThemeProvider, Typography } from '@mui/material'
 import DeviceSettings from './pages/DeviceSettings'
+import { DevicesProvider } from './context/devices.context'
 function App() {
     
 
@@ -101,11 +102,13 @@ function App() {
         }
     ])
     return (
-        <ThemeProvider theme={theme}>
-            <Box bgcolor={'#F0F2F5'}>
-                <RouterProvider router={router}/>
-            </Box>
-        </ThemeProvider>
+        <DevicesProvider>
+            <ThemeProvider theme={theme}>
+                <Box bgcolor={'#F0F2F5'}>
+                    <RouterProvider router={router}/>
+                </Box>
+            </ThemeProvider>
+        </DevicesProvider>
     )
 }
 
