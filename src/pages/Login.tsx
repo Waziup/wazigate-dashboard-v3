@@ -55,7 +55,7 @@ export default function Login() {
             .then((res) => {
                 console.log("Token", res);
                 window.localStorage.setItem('token',res as unknown as string);
-                navigate('/dashboard')
+                navigate('/dashboard',{state:{title:'Dashboard'}})
             }).catch(err=>{
                 console.log(err);
                 handleClose()
