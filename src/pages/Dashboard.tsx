@@ -1,7 +1,7 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import {Router, CloudOff,Wifi, WaterDrop, WifiTethering} from '@mui/icons-material';
 import BasicTable from "../components/BasicTable";
-import React from "react";
+import React, { useEffect } from "react";
 import { DEFAULT_COLORS } from "../constants";
 import { useOutletContext } from "react-router-dom";
 import MobileDashboard from "../components/layout/MobileDashboard";
@@ -55,13 +55,19 @@ const AppStatus = ()=>(
 );
 export const NormalText= ({title}:{title:string})=>(<Typography color={'black'}>{title}</Typography>)
 function Dashboard() {
+    useEffect(()=>{
+        const fb = async()=>{
 
+            console.log(await window.wazigate.getClouds())
+        }
+        fb()
+    },[])
     const [matches] = useOutletContext<[matches: boolean]>();
     return (
-        <>
+        <Box sx={{height:'100vh'}}>
             {
                 matches?(
-                    <Box p={3} sx={{width:'100%', height:'100%'}}>
+                    <Box p={3} sx={{width:'100%'}}>
                         <Typography color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
                         <Stack direction={'row'} mt={2} spacing={2}>
                             <Item color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
@@ -89,7 +95,7 @@ function Dashboard() {
                     </>
                 )
             }
-        </>
+        </Box>
     );
 }
 

@@ -1,10 +1,11 @@
-import { Box,  Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Alert, Box,  Snackbar,  Typography, useMediaQuery, useTheme } from '@mui/material';
 import {  DEFAULT_COLORS } from '../constants';
 import { LockOpen } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup'
 import {useForm,SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup';
+import { useState } from 'react';
 interface RegistrationInput{
     username:string
     password:string
@@ -38,6 +39,7 @@ const reToken = () => {
 setInterval(reToken, 1000 * 60 * 8); // Referesh the token every 10-2 minutes
 export default function Login() {
     const navigate = useNavigate();
+    const [showErrSnackbar, setShowErrSnackbar] = useState<boolean>(false);
     // const handleNavigate = ()=>{navigate('/')}
     const {handleSubmit,register} = useForm<RegistrationInput>({
         resolver: yupResolver(schema),
@@ -53,9 +55,10 @@ export default function Login() {
             .then((res) => {
                 console.log("Token", res);
                 window.localStorage.setItem('token',res as unknown as string);
-                navigate('/dashboard')
+                navigate('/dashboard',{state:{title:'Dashboard'}})
             }).catch(err=>{
-                console.log(err)
+                console.log(err);
+                handleClose()
             })
             
         } catch (error ) {
@@ -64,9 +67,14 @@ export default function Login() {
     }
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
+    const handleClose= ()=>{setShowErrSnackbar(!showErrSnackbar)}
     return (
         <>
-            
+            <Snackbar anchorOrigin={{vertical:'top',horizontal:'center'}} open={showErrSnackbar} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                    Invalid credentials, try again.
+                </Alert>
+            </Snackbar>
             <Box height={'100vh'} position={'relative'} width={'100%'} bgcolor={'#F4F7F6'}>
                 <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:'50%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'40%':'95%'}}>
                     <Box display={'flex'} justifyContent={'center'} py={2} width={'100%'} borderBottom={'1px solid #D5D6D8'} alignItems={'center'}>

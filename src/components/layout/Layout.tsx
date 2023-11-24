@@ -28,7 +28,7 @@ function Layout() {
                         <RowContainerBetween additionStyles={{bgcolor:'primary.main'}} >
                             <Box sx={{display:'flex',py:2,alignItems:'center'}} >
                                 <Menu onClick={handleToggle}  sx={{mx:2,color:'white', cursor:'pointer'}}/>
-                                <Typography color={'white'} fontWeight={'600'}>{state.title}</Typography>
+                                <Typography color={'white'} fontWeight={'600'}>{state?state.title:'Title'}</Typography>
                             </Box>
                             <Search sx={{ color: 'white', mx: 1 }} />
                         </RowContainerBetween>
