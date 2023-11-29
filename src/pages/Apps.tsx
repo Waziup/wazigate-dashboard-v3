@@ -132,6 +132,9 @@ export default function Apps() {
         </>});
         installAppFunction(id)
     }
+    const [uninstLoader,setUninstLoader] = useState<boolean>(false);
+    const [showAppSettings,setShowAppSettings] = useState<boolean>(false);
+    const [appToUninstall,setAppToUninstall] = useState<App | null>(null);
     function fetchInstallLogs(id:string){
         window.wazigate.get(`apps/${id}?install_logs`).then((logs)=>{
             setLogs(logs as string);
@@ -139,6 +142,29 @@ export default function Apps() {
             console.log(err);
         })
     }
+    const load = () => {
+        window.wazigate.getApp(appToUninstall?appToUninstall.id:'').then(setAppToUninstall, (error) => {
+          alert("There was an error loading the app info:\n" + error);
+        });
+    };
+    const setAppToUninstallFc = (app:App)=>{
+        console.log(app);
+        setAppToUninstall(app);
+        handleClose();
+        setUninstLoader(!uninstLoader)
+    }
+    const uninstall = () => {
+
+        console.log(appToUninstall);
+        window.wazigate.uninstallApp(appToUninstall?appToUninstall?.id:'', false)
+        .then((res) => {
+            console.log(res);
+            setUninstLoader(false);
+            load();
+        }).catch((err)=>{
+            console.log('error encountered',err);
+        })
+    };
     function closeModal(){
         setModalProps({open:false, title:'', children:null});
     }
@@ -154,13 +180,42 @@ export default function Apps() {
                         <Box borderBottom={'1px solid black'} px={2} py={2}>
                             <Typography>{modalProps.title}</Typography>
                         </Box>
+                        
                         <Box borderBottom={'1px solid black'}  py={2}>
                             {modalProps.children}
                         </Box>
                     </Box>
                 </Backdrop>
             }
-            
+            {
+                uninstLoader &&(
+                    <Backdrop>
+                        <Box  width={matches?'40%':'90%'} bgcolor={'#fff'}>
+                            <Box borderBottom={'1px solid black'} px={2} py={2}>
+                                <Typography>Do you wish to uninstall {appToUninstall?.name}</Typography>
+                            </Box>
+                            <Box px={2} py={1}>
+                                <Button onClick={uninstall} variant={'contained'} sx={{mx:2}} color={'primary'}>Uninstall</Button>
+                                <Button onClick={()=>{setAppToUninstall(null); setUninstLoader(!uninstLoader)}} variant={'contained'} sx={{mx:2}} color={'error'}>Cancel</Button>
+                            </Box>
+                        </Box>
+                    </Backdrop>
+                )
+            }
+            {
+                showAppSettings &&(
+                    <Backdrop>
+                        <Box width={matches?'40%':'90%'} bgcolor={'#fff'}>
+                            <Box borderBottom={'1px solid black'} px={2} py={2}>
+                                <Typography>App Settings</Typography>
+                            </Box>
+                            <Box px={2} py={1}>
+                                <Button onClick={()=>{setShowAppSettings(!showAppSettings)}} variant={'contained'} sx={{mx:2}} color={'error'}>CLOSE</Button>
+                            </Box>
+                        </Box>
+                    </Backdrop>
+                )
+            }
             <Box p={3} sx={{overflowY:'scroll',my:2, height:'100%'}}>
                 <RowContainerBetween>
                     <Box maxWidth={'50%'}>
@@ -171,60 +226,63 @@ export default function Apps() {
                 </RowContainerBetween>
                 <Grid container spacing={2} py={2}>
                     {
-                        apps.map((app)=>(
-                            <GridItem key={app.id}>
-                                <Box px={.4} display={'flex'} alignItems={'center'} sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
-                                    <Box component={'img'} src='/wazi_sig.svg' />
-                                    <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
-                                </Box>
-                                <Box display={'flex'} py={2}  justifyContent={'space-between'}>
-                                    <Box>
-                                        <NormalText title={app.name} />
-                                        <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>{app.id}</Typography>
+                        apps.map((app)=>{
+                            return(
+                                <GridItem key={app.id}>
+                                    <Box px={.4} display={'flex'} alignItems={'center'} sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
+                                        <Box component={'img'} src='/wazi_sig.svg' />
+                                        <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
                                     </Box>
-                                    <Box>
-                                        <Button id="demo-positioned-button"
-                                            aria-controls={open ? 'demo-positioned-menu' : undefined}
-                                            aria-haspopup="true"
-                                            aria-expanded={open ? 'true' : undefined}
-                                            onClick={handleClick}
-                                            >
-                                            <MoreVert sx={{color:'black'}}/>
-                                        </Button>
-                                        <Menu
-                                            id="demo-positioned-menu"
-                                            aria-labelledby="demo-positioned-button"
-                                            anchorEl={anchorEl}
-                                            open={open}
-                                            onClose={handleClose}
-                                            anchorOrigin={{
-                                            vertical: 'top',
-                                            horizontal: 'left',
-                                            }}
-                                            transformOrigin={{
+                                    <Box display={'flex'} py={2}  justifyContent={'space-between'}>
+                                        <Box>
+                                            <NormalText title={app.name} />
+                                            <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>{app.id}</Typography>
+                                        </Box>
+                                        <Box>
+                                            <Button id="demo-positioned-button"
+                                                aria-controls={open ? 'demo-positioned-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={open ? 'true' : undefined}
+                                                onClick={handleClick}
+                                                >
+                                                <MoreVert sx={{color:'black'}}/>
+                                            </Button>
+                                            <Menu
+                                                id="demo-positioned-menu"
+                                                aria-labelledby="demo-positioned-button"
+                                                anchorEl={anchorEl}
+                                                open={open}
+                                                onClose={handleClose}
+                                                anchorOrigin={{
                                                 vertical: 'top',
                                                 horizontal: 'left',
-                                            }}
-                                        >
-                                            <MenuItem onClick={handleClose}>
-                                                <ListItemIcon>
-                                                    <SettingsTwoTone fontSize="small" />
-                                                </ListItemIcon>
-                                                <ListItemText>Settings</ListItemText>
-                                            </MenuItem>
-                                            <MenuItem onClick={handleClose}>
-                                                <ListItemIcon>
-                                                    <DeleteForever fontSize="small" />
-                                                </ListItemIcon>
-                                                <ListItemText>Uninstall</ListItemText>
-                                            </MenuItem>
-                                        </Menu>
+                                                }}
+                                                transformOrigin={{
+                                                    vertical: 'top',
+                                                    horizontal: 'left',
+                                                }}
+                                            >
+                                                <MenuItem onClick={()=>{setShowAppSettings(!showAppSettings); handleClose()}}>
+                                                    <ListItemIcon>
+                                                        <SettingsTwoTone fontSize="small" />
+                                                    </ListItemIcon>
+                                                    <ListItemText>Settings</ListItemText>
+                                                </MenuItem>
+                                                <Box onClick={()=>setAppToUninstallFc(app)}>
+                                                    <MenuItem >
+                                                        <ListItemIcon>
+                                                            <DeleteForever fontSize="small" />
+                                                        </ListItemIcon>
+                                                        <ListItemText>Uninstall</ListItemText>
+                                                    </MenuItem>
+                                                </Box>
+                                            </Menu>
+                                        </Box>
                                     </Box>
-                                </Box>
-                                <Typography fontSize={15} color={DEFAULT_COLORS.secondary_black}>Status: <Typography component={'span'} fontSize={15} color={'red'}>Running</Typography></Typography>
-                                <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black}>{(app as App1).description}</Typography>
-                            </GridItem>
-                        ))
+                                    <Typography fontSize={15} color={DEFAULT_COLORS.secondary_black}>Status: <Typography component={'span'} fontSize={15} color={app.state?app.state.running?'green':'black':'red'}>{app.state?app.state.running?'Running':'Stopped':'Running'}</Typography></Typography>
+                                    <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black}>{(app as App1).description}</Typography>
+                                </GridItem>
+                        )})
                     }
                 </Grid>
             </Box>
