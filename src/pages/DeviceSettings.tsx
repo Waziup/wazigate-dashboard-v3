@@ -32,7 +32,7 @@ export const SelectElement = ({handleChange,title,conditions,isDisabled, value}:
         </FormControl>
     </Box>
 );
-const AddTextShow=({text,placeholder,}:{text:string,placeholder:string})=>(
+export const AddTextShow=({text,placeholder,}:{text:string,placeholder:string})=>(
     <Box sx={{my:2}}>
         <Box sx={{display:'flex',justifyContent:'space-between',alignItems:'center', borderBottom:'1px solid #ccc'}}>
             <Typography fontSize={16} my={.5} color={'#757474'} fontWeight={200} >{text}</Typography>
