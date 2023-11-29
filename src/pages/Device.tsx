@@ -1,5 +1,5 @@
 import {  Add,  SettingsTwoTone } from "@mui/icons-material";
-import { Box, Breadcrumbs, Button, Modal,  Typography, SpeedDial, SpeedDialAction, SpeedDialIcon, } from "@mui/material";
+import { Box, Breadcrumbs, Button, Modal,  Typography, SpeedDial, SpeedDialAction, SpeedDialIcon, Grid, } from "@mui/material";
 import RowContainerBetween from "../components/RowContainerBetween";
 // import { SelectElement } from "./Automation";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -24,7 +24,12 @@ function DeviceSettings() {
     const navigate = useNavigate();
     const [sensors, setSensors] = useState<Sensor[]>([]);
     const [actuators,setActuators] = useState<Actuator[]>();
+    const [sensorName,setSensorName]= useState<{name:string,sensorType:string}>({name:'',sensorType:''});
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const [actuatorName,setActuatorName] = useState<string>('')
     const [modalProps, setModalProps] = useState<{title:string,placeholder:string}>({title:'',placeholder:''});
+
+
     useEffect(() => {
         window.wazigate.getSensors(state.id).then(setSensors);
         window.wazigate.getActuators(state.id).then(setActuators);
@@ -32,14 +37,14 @@ function DeviceSettings() {
     const setModalEls = (title:string,placeholder:string) => {
         setModalProps({title,placeholder});
     }
-    const [sensorName,setSensorName]= useState<{name:string,sensorType:string}>({name:'',sensorType:''});
-    const [actuatorName,setActuatorName] = useState<string>('')
-    const handleCreateSensorClick = () => {
+    const handleCreateSensorClick = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log('Creating a sensor',sensorName);
         const sensor: Sensor = {
             name: sensorName.name,
             id: "",
             meta: {
-                kind:sensorName.sensorType
+                kind: sensorName.sensorType
             },
             value: 0,
             time: new Date(),
@@ -50,16 +55,17 @@ function DeviceSettings() {
         window.wazigate.addSensor(state.id,sensor)
         .then((res)=>{
             console.log(res);
-            navigate(1);
+            handleToggleModal()
+            navigate('/devices');
         })
         .catch((err)=>{
             console.log('Error encounted',err);
         })
     }
-    const [openModal, setOpenModal] = useState(false);
     const handleToggleModal = () => setOpenModal(!openModal);
-    const handleCreateActuatorClick = () => {
-        console.log('Creating an actuator');
+    const handleCreateActuatorClick = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log('Creating an actuator',actuatorName);
         const actuator: Actuator = {
             name: actuatorName,
             id: "",
@@ -75,8 +81,8 @@ function DeviceSettings() {
         window.wazigate.addActuator(state.id,actuator)
         .then((res)=>{
             console.log(res);
-            navigate(1);
             handleToggleModal()
+            navigate('/devices');
         })
         .catch((err)=>{
             console.log('Error encounted',err);
@@ -84,19 +90,22 @@ function DeviceSettings() {
         })
     }
     const handleNameChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        console.log(e.target.value,e.target.name);
         if(modalProps.title==='sensor'){
             setSensorName({
-                [e.target.name]:e.target.value,
-               ...sensorName
+                name:e.target.value,
+                sensorType:sensorName.sensorType
             });
         }else{
             setActuatorName(e.target.value);
         }
     }
     const handleSelectChange = (e:React.ChangeEvent<HTMLSelectElement>)=>{
+        console.log(e.target.value,e.target.name);
+        
         setSensorName({
-            [e.target.name]:e.target.value,
-           ...sensorName
+            sensorType:e.target.value,
+            name:sensorName.name
         });
     }
     console.log(actuators)
@@ -118,7 +127,7 @@ function DeviceSettings() {
                                     <input name="name" style={{outline:'none',width:'100%',borderRadius:4, border:'1px solid black',padding:'5px 2px'}} onInput={handleNameChange} required type="text" placeholder={modalProps.placeholder} />    
                                     {
                                         modalProps.title==='sensor' &&(
-                                            <select onChange={handleSelectChange} name="sensorType" id="sensorType">
+                                            <select required style={{outline:'none',width:'100%',borderRadius:4,margin:'10px 0',background:'none', border:'1px solid black',padding:'5px 2px'}} onChange={handleSelectChange} name="sensorType" id="sensorType">
                                                 <option defaultValue={''} disabled selected>Select Sensor Type</option>
                                                 <option value="WaterThermometer">Water Thermometer</option>
                                                 <option value="WaterLevel">Water Level</option>
@@ -171,24 +180,29 @@ function DeviceSettings() {
                         </Box>
                     )
                 }
-                {
-                    actuators?.map((act)=>(
-                        <Box>
-                            <Typography>{act.name}</Typography>
-                        </Box>
-                    ))
-                }
-                {
-                    sensors.length===0?(
-                        <Box>
-                            <Typography>No Sensors found</Typography>
-                        </Box>
-                    ):(sensors.map((sens)=>(
-                        <Box>
-                            <Typography>{sens.name}</Typography>
-                        </Box>
-                    )))
-                }
+                <Grid container my={2} spacing={2}>
+                    {
+                        actuators?.map((act)=>(
+                            <Grid md={4} item sx={{bgcolor:'#fff',mx:2,borderRadius:2}}>
+                                <Typography>{act.name}</Typography>
+                            </Grid>
+                        ))
+                    }
+                    
+                </Grid>
+                <Grid container my={2} spacing={2}>
+                    {
+                        sensors.length===0?(
+                            <Box>
+                                <Typography>No Sensors found</Typography>
+                            </Box>
+                        ):(sensors.map((sens)=>(
+                            <Grid md={4} item sx={{bgcolor:'#fff',mx:2,borderRadius:2}}>
+                                <Typography>{sens.name}</Typography>
+                            </Grid>
+                        )))
+                    }
+                </Grid>
                 <Box sx={{ height: 320, flexGrow: 1 }}>
                     <SpeedDial ariaLabel="Add device"
                         sx={{ position: 'absolute', bottom: 30, right: 16 }}
