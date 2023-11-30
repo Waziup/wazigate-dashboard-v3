@@ -1,8 +1,9 @@
-import { AddCircleOutline, MoreVert,Router,} from "@mui/icons-material";
+import {  MoreVert,Router,} from "@mui/icons-material";
 import { Box,Breadcrumbs,FormControl,Grid,  NativeSelect,  Typography } from "@mui/material";
 import RowContainerBetween from "../components/RowContainerBetween";
 import { Link, useLocation } from "react-router-dom";
 import { ChangeEvent,useEffect,useState } from "react";
+import AddTextShow from "../components/AddTextInput";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange:(event: ChangeEvent<HTMLSelectElement>)=>void,
     title:string,
@@ -32,15 +33,7 @@ export const SelectElement = ({handleChange,title,conditions,isDisabled, value}:
         </FormControl>
     </Box>
 );
-export const AddTextShow=({text,placeholder,}:{text:string,placeholder:string})=>(
-    <Box sx={{my:2}}>
-        <Box sx={{display:'flex',justifyContent:'space-between',alignItems:'center', borderBottom:'1px solid #ccc'}}>
-            <Typography fontSize={16} my={.5} color={'#757474'} fontWeight={200} >{text}</Typography>
-            <AddCircleOutline sx={{color:'#292F3F', fontSize:20}} />
-        </Box>
-        <Typography fontSize={10} my={.5} color={'#292F3F'} fontWeight={200}>{placeholder}</Typography>
-    </Box>
-)
+
 export default function DeviceSettings(){
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
