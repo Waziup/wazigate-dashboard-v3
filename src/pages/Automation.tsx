@@ -19,6 +19,7 @@ export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSe
     conditions:string[] | number[], 
     value: string
     mx?:number
+    my?:number
     isDisabled?:boolean
     matches?:boolean
 }
@@ -44,8 +45,8 @@ export const SelectElement = ({handleChange,title,conditions,isDisabled, value}:
         </FormControl>
     </Box>
 );
-export const SelectElementString = ({handleChange,title,mx,  conditions,isDisabled, value}:HTMLSelectPropsString)=>(
-    <Box minWidth={120} mx={mx !==undefined?mx:2}>
+export const SelectElementString = ({handleChange,title,mx,my,  conditions,isDisabled, value}:HTMLSelectPropsString)=>(
+    <Box minWidth={120} my={my !==undefined?my:0} mx={mx !==undefined?mx:2}>
         <Typography  fontSize={12} color={DEFAULT_COLORS.secondary_black}>{title}</Typography>
         <FormControl disabled={isDisabled} fullWidth>
             <NativeSelect
