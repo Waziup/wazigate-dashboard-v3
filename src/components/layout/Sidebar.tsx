@@ -83,20 +83,20 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                 <NavigationItem 
                                     location={location} 
                                     path={'/dashboard'} 
-                                    icon={<Dashboard sx={{...IconStyle,color:location==='/dashboard'?'black':'white'}} />} 
+                                    icon={<Dashboard sx={{...IconStyle,color:location==='/dashboard'?'#292F3F':'white'}} />} 
                                     text={'Dashboard'} 
                                 />
                             </Box>
                             <NavigationItem 
                                 location={location} 
                                 path={'/devices'} 
-                                icon={<SettingsRemoteSharp sx={{...IconStyle,color:location==='/devices'?'black':'white'}} />} 
+                                icon={<SettingsRemoteSharp sx={{...IconStyle,color:location==='/devices'?'#292F3F':'white'}} />} 
                                 text={'Devices'} 
                             />
                             <NavigationItem location={location} path={'/automation'} icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'black':'white'}} />} text={'Automation'} />
                             <NavigationItem location={location} 
                                 path={'/settings'} 
-                                icon={<SettingsTwoTone sx={{...IconStyle,color:location==='/settings'?'black':'white'}} />} 
+                                icon={<SettingsTwoTone sx={{...IconStyle,color:location==='/settings'?'#292F3F':'white'}} />} 
                                 text={'Settings'}
                                 otherItem={open ? <ExpandLess onClick={handleClick} /> : <ExpandMore onClick={handleClick} />}
                             />
@@ -106,18 +106,18 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     <NavigationItem 
                                         location={location} 
                                         path={'/settings/networking'} 
-                                        icon={<Wifi sx={{...IconStyle,ml:2, color:location.includes('/settings')?'black':'white'}} />} 
+                                        icon={<Wifi sx={{...IconStyle,ml:2, color:location.includes('/settings')?'#292F3F':'white'}} />} 
                                         text={'Networking'}
                                     />
                                     <NavigationItem
                                         location={location}
                                         path={'/settings/maintenance'}
-                                        icon={<WifiLock sx={{...IconStyle,ml:2, color:location.includes('/settings')?'black':'white'}} />}
+                                        icon={<WifiLock sx={{...IconStyle,ml:2, color:location.includes('/settings')?'#292F3F':'white'}} />}
                                         text={'Maintenance'}
                                     />
                                 </List>
                             </Collapse>
-                            <NavigationItem location={location} path={'/apps'} icon={<Apps sx={{...IconStyle,color:location==='/apps'?'black':'white'}} />} text={'Apps'} />
+                            <NavigationItem location={location} path={'/apps'} icon={<Apps sx={{...IconStyle,color:location==='/apps'?'#292F3F':'white'}} />} text={'Apps'} />
                         </List>
                         <Box position={'absolute'} alignItems={'center'} bottom={0} width={'100%'} >
                             <NavLink style={{textDecoration:'none',}} to={'/help'}>
@@ -157,18 +157,18 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                             location={location} 
                             path={'/devices'}
                             title='Devices'
-                            icon={<SettingsRemoteSharp sx={{...IconStyle,color:location==='/devices'?'black':'white'}} />} 
+                            icon={<SettingsRemoteSharp sx={{...IconStyle,color:location==='/devices'?'#292F3F':'white'}} />} 
                         />
                         <NavigationSmall 
                             location={location} 
                             path={'/automation'} 
                             title='Automation'
-                            icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'black':'white'}} />} 
+                            icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'#292F3F':'white'}} />} 
                         />
                         <NavigationSmall 
                             location={location} 
                             path={'/settings'} 
-                            icon={<SettingsTwoTone sx={{...IconStyle,color:location==='/settings'?'black':'white'}} />} 
+                            icon={<SettingsTwoTone sx={{...IconStyle,color:location==='/settings'?'#292F3F':'white'}} />} 
                             onClick={handleClick} 
                             title='Settings'
                             // otherItem={open ? <ExpandLess /> : <ExpandMore />}
@@ -180,13 +180,13 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     location={location} 
                                     title='Networking'
                                     path={'/settings/networking'} 
-                                    icon={<Wifi sx={{...IconStyle,ml:1, color:location.includes('/settings')?'black':'white'}} />} 
+                                    icon={<Wifi sx={{...IconStyle,ml:1, color:location.includes('/settings')?'#292F3F':'white'}} />} 
                                 />
                                 <NavigationSmall
                                     location={location}
                                     title='Maintenance'
                                     path={'/settings/maintenance'}
-                                    icon={<WifiLock sx={{...IconStyle,ml:1, color:location.includes('/settings')?'black':'white'}} />}
+                                    icon={<WifiLock sx={{...IconStyle,ml:1, color:location.includes('/settings')?'#292F3F':'white'}} />}
                                 />
                             </List>
                         </Collapse>
