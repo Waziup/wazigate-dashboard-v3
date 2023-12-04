@@ -50,7 +50,7 @@ const AppStatus = ({apps}:{apps:App[]})=>(
         </Stack>
     </Box>
 );
-export const NormalText= ({title}:{title:string})=>(<Typography color={'black'}>{title}</Typography>)
+export const NormalText= ({title}:{title:string})=>(<Typography color={DEFAULT_COLORS.navbar_dark}>{title}</Typography>)
 function Dashboard() {
     const {devices,apps}=useContext(DevicesContext);
     useEffect(()=>{
