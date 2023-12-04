@@ -1,16 +1,17 @@
-import {Box, Button, FormControl,  Grid,  InputLabel, ListItemIcon, ListItemText, Menu, MenuItem, Select,Tooltip, Typography} from '@mui/material';
+import {Box, Button, CircularProgress, FormControl,  Grid,  InputLabel, ListItemIcon, ListItemText, Menu, MenuItem, Select,Tooltip, Typography} from '@mui/material';
 import { NormalText,  } from './Dashboard';
 import RowContainerBetween from '../components/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
 import { DeleteForever, Download, FiberNew, MoreVert, SettingsTwoTone, } from '@mui/icons-material';
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect, useContext} from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { type App } from 'waziup';
 import Backdrop from '../components/Backdrop';
+import { DevicesContext } from '../context/devices.context';
 type App1 =App &{
     description:string
 } 
-const DropDown = ({handleChange,matches,recommendedApps,customAppInstallHandler,installApp, age}:{installApp:(id:string)=>void, customAppInstallHandler:()=>void, matches:boolean,recommendedApps:RecomendedApp[], handleChange:()=>void,age: string})=>(
+const DropDown = ({handleChange,matches,recommendedApps,customAppInstallHandler,installApp, age}:{installApp:(image:string, id:string)=>void, customAppInstallHandler:()=>void, matches:boolean,recommendedApps:RecomendedApp[], handleChange:()=>void,age: string})=>(
     <FormControl sx={{p:0, border:'none', width: matches?'35%':'45%', }}>
         <InputLabel id="demo-simple-select-helper-label">Install App</InputLabel>
         <Select sx={{width:'100%',py:0,}} labelId="demo-simple-select-helper-label"
@@ -23,7 +24,7 @@ const DropDown = ({handleChange,matches,recommendedApps,customAppInstallHandler,
             }} value={age} label="Age" onChange={handleChange}>
             {
                 recommendedApps.map((app)=>(
-                    <MenuItem onClick={()=>installApp(app.image)} key={app.id} value={app.id} sx={{display:'flex',width:'100%', justifyContent:'space-between'}}>
+                    <MenuItem onClick={()=>installApp(app.image,app.id)} key={app.id} value={app.id} sx={{display:'flex',width:'100%', justifyContent:'space-between'}}>
                         <Box display={'flex'} alignItems={'center'}>
                             <Box component={'img'} sx={{width:20,mx:1, height:20}} src='/wazilogo.svg' />
                             <Tooltip color='black' followCursor  title={app.description} placement="top-start">
@@ -60,7 +61,7 @@ export const GridItem=({children}:{children:React.ReactNode})=>(
     <Grid item md={6} lg={4} xl={4}  sm={6} xs={12} minHeight={100} my={1} px={1} >
         <Box minHeight={100} sx={{px:2, py:1, position:'relative', bgcolor: 'white', borderRadius:2, }}>
             {children}
-            <Button sx={{fontWeight:'700'}}>OPEN</Button>
+            <Button sx={{fontWeight:'500',bgcolor:'#F4F7F6',my:1, color:'info.main',width:'100%'}}>OPEN</Button>
         </Box>
     </Grid>
 );
@@ -72,6 +73,7 @@ type RecomendedApp={
 export default function Apps() {
     const [matches] = useOutletContext<[matches: boolean]>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [loadingUninstall,setLoadingUninstall] = React.useState<boolean>(false);
     const open = Boolean(anchorEl);
     const [modalProps, setModalProps] = useState<{ open: boolean, title: string, children: React.ReactNode }>({ open: false, title: '', children: null });
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -80,12 +82,12 @@ export default function Apps() {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const [apps, setApps] = useState<App[]>([]);
+    const {apps,getApps} =useContext(DevicesContext);
     const [recommendedApps,setRecommendedApps] = useState<RecomendedApp[]>([]);
     const [logs,setLogs] = useState<string>('');
     const [error, setError] = useState<Error | null | string>(null);
-    function installAppFunction(id:string){
-        window.wazigate.installApp(id).then((res)=>{
+    function installAppFunction(image:string,id:string){
+        window.wazigate.installApp(image).then((res)=>{
             console.log(res);
         }).catch((err)=>{
             console.log(err);
@@ -93,7 +95,6 @@ export default function Apps() {
         setInterval(()=>fetchInstallLogs(id),1000);
     }
     useEffect(() => {
-        window.wazigate.getApps().then(setApps, setError);
         window.wazigate.get<RecomendedApp[]>('apps?available').then((appsr)=>{
             setRecommendedApps(appsr);
         }
@@ -103,7 +104,7 @@ export default function Apps() {
     function handleInstallAppModal(){
         setModalProps({open:true, title:'Install App', children:<>
             <Box  width={'100%'}  bgcolor={'#fff'}>
-                <form onSubmit={(e)=>{e.preventDefault(); handleLogsModal(customAppId)}}>
+                <form onSubmit={(e)=>{e.preventDefault(); handleLogsModal(customAppId,customAppId)}}>
                     <Box borderBottom={'1px solid black'} px={2} py={2}>
                         <input style={{width:'100%',padding:'8px 4px',borderRadius:5, outline:'none',border:'1px solid  black'}} value={customAppId} onChange={handleCustomAppIdChange}  id="outlined-basic" required placeholder="Full docker  image name and associated tag(image_name:tag)" />
                     </Box>
@@ -116,7 +117,7 @@ export default function Apps() {
         </>});
     }
     const [customAppId,setCustomAppId] = useState<string>('');
-    function handleLogsModal(id:string){
+    function handleLogsModal(image:string, id:string){
         console.log(id);
         
         setModalProps({open:true, title:'Installing waizgate-j....', children:<>
@@ -130,7 +131,7 @@ export default function Apps() {
                 </Box>
             </Box>
         </>});
-        installAppFunction(id)
+        installAppFunction(image,id)
     }
     const [uninstLoader,setUninstLoader] = useState<boolean>(false);
     const [showAppSettings,setShowAppSettings] = useState<boolean>(false);
@@ -156,13 +157,20 @@ export default function Apps() {
     const uninstall = () => {
 
         console.log(appToUninstall);
+        
+        setLoadingUninstall(true)
         window.wazigate.uninstallApp(appToUninstall?appToUninstall?.id:'', false)
         .then((res) => {
             console.log(res);
             setUninstLoader(false);
             load();
+            setAppToUninstall(null);
+            getApps();
         }).catch((err)=>{
+            // setAppToUninstall(null);
             console.log('error encountered',err);
+            setLoadingUninstall(false);
+            
         })
     };
     function closeModal(){
@@ -194,6 +202,13 @@ export default function Apps() {
                             <Box borderBottom={'1px solid black'} px={2} py={2}>
                                 <Typography>Do you wish to uninstall {appToUninstall?.name}</Typography>
                             </Box>
+                            {
+                                loadingUninstall &&(
+                                    <Box borderBottom={'1px solid black'} width={'100%'} my={1}>
+                                        <CircularProgress color='info'  />
+                                    </Box>
+                                )
+                            }
                             <Box px={2} py={1}>
                                 <Button onClick={uninstall} variant={'contained'} sx={{mx:2}} color={'primary'}>Uninstall</Button>
                                 <Button onClick={()=>{setAppToUninstall(null); setUninstLoader(!uninstLoader)}} variant={'contained'} sx={{mx:2}} color={'error'}>Cancel</Button>
@@ -279,8 +294,8 @@ export default function Apps() {
                                             </Menu>
                                         </Box>
                                     </Box>
-                                    <Typography fontSize={15} color={DEFAULT_COLORS.secondary_black}>Status: <Typography component={'span'} fontSize={15} color={app.state?app.state.running?'green':'black':'red'}>{app.state?app.state.running?'Running':'Stopped':'Running'}</Typography></Typography>
-                                    <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black}>{(app as App1).description}</Typography>
+                                    <Typography fontSize={15} fontWeight={200} my={1} color={DEFAULT_COLORS.navbar_dark}>Status: <Typography component={'span'} fontSize={15} color={DEFAULT_COLORS.navbar_dark}>{app.state?app.state.running?'Running':'Stopped':'Running'}</Typography></Typography>
+                                    <Typography fontSize={14} my={1} color={DEFAULT_COLORS.secondary_black}>{(app as App1).description.length>40?(app as App1).description.slice(0,39)+'...':(app as App1).description}</Typography>
                                 </GridItem>
                         )})
                     }
