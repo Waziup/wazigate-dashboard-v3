@@ -81,8 +81,8 @@ export default function MobileDashboard() {
                                     <WifiTethering sx={{ textAlign:'center',  color:'#fff', }} />
                                 </Box>
                                 <Box>
-                                    <Typography color={'black'} fontWeight={300}>LoraWAN</Typography>
-                                    <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>by Waziup</Typography>
+                                    <Typography color={'#292F3F'} fontWeight={300}>LoraWAN</Typography>
+                                    <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>by Waziup</Typography>
                                 </Box>
                             </RowContainerNormal>
                             <Typography color={'#C5C5C5'} fontWeight={300}>offline</Typography>    

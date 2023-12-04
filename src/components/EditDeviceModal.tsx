@@ -1,4 +1,4 @@
-import { Close } from "@mui/icons-material";
+import { Close, Router } from "@mui/icons-material";
 import { Box, FormControl, Modal, Typography } from "@mui/material";
 import { Device } from "waziup";
 import RowContainerBetween from "./RowContainerBetween";
@@ -6,6 +6,7 @@ import { DropDownCreateDeviceTab1 } from "./CreateDeviceTab1";
 import { SelectElementString } from "../pages/Automation";
 import AddTextShow from "./AddTextInput";
 import { Android12Switch } from "./Switch";
+import RowContainerNormal from "./RowContainerNormal";
 const style = {
     position: 'absolute',
     top: '50%',
@@ -44,7 +45,10 @@ export default function EditDeviceModal({device,openModal,handleToggleModal}:{ h
                 />
                 <SelectElementString mx={0} my={2} title='Device Codec' value={'JSON'} handleChange={()=>{}} conditions={['JSON','b']} />
                 <RowContainerBetween additionStyles={{my:1}}>
-                    <Typography fontSize={13}>LoRAWAN Settings</Typography>
+                    <RowContainerNormal>
+                        <Router sx={{mx:1, fontSize: 20,color:'primary.main' }} />
+                        <Typography color={'primary.main'} fontSize={13}>LoRAWAN Settings</Typography>
+                    </RowContainerNormal>
                     <Android12Switch onChange={()=>{}} color='info' />
                 </RowContainerBetween>
                 <Box my={2}>

@@ -10,7 +10,7 @@ import RowContainerBetween from "../components/RowContainerBetween";
 import { DevicesContext } from "../context/devices.context";
 import { App, Device } from "waziup";
 export const Item=({more,color,children, title}:{more:string,children:React.ReactNode, color:string,title:string})=>(
-    <Box width={'33%'} minWidth={250} mx={2} sx={{ height: '100%',borderRadius:2, bgcolor: 'white', p: 2 }}>
+    <Box mx={2} sx={{width:'33%',minWidth:250,mx:2, height: '100%',borderRadius:2, bgcolor: 'white', p: 2 }}>
         {children}
         <NormalText title={title} />
         <Typography fontSize={14} color={color} fontWeight={300}>{more}</Typography>
@@ -50,7 +50,7 @@ const AppStatus = ({apps}:{apps:App[]})=>(
         </Stack>
     </Box>
 );
-export const NormalText= ({title}:{title:string})=>(<Typography color={'black'}>{title}</Typography>)
+export const NormalText= ({title}:{title:string})=>(<Typography color={DEFAULT_COLORS.navbar_dark}>{title}</Typography>)
 function Dashboard() {
     const {devices,apps}=useContext(DevicesContext);
     useEffect(()=>{

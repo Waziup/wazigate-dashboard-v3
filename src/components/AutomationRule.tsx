@@ -16,8 +16,8 @@ export function RuleEditHandler({enableRuleEdit,toggleRuleEdit}:{toggleRuleEdit:
                     </>
                 ):(
                     <>
-                        <ModeOutlined onClick={toggleRuleEdit} sx={{fontSize:20, color:'black',mx:1}}/>
-                        <MoreVert sx={{fontSize:20,color:'black',mx:1}}/>
+                        <ModeOutlined onClick={toggleRuleEdit} sx={{fontSize:20, color:'primary.main',mx:1}}/>
+                        <MoreVert sx={{fontSize:20,color:'primary.main',mx:1}}/>
                     </>
                 )
 

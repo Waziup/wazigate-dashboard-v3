@@ -13,9 +13,9 @@ export default function CustomApp(){
             <Box display={'flex'} py={2}  justifyContent={'space-between'}>
                 <Box>
                     <NormalText title="Waziup App" />
-                    <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>wazigate-edge</Typography>
+                    <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>wazigate-edge</Typography>
                 </Box>
-                <MoreVert sx={{color:'black'}}/>
+                <MoreVert sx={{color:'#292F3F'}}/>
             </Box>
             <Typography color={DEFAULT_COLORS.secondary_black}>Status: <span color='red'>Running</span></Typography>
             <Typography color={DEFAULT_COLORS.secondary_black}>Waziup firmware for Edge Computing</Typography>

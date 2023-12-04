@@ -27,6 +27,7 @@ const style = {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 2,
+    borderRadius:2,
 };
 const IconStyle = {
     cursor:'pointer',
@@ -44,8 +45,10 @@ export default function CreateDeviceModalWindow({openModal,handleToggleModal,sub
                     <Box sx={style}>
                         <RowContainerBetween>
                             {
-                                screen==='tab2'&&(
+                                screen==='tab2'?(
                                     <ArrowBack onClick={()=>{handleScreenChange('tab1')}} sx={{...IconStyle, fontSize:20}} />
+                                ):(
+                                    <Box></Box>
                                 )
                             }
                             <Close onClick={handleToggleModal} sx={{...IconStyle, fontSize:20}} />

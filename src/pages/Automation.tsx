@@ -47,8 +47,8 @@ export const SelectElement = ({handleChange,title,conditions,isDisabled, value}:
 );
 export const SelectElementString = ({handleChange,title,mx,my,  conditions,isDisabled, value}:HTMLSelectPropsString)=>(
     <Box minWidth={120} my={my !==undefined?my:0} mx={mx !==undefined?mx:2}>
-        <Typography  fontSize={12} color={DEFAULT_COLORS.secondary_black}>{title}</Typography>
-        <FormControl disabled={isDisabled} fullWidth>
+        <Typography  fontSize={12} color={DEFAULT_COLORS.navbar_dark}>{title}</Typography>
+        <FormControl color="primary" disabled={isDisabled} fullWidth>
             <NativeSelect
                 defaultValue={30}
                 inputProps={{
@@ -60,7 +60,7 @@ export const SelectElementString = ({handleChange,title,mx,my,  conditions,isDis
                 onChange={handleChange}
             >
                 {conditions.map((condition,index)=>(
-                    <option key={index} value={condition}>{condition}</option>
+                    <option color={DEFAULT_COLORS.navbar_dark} key={index} value={condition}>{condition}</option>
                 ))}
             </NativeSelect>
         </FormControl>

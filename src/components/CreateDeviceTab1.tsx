@@ -1,8 +1,8 @@
-import { Box, FormControl, Typography, Radio, InputLabel, MenuItem, Select } from "@mui/material"
+import { Box, FormControl, Typography, Radio, InputLabel, MenuItem, Select, } from "@mui/material"
 export const DropDownCreateDeviceTab1 = ({handleChangeSelect,options,selectedValue, age}:{selectedValue:string, handleChangeSelect:(e:React.ChangeEvent<HTMLInputElement>)=>void,  options:{name:string,imageurl:string}[], age: string})=>(
-    <FormControl sx={{p:0,mt:2, border:'none', width: '100%', }}>
-        <InputLabel id="demo-simple-select-helper-label">Select board Type</InputLabel>
-        <Select sx={{width:'100%',py:0,}} labelId="demo-simple-select-helper-label"
+    <FormControl variant="standard" sx={{p:0,mt:2, border:'none', width: '100%', }}>
+        <InputLabel id="demo-simple-select-helper-labe/l">Select board Type</InputLabel>
+        <Select sx={{width:'100%',py:0,border:'none'}} labelId="demo-simple-select-helper-label"
             id="demo-simple-select-helper" onClose={()=>{
                 setTimeout(() => {
                     if (document?.activeElement) {
@@ -10,9 +10,6 @@ export const DropDownCreateDeviceTab1 = ({handleChangeSelect,options,selectedVal
                     }
                 }, 0);
             }} value={age} label="Age" onChange={()=>{}}>
-                <MenuItem selected value="b">
-                    <em>Nonffde</em>
-                </MenuItem>
                 {
                     options.map((op,idx)=>(
                         <MenuItem key={idx} onClick={()=>{}}  sx={{display:'flex',width:'100%', justifyContent:'space-between'}}>
@@ -42,7 +39,7 @@ export default function CreateDeviceTab1({handleChange,deviceName,handleChangeSe
     
     return(
             <Box>
-                <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid black'}}>
+                <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #292F3F'}}>
                     <Typography color={'primary'} mb={.4} fontSize={12}>Device name</Typography>
                     <input autoFocus onInput={handleChange} name="name" placeholder='Enter device name' value={deviceName} style={{border:'none',width:'100%',padding:'6px 0', outline:'none'}}/>
                 </FormControl>
