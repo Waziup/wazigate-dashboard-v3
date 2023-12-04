@@ -4,7 +4,8 @@ interface ContextValues{
     devices: Device[]
     apps: App[],
     setDevicesFc:(devices:Device[])=>void,
-    setAppsFc:(apps:App[])=>void
+    setAppsFc:(apps:App[])=>void,
+    getApps:()=>void
 }
 export const DevicesContext = createContext<ContextValues>({
     devices:[],
@@ -14,6 +15,9 @@ export const DevicesContext = createContext<ContextValues>({
     },
     setAppsFc(apps) {
         console.log(apps);
+    },
+    getApps() {
+        console.log("get apps");
     }
 });
 
@@ -22,18 +26,22 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     const setDevicesFc = ((devices:Device[])=>setDevices(devices));
     const setAppsFc = ((apps:App[])=>setApps(apps));
     const [apps, setApps] = useState<App[]>([]);
-    useEffect(() => {
-        window.wazigate.getDevices().then(setDevices);
+    const getApps = ()=>{
         window.wazigate.getApps().then((res)=>{
             setApps(res);
         });
+    }
+    useEffect(() => {
+        window.wazigate.getDevices().then(setDevices);
+        getApps();
 
     }, []);
     const value={
         devices,
         apps,
         setDevicesFc,
-        setAppsFc
+        setAppsFc,
+        getApps
     }
     return(
         <DevicesContext.Provider value={value}>
