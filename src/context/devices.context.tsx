@@ -3,15 +3,24 @@ import { App, Device } from "waziup";
 interface ContextValues{
     devices: Device[]
     apps: App[],
-    setDevicesFc:(devices:Device[])=>void
+    setDevicesFc:(devices:Device[])=>void,
+    setAppsFc:(apps:App[])=>void
 }
-export const DevicesContext = createContext<ContextValues>({devices:[],apps:[],setDevicesFc(devices) {
-    console.log(devices);
-},});
+export const DevicesContext = createContext<ContextValues>({
+    devices:[],
+    apps:[],
+    setDevicesFc(devices) {
+        console.log(devices);
+    },
+    setAppsFc(apps) {
+        console.log(apps);
+    }
+});
 
 export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     const [devices, setDevices] = useState<Device[]>([]);
     const setDevicesFc = ((devices:Device[])=>setDevices(devices));
+    const setAppsFc = ((apps:App[])=>setApps(apps));
     const [apps, setApps] = useState<App[]>([]);
     useEffect(() => {
         window.wazigate.getDevices().then(setDevices);
@@ -23,7 +32,8 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     const value={
         devices,
         apps,
-        setDevicesFc
+        setDevicesFc,
+        setAppsFc
     }
     return(
         <DevicesContext.Provider value={value}>
