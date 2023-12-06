@@ -1,6 +1,6 @@
 import {Table,TableBody,TableCell,TableContainer,TableHead,TableRow,Paper, Typography, Box} from '@mui/material';
 import { DEFAULT_COLORS } from '../constants';
-import { Sensors } from '@mui/icons-material';
+import { Sensors,History, DeviceHub } from '@mui/icons-material';
 function createData(
   name: string,
   runtime: number,
@@ -19,13 +19,17 @@ const rows = [
 export default function BasicTable() {
     return (
         <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650,maxWidth:'100%' }} aria-label="simple table">
+            <Table stickyHeader sx={{minWidth:440, maxWidth:'100%' }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell align="right">Run Time</TableCell>
-                        <TableCell align="right">Interfaces</TableCell>
-                        <TableCell align="right">Status</TableCell>
+                        <TableCell sx={{fontWeight:'bold'}}>Name</TableCell>
+                        <TableCell align="right">
+                            <History sx={{fontSize:15,fontWeight:900, color:DEFAULT_COLORS.navbar_dark}}/>
+                        </TableCell>
+                        <TableCell align="right">
+                            <DeviceHub sx={{fontSize:15, color:DEFAULT_COLORS.navbar_dark}}/>
+                        </TableCell>
+                        <TableCell sx={{fontWeight:'bold'}} align="right">Status</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -34,24 +38,24 @@ export default function BasicTable() {
                         key={row.name}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell component="th" scope="row">
+                            <TableCell width={260}  >
                                 <Box alignItems={'center'} display={'flex'}>
-                                    <Box height={'50%'} borderRadius={1} mx={1} p={.5} bgcolor={DEFAULT_COLORS.primary_blue}>
+                                    <Box height={'50%'} borderRadius={1} mx={0} p={.5} bgcolor={DEFAULT_COLORS.primary_blue}>
                                         <Sensors sx={{fontSize:15, color:'#fff'}}/>
-                                        <Typography fontSize={10} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
+                                        <Typography fontSize={10} mx={0} color={'white'} component={'span'}>WaziDev</Typography>
                                     </Box>
                                     <Box>
-                                        <Typography color={DEFAULT_COLORS.primary_black}>
+                                        <Typography fontSize={[10,12,16,12,10]} color={DEFAULT_COLORS.primary_black}>
                                             {row.name}
                                         </Typography> 
-                                        <Typography color={DEFAULT_COLORS.secondary_black}>Last updated: 10 seconds</Typography>
+                                        <Typography fontSize={[10,11,11,12,10]}  color='#797979'>Last updated: 10 seconds</Typography>
                                     </Box>
                                 </Box>
                             </TableCell>
-                            <TableCell align="right">{row.runtime}</TableCell>
-                            <TableCell align="right">{row.interfaces}</TableCell>
-                            <TableCell color={row.status?'#499DFF':'orange'} align="right">
-                                <Typography color={row.status?'#499DFF':'orange'} fontWeight={300}>{row.status?'active':'offline'}</Typography>
+                            <TableCell color='#797979' align="right">{row.runtime}</TableCell>
+                            <TableCell color='#797979' align="right">{row.interfaces}</TableCell>
+                            <TableCell color={row.status?'#499DFF':'#797979'} align="right">
+                                <Typography color={row.status?'#499DFF':'#797979'} fontWeight={300}>{row.status?'active':'offline'}</Typography>
                             </TableCell>
                         </TableRow>
                     ))}

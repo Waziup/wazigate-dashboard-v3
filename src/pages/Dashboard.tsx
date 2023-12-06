@@ -39,11 +39,11 @@ const AppStatus = ({apps}:{apps:App[]})=>(
                         <RowContainerNormal >
                             <WaterDrop sx={{ fontSize: [20,35,38,40,40],color:'info.main' }} />
                             <Box>
-                                <Typography color={'black'} fontWeight={300}>{app.name}</Typography>
+                                <Typography color={'black'} fontSize={[10,12,10,12,14]} fontWeight={300}>{app.name}</Typography>
                                 <TextItem text="Last active 3h ago"/>
                             </Box>
                         </RowContainerNormal>
-                        <Typography sx={{color:app.state?app.state.running?'info.main':'#CCC400':'info.main',fontWeight:300, fontSize:[10,12,16,15,10]}}>{app.state?app.state.running?'Running':'Stopped':'Running'}</Typography> 
+                        <Typography sx={{color:app.state?app.state.running?'info.main':'#CCC400':'info.main',fontWeight:300, fontSize:[10,12,16,12,10]}}>{app.state?app.state.running?'Running':'Stopped':'Running'}</Typography> 
                     </RowContainerBetween>
                 ))
             }
