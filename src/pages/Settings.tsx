@@ -12,13 +12,14 @@ import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { useState,useEffect } from 'react';
 
 const IconStyle: SxProps<Theme> ={ fontSize: 20,mr:2, color:DEFAULT_COLORS.primary_black };
 const GridItem=({children,text, matches,icon}:{matches:boolean,additionStyles?: SxProps<Theme>, text:string,children:React.ReactNode,icon:React.ReactNode})=>(
     <Grid item xs={12} md={6} m={matches?2:0}  my={1} borderRadius={2} bgcolor={'#fff'} >
         <Box sx={{display:'flex',borderTopLeftRadius:5,borderTopRightRadius:5,bgcolor:'#D8D8D8',p:1,alignItems:'center'}}p={1} >
             {icon}
-            <Typography color={'black'} fontWeight={500}>{text}</Typography>
+            <Typography color={'#212529'} fontWeight={500}>{text}</Typography>
         </Box>
         {children}
     </Grid>
@@ -64,6 +65,16 @@ const RowContainer = ({children,additionStyles}:{children:React.ReactNode, addit
 )
 function Settings() {
     const [matches] = useOutletContext<[matches: boolean]>();
+    const today = new Date();
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const [currentTime, setCurrentTime] = useState<string>('');
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+          setCurrentTime(dayjs().format('HH:mm:ss'));
+        }, 1000);
+        return () => {clearInterval(timer);}
+      }, []);
     return (
         <Box sx={{p:3,overflowY:'scroll', height:'100%'}}>
             <Box>
@@ -74,11 +85,11 @@ function Settings() {
                 <GridItem matches={matches} text='Network' icon={<CellTower sx={IconStyle} />}>
                     <Box my={2}>
                         <RowContainer>
-                            <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.primary_black} fontWeight={300}>Waziup</Typography>
+                            <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Waziup</Typography>
                             <CheckCircle sx={{color:DEFAULT_COLORS.primary_black,fontSize:17}} />
                         </RowContainer>
                         <RowContainer>
-                            <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>IP address</Typography>
+                            <Typography color={'primary.main'} fontWeight={300}>IP address</Typography>
                             <Typography color={DEFAULT_COLORS.primary_black} fontWeight={700}>192.168.88.1</Typography>
                         </RowContainer>
                     </Box>
@@ -86,25 +97,25 @@ function Settings() {
                 <GridItem matches={matches} text='Time Settings' icon={<AccessTime sx={IconStyle} />}>
                     <Box my={2}>
                         <RowContainer>
-                            <Typography color={DEFAULT_COLORS.primary_black} fontWeight={300}>Local Time</Typography>
-                            <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.primary_black} fontWeight={700}>10:29:08 AM</Typography>
+                            <Typography color={'primary.main'} fontWeight={300}>Local Time</Typography>
+                            <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.primary_black} fontWeight={700}>{currentTime}</Typography>
                         </RowContainer>
                         <RowContainer>
-                            <Typography color={DEFAULT_COLORS.primary_black} fontWeight={300}>Date</Typography>
-                            <Typography textTransform={'uppercase'} fontSize={14} color={DEFAULT_COLORS.primary_black} fontWeight={700}>2023-01-23</Typography>
+                            <Typography color={'primary.main'} fontWeight={300}>Date</Typography>
+                            <Typography textTransform={'uppercase'} fontSize={14} color={DEFAULT_COLORS.primary_black} fontWeight={700}>{today.toLocaleDateString().toString().replaceAll('/','-')}</Typography>
                         </RowContainer>
                         <RowContainer>
-                            <Typography color={DEFAULT_COLORS.primary_black} fontWeight={300}>Time Zone</Typography>
-                            <Typography  color={DEFAULT_COLORS.primary_black} fontSize={14} fontWeight={700}>Europe/Berlin</Typography>
+                            <Typography color={'primary.main'} fontWeight={300}>Time Zone</Typography>
+                            <Typography  color={DEFAULT_COLORS.primary_black} fontSize={14} fontWeight={700}>{timeZone}</Typography>
                         </RowContainer>
                         <RowContainerBetween additionStyles={{m:1,px:1}}>
                             <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>Set TimeZone Automatically</Typography>
-                            <Android12Switch/>
+                            <Android12Switch checked color='info'/>
                         </RowContainerBetween>
                         <Box bgcolor={'#D4E3F5'} borderRadius={1} p={1} m={1}>
                             <RowContainerBetween additionStyles={{m:1,}}>
-                                <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>Set TimeZone Automatically</Typography>
-                                <Android12Switch/>
+                                <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>set time and date manually</Typography>
+                                <Android12Switch color='info' />
                             </RowContainerBetween>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DemoContainer
@@ -125,13 +136,13 @@ function Settings() {
                 </GridItem>
                 <GridItem matches={matches} text='Gateway Power' icon={<PowerSettingsNew sx={IconStyle} />}>
                     <RowContainerNormal additionStyles={{m:1, borderRadius:1, p:1}}>
-                        <Button  variant="contained" sx={{mx:1}} startIcon={<PowerSettingsNew />}>
+                        <Button  variant="contained" sx={{mx:1,fontWeight:'bold', bgcolor:'info.main'}} startIcon={<PowerSettingsNew />}>
                             Delete
                         </Button>
-                         <Button variant="contained"  sx={{mx:1,bgcolor:'info.main'}} startIcon={<RestartAlt />}>
+                         <Button variant="contained"  sx={{mx:1,fontWeight:'bold', bgcolor:'info.main'}} startIcon={<RestartAlt />}>
                             Restart
                         </Button>
-                        <Button variant="contained" sx={{mx:1}} startIcon={<Logout/>}>
+                        <Button variant="contained" sx={{mx:1,fontWeight:'bold', bgcolor:'info.main'}} startIcon={<Logout/>}>
                             Logout
                         </Button>
                     </RowContainerNormal>
