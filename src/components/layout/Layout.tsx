@@ -1,7 +1,7 @@
 import { Box, Grid, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { Outlet, useLocation, } from 'react-router-dom';
+import { Link, Outlet, useLocation, } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import { Search, Menu, } from '@mui/icons-material';
+import {Menu, Search, SettingsOutlined} from '@mui/icons-material';
 import RowContainerBetween from '../RowContainerBetween';
 import { useState } from 'react';
 function Layout() {
@@ -10,7 +10,8 @@ function Layout() {
     const matchesMd = useMediaQuery(theme.breakpoints.between('sm','md'));
     const [open,setOpen] = useState(false);
     const handleToggle=()=>{setOpen(!open)}
-    const {state} = useLocation();
+    const {state,pathname} = useLocation();
+    console.log(pathname);
     return (
         <>
             {
@@ -30,7 +31,15 @@ function Layout() {
                                 <Menu onClick={handleToggle}  sx={{mx:2,color:'white', cursor:'pointer'}}/>
                                 <Typography color={'white'} fontWeight={'600'}>{state?state.title:'Title'}</Typography>
                             </Box>
-                            <Search sx={{ color: 'white', mx: 1 }} />
+                            {
+                                pathname.includes('/sensors')?(
+                                    <Link to={''}>
+                                        <SettingsOutlined onClick={handleToggle} sx={{ color: 'white', mx: 1, }} />
+                                    </Link>
+                                ):(
+                                    <Search sx={{ color: 'white', mx: 1 }} />
+                                )
+                            }
                         </RowContainerBetween>
                         <Box onClick={handleToggle} sx={{position:'absolute',top:0, display:open?'flex':'none', height:'100%',width:'100%',bgcolor:'rgba(0,0,0,.5)',zIndex:99}}>
                             <Box sx={{bgcolor:'primary.main',display:'flex',flexDirection:'column',alignItems:'center', height:'100%',width:'65%'}}>
