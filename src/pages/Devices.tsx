@@ -144,7 +144,7 @@ function Devices() {
                                             <Sensors sx={{ fontSize: 15, color: '#fff' }} />
                                             <Typography fontSize={13} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
                                         </Box>
-                                        <Box onClick={() => { }} sx={{ borderBottom: '1px solid black', py: 1.5, ":hover": { py: 1.5 }, px: 2, }}>
+                                        <Box onClick={() => {navigate(`${device.id}/settings`,{state:{...device}}) }} sx={{ borderBottom: '1px solid black', py: 1.5, ":hover": { py: 1.5 }, px: 2, }}>
                                             <RowContainerBetween additionStyles={{}} >
                                                 <Box>
                                                     <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>

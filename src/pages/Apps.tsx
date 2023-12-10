@@ -93,15 +93,16 @@ export default function Apps() {
     const logsRef = React.useRef<string>('');
     const [error, setError] = useState<Error | null | string>(null);
     function installAppFunction(image:string,id:string){
-        const myInterVal = setInterval(async ()=>{await fetchInstallLogs(id)},2000);
+        setAppToInstallId(id);
+        // const myInterVal = setInterval(async ()=>{await fetchInstallLogs(id)},2000);
         window.wazigate.installApp(image).then((res)=>{
             console.log(res);
-            clearInterval(myInterVal);
+            // clearInterval(myInterVal);
             logsRef.current = res as unknown as string;
             setLogs(res as unknown as string);
         }).catch((err)=>{
             console.log(err);
-            clearInterval(myInterVal);
+            // clearInterval(myInterVal);
             setLogs(err as string);
         })
     }
@@ -113,6 +114,7 @@ export default function Apps() {
     }, []);
     const handleCustomAppIdChange = (e:React.ChangeEvent<HTMLInputElement>)=>{console.log(e.target.value); setCustomAppId(e.target.value)}
     const [customAppId,setCustomAppId] = useState<string>('');
+    const [appToInstallId,setAppToInstallId] = useState<string>('');
     console.log(customAppId,'custom app id');
     
     function handleInstallAppModal(){
@@ -121,7 +123,6 @@ export default function Apps() {
                 <form onSubmit={(e)=>{e.preventDefault(); handleLogsModal(customAppId,customAppId)}}>
                     <Box borderBottom={'1px solid black'} px={2} py={2}>
                         <input style={{width:'100%',padding:'8px 4px',borderRadius:5, outline:'none',border:'1px solid  black'}} 
-                            // value={customAppId} 
                             onInput={handleCustomAppIdChange}  
                             id="outlined-basic" required 
                             placeholder="docker image name and tag(image_name:tag)" 
@@ -139,16 +140,12 @@ export default function Apps() {
     function handleLogsModal(image:string, id:string){
         console.log('ID is: ',id);
         console.log('Image is: ',image);
+        setAppToInstallId(id);
         const appToInstall = apps.find((app)=>app.id===id);
         console.log(appToInstall);
         setModalProps({open:true, title:'Installing New App', children:<>
             <Box  width={'100%'} bgcolor={'#fff'}>
-                <Box borderBottom={'1px solid black'} bgcolor={'black'} width={'100%'} mb={1} height={200} px={2} py={2}>
-                    <Typography color={'#fff'}>{logsRef.current}</Typography>
-                    <div style={{color:'#fff'}} dangerouslySetInnerHTML={{__html:logs}} />
-                </Box>
-                <Box  px={2} py={1}>
-                    <Button variant={'contained'} sx={{mx:2}} color={'primary'}>DOWNLOAD</Button>
+                <Box px={2} py={1}>
                     <Button onClick={closeModal} variant={'contained'} sx={{mx:2}} color={'error'}>CLOSE</Button>
                 </Box>
             </Box>
@@ -184,8 +181,17 @@ export default function Apps() {
         });
     };
     useEffect(() => {
-        
-    },[]);
+        console.log('We are installing a new app and the ID is passed as: ',appToInstallId)
+        if (modalProps.open && modalProps.title==='Installing New App') {
+            fetchInstallLogs(appToInstallId);
+            const intervalId = setInterval(async () => {
+                await fetchInstallLogs(appToInstallId);
+              }, 1000); // Adjust the interval duration (in milliseconds) as needed
+              // Clean up the interval on component unmount
+            return () => clearInterval(intervalId);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[modalProps.open && modalProps.title==='Installing New App']);
     console.log(logs,'logs in app component');
     const setAppToUninstallFc = (id:number)=>{
         console.log(id);
@@ -229,7 +235,15 @@ export default function Apps() {
                         <Box borderBottom={'1px solid black'} px={2} py={2}>
                             <Typography>{modalProps.title}</Typography>
                         </Box>
-                        
+                        {
+                            logs &&(
+                                <Box maxWidth={'100%'} width={'100%'} height={200} bgcolor={'#000'}>
+                                    <Typography fontSize={10} color={'#fff'}>
+                                        {logs}
+                                    </Typography>
+                                </Box>
+                            )
+                        }
                         <Box borderBottom={'1px solid black'}  py={2}>
                             {modalProps.children}
                         </Box>
