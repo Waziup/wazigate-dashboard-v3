@@ -1,4 +1,4 @@
-import {Box, Button, CircularProgress, FormControl,  Grid,  InputLabel, ListItemText,  MenuItem,  Select,SelectChangeEvent,Tooltip, Typography} from '@mui/material';
+import {Box, Button, CircularProgress, FormControl,  Grid,  InputLabel, ListItemIcon, Menu,  MenuItem,  Select,SelectChangeEvent,Tooltip, Typography} from '@mui/material';
 import { NormalText,  } from './Dashboard';
 import RowContainerBetween from '../components/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
@@ -8,6 +8,7 @@ import { useOutletContext } from 'react-router-dom';
 import { type App } from 'waziup';
 import Backdrop from '../components/Backdrop';
 import { DevicesContext } from '../context/devices.context';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 type App1 =App &{
     description:string
 }
@@ -77,15 +78,12 @@ type RecomendedApp={
 }
 export default function Apps() {
     const [matches] = useOutletContext<[matches: boolean]>();
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [loadingUninstall,setLoadingUninstall] = React.useState<boolean>(false);
-    const [open,setOpen] = useState(false);
+    const open = Boolean(anchorEl)
     const [modalProps, setModalProps] = useState<{ open: boolean, title: string, children: React.ReactNode }>({ open: false, title: '', children: null });
-    const handleClick = () => {
-        setOpen(true);
-    };
     const handleClose = () => {
-        // setAnchorEl(null);
-        setOpen(false);
+        setAnchorEl(null);
     };
     const {apps,getApps} =useContext(DevicesContext);
     const [recommendedApps,setRecommendedApps] = useState<RecomendedApp[]>([]);
@@ -315,29 +313,40 @@ export default function Apps() {
                                             <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>{app.id}</Typography>
                                         </Box>
                                         <Box position={'relative'}>
-                                            <Button id="demo-positioned-button"
-                                                aria-controls={open ? 'demo-positioned-menu' : undefined}
-                                                aria-haspopup="true"
-                                                aria-expanded={open ? 'true' : undefined}
-                                                onClick={handleClick}
-                                                >
-                                                <MoreVert sx={{color:'black'}}/>
-                                            </Button>
-                                            <Box boxShadow={1} position={'absolute'} p={1}borderRadius={2} right={-10} top={0} bgcolor={'#fff'} display={open  ?'block':'none'}>
-                                                <Box onClick={()=>{handleClose()}} sx={{ display:'flex',alignItems:'center',cursor:'pointer'}}>
-                                                    <Settings color={'primary'} sx={{mx:1}} fontSize="small" />
-                                                    <ListItemText>settings</ListItemText>
-                                                </Box>
-                                                {
-                                                    idx ?(
-                                                        <Box onClick={()=>{setAppToUninstallFc(idx);handleClose()}} sx={{display:'flex',alignItems:'center',cursor:'pointer'}}  >
-                                                            <DeleteForever sx={{mx:1}} color='primary' fontSize="small" />
-                                                            <ListItemText color={'#292f3f'}>uninstall</ListItemText>
-                                                        </Box>
-                                                    ):null
-                                                }
-                                            </Box>
-                                            
+                                            <PopupState variant="popover" popupId="demo-popup-menu">
+                                                {(popupState) => (
+                                                    <React.Fragment>
+                                                        <Button id="demo-positioned-button"
+                                                            aria-controls={open ? 'demo-positioned-menu' : undefined}
+                                                            aria-haspopup="true"
+                                                            aria-expanded={open ? 'true' : undefined}
+                                                            // onClick={handleClick}
+                                                            {...bindTrigger(popupState)}
+                                                            >
+                                                            <MoreVert sx={{color:'black'}}/>
+                                                        </Button>
+                                                        
+                                                        <Menu {...bindMenu(popupState)}>
+                                                        <MenuItem onClick={(e)=>{console.log(e.currentTarget.value);popupState.close}} value={app.id} >
+                                                            <ListItemIcon>
+                                                                <Settings fontSize="small" />
+                                                            </ListItemIcon>
+                                                            Settings
+                                                        </MenuItem>
+                                                        {
+                                                            idx?(
+                                                                <MenuItem value={idx} onClick={()=>{setAppToUninstallFc(idx);popupState.close}}>
+                                                                    <ListItemIcon>
+                                                                        <DeleteForever fontSize="small" />
+                                                                    </ListItemIcon>
+                                                                    Uninstall
+                                                                </MenuItem>
+                                                            ):null
+                                                        }
+                                                        </Menu>
+                                                    </React.Fragment>
+                                                )}
+                                            </PopupState>
                                         </Box>
                                     </Box>
                                     <Typography fontSize={15} fontWeight={200} my={1} color={DEFAULT_COLORS.navbar_dark}>Status: <Typography component={'span'} fontSize={15} color={DEFAULT_COLORS.navbar_dark}>{app.state?app.state.running?'Running':'Stopped':'Running'}</Typography></Typography>

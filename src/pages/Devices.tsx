@@ -1,4 +1,4 @@
-import { Box, Button, Grid, CardContent, Typography, Icon, ListItemIcon, ListItemText, Menu, MenuItem, } from '@mui/material';
+import { Box, Button, Grid, CardContent, Typography, Icon, ListItemIcon, ListItemText, Menu, MenuItem, SelectChangeEvent, } from '@mui/material';
 import RowContainerBetween from '../components/RowContainerBetween';
 import { Add, DeleteOutline, ModeOutlined, MoreVert, Sensors, } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
@@ -23,14 +23,35 @@ function differenceInMinutes(date:Date){
     return Math.abs(Math.round(diff));
 
 }
+const initialNewDevice:Device = {
+    actuators:[],
+    created:new Date(),
+    id:'',
+    meta:{
+        type:'',
+        codec:'',
+        is_lorawan:false,
+        appkey:'',
+        device_addr:'',
+        nwkskey:'',
+    },
+    modified:new Date(),
+    name:'',
+    sensors:[],
+}
 function Devices() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
     const {devices,setDevicesFc} = useContext(DevicesContext);
     const [selectedDevice, setSelectedDevice] = useState<null | Device>(null);
-    const [deviceName, setDeviceName] = useState<string>('');
-    const handleToggleModal = () => setOpenModal(!openModal);
+    const [newDevice, setNewDevice] = useState<Device>(initialNewDevice);
+    const handleToggleModal = () => {
+        setOpenModal(!openModal);
+        if (!openModal) {
+            setNewDevice(initialNewDevice);
+        }
+    };
     const [openModal, setOpenModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
     const handleToggleEditModal = () => {
@@ -40,27 +61,32 @@ function Devices() {
         setSelectedDevice(null);
         setOpenEditModal(!openEditModal);
     }
-    const [makeLoraWAN, setMakeLoraWAN] = useState(false);
     const changeMakeLoraWAN = () => {
-        setMakeLoraWAN(!makeLoraWAN);
+        setNewDevice({
+            ...newDevice,
+            meta:{
+                ...newDevice.meta,
+                is_lorawan: !newDevice.meta.is_lorawan,
+            }
+        })
     }
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setDeviceName(event.target.value);
+        console.log(event.target.name, event.target.value);
+        
+        setNewDevice({
+            ...newDevice,
+            name: event.target.value,
+        })
+        // setDeviceName(event.target.value);
     }
     const handleClose = () => {
         setAnchorEl(null);
     };
     function submitCreateDevice(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log('Creating device', deviceName);
+        console.log('Creating device', newDevice);
         const device: Device = {
-            name: deviceName,
-            actuators: [],
-            sensors: [],
-            id: '',
-            created: new Date(),
-            meta: {},
-            modified: new Date(),
+            ...newDevice,
         }
         window.wazigate.addDevice(device)
             .then((res) => {
@@ -71,12 +97,42 @@ function Devices() {
                 console.log('Error encountered: ', err)
             });
     }
-    const [selectedValue, setSelectedValue] = useState('a');
+    const [selectedValue, setSelectedValue] = useState('');
     const blockOnClick = (value: string) => {
         setSelectedValue(value);
     }
-    const handleChangeSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeSelect = (event: SelectChangeEvent<string>) => {
         setSelectedValue(event.target.value);
+        console.log(event.target.value);
+        
+        setNewDevice({
+            ...newDevice,
+            meta:{
+                ...newDevice.meta,
+                type: event.target.value
+            }
+        })
+    };
+    const handleTextInputChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        console.log(e.target.name,e.target.value);
+        setNewDevice({
+            ...newDevice,
+            meta:{
+                ...newDevice.meta,
+                [e.target.name]:e.target.value
+            }
+        })
+    }
+    const handleChangeDeviceCodec = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        // setSelectedValue(event.target.value);
+        console.log(event.target.name,event.target.value);
+        
+        setNewDevice({
+            ...newDevice,
+            meta:{
+                codec: event.target.value
+            }
+        })
     };
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -118,9 +174,10 @@ function Devices() {
                 screen={screen}
                 handleScreenChange={handleScreenChange}
                 blockOnClick={blockOnClick}
-                deviceName={deviceName}
+                newDevice={newDevice}
                 changeMakeLoraWAN={changeMakeLoraWAN}
-                makeLoraWAN={makeLoraWAN}
+                handleChangeDeviceCodec={handleChangeDeviceCodec}
+                onTextInputChange={handleTextInputChange}
             />
             <EditDeviceModal device={selectedDevice as Device}
                 openModal={openEditModal}
@@ -144,9 +201,9 @@ function Devices() {
                                             <Sensors sx={{ fontSize: 15, color: '#fff' }} />
                                             <Typography fontSize={13} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
                                         </Box>
-                                        <Box onClick={() => {navigate(`${device.id}/settings`,{state:{...device}}) }} sx={{ borderBottom: '1px solid black', py: 1.5, ":hover": { py: 1.5 }, px: 2, }}>
+                                        <Box  sx={{ borderBottom: '1px solid black', py: 1.5, ":hover": { py: 1.5 }, px: 2, }}>
                                             <RowContainerBetween additionStyles={{}} >
-                                                <Box>
+                                                <Box onClick={() => {navigate(`${device.id}/settings`,{state:{...device}}) }}>
                                                     <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>
                                                     <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>Last Updated {differenceInMinutes(device.modified)} mins ago</Typography>
                                                 </Box>

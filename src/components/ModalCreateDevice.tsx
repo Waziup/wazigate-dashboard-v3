@@ -1,21 +1,23 @@
 import { ArrowBack, Close } from "@mui/icons-material"
-import { Modal, Box, Button } from "@mui/material"
+import { Modal, Box, Button, SelectChangeEvent } from "@mui/material"
 import CreateDeviceTab1 from "./CreateDeviceTab1"
 import CreateDeviceTabTwo from "./CreateDeviceTab2"
 import RowContainerBetween from "./RowContainerBetween";
+import { Device } from "waziup";
 interface Props{
     openModal:boolean
     handleToggleModal:()=>void
     submitCreateDevice:(e: React.FormEvent<HTMLFormElement>)=>void
     handleChange:(event: React.ChangeEvent<HTMLInputElement>)=>void
-    handleChangeSelect:(event: React.ChangeEvent<HTMLInputElement>)=>void
+    handleChangeSelect:(event: SelectChangeEvent<string>)=>void
+    handleChangeDeviceCodec:(event: React.ChangeEvent<HTMLSelectElement>)=>void
     selectedValue:string
     screen:string
     handleScreenChange:(tab:'tab1'|'tab2')=>void
     blockOnClick: (va:string)=>void,
-    deviceName:string
+    newDevice: Device,
     changeMakeLoraWAN:()=>void
-    makeLoraWAN:boolean
+    onTextInputChange?:(e:React.ChangeEvent<HTMLInputElement>)=>void
 
 }
 const style = {
@@ -33,7 +35,7 @@ const IconStyle = {
     cursor:'pointer',
     color:'black',
 }
-export default function CreateDeviceModalWindow({openModal,handleToggleModal,submitCreateDevice,handleChange,handleChangeSelect,selectedValue,screen,handleScreenChange,blockOnClick,deviceName,changeMakeLoraWAN,makeLoraWAN}:Props){
+export default function CreateDeviceModalWindow({openModal,onTextInputChange, handleChangeDeviceCodec, handleToggleModal,submitCreateDevice,handleChange,handleChangeSelect,selectedValue,screen,handleScreenChange,blockOnClick,newDevice,changeMakeLoraWAN,}:Props){
     return(
         <Modal
                 open={openModal}
@@ -57,17 +59,25 @@ export default function CreateDeviceModalWindow({openModal,handleToggleModal,sub
                             <form onSubmit={submitCreateDevice}>
                                 {
                                     screen==='tab1'?(
-                                        <CreateDeviceTab1 blockOnClick={blockOnClick} deviceName={deviceName} handleChange={handleChange} handleChangeSelect={handleChangeSelect} selectedValue={selectedValue} />
+                                        <CreateDeviceTab1
+                                            blockOnClick={blockOnClick} 
+                                            newDevice={newDevice}
+                                            handleChange={handleChange} 
+                                            handleChangeSelect={handleChangeSelect}
+                                        />
                                     ):(
                                         <CreateDeviceTabTwo
-                                            handleChange={()=>{}}
+                                            handleChangeDeviceCodec={handleChangeDeviceCodec}
                                             changeMakeLoraWAN={changeMakeLoraWAN}
-                                            makeLoraWAN={makeLoraWAN} 
+                                            makeLoraWAN={newDevice.meta.is_lorawan}
+                                            onTextInputChange={onTextInputChange as (e:React.ChangeEvent<HTMLInputElement>)=>void}
+                                            newDevice={newDevice}
                                             selectedValue={selectedValue} 
                                         />
                                     )
                                 }
-                                <Box pt={2}>
+                                <Box sx={{display:'flex',justifyContent:'space-between', alignItems:'center',pt:2}} >
+                                    <Box></Box>
                                     <Button onClick={()=>{handleScreenChange('tab2')}} sx={{mx:2, color:'#fff'}} variant="contained" color="info" type={'button'}>{screen==='tab1'?'NEXT':'CREATE'}</Button>
                                 </Box>
                             </form>
