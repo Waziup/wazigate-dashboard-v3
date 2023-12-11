@@ -52,7 +52,7 @@ export default function DeviceSettings(){
         loadCodecsList();
     },[])
     return(
-        <Box mx={2} m={2}>
+        <Box mx={2} sx={{ height: '100%',overflowY:'scroll', scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}}} m={2}>
             <RowContainerBetween additionStyles={{mx:2}}>
                 <Box>
                     <Typography fontWeight={700} color={'black'}>{state.name}</Typography>
@@ -106,7 +106,7 @@ export default function DeviceSettings(){
                         <SelectElement title={'Application Type'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} />
                         {
                             codecsList? codecsList.map((codec,id)=>(
-                                <AddTextShow text={codec.name}  placeholder={`${id===0?'8':'32'}digits required, got 0`} />
+                                <AddTextShow key={id} text={codec.name}  placeholder={`${id===0?'8':'32'}digits required, got 0`} />
                             )):null
                         }
                     </Box>
