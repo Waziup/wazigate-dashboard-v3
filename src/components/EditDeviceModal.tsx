@@ -1,5 +1,5 @@
 import { Close, Router } from "@mui/icons-material";
-import { Box, FormControl, Modal, Typography } from "@mui/material";
+import { Box, FormControl, Modal, SelectChangeEvent, Typography } from "@mui/material";
 import { Device } from "waziup";
 import RowContainerBetween from "./RowContainerBetween";
 import { DropDownCreateDeviceTab1 } from "./CreateDeviceTab1";
@@ -20,7 +20,7 @@ const style = {
 };
 export default function EditDeviceModal({device,openModal,handleToggleModal}:{ handleToggleModal: () => void, device:Device,openModal:boolean}){
     console.log(device);
-    const handleChangeSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeSelect = (event: SelectChangeEvent<string>) => {
         console.log(event.target.value);
     };
     if(!device)
@@ -37,10 +37,10 @@ export default function EditDeviceModal({device,openModal,handleToggleModal}:{ h
                     <input autoFocus onInput={()=>{}} name="name" placeholder='Enter device name' value={device.name} style={{border:'none',width:'100%',padding:'6px 0', outline:'none'}}/>
                 </FormControl>
                 <DropDownCreateDeviceTab1 
-                    age="a"  
                     handleChangeSelect={handleChangeSelect} 
-                    selectedValue="b"  
-                    options={[{name:'Wazidev Board',imageurl:'wazidev.svg'},{name:'Generic board',imageurl:'/WaziAct.svg'}]} 
+                    value={device.meta.type}
+                    
+                    options={[{name:'Wazidev Board',id:'wazidev', imageurl:'wazidev.svg'},{name:'Generic board',id:'genericboard', imageurl:'/WaziAct.svg'}]} 
                     
                 />
                 <SelectElementString mx={0} my={2} title='Device Codec' value={'JSON'} handleChange={()=>{}} conditions={['JSON','b']} />
