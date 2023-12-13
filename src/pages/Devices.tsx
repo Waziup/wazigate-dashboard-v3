@@ -1,13 +1,15 @@
-import { Box, Button, Grid, CardContent, Typography, Icon, ListItemIcon, ListItemText, Menu, MenuItem, SelectChangeEvent, } from '@mui/material';
+import { Box, Button, Grid, CardContent, Typography, Icon, ListItemIcon, Menu, MenuItem, SelectChangeEvent, } from '@mui/material';
 import RowContainerBetween from '../components/RowContainerBetween';
 import { Add, DeleteOutline, ModeOutlined, MoreVert, Sensors, } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
 import { useNavigate, } from 'react-router-dom';
-import { useContext, useState } from 'react';
+import React,{ useContext, useState } from 'react';
 import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ModalCreateDevice';
 import EditDeviceModal from '../components/EditDeviceModal';
 import { DevicesContext } from '../context/devices.context';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
+import { differenceInMinutes } from '../utils';
 export const SensorInfo = ({ text, name, onClick, iconname }: { text: string, name: string, onClick: () => void, iconname: string }) => (
     <RowContainerBetween onClick={onClick} additionStyles={{ my: 2, py: 1, px: .5, ":hover": { bgcolor: '#f5f5f5' } }}>
         <Box sx={{ display: 'flex', width: '50%' }}>
@@ -17,12 +19,6 @@ export const SensorInfo = ({ text, name, onClick, iconname }: { text: string, na
         <Typography color={'primary.main'} fontSize={14} fontWeight={300}>{text} </Typography>
     </RowContainerBetween>
 );
-function differenceInMinutes(date:Date){
-    const now = new Date();
-    const diff = (now.getTime() - date.getTime()) / 1000;
-    return Math.abs(Math.round(diff));
-
-}
 const initialNewDevice:Device = {
     actuators:[],
     created:new Date(),
@@ -134,9 +130,6 @@ function Devices() {
             }
         })
     };
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
     const [screen, setScreen] = useState<'tab1' | 'tab2'>('tab1');
     const handleScreenChange = (screen: 'tab1' | 'tab2') => {
         setScreen(screen);
@@ -207,44 +200,37 @@ function Devices() {
                                                     <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>
                                                     <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>Last Updated {differenceInMinutes(device.modified)} mins ago</Typography>
                                                 </Box>
-
-                                                <Box>
-                                                    <Button id="demo-positioned-button"
-                                                        aria-controls={open ? 'demo-positioned-menu' : undefined}
-                                                        aria-haspopup="true"
-                                                        aria-expanded={open ? 'true' : undefined}
-                                                        onClick={handleClick}
-                                                    >
-                                                        <MoreVert sx={{ color: 'primary' }} />
-                                                    </Button>
-                                                    <Menu
-                                                        id="demo-positioned-menu"
-                                                        aria-labelledby="demo-positioned-button"
-                                                        anchorEl={anchorEl}
-                                                        open={open}
-                                                        onClose={handleClose}
-                                                        anchorOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'left',
-                                                        }}
-                                                        transformOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'left',
-                                                        }}
-                                                    >
-                                                        <MenuItem onClick={() => { handleSelectDevice(device); handleClose() }}>
-                                                            <ListItemIcon>
-                                                                <ModeOutlined fontSize="small" />
-                                                            </ListItemIcon>
-                                                            <ListItemText sx={{ fontSize: 10 }}>Edit</ListItemText>
-                                                        </MenuItem>
-                                                        <MenuItem onClick={() => { handleDeleteDevice(device); handleClose() }}>
-                                                            <ListItemIcon>
-                                                                <DeleteOutline fontSize="small" />
-                                                            </ListItemIcon>
-                                                            <ListItemText>Delete</ListItemText>
-                                                        </MenuItem>
-                                                    </Menu>
+                                                <Box position={'relative'}>
+                                                    <PopupState variant="popover" popupId="demo-popup-menu">
+                                                        {(popupState) => (
+                                                            <React.Fragment>
+                                                                <Button id="demo-positioned-button"
+                                                                    aria-controls={open ? 'demo-positioned-menu' : undefined}
+                                                                    aria-haspopup="true"
+                                                                    aria-expanded={open ? 'true' : undefined}
+                                                                    {...bindTrigger(popupState)}
+                                                                    >
+                                                                    <MoreVert sx={{color:'black'}}/>
+                                                                </Button>
+                                                                
+                                                                <Menu {...bindMenu(popupState)}>
+                                                                <MenuItem onClick={()=>{handleSelectDevice(device);popupState.close}} value={device.id} >
+                                                                    <ListItemIcon>
+                                                                        <ModeOutlined fontSize="small" />
+                                                                    </ListItemIcon>
+                                                                    Settings
+                                                                </MenuItem>
+                                                                <MenuItem value={id} onClick={()=>{handleDeleteDevice(device);popupState.close}}>
+                                                                    <ListItemIcon>
+                                                                        <DeleteOutline fontSize="small" />
+                                                                    </ListItemIcon>
+                                                                    Uninstall
+                                                                </MenuItem>
+                                                                
+                                                                </Menu>
+                                                            </React.Fragment>
+                                                        )}
+                                                    </PopupState>
                                                 </Box>
                                             </RowContainerBetween>
                                         </Box>
