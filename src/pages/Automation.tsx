@@ -55,7 +55,7 @@ export const SelectElementString = ({handleChange,title,mx,my,  conditions,isDis
                     name: 'age',
                     id: 'uncontrolled-native',
                 }}
-
+                required
                 value={value}
                 onChange={handleChange}
             >
