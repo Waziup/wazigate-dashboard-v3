@@ -78,7 +78,7 @@ export default function CreateDeviceModalWindow({openModal,onTextInputChange, ha
                                 }
                                 <Box sx={{display:'flex',justifyContent:'space-between', alignItems:'center',pt:2}} >
                                     <Box></Box>
-                                    <Button onClick={()=>{handleScreenChange('tab2')}} sx={{mx:2, color:'#fff'}} variant="contained" color="info" type={'button'}>{screen==='tab1'?'NEXT':'CREATE'}</Button>
+                                    <Button onClick={()=>{handleScreenChange('tab2')}} sx={{mx:2, color:'#fff'}} variant="contained" color="info" type={screen==='tab1'?'button':'submit'}>{screen==='tab1'?'NEXT':'CREATE'}</Button>
                                 </Box>
                             </form>
                         </Box>
