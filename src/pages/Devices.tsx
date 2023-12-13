@@ -155,6 +155,38 @@ function Devices() {
         handleClose();
         handleToggleEditModal();
     }
+    function handleEditSelectedDeviceName(e: React.ChangeEvent<HTMLInputElement>){
+        if(selectedDevice){
+            setSelectedDevice({
+                ...selectedDevice,
+                name: e.target.value
+            }) as unknown as Device
+        }
+    }
+    function handleChangeSelectDeviceType(e: SelectChangeEvent<string>){
+        if(selectedDevice){
+            setSelectedDevice({
+                ...selectedDevice,
+                meta:{
+                    ...selectedDevice.meta,
+                    type: e.target.value
+                }
+            }) as unknown as Device
+        }
+    }
+    const handleTextInputEditCodec = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        console.log(e.target.name,e.target.value);
+        setNewDevice({
+            ...newDevice,
+            meta:{
+                ...newDevice.meta,
+                [e.target.name]:e.target.value
+            }
+        })
+    }
+    const handleSubmitEditDevice=(e: React.FormEvent<HTMLFormElement>)=>{
+        e.preventDefault();
+    }
     return (
         <>
             <CreateDeviceModalWindow
@@ -172,9 +204,14 @@ function Devices() {
                 handleChangeDeviceCodec={handleChangeDeviceCodec}
                 onTextInputChange={handleTextInputChange}
             />
-            <EditDeviceModal device={selectedDevice as Device}
+            <EditDeviceModal 
+                device={selectedDevice as Device}
                 openModal={openEditModal}
+                handleChangeSelectDeviceType={handleChangeSelectDeviceType}
                 handleToggleModal={handleToggleEditModalClose}
+                handleNameChange={handleEditSelectedDeviceName}
+                handleTextInputEditCodec={handleTextInputEditCodec}
+                submitEditDevice={handleSubmitEditDevice}
             />
             <Box sx={{ p: 3, height: '100%' }}>
                 <RowContainerBetween>
