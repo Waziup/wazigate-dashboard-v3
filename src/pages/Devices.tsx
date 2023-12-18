@@ -243,7 +243,7 @@ function Devices() {
                                             <RowContainerBetween additionStyles={{}} >
                                                 <Box onClick={() => {navigate(`${device.id}/settings`,{state:{...device}}) }}>
                                                     <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>
-                                                    <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>Last Updated {differenceInMinutes(device.modified)} mins ago</Typography>
+                                                    <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>Last Updated {Math.round(differenceInMinutes(device.modified)/60)} mins ago</Typography>
                                                 </Box>
                                                 <Box position={'relative'}>
                                                     <PopupState variant="popover" popupId="demo-popup-menu">
