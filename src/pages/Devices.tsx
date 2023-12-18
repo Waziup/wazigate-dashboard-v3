@@ -19,11 +19,19 @@ export const SensorInfo = ({ text, name, onClick, iconname }: { text: string, na
         <Typography color={'primary.main'} fontSize={14} fontWeight={300}>{text} </Typography>
     </RowContainerBetween>
 );
+
 const initialNewDevice:Device = {
     actuators:[],
     created:new Date(),
     id:'',
     meta:{
+        lorawan:{
+            profile: '',
+            devEUI: '',
+            devAddr: '',
+            appSKey: '',
+            nwkSEncKey: '',
+        },
         type:'',
         codec:'',
         is_lorawan:false,
@@ -188,7 +196,7 @@ function Devices() {
         e.preventDefault();
     }
     return (
-        <>
+        <Box sx={{height:'100%',overflowY:'scroll'}}>
             <CreateDeviceModalWindow
                 openModal={openModal}
                 handleToggleModal={handleToggleModal}
@@ -255,7 +263,7 @@ function Devices() {
                                                                     <ListItemIcon>
                                                                         <ModeOutlined fontSize="small" />
                                                                     </ListItemIcon>
-                                                                    Settings
+                                                                    Edit
                                                                 </MenuItem>
                                                                 <MenuItem value={id} onClick={()=>{handleDeleteDevice(device);popupState.close}}>
                                                                     <ListItemIcon>
@@ -304,7 +312,7 @@ function Devices() {
                     }
                 </Grid>
             </Box>
-        </>
+        </Box>
     );
 }
 
