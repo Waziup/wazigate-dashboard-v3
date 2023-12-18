@@ -259,19 +259,18 @@ function Devices() {
                                                                 </Button>
                                                                 
                                                                 <Menu {...bindMenu(popupState)}>
-                                                                <MenuItem onClick={()=>{handleSelectDevice(device);popupState.close}} value={device.id} >
-                                                                    <ListItemIcon>
-                                                                        <ModeOutlined fontSize="small" />
-                                                                    </ListItemIcon>
-                                                                    Edit
-                                                                </MenuItem>
-                                                                <MenuItem value={id} onClick={()=>{handleDeleteDevice(device);popupState.close}}>
-                                                                    <ListItemIcon>
-                                                                        <DeleteOutline fontSize="small" />
-                                                                    </ListItemIcon>
-                                                                    Uninstall
-                                                                </MenuItem>
-                                                                
+                                                                    <MenuItem onClick={()=>{handleSelectDevice(device);popupState.close}} value={device.id} >
+                                                                        <ListItemIcon>
+                                                                            <ModeOutlined fontSize="small" />
+                                                                        </ListItemIcon>
+                                                                        Edit
+                                                                    </MenuItem>
+                                                                    <MenuItem value={id} onClick={()=>{handleDeleteDevice(device);popupState.close}}>
+                                                                        <ListItemIcon>
+                                                                            <DeleteOutline fontSize="small" />
+                                                                        </ListItemIcon>
+                                                                        Uninstall
+                                                                    </MenuItem>
                                                                 </Menu>
                                                             </React.Fragment>
                                                         )}
@@ -289,7 +288,14 @@ function Devices() {
                                             {
                                                 device.sensors.length > 0 ? device.sensors.map((sensor) => (
                                                     <Box key={sensor.id}>
-                                                        <SensorInfo onClick={() => { console.log('Navigation handler'); navigate(`/devices/${device.id}/sensors/${sensor.id}`, { state: { devicename: device.name, sensorId: sensor.id, deviceId: device.id, sensorname: sensor.name } }) }} iconname='device_thermostat' name={sensor.name} text='25&deg;C' />
+                                                        <SensorInfo 
+                                                            onClick={() => {  
+                                                                navigate(`/devices/${device.id}/sensors/${sensor.id}`, { state: { devicename: device.name, sensorId: sensor.id, deviceId: device.id, sensorname: sensor.name } }) 
+                                                            }} 
+                                                            iconname='device_thermostat' 
+                                                            name={sensor.name} 
+                                                            text={sensor.value}
+                                                        />
                                                     </Box>
                                                 )) : (
                                                     <Box my={2}></Box>
@@ -298,7 +304,13 @@ function Devices() {
                                             {
                                                 device.actuators.length > 0 ? device.actuators.map((act) => (
                                                     <Box key={act.id}>
-                                                        <SensorInfo onClick={() => { console.log('Navigation handler'); navigate(`/devices/${device.id}/sensors/${act.id}`, { state: { deviceId: device.id, actuatorname: act.name } }) }} iconname='precision_manufacturing' name={act.name} text='25&deg;C' />
+                                                        <SensorInfo onClick={() => { 
+                                                            navigate(`/devices/${device.id}/sensors/${act.id}`, { state: { deviceId: device.id, actuatorname: act.name } }) 
+                                                            }}
+                                                            iconname='precision_manufacturing'
+                                                            name={act.name} 
+                                                            text={act.value?'Running':'Closed'}
+                                                        />
                                                     </Box>
                                                 )) : (
                                                     <Box my={2}></Box>
