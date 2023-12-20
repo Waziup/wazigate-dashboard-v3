@@ -1,4 +1,4 @@
-import {  MoreVert,Router,} from "@mui/icons-material";
+import {  Add, MoreVert,Router,} from "@mui/icons-material";
 import { Box,Breadcrumbs,FormControl,Grid,Modal,Button,  NativeSelect,  Typography } from "@mui/material";
 import RowContainerBetween from "../components/RowContainerBetween";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -21,7 +21,7 @@ const style = {
     width: 400,
     bgcolor: 'background.paper',
     boxShadow: 24,
-    py: 2,
+    p: 2,
 };
 export const SelectElement = ({handleChange,title,conditions,isDisabled, value}:HTMLSelectProps)=>(
     <Box minWidth={120} >
@@ -37,6 +37,7 @@ export const SelectElement = ({handleChange,title,conditions,isDisabled, value}:
                 value={value}
                 onChange={handleChange}
             >
+                <option defaultChecked defaultValue={''} selected>Select</option>
                 {conditions.map((condition,index)=>(
                     <option key={index} value={condition}>{condition}</option>
                 ))}
@@ -147,9 +148,10 @@ export default function DeviceSettings(){
         <>
             <Modal
                     open={openModal}
-                    onClose={handleToggleModal}
+                    onClose={()=>{setModalProps({title:'',placeholder:''}); handleToggleModal()}}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
+                    sx={{borderRadius:14}}
                 >
                     <Box>
                         <Box sx={style}>
@@ -163,8 +165,8 @@ export default function DeviceSettings(){
                                 }
                             </Box>
                             <SelectElement
-                                conditions={['Actuator','Sensor']}
-                                handleChange={(e: React.ChangeEvent<HTMLSelectElement>)=>{setModalEls(e.target.value==='Actuator'?'actuator':'sensor',e.target.value)}}
+                                conditions={['actuator','sensor']}
+                                handleChange={(e: React.ChangeEvent<HTMLSelectElement>)=>{setModalEls(e.target.value==='actuator'?'actuator':'sensor',e.target.value)}}
                                 title="Select Type"
                                 value={modalProps.title}
                             />
@@ -185,7 +187,7 @@ export default function DeviceSettings(){
                                             }
                                             <Box pt={2}>
                                                 <Button sx={{mx:2, color:'#fff'}} variant="contained" color="info" type="submit">Save</Button>
-                                                <Button variant="contained" color="warning" onClick={handleToggleModal}>Close</Button>
+                                                <Button variant="contained" color="warning" onClick={()=>{setModalProps({title:'',placeholder:''}); handleToggleModal()}}>Close</Button>
                                             </Box>
                                         </form>
                                     </Box>
@@ -218,7 +220,10 @@ export default function DeviceSettings(){
                             </Breadcrumbs>
                         </div>
                     </Box>
-                    
+                    <Button color='info' onClick={handleToggleModal} variant={'contained'}>
+                        <Add sx={{color:'#fff',mx:1}}/>
+                        <Typography color={'#fff'}>New Interface</Typography>
+                    </Button>
                 </RowContainerBetween>
                 <Grid m={2} container >
                     <Grid bgcolor={'#fff'} mx={2} my={1} item md={6} px={2} py={2} borderRadius={2} lg={5} xl={5} sm={8} xs={11}>
