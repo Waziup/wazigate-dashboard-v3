@@ -7,4 +7,4 @@ export const DEFAULT_COLORS={
     secondary_gray:'#D5D6D8',
     navbar_dark:'#292F3F'
 }
-export const BACKEND_URL='http://localhost'
+export const VITE_WAZIGATE_API_URL=import.meta.env.VITE_WAZIGATE_API_URL
