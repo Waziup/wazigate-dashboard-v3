@@ -25,19 +25,8 @@ const initialNewDevice:Device = {
     created:new Date(),
     id:'',
     meta:{
-        lorawan:{
-            profile: '',
-            devEUI: '',
-            devAddr: '',
-            appSKey: '',
-            nwkSEncKey: '',
-        },
         type:'',
         codec:'',
-        is_lorawan:false,
-        appkey:'',
-        device_addr:'',
-        nwkskey:'',
     },
     modified:new Date(),
     name:'',
@@ -70,31 +59,37 @@ function Devices() {
             ...newDevice,
             meta:{
                 ...newDevice.meta,
-                is_lorawan: !newDevice.meta.is_lorawan,
+                lorawan: newDevice.meta.lorawan?null:{devEUI: null,},
             }
         })
     }
+    const changeEditMakeLoraWAN = () => {
+        if (selectedDevice) {
+            setSelectedDevice({
+                ...selectedDevice,
+                meta:{
+                    ...selectedDevice.meta,
+                    lorawan: selectedDevice.meta.lorawan?null:{devEUI: null,},
+                }
+            }) as unknown as Device
+        }
+    }
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target.name, event.target.value);
-        
         setNewDevice({
             ...newDevice,
             name: event.target.value,
         })
-        // setDeviceName(event.target.value);
     }
     const handleClose = () => {
         setAnchorEl(null);
     };
     function submitCreateDevice(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log('Creating device', newDevice);
         const device: Device = {
             ...newDevice,
         }
         window.wazigate.addDevice(device)
-            .then((res) => {
-                console.log('Device created: ', res);
+            .then(() => {
                 handleToggleModal();
                 window.wazigate.getDevices().then(setDevicesFc);
             }).catch(err => {
@@ -123,14 +118,13 @@ function Devices() {
             ...newDevice,
             meta:{
                 ...newDevice.meta,
-                [e.target.name]:e.target.value
+                lorawan:{
+                    [e.target.name]:e.target.value
+                },
             }
         })
     }
     const handleChangeDeviceCodec = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        // setSelectedValue(event.target.value);
-        console.log(event.target.name,event.target.value);
-        
         setNewDevice({
             ...newDevice,
             meta:{
@@ -148,8 +142,7 @@ function Devices() {
             return;
         }else{
             window.wazigate.deleteDevice(device.id)
-            .then((res)=>{
-                console.log(res);
+            .then(()=>{
                 window.wazigate.getDevices().then(setDevicesFc);
             })
             .catch(err=>{
@@ -194,6 +187,12 @@ function Devices() {
     }
     const handleSubmitEditDevice=(e: React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
+        if (selectedDevice?.meta) {
+            window.wazigate.setDeviceMeta(selectedDevice?.id as string,selectedDevice?.meta as Device)
+            window.wazigate.setDeviceName(selectedDevice.id as string,selectedDevice.name);
+        }
+        window.wazigate.getDevices().then(setDevicesFc);
+        navigate('/devices')
     }
     return (
         <Box sx={{height:'100%',overflowY:'scroll'}}>
@@ -220,6 +219,7 @@ function Devices() {
                 handleNameChange={handleEditSelectedDeviceName}
                 handleTextInputEditCodec={handleTextInputEditCodec}
                 submitEditDevice={handleSubmitEditDevice}
+                changeEditMakeLoraWAN={changeEditMakeLoraWAN}
             />
             <Box sx={{ p: 3, height: '100%' }}>
                 <RowContainerBetween>
