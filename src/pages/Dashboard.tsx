@@ -21,7 +21,7 @@ const DeviceStatus = ({devices}:{devices:Device[]})=>{
     return(
         <Box sx={{ height: '100%',borderRadius:2, bgcolor: 'white', p: 2}}>
             <NormalText title="Device Status" />
-            <BasicTable/>
+            <BasicTable devices={devices} />
         </Box>
     );
 }
@@ -65,7 +65,19 @@ function Dashboard() {
     },[])
     const [matches] = useOutletContext<[matches: boolean]>();
     console.log(devices);
-    
+    //curl -X GET "http://waziup.github.io/apps/waziup.wazigate-system/net" -H "accept: application/json"
+    const fetchNet = async ()=>{
+        const res = await fetch('https://waziup.github.io/apps/waziup.wazigate-system/net',{
+            headers:{
+                'accept':'application/json'
+            }
+        });
+        const data = await res.json();
+        console.log(data);
+    }
+    useEffect(()=>{
+        fetchNet();
+    },[])
     return (
         <Box sx={{height:'100%',overflowY:'scroll'}}>
             {
