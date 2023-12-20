@@ -55,10 +55,11 @@ export const SelectElementString = ({handleChange,title,mx,my,  conditions,isDis
                     name: 'age',
                     id: 'uncontrolled-native',
                 }}
-
+                required
                 value={value}
                 onChange={handleChange}
             >
+                <option selected style={{color:'#ccc'}} defaultValue={''}>select option</option>
                 {conditions.map((condition,index)=>(
                     <option color={DEFAULT_COLORS.navbar_dark} key={index} value={condition}>{condition}</option>
                 ))}

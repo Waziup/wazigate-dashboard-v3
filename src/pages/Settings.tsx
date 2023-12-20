@@ -67,13 +67,16 @@ function Settings() {
     const today = new Date();
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const [currentTime, setCurrentTime] = useState<string>('');
-
+    const [isSetDateManual,setIsSetDateManual] = useState<boolean>(false);
     useEffect(() => {
         const timer = setInterval(() => {
           setCurrentTime(dayjs().format('HH:mm:ss'));
         }, 1000);
         return () => {clearInterval(timer);}
-      }, []);
+    }, []);
+    function handleSetDateManually(){
+        setIsSetDateManual(!isSetDateManual);
+    }
     return (
         <Box sx={{p:3,overflowY:'scroll', height:'100%'}}>
             <Box>
@@ -114,7 +117,7 @@ function Settings() {
                         <Box bgcolor={'#D4E3F5'} borderRadius={1} p={1} m={1}>
                             <RowContainerBetween additionStyles={{m:1,}}>
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>set time and date manually</Typography>
-                                <Android12Switch color='info' />
+                                <Android12Switch checked={isSetDateManual} onClick={handleSetDateManually} color='info' />
                             </RowContainerBetween>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DemoContainer
@@ -123,11 +126,11 @@ function Settings() {
                                     ]}
                                 >
                                     <DemoItem label="">
-                                        <DesktopDatePicker sx={{p:0}} defaultValue={dayjs('2022-04-17')} />
+                                        <DesktopDatePicker disabled={!isSetDateManual} sx={{p:0}} defaultValue={dayjs(today.toLocaleDateString().toString().replaceAll('/','-'+ " "))} />
                                     </DemoItem>
                                 </DemoContainer>
                                 </LocalizationProvider>
-                            <Button variant="text" sx={{color:'#fff', mx:1,bgcolor:'rgba(73, 157, 255, 0.40)'}} startIcon={<Save/>}>
+                            <Button disabled={!isSetDateManual} variant="text" sx={{color:'#fff', m:1,bgcolor:'info.main'}} startIcon={<Save/>}>
                                 Save
                             </Button>
                         </Box>

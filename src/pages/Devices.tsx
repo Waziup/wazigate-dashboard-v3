@@ -1,13 +1,15 @@
-import { Box, Button, Grid, CardContent, Typography, Icon, ListItemIcon, ListItemText, Menu, MenuItem, SelectChangeEvent, } from '@mui/material';
+import { Box, Button, Grid, CardContent, Typography, Icon, ListItemIcon, Menu, MenuItem, SelectChangeEvent, } from '@mui/material';
 import RowContainerBetween from '../components/RowContainerBetween';
 import { Add, DeleteOutline, ModeOutlined, MoreVert, Sensors, } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
 import { useNavigate, } from 'react-router-dom';
-import { useContext, useState } from 'react';
+import React,{ useContext, useState } from 'react';
 import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ModalCreateDevice';
 import EditDeviceModal from '../components/EditDeviceModal';
 import { DevicesContext } from '../context/devices.context';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
+import { differenceInMinutes } from '../utils';
 export const SensorInfo = ({ text, name, onClick, iconname }: { text: string, name: string, onClick: () => void, iconname: string }) => (
     <RowContainerBetween onClick={onClick} additionStyles={{ my: 2, py: 1, px: .5, ":hover": { bgcolor: '#f5f5f5' } }}>
         <Box sx={{ display: 'flex', width: '50%' }}>
@@ -17,12 +19,7 @@ export const SensorInfo = ({ text, name, onClick, iconname }: { text: string, na
         <Typography color={'primary.main'} fontSize={14} fontWeight={300}>{text} </Typography>
     </RowContainerBetween>
 );
-function differenceInMinutes(date:Date){
-    const now = new Date();
-    const diff = (now.getTime() - date.getTime()) / 1000;
-    return Math.abs(Math.round(diff));
 
-}
 const initialNewDevice:Device = {
     actuators:[],
     created:new Date(),
@@ -30,10 +27,6 @@ const initialNewDevice:Device = {
     meta:{
         type:'',
         codec:'',
-        is_lorawan:false,
-        appkey:'',
-        device_addr:'',
-        nwkskey:'',
     },
     modified:new Date(),
     name:'',
@@ -66,31 +59,37 @@ function Devices() {
             ...newDevice,
             meta:{
                 ...newDevice.meta,
-                is_lorawan: !newDevice.meta.is_lorawan,
+                lorawan: newDevice.meta.lorawan?null:{devEUI: null,},
             }
         })
     }
+    const changeEditMakeLoraWAN = () => {
+        if (selectedDevice) {
+            setSelectedDevice({
+                ...selectedDevice,
+                meta:{
+                    ...selectedDevice.meta,
+                    lorawan: selectedDevice.meta.lorawan?null:{devEUI: null,},
+                }
+            }) as unknown as Device
+        }
+    }
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target.name, event.target.value);
-        
         setNewDevice({
             ...newDevice,
             name: event.target.value,
         })
-        // setDeviceName(event.target.value);
     }
     const handleClose = () => {
         setAnchorEl(null);
     };
     function submitCreateDevice(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log('Creating device', newDevice);
         const device: Device = {
             ...newDevice,
         }
         window.wazigate.addDevice(device)
-            .then((res) => {
-                console.log('Device created: ', res);
+            .then(() => {
                 handleToggleModal();
                 window.wazigate.getDevices().then(setDevicesFc);
             }).catch(err => {
@@ -119,23 +118,19 @@ function Devices() {
             ...newDevice,
             meta:{
                 ...newDevice.meta,
-                [e.target.name]:e.target.value
+                lorawan:{
+                    [e.target.name]:e.target.value
+                },
             }
         })
     }
     const handleChangeDeviceCodec = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        // setSelectedValue(event.target.value);
-        console.log(event.target.name,event.target.value);
-        
         setNewDevice({
             ...newDevice,
             meta:{
                 codec: event.target.value
             }
         })
-    };
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
     };
     const [screen, setScreen] = useState<'tab1' | 'tab2'>('tab1');
     const handleScreenChange = (screen: 'tab1' | 'tab2') => {
@@ -147,8 +142,7 @@ function Devices() {
             return;
         }else{
             window.wazigate.deleteDevice(device.id)
-            .then((res)=>{
-                console.log(res);
+            .then(()=>{
                 window.wazigate.getDevices().then(setDevicesFc);
             })
             .catch(err=>{
@@ -162,8 +156,46 @@ function Devices() {
         handleClose();
         handleToggleEditModal();
     }
+    function handleEditSelectedDeviceName(e: React.ChangeEvent<HTMLInputElement>){
+        if(selectedDevice){
+            setSelectedDevice({
+                ...selectedDevice,
+                name: e.target.value
+            }) as unknown as Device
+        }
+    }
+    function handleChangeSelectDeviceType(e: SelectChangeEvent<string>){
+        if(selectedDevice){
+            setSelectedDevice({
+                ...selectedDevice,
+                meta:{
+                    ...selectedDevice.meta,
+                    type: e.target.value
+                }
+            }) as unknown as Device
+        }
+    }
+    const handleTextInputEditCodec = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        console.log(e.target.name,e.target.value);
+        setNewDevice({
+            ...newDevice,
+            meta:{
+                ...newDevice.meta,
+                [e.target.name]:e.target.value
+            }
+        })
+    }
+    const handleSubmitEditDevice=(e: React.FormEvent<HTMLFormElement>)=>{
+        e.preventDefault();
+        if (selectedDevice?.meta) {
+            window.wazigate.setDeviceMeta(selectedDevice?.id as string,selectedDevice?.meta as Device)
+            window.wazigate.setDeviceName(selectedDevice.id as string,selectedDevice.name);
+        }
+        window.wazigate.getDevices().then(setDevicesFc);
+        navigate('/devices')
+    }
     return (
-        <>
+        <Box sx={{height:'100%',overflowY:'scroll'}}>
             <CreateDeviceModalWindow
                 openModal={openModal}
                 handleToggleModal={handleToggleModal}
@@ -179,9 +211,15 @@ function Devices() {
                 handleChangeDeviceCodec={handleChangeDeviceCodec}
                 onTextInputChange={handleTextInputChange}
             />
-            <EditDeviceModal device={selectedDevice as Device}
+            <EditDeviceModal 
+                device={selectedDevice as Device}
                 openModal={openEditModal}
+                handleChangeSelectDeviceType={handleChangeSelectDeviceType}
                 handleToggleModal={handleToggleEditModalClose}
+                handleNameChange={handleEditSelectedDeviceName}
+                handleTextInputEditCodec={handleTextInputEditCodec}
+                submitEditDevice={handleSubmitEditDevice}
+                changeEditMakeLoraWAN={changeEditMakeLoraWAN}
             />
             <Box sx={{ p: 3, height: '100%' }}>
                 <RowContainerBetween>
@@ -205,46 +243,38 @@ function Devices() {
                                             <RowContainerBetween additionStyles={{}} >
                                                 <Box onClick={() => {navigate(`${device.id}/settings`,{state:{...device}}) }}>
                                                     <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>
-                                                    <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>Last Updated {differenceInMinutes(device.modified)} mins ago</Typography>
+                                                    <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>Last Updated {Math.round(differenceInMinutes(device.modified)/60)} mins ago</Typography>
                                                 </Box>
-
-                                                <Box>
-                                                    <Button id="demo-positioned-button"
-                                                        aria-controls={open ? 'demo-positioned-menu' : undefined}
-                                                        aria-haspopup="true"
-                                                        aria-expanded={open ? 'true' : undefined}
-                                                        onClick={handleClick}
-                                                    >
-                                                        <MoreVert sx={{ color: 'primary' }} />
-                                                    </Button>
-                                                    <Menu
-                                                        id="demo-positioned-menu"
-                                                        aria-labelledby="demo-positioned-button"
-                                                        anchorEl={anchorEl}
-                                                        open={open}
-                                                        onClose={handleClose}
-                                                        anchorOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'left',
-                                                        }}
-                                                        transformOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'left',
-                                                        }}
-                                                    >
-                                                        <MenuItem onClick={() => { handleSelectDevice(device); handleClose() }}>
-                                                            <ListItemIcon>
-                                                                <ModeOutlined fontSize="small" />
-                                                            </ListItemIcon>
-                                                            <ListItemText sx={{ fontSize: 10 }}>Edit</ListItemText>
-                                                        </MenuItem>
-                                                        <MenuItem onClick={() => { handleDeleteDevice(device); handleClose() }}>
-                                                            <ListItemIcon>
-                                                                <DeleteOutline fontSize="small" />
-                                                            </ListItemIcon>
-                                                            <ListItemText>Delete</ListItemText>
-                                                        </MenuItem>
-                                                    </Menu>
+                                                <Box position={'relative'}>
+                                                    <PopupState variant="popover" popupId="demo-popup-menu">
+                                                        {(popupState) => (
+                                                            <React.Fragment>
+                                                                <Button id="demo-positioned-button"
+                                                                    aria-controls={open ? 'demo-positioned-menu' : undefined}
+                                                                    aria-haspopup="true"
+                                                                    aria-expanded={open ? 'true' : undefined}
+                                                                    {...bindTrigger(popupState)}
+                                                                    >
+                                                                    <MoreVert sx={{color:'black'}}/>
+                                                                </Button>
+                                                                
+                                                                <Menu {...bindMenu(popupState)}>
+                                                                    <MenuItem onClick={()=>{handleSelectDevice(device);popupState.close}} value={device.id} >
+                                                                        <ListItemIcon>
+                                                                            <ModeOutlined fontSize="small" />
+                                                                        </ListItemIcon>
+                                                                        Edit
+                                                                    </MenuItem>
+                                                                    <MenuItem value={id} onClick={()=>{handleDeleteDevice(device);popupState.close}}>
+                                                                        <ListItemIcon>
+                                                                            <DeleteOutline fontSize="small" />
+                                                                        </ListItemIcon>
+                                                                        Uninstall
+                                                                    </MenuItem>
+                                                                </Menu>
+                                                            </React.Fragment>
+                                                        )}
+                                                    </PopupState>
                                                 </Box>
                                             </RowContainerBetween>
                                         </Box>
@@ -258,7 +288,14 @@ function Devices() {
                                             {
                                                 device.sensors.length > 0 ? device.sensors.map((sensor) => (
                                                     <Box key={sensor.id}>
-                                                        <SensorInfo onClick={() => { console.log('Navigation handler'); navigate(`/devices/${device.id}/sensors/${sensor.id}`, { state: { devicename: device.name, sensorId: sensor.id, deviceId: device.id, sensorname: sensor.name } }) }} iconname='device_thermostat' name={sensor.name} text='25&deg;C' />
+                                                        <SensorInfo 
+                                                            onClick={() => {  
+                                                                navigate(`/devices/${device.id}/sensors/${sensor.id}`, { state: { devicename: device.name, sensorId: sensor.id, deviceId: device.id, sensorname: sensor.name } }) 
+                                                            }} 
+                                                            iconname='device_thermostat' 
+                                                            name={sensor.name} 
+                                                            text={sensor.value}
+                                                        />
                                                     </Box>
                                                 )) : (
                                                     <Box my={2}></Box>
@@ -267,7 +304,13 @@ function Devices() {
                                             {
                                                 device.actuators.length > 0 ? device.actuators.map((act) => (
                                                     <Box key={act.id}>
-                                                        <SensorInfo onClick={() => { console.log('Navigation handler'); navigate(`/devices/${device.id}/sensors/${act.id}`, { state: { deviceId: device.id, actuatorname: act.name } }) }} iconname='precision_manufacturing' name={act.name} text='25&deg;C' />
+                                                        <SensorInfo onClick={() => { 
+                                                            navigate(`/devices/${device.id}/sensors/${act.id}`, { state: { deviceId: device.id, actuatorname: act.name } }) 
+                                                            }}
+                                                            iconname='precision_manufacturing'
+                                                            name={act.name} 
+                                                            text={act.value?'Running':'Closed'}
+                                                        />
                                                     </Box>
                                                 )) : (
                                                     <Box my={2}></Box>
@@ -281,7 +324,7 @@ function Devices() {
                     }
                 </Grid>
             </Box>
-        </>
+        </Box>
     );
 }
 

@@ -10,7 +10,7 @@ export const DropDownCreateDeviceTab1 = ({handleChangeSelect,options,value}:{ ha
                         (document.activeElement as HTMLElement).blur();
                     }
                 }, 0);
-            }} value={value} label={'Cr'} onChange={handleChangeSelect}>
+            }} value={value} label={'Cr'} required onChange={handleChangeSelect}>
                 {
                     options.map((op,idx)=>(
                         <MenuItem key={idx} value={op.id} sx={{display:'flex',width:'100%', justifyContent:'space-between'}}>
@@ -46,7 +46,8 @@ export default function CreateDeviceTab1({handleChange,newDevice,handleChangeSel
                         autoFocus 
                         onInput={handleChange} 
                         name="name" placeholder='Enter device name' 
-                        value={newDevice.name} 
+                        value={newDevice.name}
+                        required
                         style={{border:'none',width:'100%',padding:'6px 0', outline:'none'}}
                     />
                 </FormControl>

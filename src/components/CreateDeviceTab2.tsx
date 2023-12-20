@@ -31,18 +31,18 @@ const AddTextShow=({text,name, placeholder,onTextInputChange,textInputValue}:Add
 export default function CreateDeviceTabTwo({selectedValue,onTextInputChange,newDevice, changeMakeLoraWAN, handleChangeDeviceCodec,makeLoraWAN}:TabTwoProps){
     return(
         <Box>
-            <SelectElementString mx={0} title='Device Codec' value={selectedValue} handleChange={handleChangeDeviceCodec} conditions={['JSON','b']} />
+            <SelectElementString mx={0} title='Device Codec' value={selectedValue} handleChange={handleChangeDeviceCodec} conditions={['JSON']} />
             <RowContainerBetween additionStyles={{my:1}}>
-                <Typography fontSize={13}>LoRAWAN Device</Typography>
-                <Android12Switch onChange={changeMakeLoraWAN} color='info' />
+                <Typography fontSize={13}>Make LoraWAN</Typography>
+                <Android12Switch checked={makeLoraWAN} onChange={changeMakeLoraWAN} color='info' />
             </RowContainerBetween>
             {
                 makeLoraWAN && (
                     <Box my={2}>
-                        <SelectElementString mx={0} title={'Label'} handleChange={()=>{}} conditions={['Input','Level','Humidity']} value={'Temperature'} />
-                        <AddTextShow textInputValue={newDevice.meta.device_addr} onTextInputChange={onTextInputChange} name="device_addr" text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got 0'} />
-                        <AddTextShow textInputValue={newDevice.meta.nwkskey} onTextInputChange={onTextInputChange} name="nwkskey" text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got 0'} />
-                        <AddTextShow textInputValue={newDevice.meta.appkey} onTextInputChange={onTextInputChange} name="appkey" text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
+                        <SelectElementString mx={0} title={'Device Codec'} handleChange={()=>{}} conditions={['Input','Level','Humidity']} value={'Temperature'} />
+                        <AddTextShow textInputValue={newDevice.meta.device_addr} onTextInputChange={onTextInputChange} name="devAddr" text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got 0'} />
+                        <AddTextShow textInputValue={newDevice.meta.nwkskey} onTextInputChange={onTextInputChange} name="nwkSEncKey" text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got 0'} />
+                        <AddTextShow textInputValue={newDevice.meta.appkey} onTextInputChange={onTextInputChange} name="appSKey" text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
                     </Box>
                 )
             }

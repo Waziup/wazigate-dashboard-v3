@@ -29,11 +29,11 @@ function createData(
 		sos,
 	};
 }
-const rows = [
-  createData('just now 2023-04-02 13:56', 305, <TrendingUp sx={{color:'#7E9B08'}}/>),
-  createData('just now 2023-04-03 13:56', 422, <TrendingDown sx={{color:'#ff0000'}}/>),
-  createData('just now 2023-04-04 13:56', 452, <HorizontalRule sx={{color:'#000000'}}/>),
-];
+// const rows = [
+//   createData('just now 2023-04-02 13:56', 305, <TrendingUp sx={{color:'#7E9B08'}}/>),
+//   createData('just now 2023-04-03 13:56', 422, <TrendingDown sx={{color:'#ff0000'}}/>),
+//   createData('just now 2023-04-04 13:56', 452, <HorizontalRule sx={{color:'#000000'}}/>),
+// ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 	if (b[orderBy] < a[orderBy]) {
@@ -216,8 +216,13 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     </Toolbar>
   );
 }
-
-export default function DeviceTable() {
+interface Props{
+  values:{value:number,modified:string}[]
+}
+export default function DeviceTable({values}:Props) {
+  const rowsDate = values.map(v=>{
+    return createData(v.modified,v.value,<TrendingUp sx={{color:'#7E9B08'}}/>)
+  })
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('values');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -236,7 +241,7 @@ export default function DeviceTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.name);
+      const newSelected = rowsDate.map((n) => n.name);
       setSelected(newSelected);
       return;
     }
@@ -282,11 +287,11 @@ export default function DeviceTable() {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rowsDate.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort(rows, getComparator(order, orderBy)).slice(
+      stableSort(rowsDate, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       ),
@@ -309,17 +314,17 @@ export default function DeviceTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={rowsDate.length}
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.name);
+                const isItemSelected = isSelected(rowsDate.name);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.name)}
+                    onClick={(event) => handleClick(event, rowsDate.name)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
@@ -364,7 +369,7 @@ export default function DeviceTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={rowsDate.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

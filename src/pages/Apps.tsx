@@ -5,7 +5,7 @@ import { DEFAULT_COLORS } from '../constants';
 import { DeleteForever, Download, FiberNew, MoreVert, Settings, } from '@mui/icons-material';
 import React,{useState,useEffect, useContext} from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { type App } from 'waziup';
+import { StartAppConfig, type App } from 'waziup';
 import Backdrop from '../components/Backdrop';
 import { DevicesContext } from '../context/devices.context';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
@@ -63,11 +63,11 @@ const DropDown = ({handleChange,matches,recommendedApps,customAppInstallHandler,
         
     </FormControl>
 );
-export const GridItem=({children}:{children:React.ReactNode})=>(
+export const GridItem=({children}:{ children:React.ReactNode})=>(
     <Grid item md={6} lg={4} xl={4}  sm={6} xs={12} minHeight={100} my={1} px={1} >
         <Box minHeight={100} sx={{px:2, py:1, position:'relative', bgcolor: 'white', borderRadius:2, }}>
             {children}
-            <Button sx={{fontWeight:'500',bgcolor:'#F4F7F6',my:1, color:'info.main',width:'100%'}}>OPEN</Button>
+            <Button  sx={{fontWeight:'500',bgcolor:'#F4F7F6',my:1, color:'info.main',width:'100%'}}>OPEN</Button>
         </Box>
     </Grid>
 );
@@ -92,23 +92,23 @@ export default function Apps() {
     const [error, setError] = useState<Error | null | string>(null);
     function installAppFunction(image:string,id:string){
         setAppToInstallId(id);
-        // const myInterVal = setInterval(async ()=>{await fetchInstallLogs(id)},2000);
         window.wazigate.installApp(image).then((res)=>{
             console.log(res);
-            // clearInterval(myInterVal);
             logsRef.current = res as unknown as string;
             setLogs(res as unknown as string);
+            getApps();
         }).catch((err)=>{
             console.log(err);
-            // clearInterval(myInterVal);
             setLogs(err as string);
+            return;
         })
     }
     useEffect(() => {
-        window.wazigate.get<RecomendedApp[]>('apps?available').then((appsr)=>{
+        window.wazigate.get<RecomendedApp[]>('apps?available')
+        .then((appsr)=>{
             setRecommendedApps(appsr);
-        }
-        , setError);
+        })
+        .catch(setError)
     }, []);
     const handleCustomAppIdChange = (e:React.ChangeEvent<HTMLInputElement>)=>{console.log(e.target.value); setCustomAppId(e.target.value)}
     const [customAppId,setCustomAppId] = useState<string>('');
@@ -139,6 +139,7 @@ export default function Apps() {
         console.log('ID is: ',id);
         console.log('Image is: ',image);
         setAppToInstallId(id);
+        
         const appToInstall = apps.find((app)=>app.id===id);
         console.log(appToInstall);
         setModalProps({open:true, title:'Installing New App', children:<>
@@ -164,13 +165,14 @@ export default function Apps() {
     const [showAppSettings,setShowAppSettings] = useState<boolean>(false);
     const [appToUninstall,setAppToUninstall] = useState<App | null>(null);
     async function fetchInstallLogs(id:string){
-        await window.wazigate.get(`apps/${id}?install_logs`).then((logs)=>{
-            logsRef.current = (logs as {log:string,done:boolean}).log as string;
-            setLogs((logs as {log:string,done:boolean}).log as string);
-            console.log((logs as {log:string,done:boolean}).log,'logs')
+        await window.wazigate.get(`apps/${id}?install_logs`).then((fetchedLogs)=>{
+            logsRef.current = (fetchedLogs as {log:string,done:boolean}).log as string;
+            if ((fetchedLogs as {log:string,done:boolean}).log !== logs) {
+                setLogs((fetchedLogs as {log:string,done:boolean}).log as string);
+            }
+            console.log((fetchedLogs as {log:string,done:boolean}).log,'logs')
         }).catch((err)=>{
-            setLogs(logs as string);
-            console.log(err);
+            setLogs('Error encountered while fetching logs: '+err);
         })
     }
     const load = () => {
@@ -221,6 +223,27 @@ export default function Apps() {
     function closeModal(){
         setModalProps({open:false, title:'', children:null});
     }
+    function startOrStopApp(appId:string,running: boolean){
+        console.log('starting an app with this ID:',appId);
+        const yesNo=confirm('Are you sure you want to '+ (running?'stop':'start')+' '+appId+'?');
+        if (!yesNo) {
+            return;
+        }
+        const config:StartAppConfig={
+            action: running?"stop":"start",
+            restart:"no"
+        }
+        console.log(appId,JSON.stringify(config));
+        window.wazigate.startStopApp(appId,config)
+        .then((res)=>{
+            console.log(res);
+            getApps();
+        }).catch((err)=>{
+            console.log(err);
+            getApps()
+        })
+        
+    }
     if (error) {
         return <div>Error: {(error as Error).message?(error as Error).message:(error as string)}</div>;
     }
@@ -235,7 +258,7 @@ export default function Apps() {
                         </Box>
                         {
                             logs &&(
-                                <Box maxWidth={'100%'} width={'100%'} height={200} bgcolor={'#000'}>
+                                <Box maxWidth={'100%'} overflow={'scroll'} width={'100%'} height={200} bgcolor={'#000'}>
                                     <Typography fontSize={10} color={'#fff'}>
                                         {logs}
                                     </Typography>
@@ -302,7 +325,7 @@ export default function Apps() {
                     {
                         apps.map((app,idx)=>{
                             return(
-                                <GridItem key={app.id}>
+                                <GridItem  key={app.id}>
                                     <Box px={.4} display={'flex'} alignItems={'center'} sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
                                         <Box component={'img'} src='/wazi_sig.svg' />
                                         <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
@@ -343,6 +366,12 @@ export default function Apps() {
                                                                 </MenuItem>
                                                             ):null
                                                         }
+                                                        <MenuItem value={idx} onClick={()=>{startOrStopApp(app.id,app.state.running);popupState.close}}>
+                                                            <ListItemIcon>
+                                                                <DeleteForever fontSize="small" />
+                                                            </ListItemIcon>
+                                                            {app.state?app.state.running?'Stop':'Start':'Start'}
+                                                        </MenuItem>
                                                         </Menu>
                                                     </React.Fragment>
                                                 )}

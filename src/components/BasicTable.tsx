@@ -1,6 +1,8 @@
 import {Table,TableBody,TableCell,TableContainer,TableHead,TableRow,Paper, Typography, Box} from '@mui/material';
 import { DEFAULT_COLORS } from '../constants';
 import { Sensors,History, DeviceHub } from '@mui/icons-material';
+import { Device } from 'waziup';
+import { differenceInMinutes } from '../utils';
 function createData(
   name: string,
   runtime: number,
@@ -10,13 +12,13 @@ function createData(
   return { name, runtime, interfaces, status };
 }
 
-const rows = [
-  createData('Block - D1', 159, 6.0, false),
-  createData('Ice cream sandwich', 237, 9.0, true),
-  createData('Waziup central', 262, 16.0, true),
-];
-
-export default function BasicTable() {
+interface Props{
+    devices: Device[]
+}
+export default function BasicTable({devices}:Props) {
+    const rowsData = devices.map((dev)=>{
+        return createData(dev.name+'*'+differenceInMinutes(dev.modified),32,4,false)
+    });
     return (
         <TableContainer component={Paper}>
             <Table stickyHeader sx={{minWidth:440, maxWidth:'100%' }} aria-label="simple table">
@@ -33,22 +35,22 @@ export default function BasicTable() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row) => (
+                    {rowsData.map((row) => (
                         <TableRow
                         key={row.name}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell width={260}  >
                                 <Box alignItems={'center'} display={'flex'}>
-                                    <Box height={'50%'} borderRadius={1} mx={0} p={.5} bgcolor={DEFAULT_COLORS.primary_blue}>
+                                    <Box height={'50%'} borderRadius={1} mx={.5} p={.5} bgcolor={DEFAULT_COLORS.primary_blue}>
                                         <Sensors sx={{fontSize:15, color:'#fff'}}/>
-                                        <Typography fontSize={10} mx={0} color={'white'} component={'span'}>WaziDev</Typography>
+                                        <Typography fontSize={10} color={'white'} component={'span'}>WaziDev</Typography>
                                     </Box>
                                     <Box>
-                                        <Typography fontSize={[10,12,16,12,10]} color={DEFAULT_COLORS.primary_black}>
-                                            {row.name}
+                                        <Typography fontSize={[10,11,11,12,10]} color={DEFAULT_COLORS.primary_black}>
+                                            {row.name.split('*')[0]}
                                         </Typography> 
-                                        <Typography fontSize={[10,11,11,12,10]}  color='#797979'>Last updated: 10 seconds</Typography>
+                                        <Typography fontSize={[10,11,11,12,10]}  color='#797979'>Last updated: {row.name.split('*')[1]} minutes</Typography>
                                     </Box>
                                 </Box>
                             </TableCell>
