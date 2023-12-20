@@ -12,6 +12,7 @@ function Device() {
         event.preventDefault();
     }
     const [device, setDevice] = useState<Device | null>(null);
+    const [values,setValues] = useState<{value:number,modified:string}[]>([])
     const [matches] = useOutletContext<[matches:boolean]>();
     console.log(matches);
     const navigate = useNavigate();
@@ -20,6 +21,9 @@ function Device() {
         console.log(id);
     useEffect(() => {
         window.wazigate.getDevice(id).then(setDevice);
+        window.wazigate.getSensorValues(id as string).then((res: {value:number,modified:string}[])=>{
+            setValues(res)
+        })
     },[id]);
     console.log(device);
     const {state} = useLocation();
@@ -28,7 +32,7 @@ function Device() {
         <Box sx={{height:'100%',overflowY:'scroll'}}>
             <RowContainerBetween additionStyles={{px:2,py:2}}>
                 <Box>
-                    <Typography fontWeight={500} fontSize={18} color={'black'}>Device 1</Typography>
+                    <Typography fontWeight={500} fontSize={18} color={'black'}>{state.devicename}</Typography>
                     <div role="presentation" onClick={handleClick}>
                         <Breadcrumbs aria-label="breadcrumb">
                             <Link fontSize={14} underline="hover" color="inherit" href={`/devices/${state.deviceId}`}>
@@ -88,7 +92,9 @@ function Device() {
                     />
                 </Box>
                 <Box bgcolor={'#fff'} width={matches?'80%':'90%'}>
-                    <EnhancedTable  />
+                    <EnhancedTable
+                        values={values}
+                    />
                 </Box>
             </Box>
         </Box>
