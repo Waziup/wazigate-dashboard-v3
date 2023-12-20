@@ -27,8 +27,9 @@ interface Props{
     handleChangeSelectDeviceType: (e:SelectChangeEvent<string>)=>void
     handleTextInputEditCodec: (e:React.ChangeEvent<HTMLInputElement>)=>void
     submitEditDevice:(e: React.FormEvent<HTMLFormElement>)=>void
+    changeEditMakeLoraWAN: ()=>void,
 }
-export default function EditDeviceModal({device,openModal,handleTextInputEditCodec,submitEditDevice, handleNameChange,handleChangeSelectDeviceType, handleToggleModal}:Props){
+export default function EditDeviceModal({changeEditMakeLoraWAN, device,openModal,handleTextInputEditCodec,submitEditDevice, handleNameChange,handleChangeSelectDeviceType, handleToggleModal}:Props){
     console.log(device);
     if(!device)
         return;
@@ -49,24 +50,34 @@ export default function EditDeviceModal({device,openModal,handleTextInputEditCod
                         value={device.meta.type}
                         options={[{name:'Wazidev Board',id:'wazidev', imageurl:'wazidev.svg'},{name:'Generic board',id:'genericboard', imageurl:'/WaziAct.svg'}]}
                     />
-                    <SelectElementString mx={0} my={2} title='Device Codec' value={'JSON'} handleChange={()=>{}} conditions={['JSON','b']} />
+                    {
+                        device.meta.codec &&(
+                            <SelectElementString mx={0} my={2} title='Device Codec' value={device.meta.codec} handleChange={()=>{}} conditions={['JSON','b']} />
+                        )
+                    }
                     <RowContainerBetween additionStyles={{my:1}}>
                         <RowContainerNormal>
                             <Router sx={{mx:1, fontSize: 20,color:'primary.main' }} />
-                            <Typography color={'primary.main'} fontSize={13}>LoRAWAN Settings</Typography>
+                            <Typography color={'primary.main'} fontSize={13}>{device.meta.lorawan?'LoraWAN Settings':'Make LoraWAN'} </Typography>
                         </RowContainerNormal>
-                        <Android12Switch checked={device.meta.is_lorawan} onChange={()=>{}} color='info' />
+                        <Android12Switch checked={device.meta.lorawan} onChange={changeEditMakeLoraWAN} color='info' />
                     </RowContainerBetween>
-                    <Box my={2}>
-                        <SelectElementString mx={0} title={'Label'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} />
-                        <AddTextShow name="device_addr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.device_addr} text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got 0'} />
-                        <AddTextShow name="nwkskey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.nwkskey} text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got 0'} />
-                        <AddTextShow name="appkey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.appkey} text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
-                    </Box>
-                    <Box sx={{display:'flex',justifyContent:'space-between', alignItems:'center',pt:2}} >
-                        <Box></Box>
-                        <Button type="submit" sx={{mx:2, color:'#fff'}} variant="contained" color="info" >EDIT</Button>
-                    </Box>
+                    {
+                        device.meta.lorawan?(
+                            <>
+                                <Box my={2}>
+                                    <SelectElementString mx={0} title={'Label'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} />
+                                    <AddTextShow name="device_addr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.device_addr} text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got 0'} />
+                                    <AddTextShow name="nwkskey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.nwkskey} text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got 0'} />
+                                    <AddTextShow name="appkey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.appkey} text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
+                                </Box>
+                                <Box sx={{display:'flex',justifyContent:'space-between', alignItems:'center',pt:2}} >
+                                    <Box></Box>
+                                    <Button type="submit" sx={{mx:2, color:'#fff'}} variant="contained" color="info" >EDIT</Button>
+                                </Box>
+                            </>
+                        ):null
+                    }
                 </form>
             </Box>
         </Modal>
