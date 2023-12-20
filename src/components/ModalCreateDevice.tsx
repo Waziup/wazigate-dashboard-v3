@@ -69,7 +69,7 @@ export default function CreateDeviceModalWindow({openModal,onTextInputChange, ha
                                         <CreateDeviceTabTwo
                                             handleChangeDeviceCodec={handleChangeDeviceCodec}
                                             changeMakeLoraWAN={changeMakeLoraWAN}
-                                            makeLoraWAN={newDevice.meta.is_lorawan}
+                                            makeLoraWAN={newDevice.meta.lorawan}
                                             onTextInputChange={onTextInputChange as (e:React.ChangeEvent<HTMLInputElement>)=>void}
                                             newDevice={newDevice}
                                             selectedValue={selectedValue} 
