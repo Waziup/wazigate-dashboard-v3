@@ -46,7 +46,8 @@ export default function CreateDeviceTab1({handleChange,newDevice,handleChangeSel
                         autoFocus 
                         onInput={handleChange} 
                         name="name" placeholder='Enter device name' 
-                        value={newDevice.name} 
+                        value={newDevice.name}
+                        required
                         style={{border:'none',width:'100%',padding:'6px 0', outline:'none'}}
                     />
                 </FormControl>
