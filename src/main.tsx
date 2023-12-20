@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css';
 import * as waziup from 'waziup';
-import { BACKEND_URL } from './constants/index.ts';
+import { VITE_WAZIGATE_API_URL } from './constants/index.ts';
 import 'material-icons/iconfont/material-icons.css';
 declare global {
     interface Window {
@@ -15,7 +15,7 @@ window.addEventListener('beforeunload', () => {
     window.localStorage.removeItem('token');
 });    
 waziup.connect({
-    host: BACKEND_URL,
+    host: VITE_WAZIGATE_API_URL,
 }).then((wazigate: waziup.Waziup) => {
     window.wazigate = wazigate;
     console.log('Connected to Wazigate')
