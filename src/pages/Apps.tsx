@@ -9,8 +9,42 @@ import { StartAppConfig, type App } from 'waziup';
 import Backdrop from '../components/Backdrop';
 import { DevicesContext } from '../context/devices.context';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
+import CustomApp from '../components/CustomApp';
 type App1 =App &{
     description:string
+}
+type App2 =App &{
+    description:string
+    customApp:boolean
+}
+const customAppProps:App2={
+    description:'',
+    id:'',
+    author:'',
+    customApp:true,
+    name:'',
+    version:'',
+    waziapp:{
+        hook:'',
+        menu:{
+            'fdf':{
+                href:'',
+                icon:'',
+                primary:''
+            }
+        }
+    },
+    state:{
+        running:false,
+        status:'',
+        error:'',
+        finishedAt:'',
+        startedAt:'',
+        health:'',
+        paused:'unhealthy',
+        restartPolicy:'',
+
+    }
 }
 const onCloseHandler= ()=>{
     setTimeout(() => {
@@ -85,7 +119,7 @@ export default function Apps() {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const {apps,getApps} =useContext(DevicesContext);
+    const {apps,addApp,getApps} =useContext(DevicesContext);
     const [recommendedApps,setRecommendedApps] = useState<RecomendedApp[]>([]);
     const [logs,setLogs] = useState<string>('');
     const logsRef = React.useRef<string>('');
@@ -110,25 +144,45 @@ export default function Apps() {
         })
         .catch(setError)
     }, []);
-    const handleCustomAppIdChange = (e:React.ChangeEvent<HTMLInputElement>)=>{console.log(e.target.value); setCustomAppId(e.target.value)}
-    const [customAppId,setCustomAppId] = useState<string>('');
+    const handleCustomAppIdChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        console.log(e.target.value); 
+        setCustomAppId({
+            ...customAppId,
+            [e.target.id]:e.target.value 
+        })
+    }
+    const handleSubmitNewCustomApp = ()=>{
+        console.log(customAppId);
+        const yesNo = confirm('Are you sure you want to install this app?');
+        if (!yesNo) {
+            return;
+        }
+        addApp(customAppId);
+    }
+    const [customAppId,setCustomAppId] = useState<App2>(customAppProps);
     const [appToInstallId,setAppToInstallId] = useState<string>('');
     console.log(customAppId,'custom app id');
     
     function handleInstallAppModal(){
         setModalProps({open:true, title:'Install App', children:<>
             <Box  width={'100%'}  bgcolor={'#fff'}>
-                <form onSubmit={(e)=>{e.preventDefault(); handleLogsModal(customAppId,customAppId)}}>
+                <form onSubmit={(e)=>{e.preventDefault();handleSubmitNewCustomApp()}}>
                     <Box borderBottom={'1px solid black'} px={2} py={2}>
                         <input style={{width:'100%',padding:'8px 4px',borderRadius:5, outline:'none',border:'1px solid  black'}} 
                             onInput={handleCustomAppIdChange}  
-                            id="outlined-basic" required 
-                            placeholder="docker image name and tag(image_name:tag)" 
+                            id="name" required 
+                            placeholder="format(owner/image_name:tag)" 
+                        />
+                        <input style={{width:'100%',padding:'8px 4px',borderRadius:5, outline:'none',border:'1px solid  black'}} 
+                            onInput={handleCustomAppIdChange}  
+                            id="description" 
+                            required 
+                            placeholder="Description of app" 
                         />
                     </Box>
                     <Box py={2}>
                         <Button type='submit' variant={'contained'} sx={{mx:2}} color={'primary'}>Install</Button>
-                        <Button onClick={()=>{setCustomAppId('');setLogs(''); closeModal()}} variant={'contained'} sx={{mx:2}} color={'error'}>Cancel</Button>
+                        <Button onClick={()=>{setCustomAppId(customAppProps);setLogs(''); closeModal()}} variant={'contained'} sx={{mx:2}} color={'error'}>Cancel</Button>
                     </Box>
                 </form>
             </Box>
@@ -313,8 +367,7 @@ export default function Apps() {
                         <Typography fontWeight={700} fontSize={20} color={'black'}>Apps</Typography>
                         <Typography fontSize={matches?15:13} sx={{color:DEFAULT_COLORS.secondary_black}}>Setup your Wazigate Edge Apps</Typography>
                     </Box>
-                    <DropDown 
-                        // installApp={handleLogsModal} 
+                    <DropDown
                         customAppInstallHandler={handleInstallAppModal} 
                         recommendedApps={recommendedApps}
                         matches={matches} 
@@ -325,63 +378,76 @@ export default function Apps() {
                     {
                         apps.map((app,idx)=>{
                             return(
-                                <GridItem  key={app.id}>
-                                    <Box px={.4} display={'flex'} alignItems={'center'} sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
-                                        <Box component={'img'} src='/wazi_sig.svg' />
-                                        <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
-                                    </Box>
-                                    <Box display={'flex'} py={2}  justifyContent={'space-between'}>
-                                        <Box>
-                                            <NormalText title={app.name} />
-                                            <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>{app.id}</Typography>
-                                        </Box>
-                                        <Box position={'relative'}>
-                                            <PopupState variant="popover" popupId="demo-popup-menu">
-                                                {(popupState) => (
-                                                    <React.Fragment>
-                                                        <Button id="demo-positioned-button"
-                                                            aria-controls={open ? 'demo-positioned-menu' : undefined}
-                                                            aria-haspopup="true"
-                                                            aria-expanded={open ? 'true' : undefined}
-                                                            // onClick={handleClick}
-                                                            {...bindTrigger(popupState)}
-                                                            >
-                                                            <MoreVert sx={{color:'black'}}/>
-                                                        </Button>
-                                                        
-                                                        <Menu {...bindMenu(popupState)}>
-                                                        <MenuItem onClick={(e)=>{console.log(e.currentTarget.value);popupState.close}} value={app.id} >
-                                                            <ListItemIcon>
-                                                                <Settings fontSize="small" />
-                                                            </ListItemIcon>
-                                                            Settings
-                                                        </MenuItem>
-                                                        {
-                                                            idx?(
-                                                                <MenuItem value={idx} onClick={()=>{setAppToUninstallFc(idx);popupState.close}}>
-                                                                    <ListItemIcon>
-                                                                        <DeleteForever fontSize="small" />
-                                                                    </ListItemIcon>
-                                                                    Uninstall
-                                                                </MenuItem>
-                                                            ):null
-                                                        }
-                                                        <MenuItem value={idx} onClick={()=>{startOrStopApp(app.id,app.state.running);popupState.close}}>
-                                                            <ListItemIcon>
-                                                                <DeleteForever fontSize="small" />
-                                                            </ListItemIcon>
-                                                            {app.state?app.state.running?'Stop':'Start':'Start'}
-                                                        </MenuItem>
-                                                        </Menu>
-                                                    </React.Fragment>
-                                                )}
-                                            </PopupState>
-                                        </Box>
-                                    </Box>
-                                    <Typography fontSize={15} fontWeight={200} my={1} color={DEFAULT_COLORS.navbar_dark}>Status: <Typography component={'span'} fontSize={15} color={DEFAULT_COLORS.navbar_dark}>{app.state?app.state.running?'Running':'Stopped':'Running'}</Typography></Typography>
-                                    <Typography fontSize={14} my={1} color={DEFAULT_COLORS.secondary_black}>{(app as App1).description.length>40?(app as App1).description.slice(0,39)+'...':(app as App1).description}</Typography>
-                                </GridItem>
-                        )})
+                                <>
+                                    {
+                                        (app as App2).customApp?(
+                                            <CustomApp
+                                                key={app.id}
+                                                app={app}
+                                            />
+                                        ):(
+
+                                            <GridItem key={app.id}>
+                                                <Box px={.4} display={'flex'} alignItems={'center'} sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
+                                                    <Box component={'img'} src='/wazi_sig.svg' />
+                                                    <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
+                                                </Box>
+                                                <Box display={'flex'} py={2}  justifyContent={'space-between'}>
+                                                    <Box>
+                                                        <NormalText title={app.name} />
+                                                        <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>{app.id}</Typography>
+                                                    </Box>
+                                                    <Box position={'relative'}>
+                                                        <PopupState variant="popover" popupId="demo-popup-menu">
+                                                            {(popupState) => (
+                                                                <React.Fragment>
+                                                                    <Button id="demo-positioned-button"
+                                                                        aria-controls={open ? 'demo-positioned-menu' : undefined}
+                                                                        aria-haspopup="true"
+                                                                        aria-expanded={open ? 'true' : undefined}
+                                                                        // onClick={handleClick}
+                                                                        {...bindTrigger(popupState)}
+                                                                        >
+                                                                        <MoreVert sx={{color:'black'}}/>
+                                                                    </Button>
+                                                                    
+                                                                    <Menu {...bindMenu(popupState)}>
+                                                                    <MenuItem onClick={(e)=>{console.log(e.currentTarget.value);popupState.close}} value={app.id} >
+                                                                        <ListItemIcon>
+                                                                            <Settings fontSize="small" />
+                                                                        </ListItemIcon>
+                                                                        Settings
+                                                                    </MenuItem>
+                                                                    {
+                                                                        idx?(
+                                                                            <MenuItem value={idx} onClick={()=>{setAppToUninstallFc(idx);popupState.close}}>
+                                                                                <ListItemIcon>
+                                                                                    <DeleteForever fontSize="small" />
+                                                                                </ListItemIcon>
+                                                                                Uninstall
+                                                                            </MenuItem>
+                                                                        ):null
+                                                                    }
+                                                                    <MenuItem value={idx} onClick={()=>{startOrStopApp(app.id,app.state.running);popupState.close}}>
+                                                                        <ListItemIcon>
+                                                                            <DeleteForever fontSize="small" />
+                                                                        </ListItemIcon>
+                                                                        {app.state?app.state.running?'Stop':'Start':'Start'}
+                                                                    </MenuItem>
+                                                                    </Menu>
+                                                                </React.Fragment>
+                                                            )}
+                                                        </PopupState>
+                                                    </Box>
+                                                </Box>
+                                                <Typography fontSize={15} fontWeight={200} my={1} color={DEFAULT_COLORS.navbar_dark}>Status: <Typography component={'span'} fontSize={15} color={DEFAULT_COLORS.navbar_dark}>{app.state?app.state.running?'Running':'Stopped':'Running'}</Typography></Typography>
+                                                <Typography fontSize={14} my={1} color={DEFAULT_COLORS.secondary_black}>{(app as App1).description.length>40?(app as App1).description.slice(0,39)+'...':(app as App1).description}</Typography>
+                                            </GridItem>
+                                        )
+                                    }
+                                </>
+                            )
+                        })
                     }
                 </Grid>
             </Box>
