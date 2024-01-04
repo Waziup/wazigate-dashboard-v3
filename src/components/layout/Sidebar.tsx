@@ -1,4 +1,4 @@
-import { ExpandLess,SettingsRemoteSharp,Apps, PrecisionManufacturing, ExpandMore,Dashboard, SettingsTwoTone, Wifi, WifiLock, Logout, HelpCenter} from '@mui/icons-material';
+import { ExpandLess,SettingsRemoteSharp,Apps, ExpandMore,Dashboard, SettingsTwoTone, Wifi, WifiLock, Logout, HelpCenter} from '@mui/icons-material';
 import { Box, Collapse, List,  ListItemIcon, ListItemText, SxProps, Theme, Typography} from '@mui/material';
 import React, { CSSProperties } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
@@ -93,7 +93,7 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                 icon={<SettingsRemoteSharp sx={{...IconStyle,color:location==='/devices'?'#292F3F':'white'}} />} 
                                 text={'Devices'} 
                             />
-                            <NavigationItem location={location} path={'/automation'} icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'black':'white'}} />} text={'Automation'} />
+                            {/* <NavigationItem location={location} path={'/automation'} icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'black':'white'}} />} text={'Automation'} /> */}
                             <NavigationItem location={location} 
                                 path={'/settings'} 
                                 icon={<SettingsTwoTone sx={{...IconStyle,color:location==='/settings'?'#292F3F':'white'}} />} 
@@ -159,12 +159,12 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                             title='Devices'
                             icon={<SettingsRemoteSharp sx={{...IconStyle,color:location==='/devices'?'#292F3F':'white'}} />} 
                         />
-                        <NavigationSmall 
+                        {/* <NavigationSmall 
                             location={location} 
                             path={'/automation'} 
                             title='Automation'
                             icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'#292F3F':'white'}} />} 
-                        />
+                        /> */}
                         <NavigationSmall 
                             location={location} 
                             path={'/settings'} 
