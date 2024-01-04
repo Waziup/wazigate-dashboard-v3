@@ -40,6 +40,7 @@ setInterval(reToken, 1000 * 60 * 8); // Referesh the token every 10-2 minutes
 export default function Login() {
     const navigate = useNavigate();
     const [showErrSnackbar, setShowErrSnackbar] = useState<boolean>(false);
+    const [errorMess, setErrorMessage] = useState<string>('');
     // const handleNavigate = ()=>{navigate('/')}
     const {handleSubmit,register} = useForm<RegistrationInput>({
         resolver: yupResolver(schema),
@@ -49,15 +50,17 @@ export default function Login() {
             "username": data.username,
             "password": data.password,
         }
-        console.log('userdata: ',userData);
         try {
             window.wazigate.set(`auth/token`,userData)
             .then((res) => {
-                console.log("Token", res);
                 window.localStorage.setItem('token',res as unknown as string);
                 navigate('/dashboard',{state:{title:'Dashboard'}})
             }).catch(err=>{
-                console.log(err);
+                if(err.message && err.message==='Failed to fetch'){
+                    setErrorMessage('Check if the backend server is running')
+                }else{
+                    setErrorMessage('Invalid username or password')
+                }
                 handleClose()
             })
             
@@ -72,7 +75,7 @@ export default function Login() {
         <>
             <Snackbar anchorOrigin={{vertical:'top',horizontal:'center'}} open={showErrSnackbar} autoHideDuration={6000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                    Invalid credentials, try again.
+                    {errorMess}
                 </Alert>
             </Snackbar>
             <Box height={'100vh'} position={'relative'} width={'100%'} bgcolor={'#F4F7F6'}>
