@@ -275,6 +275,7 @@ export default function Apps() {
         })
     };
     function closeModal(){
+        setLogs('');
         setModalProps({open:false, title:'', children:null});
     }
     function startOrStopApp(appId:string,running: boolean){
