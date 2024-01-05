@@ -27,6 +27,7 @@ const initialNewDevice:Device = {
     meta:{
         type:'',
         codec:'',
+        lorawan:null,
     },
     modified:new Date(),
     name:'',
@@ -194,6 +195,48 @@ function Devices() {
         window.wazigate.getDevices().then(setDevicesFc);
         navigate('/devices')
     }
+    const autoGenerateLoraWANOptions =  (title:"devAddr" | "nwkSEncKey"| "appSKey")=>{
+        switch (title) {
+            case 'devAddr':
+                setNewDevice({
+                    ...newDevice,
+                    meta:{
+                        ...newDevice.meta,
+                        lorawan:{
+                            ...newDevice.meta.lorawan,
+                            devAddr: Math.floor(Math.random() * 90000000)+10000000,
+                        }
+                    }
+                });
+                break;
+            case 'nwkSEncKey':
+                setNewDevice({
+                    ...newDevice,
+                    meta:{
+                        ...newDevice.meta,
+                        lorawan:{
+                            ...newDevice.meta.lorawan,
+                            nwkSEncKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                        }
+                    }
+                });
+                break;
+            case 'appSKey':
+                setNewDevice({
+                    ...newDevice,
+                    meta:{
+                        ...newDevice.meta,
+                        lorawan:{
+                            ...newDevice.meta.lorawan,
+                            appSKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                        }
+                    }
+                });
+                break;
+            default:
+                break;
+        }
+    }
     return (
         <Box sx={{height:'100%',overflowY:'scroll'}}>
             <CreateDeviceModalWindow
@@ -210,6 +253,7 @@ function Devices() {
                 changeMakeLoraWAN={changeMakeLoraWAN}
                 handleChangeDeviceCodec={handleChangeDeviceCodec}
                 onTextInputChange={handleTextInputChange}
+                autoGenerateLoraWANOptionsHandler={autoGenerateLoraWANOptions}
             />
             <EditDeviceModal 
                 device={selectedDevice as Device}
