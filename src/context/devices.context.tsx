@@ -3,7 +3,7 @@ import { App, Device } from "waziup";
 interface ContextValues{
     devices: Device[]
     apps: App[],
-    setDevicesFc:(devices:Device[])=>void,
+    getDevicesFc:()=>void,
     setAppsFc:(apps:App[])=>void,
     getApps:()=>void,
     addApp:(app:App)=>void
@@ -11,8 +11,8 @@ interface ContextValues{
 export const DevicesContext = createContext<ContextValues>({
     devices:[],
     apps:[],
-    setDevicesFc(devices) {
-        console.log(devices);
+    getDevicesFc() {
+        console.log("get devices");
     },
     setAppsFc(apps) {
         console.log(apps);
@@ -27,7 +27,6 @@ export const DevicesContext = createContext<ContextValues>({
 
 export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     const [devices, setDevices] = useState<Device[]>([]);
-    const setDevicesFc = ((devices:Device[])=>setDevices(devices));
     const setAppsFc = ((apps:App[])=>setApps(apps));
     const [apps, setApps] = useState<App[]>([]);
     const addApp = (app:App)=>{
@@ -38,17 +37,21 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             setApps(res);
         });
     }
-    useEffect(() => {
-        window.wazigate.getDevices().then((devs)=>{
-            setDevices(devs.filter((_dev,id)=>id>0));
+    const getDevices = ()=>{
+        window.wazigate.getDevices().then((res)=>{
+            const devFilter = res.filter((_dev,id)=>id);
+            setDevices(devFilter);
         });
+    }
+    useEffect(() => {
+        getDevices();
         getApps();
 
     }, []);
     const value={
         devices,
         apps,
-        setDevicesFc,
+        getDevicesFc:getDevices,
         setAppsFc,
         getApps,
         addApp
