@@ -37,7 +37,7 @@ function Devices() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
-    const {devices,setDevicesFc} = useContext(DevicesContext);
+    const {devices,getDevicesFc} = useContext(DevicesContext);
     const [selectedDevice, setSelectedDevice] = useState<null | Device>(null);
     const [newDevice, setNewDevice] = useState<Device>(initialNewDevice);
     const handleToggleModal = () => {
@@ -92,7 +92,7 @@ function Devices() {
         window.wazigate.addDevice(device)
             .then(() => {
                 handleToggleModal();
-                window.wazigate.getDevices().then(setDevicesFc);
+                getDevicesFc();
             }).catch(err => {
                 console.log('Error encountered: ', err)
             });
@@ -144,7 +144,7 @@ function Devices() {
         }else{
             window.wazigate.deleteDevice(device.id)
             .then(()=>{
-                window.wazigate.getDevices().then(setDevicesFc);
+                getDevicesFc();
             })
             .catch(err=>{
                 console.log(err);
