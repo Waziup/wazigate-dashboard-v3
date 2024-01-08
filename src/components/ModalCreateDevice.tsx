@@ -18,7 +18,7 @@ interface Props{
     newDevice: Device,
     changeMakeLoraWAN:()=>void
     onTextInputChange?:(e:React.ChangeEvent<HTMLInputElement>)=>void
-
+    autoGenerateLoraWANOptionsHandler:(title:"devAddr"|"nwkSEncKey"|"appSKey")=>void
 }
 const style = {
     position: 'absolute',
@@ -35,7 +35,7 @@ const IconStyle = {
     cursor:'pointer',
     color:'black',
 }
-export default function CreateDeviceModalWindow({openModal,onTextInputChange, handleChangeDeviceCodec, handleToggleModal,submitCreateDevice,handleChange,handleChangeSelect,selectedValue,screen,handleScreenChange,blockOnClick,newDevice,changeMakeLoraWAN,}:Props){
+export default function CreateDeviceModalWindow({openModal,autoGenerateLoraWANOptionsHandler, onTextInputChange, handleChangeDeviceCodec, handleToggleModal,submitCreateDevice,handleChange,handleChangeSelect,selectedValue,screen,handleScreenChange,blockOnClick,newDevice,changeMakeLoraWAN,}:Props){
     return(
         <Modal
                 open={openModal}
@@ -73,6 +73,7 @@ export default function CreateDeviceModalWindow({openModal,onTextInputChange, ha
                                             onTextInputChange={onTextInputChange as (e:React.ChangeEvent<HTMLInputElement>)=>void}
                                             newDevice={newDevice}
                                             selectedValue={selectedValue} 
+                                            autoGenerateHandler={autoGenerateLoraWANOptionsHandler}
                                         />
                                     )
                                 }
