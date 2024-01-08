@@ -53,7 +53,7 @@ export default function CreateDeviceModalWindow({openModal,onTextInputChange, ha
                                     <Box></Box>
                                 )
                             }
-                            <Close onClick={handleToggleModal} sx={{...IconStyle, fontSize:20}} />
+                            <Close onClick={()=>{handleScreenChange('tab1');handleToggleModal()}} sx={{...IconStyle, fontSize:20}} />
                         </RowContainerBetween>
                         <Box p={2}>
                             <form onSubmit={submitCreateDevice}>
