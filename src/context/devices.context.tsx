@@ -39,7 +39,9 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         });
     }
     useEffect(() => {
-        window.wazigate.getDevices().then(setDevices);
+        window.wazigate.getDevices().then((devs)=>{
+            setDevices(devs.filter((_dev,id)=>id>0));
+        });
         getApps();
 
     }, []);

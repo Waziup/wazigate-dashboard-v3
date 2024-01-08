@@ -3,7 +3,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import Dashboard from './pages/Dashboard'
 import Devices from './pages/Devices'
-import Automation from './pages/Automation'
+// import Automation from './pages/Automation'
 import Apps from './pages/Apps'
 import Settings from './pages/Settings'
 import Login from './pages/Login';
@@ -70,10 +70,10 @@ function App() {
                     path: '*',
                     element: <div>Not Found</div>
                 },
-                {
-                    path: '/automation',
-                    element: <Automation/>
-                },
+                // {
+                //     path: '/automation',
+                //     element: <Automation/>
+                // },
                 {
                     path:'/apps',
                     element:<Apps/>

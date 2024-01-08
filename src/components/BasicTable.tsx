@@ -50,7 +50,7 @@ export default function BasicTable({devices}:Props) {
                                         <Typography fontSize={[10,11,11,12,10]} color={DEFAULT_COLORS.primary_black}>
                                             {row.name.split('*')[0]}
                                         </Typography> 
-                                        <Typography fontSize={[10,11,11,12,10]}  color='#797979'>Last updated: {row.name.split('*')[1]} minutes</Typography>
+                                        <Typography fontSize={[10,11,11,12,10]}  color='#797979'>Last updated: {row.name.split('*')[1]} seconds</Typography>
                                     </Box>
                                 </Box>
                             </TableCell>

@@ -1,15 +1,18 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Tooltip, Typography } from "@mui/material";
 import { SelectElementString } from "../pages/Automation";
 import RowContainerBetween from "./RowContainerBetween";
 import { Android12Switch } from "./Switch";
-import { AddCircleOutline } from "@mui/icons-material";
+import { AddCircleOutline, RouterOutlined } from "@mui/icons-material";
 import { Device } from "waziup";
+import { DEFAULT_COLORS } from "../constants";
+import RowContainerNormal from "./RowContainerNormal";
 interface AddTextProps{
     text:string
     placeholder:string
     textInputValue?:string
     onTextInputChange?:(e:React.ChangeEvent<HTMLInputElement>)=>void
     name?:string
+    autoGenerateHandler:(title:"devAddr"|"nwkSEncKey"|"appSKey")=>void
 }
 interface TabTwoProps{
     selectedValue:string, 
@@ -18,35 +21,41 @@ interface TabTwoProps{
     makeLoraWAN:boolean
     newDevice: Device
     onTextInputChange?:(e:React.ChangeEvent<HTMLInputElement>)=>void
+    autoGenerateHandler:(title:"devAddr"|"nwkSEncKey"|"appSKey")=>void
 }
-const AddTextShow=({text,name, placeholder,onTextInputChange,textInputValue}:AddTextProps)=>(
+const AddTextShow=({text,name,autoGenerateHandler, placeholder,onTextInputChange,textInputValue}:AddTextProps)=>(
     <Box sx={{my:2}}>
         <Box sx={{display:'flex',justifyContent:'space-between',alignItems:'center', borderBottom:'1px solid #ccc'}}>
             <input name={name} value={textInputValue} onChange={onTextInputChange} placeholder={text} style={{border:'none',color:'#757474',fontWeight:200, outline:'none',width:'100%',padding:'6px 0'}} />
-            <AddCircleOutline sx={{color:'#292F3F', fontSize:20}} />
+            <Tooltip onClick={()=>autoGenerateHandler(name as "devAddr"|"nwkSEncKey"|"appSKey")} title="AutoGenerate">
+                <AddCircleOutline sx={{color:'#292F3F', fontSize:20}} />
+            </Tooltip>
         </Box>
         <Typography fontSize={10} my={.5} color={'#292F3F'} fontWeight={200}>{placeholder}</Typography>
     </Box>
 )
-export default function CreateDeviceTabTwo({selectedValue,onTextInputChange,newDevice, changeMakeLoraWAN, handleChangeDeviceCodec,makeLoraWAN}:TabTwoProps){
+export default function CreateDeviceTabTwo({onTextInputChange,newDevice,autoGenerateHandler, changeMakeLoraWAN, handleChangeDeviceCodec,makeLoraWAN}:TabTwoProps){
     return(
         <Box>
-            <SelectElementString mx={0} title='Device Codec' value={selectedValue} handleChange={handleChangeDeviceCodec} conditions={['JSON']} />
+            <SelectElementString mx={0} title='Device Codec' value={newDevice.meta.codec} handleChange={handleChangeDeviceCodec} conditions={['JSON','XLPP (Waziup Extended Low Power Payload)','LPP (Cayenne Low Power Payload)']} />
             <RowContainerBetween additionStyles={{my:1}}>
-                <Typography fontSize={13}>Make LoraWAN</Typography>
+                <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={13}>LoRaWAN Device</Typography>
                 <Android12Switch checked={makeLoraWAN} onChange={changeMakeLoraWAN} color='info' />
             </RowContainerBetween>
             {
                 makeLoraWAN && (
                     <Box my={2}>
-                        <SelectElementString mx={0} title={'Device Codec'} handleChange={()=>{}} conditions={['Input','Level','Humidity']} value={'Temperature'} />
-                        <AddTextShow textInputValue={newDevice.meta.device_addr} onTextInputChange={onTextInputChange} name="devAddr" text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got 0'} />
-                        <AddTextShow textInputValue={newDevice.meta.nwkskey} onTextInputChange={onTextInputChange} name="nwkSEncKey" text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got 0'} />
-                        <AddTextShow textInputValue={newDevice.meta.appkey} onTextInputChange={onTextInputChange} name="appSKey" text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
+                        <RowContainerNormal>
+                            <RouterOutlined sx={{mr:2, fontSize: 20,color:DEFAULT_COLORS.navbar_dark }} />
+                            <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={13}>LoRaWAN Settings</Typography>
+                        </RowContainerNormal>
+                        <SelectElementString mx={0} title={'Label'} handleChange={()=>{}} conditions={['Input','Level','Humidity']} value={'Temperature'} />
+                        <AddTextShow autoGenerateHandler={autoGenerateHandler} textInputValue={newDevice.meta.lorawan.devAddr} onTextInputChange={onTextInputChange} name="devAddr" text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got 0'} />
+                        <AddTextShow autoGenerateHandler={autoGenerateHandler} textInputValue={newDevice.meta.lorawan.nwkSEncKey} onTextInputChange={onTextInputChange} name="nwkSEncKey" text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got 0'} />
+                        <AddTextShow autoGenerateHandler={autoGenerateHandler} textInputValue={newDevice.meta.lorawan.appSKey} onTextInputChange={onTextInputChange} name="appSKey" text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
                     </Box>
                 )
             }
-            
         </Box>
     )
     
