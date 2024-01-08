@@ -37,7 +37,7 @@ function Devices() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
-    const {devices,setDevicesFc} = useContext(DevicesContext);
+    const {devices,getDevicesFc} = useContext(DevicesContext);
     const [selectedDevice, setSelectedDevice] = useState<null | Device>(null);
     const [newDevice, setNewDevice] = useState<Device>(initialNewDevice);
     const handleToggleModal = () => {
@@ -92,7 +92,7 @@ function Devices() {
         window.wazigate.addDevice(device)
             .then(() => {
                 handleToggleModal();
-                window.wazigate.getDevices().then(setDevicesFc);
+                getDevicesFc();
             }).catch(err => {
                 console.log('Error encountered: ', err)
             });
@@ -144,7 +144,7 @@ function Devices() {
         }else{
             window.wazigate.deleteDevice(device.id)
             .then(()=>{
-                window.wazigate.getDevices().then(setDevicesFc);
+                getDevicesFc();
             })
             .catch(err=>{
                 console.log(err);
@@ -188,50 +188,93 @@ function Devices() {
     }
     const handleSubmitEditDevice=(e: React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
+        console.log("Selected Device: ",selectedDevice);
         if (selectedDevice?.meta) {
             window.wazigate.setDeviceMeta(selectedDevice?.id as string,selectedDevice?.meta as Device)
             window.wazigate.setDeviceName(selectedDevice.id as string,selectedDevice.name);
         }
-        window.wazigate.getDevices().then(setDevicesFc);
+        handleToggleEditModalClose();
+        getDevicesFc();
         navigate('/devices')
     }
     const autoGenerateLoraWANOptions =  (title:"devAddr" | "nwkSEncKey"| "appSKey")=>{
         switch (title) {
             case 'devAddr':
-                setNewDevice({
-                    ...newDevice,
-                    meta:{
-                        ...newDevice.meta,
-                        lorawan:{
-                            ...newDevice.meta.lorawan,
-                            devAddr: Math.floor(Math.random() * 90000000)+10000000,
+                if(selectedDevice){
+                    setSelectedDevice({
+                        ...selectedDevice,
+                        meta:{
+                            ...selectedDevice.meta,
+                            lorawan:{
+                                ...selectedDevice.meta.lorawan,
+                                devAddr: Math.floor(Math.random() * 90000000)+10000000,
+                            }
                         }
-                    }
-                });
+                    }) as unknown as Device
+                }else{
+                    setNewDevice({
+                        ...newDevice,
+                        meta:{
+                            ...newDevice.meta,
+                            lorawan:{
+                                ...newDevice.meta.lorawan,
+                                devAddr: Math.floor(Math.random() * 90000000)+10000000,
+                            }
+                        }
+                    });
+                }
                 break;
             case 'nwkSEncKey':
-                setNewDevice({
-                    ...newDevice,
-                    meta:{
-                        ...newDevice.meta,
-                        lorawan:{
-                            ...newDevice.meta.lorawan,
-                            nwkSEncKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                if(selectedDevice){
+                    setSelectedDevice({
+                        ...selectedDevice,
+                        meta:{
+                            ...selectedDevice.meta,
+                            lorawan:{
+                                ...selectedDevice.meta.lorawan,
+                                nwkSEncKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                            }
                         }
-                    }
-                });
+                    }) as unknown as Device
+                }
+                else{
+                    setNewDevice({
+                        ...newDevice,
+                        meta:{
+                            ...newDevice.meta,
+                            lorawan:{
+                                ...newDevice.meta.lorawan,
+                                nwkSEncKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                            }
+                        }
+                    });
+                }
                 break;
             case 'appSKey':
-                setNewDevice({
-                    ...newDevice,
-                    meta:{
-                        ...newDevice.meta,
-                        lorawan:{
-                            ...newDevice.meta.lorawan,
-                            appSKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                if(selectedDevice){
+                    setSelectedDevice({
+                        ...selectedDevice,
+                        meta:{
+                            ...selectedDevice.meta,
+                            lorawan:{
+                                ...selectedDevice.meta.lorawan,
+                                appSKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                            }
                         }
-                    }
-                });
+                    }) as unknown as Device
+                }
+                else{
+                    setNewDevice({
+                        ...newDevice,
+                        meta:{
+                            ...newDevice.meta,
+                            lorawan:{
+                                ...newDevice.meta.lorawan,
+                                appSKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                            }
+                        }
+                    });
+                }
                 break;
             default:
                 break;
@@ -264,6 +307,7 @@ function Devices() {
                 handleTextInputEditCodec={handleTextInputEditCodec}
                 submitEditDevice={handleSubmitEditDevice}
                 changeEditMakeLoraWAN={changeEditMakeLoraWAN}
+                autoGenerateLoraWANOptionsHandler={autoGenerateLoraWANOptions}
             />
             <Box sx={{ p: 3, height: '100%' }}>
                 <RowContainerBetween>

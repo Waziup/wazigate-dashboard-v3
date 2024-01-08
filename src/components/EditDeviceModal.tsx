@@ -28,8 +28,10 @@ interface Props{
     handleTextInputEditCodec: (e:React.ChangeEvent<HTMLInputElement>)=>void
     submitEditDevice:(e: React.FormEvent<HTMLFormElement>)=>void
     changeEditMakeLoraWAN: ()=>void,
+    autoGenerateLoraWANOptionsHandler:(title:"devAddr"|"nwkSEncKey"|"appSKey")=>void
+
 }
-export default function EditDeviceModal({changeEditMakeLoraWAN, device,openModal,handleTextInputEditCodec,submitEditDevice, handleNameChange,handleChangeSelectDeviceType, handleToggleModal}:Props){
+export default function EditDeviceModal({changeEditMakeLoraWAN,autoGenerateLoraWANOptionsHandler, device,openModal,handleTextInputEditCodec,submitEditDevice, handleNameChange,handleChangeSelectDeviceType, handleToggleModal}:Props){
     console.log(device);
     if(!device)
         return;
@@ -63,21 +65,21 @@ export default function EditDeviceModal({changeEditMakeLoraWAN, device,openModal
                             </RowContainerNormal>
                             <Android12Switch checked={device.meta.lorawan} onChange={changeEditMakeLoraWAN} color='info' />
                         </RowContainerBetween>
-                    {
-                        device.meta.lorawan?(
-                            <>
-                                <Box  my={2}>
-                                    <SelectElementString mx={0} title={'Label'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} />
-                                    <AddTextShow name="device_addr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.device_addr} text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got 0'} />
-                                    <AddTextShow name="nwkskey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.nwkskey} text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got 0'} />
-                                    <AddTextShow name="appkey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.appkey} text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
-                                </Box>
-                            </>
-                        ):null
-                    }
-                    <Box sx={{display:'flex',justifyContent:'flex-end', alignItems:'center',pt:2}} >
-                        <Button type="submit" sx={{ color:'#fff'}} variant="contained" color="info" >EDIT</Button>
-                    </Box>
+                        {
+                            device.meta.lorawan?(
+                                <>
+                                    <Box  my={2}>
+                                        <SelectElementString mx={0} title={'Label'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} />
+                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="devAddr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devAddr} text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got 0'} />
+                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="nwkSEncKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got 0'} />
+                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="appSKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.appSKey} text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
+                                    </Box>
+                                </>
+                            ):null
+                        }
+                        <Box sx={{display:'flex',justifyContent:'flex-end', alignItems:'center',pt:2}} >
+                            <Button type="submit" sx={{ color:'#fff'}} variant="contained" color="info" >EDIT</Button>
+                        </Box>
                     </Box>
                 </form>
             </Box>
