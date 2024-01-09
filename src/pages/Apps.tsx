@@ -125,19 +125,23 @@ export default function Apps() {
     };
     const {apps,addApp,getApps} =useContext(DevicesContext);
     const [recommendedApps,setRecommendedApps] = useState<RecomendedApp[]>([]);
-    const [logs,setLogs] = useState<string>('');
+    const [logs,setLogs] = useState<{logs:string,done:boolean}>({logs:'',done:false});
     const logsRef = React.useRef<string>('');
     const [error, setError] = useState<Error | null | string>(null);
     function installAppFunction(image:string,id:string){
         setAppToInstallId(id);
         window.wazigate.installApp(image).then((res)=>{
-            console.log(res);
             logsRef.current = res as unknown as string;
-            setLogs(res as unknown as string);
+            setLogs({
+                done:logsRef.current?true:false,
+                logs:res as unknown as string
+            });
             getApps();
         }).catch((err)=>{
-            console.log(err);
-            setLogs(err as string);
+            setLogs({
+                done:true,
+                logs:err as string
+            });
             return;
         })
     }
@@ -178,9 +182,7 @@ export default function Apps() {
         installAppFunction(image,id);
     }
     const handleChangeLogsModal = (e: SelectChangeEvent)=>{
-        console.log(e.target.value);
         if (parseInt(e.target.value) === 20) {
-            console.log('we are installing a custom app');
             handleInstallAppModal();
             return;
         }
@@ -191,14 +193,20 @@ export default function Apps() {
     const [showAppSettings,setShowAppSettings] = useState<boolean>(false);
     const [appToUninstall,setAppToUninstall] = useState<App | null>(null);
     async function fetchInstallLogs(id:string){
+        
         await window.wazigate.get(`apps/${id}?install_logs`).then((fetchedLogs)=>{
             logsRef.current = (fetchedLogs as {log:string,done:boolean}).log as string;
-            if ((fetchedLogs as {log:string,done:boolean}).log !== logs) {
-                setLogs((fetchedLogs as {log:string,done:boolean}).log as string);
+            if ((fetchedLogs as {log:string,done:boolean}).log !== logs.logs) {
+                setLogs({
+                    done:(fetchedLogs as {log:string,done:boolean}).done,
+                    logs: (fetchedLogs as {log:string,done:boolean}).log as string
+                });
             }
-            console.log((fetchedLogs as {log:string,done:boolean}).log,'logs')
         }).catch((err)=>{
-            setLogs('Error encountered while fetching logs: '+err);
+            setLogs({
+                done:true,
+                logs:'Error encountered while fetching logs: '+err
+            });
         })
     }
     const load = () => {
@@ -207,51 +215,52 @@ export default function Apps() {
         });
     };
     useEffect(() => {
-        console.log('We are installing a new app and the ID is passed as: ',appToInstallId)
         if (modalProps.open && modalProps.title==='Installing New App') {
             fetchInstallLogs(appToInstallId);
             const intervalId = setInterval(async () => {
                 await fetchInstallLogs(appToInstallId);
-              }, 1000); // Adjust the interval duration (in milliseconds) as needed
+            }, 1000); // Adjust the interval duration (in milliseconds) as needed
               // Clean up the interval on component unmount
+            if (logs.done) {
+                clearInterval(intervalId);
+                setLogs({
+                    done:false,
+                    logs:''
+                });
+                setModalProps({open:false, title:'', children:null});
+                getApps();
+                return;
+            }
             return () => clearInterval(intervalId);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[modalProps.open && modalProps.title==='Installing New App']);
-    console.log(logs,'logs in app component');
     const setAppToUninstallFc = (id:number)=>{
-        console.log(id);
         const appToUninstallFind = apps[id];
-        console.log(appToUninstallFind);
         setAppToUninstall(appToUninstallFind);
         // handleClose();
         setUninstLoader(!uninstLoader)
     }
     const uninstall = () => {
-
-        console.log(appToUninstall);
-        
         setLoadingUninstall(true)
         window.wazigate.uninstallApp(appToUninstall?appToUninstall?.id:'', false)
-        .then((res) => {
-            console.log(res);
+        .then(() => {
             setUninstLoader(false);
             load();
             setAppToUninstall(null);
             getApps();
-        }).catch((err)=>{
-            // setAppToUninstall(null);
-            console.log('error encountered',err);
+        }).catch(()=>{
             setLoadingUninstall(false);
-            
         })
     };
     function closeModal(){
-        setLogs('');
+        setLogs({
+            done:false,
+            logs:''
+        });
         setModalProps({open:false, title:'', children:null});
     }
     function startOrStopApp(appId:string,running: boolean){
-        console.log('starting an app with this ID:',appId);
         const yesNo=confirm('Are you sure you want to '+ (running?'stop':'start')+' '+appId+'?');
         if (!yesNo) {
             return;
@@ -260,13 +269,10 @@ export default function Apps() {
             action: running?"stop":"start",
             restart:"no"
         }
-        console.log(appId,JSON.stringify(config));
         window.wazigate.startStopApp(appId,config)
-        .then((res)=>{
-            console.log(res);
+        .then(()=>{
             getApps();
-        }).catch((err)=>{
-            console.log(err);
+        }).catch(()=>{
             getApps()
         })
         
@@ -435,7 +441,7 @@ export default function Apps() {
                                                                     </Button>
                                                                     
                                                                     <Menu {...bindMenu(popupState)}>
-                                                                    <MenuItem onClick={(e)=>{console.log(e.currentTarget.value);popupState.close}} value={app.id} >
+                                                                    <MenuItem onClick={()=>{popupState.close}} value={app.id} >
                                                                         <ListItemIcon>
                                                                             <Settings fontSize="small" />
                                                                         </ListItemIcon>
