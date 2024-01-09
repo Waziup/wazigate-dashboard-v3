@@ -8,6 +8,12 @@ import { Button, Menu, MenuItem, ListItemIcon } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 import React from "react";
 import { App } from "waziup";
+import { StringSchema } from "yup";
+type App1 =App &{
+    customApp:boolean
+    description:string
+    image:StringSchema
+}
 export default function CustomApp({open,app}:{open?:boolean,app:App}){
     return(
         <GridItem>
@@ -17,7 +23,7 @@ export default function CustomApp({open,app}:{open?:boolean,app:App}){
             </Box>
             <Box display={'flex'} py={2}  justifyContent={'space-between'}>
                 <Box>
-                    <NormalText title="Waziup App" />
+                    <NormalText title={app.name} />
                     <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>wazigate-edge</Typography>
                 </Box>
                 <Box position={'relative'}>
@@ -48,8 +54,8 @@ export default function CustomApp({open,app}:{open?:boolean,app:App}){
                 </Box>
                 {/* <MoreVert sx={{color:'#292F3F'}}/> */}
             </Box>
-            <Typography color={DEFAULT_COLORS.secondary_black}>Status: <span color='red'>Running</span></Typography>
-            <Typography color={DEFAULT_COLORS.secondary_black}>Waziup firmware for Edge Computing</Typography>
+            <Typography color={DEFAULT_COLORS.secondary_black}>Status: <span color='red'>{app.state.running?'Running':'Stopped'}</span></Typography>
+            <Typography color={DEFAULT_COLORS.secondary_black}>{(app as App1).description}</Typography>
             
         </GridItem>
     )
