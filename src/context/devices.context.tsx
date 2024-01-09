@@ -6,6 +6,7 @@ interface ContextValues{
     getDevicesFc:()=>void,
     setAppsFc:(apps:App[])=>void,
     getApps:()=>void,
+    codecsList?:{id:string,name:string}[] | null,
     addApp:(app:App)=>void
 }
 export const DevicesContext = createContext<ContextValues>({
@@ -23,6 +24,7 @@ export const DevicesContext = createContext<ContextValues>({
     addApp(app) {
         console.log(app);
     },
+    codecsList:[]
 });
 
 export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
@@ -46,15 +48,24 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     useEffect(() => {
         getDevices();
         getApps();
-
+        loadCodecsList();
     }, []);
+    const [codecsList, setCodecsList] = useState<{id:string,name:string}[] | null>(null);
+    const loadCodecsList = () => {
+        window.wazigate.get('/codecs').then(res => {
+            setCodecsList(res as {id:string,name:string}[]);
+        }, (err: Error) => {
+            console.error("There was an error loading codecs:\n" + err)
+        });
+    }
     const value={
         devices,
         apps,
         getDevicesFc:getDevices,
         setAppsFc,
         getApps,
-        addApp
+        addApp,
+        codecsList
     }
     return(
         <DevicesContext.Provider value={value}>
