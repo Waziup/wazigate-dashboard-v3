@@ -6,6 +6,8 @@ import { AddCircleOutline, RouterOutlined } from "@mui/icons-material";
 import { Device } from "waziup";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerNormal from "./RowContainerNormal";
+import { useContext } from "react";
+import { DevicesContext } from "../context/devices.context";
 interface AddTextProps{
     text:string
     placeholder:string
@@ -35,9 +37,10 @@ const AddTextShow=({text,name,autoGenerateHandler, placeholder,onTextInputChange
     </Box>
 )
 export default function CreateDeviceTabTwo({onTextInputChange,newDevice,autoGenerateHandler, changeMakeLoraWAN, handleChangeDeviceCodec,makeLoraWAN}:TabTwoProps){
+    const {codecsList} = useContext(DevicesContext);
     return(
         <Box>
-            <SelectElementString mx={0} title='Device Codec' value={newDevice.meta.codec} handleChange={handleChangeDeviceCodec} conditions={['JSON','XLPP (Waziup Extended Low Power Payload)','LPP (Cayenne Low Power Payload)']} />
+            <SelectElementString mx={0} title='Device Codec' value={newDevice.meta.codec} handleChange={handleChangeDeviceCodec} conditions={codecsList as {id:string,name:string}[]} />
             <RowContainerBetween additionStyles={{my:1}}>
                 <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={13}>LoRaWAN Device</Typography>
                 <Android12Switch checked={makeLoraWAN} onChange={changeMakeLoraWAN} color='info' />
@@ -49,7 +52,7 @@ export default function CreateDeviceTabTwo({onTextInputChange,newDevice,autoGene
                             <RouterOutlined sx={{mr:2, fontSize: 20,color:DEFAULT_COLORS.navbar_dark }} />
                             <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={13}>LoRaWAN Settings</Typography>
                         </RowContainerNormal>
-                        <SelectElementString mx={0} title={'Label'} handleChange={()=>{}} conditions={['Input','Level','Humidity']} value={'Temperature'} />
+                        {/* <SelectElementString mx={0} title={'Label'} handleChange={()=>{}} conditions={['Input','Level','Humidity']} value={'Temperature'} /> */}
                         <AddTextShow autoGenerateHandler={autoGenerateHandler} textInputValue={newDevice.meta.lorawan.devAddr} onTextInputChange={onTextInputChange} name="devAddr" text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got 0'} />
                         <AddTextShow autoGenerateHandler={autoGenerateHandler} textInputValue={newDevice.meta.lorawan.nwkSEncKey} onTextInputChange={onTextInputChange} name="nwkSEncKey" text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got 0'} />
                         <AddTextShow autoGenerateHandler={autoGenerateHandler} textInputValue={newDevice.meta.lorawan.appSKey} onTextInputChange={onTextInputChange} name="appSKey" text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
