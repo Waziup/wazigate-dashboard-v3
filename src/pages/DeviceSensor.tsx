@@ -5,29 +5,44 @@ import EnhancedTable from "../components/DeviceTable";
 import { useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Chart from 'react-apexcharts';  
 import { DEFAULT_COLORS } from "../constants";
-import { useEffect,useState } from "react";
+import { useCallback, useEffect,useState } from "react";
 import type { Device } from "waziup";
 function Device() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
     }
-    const [device, setDevice] = useState<Device | null>(null);
-    const [values,setValues] = useState<{value:number,modified:string}[]>([])
-    const [matches] = useOutletContext<[matches:boolean]>();
-    console.log(matches);
-    const navigate = useNavigate();
-    const handleNav = (path:string)=>{navigate(path)}
-    const {id} = useParams();
-        console.log(id);
-    useEffect(() => {
-        window.wazigate.getDevice(id).then(setDevice);
-        window.wazigate.getSensorValues(id as string).then((res: {value:number,modified:string}[])=>{
-            setValues(res)
-        })
-    },[id]);
-    console.log(device);
     const {state} = useLocation();
     console.log(state);
+    const [device, setDevice] = useState<Device | null>(null);
+    const [values,setValues] = useState<{value:number,modified:string}[]>([]);
+    const [graphValues,setGraphValues] = useState<{y:number,x:string}[]>([]);
+    const [matches] = useOutletContext<[matches:boolean]>();
+
+    const navigate = useNavigate();
+    const {id} = useParams();
+    console.log(id);
+    const getGraphValues = useCallback(function(deviceId:string, sensorId:string) {
+        window.wazigate.getSensorValues(deviceId,sensorId)
+        .then((res)=>{
+            const values = (res as {time:string,value:number}[]).map((value)=>{
+                return {y:value.value,x:value.time}
+            })
+            const valuesTable = (res as {time:string,value:number}[]).map((value)=>{
+                return {
+                    value:value.value,
+                    modified:value.time
+                }
+            })
+            setValues(valuesTable);
+            setGraphValues(values);
+        })
+    },[]);
+    
+    useEffect(() => {
+        getGraphValues(state.deviceId,state.sensorId);
+        window.wazigate.getDevice(id).then(setDevice);
+    },[getGraphValues, id, state]);
+    console.log(device);
     return (
         <Box sx={{height:'100%',overflowY:'scroll'}}>
             <RowContainerBetween additionStyles={{px:2,py:2}}>
@@ -44,7 +59,7 @@ function Device() {
                 </Box>
                 {
                     matches?(
-                        <Button onClick={()=>handleNav(`/devices/${state.deviceId}/sensors/${state.sensorId}/settings`)} variant={'contained'}>
+                        <Button onClick={()=>navigate(`/devices/${state.deviceId}/sensors/${state.sensorId}/settings`,{state:{deviceName:device?.name,sensorname:state.sensorname, sensorId:state.sensorId}})} variant={'contained'}>
                             <SettingsTwoTone/>
                             SETTINGS
                         </Button>
@@ -67,7 +82,7 @@ function Device() {
                                 id: "basic-bar",
                             },
                             xaxis: {
-                                categories: [1,2,3,4,5,6,7,8,9,10],
+                                categories: graphValues.map((value)=>value.x),
                                 type: 'numeric',
                                 
                             },
@@ -78,12 +93,11 @@ function Device() {
                             legend:{
                                 show:false
                             },
-                            labels: ['Temperature', 'Humidity', 'Pressure', 'Wind Speed', 'Wind Direction', 'Rainfall', 'Soil Moisture', 'Soil Temperature', 'Soil Conductivity', 'Soil PH']
                         }}
                         series={[
                             {
                                 name: "series-1",
-                                data: [30,40,45,50,49,60,70,91,125,100]
+                                data: graphValues.map((value)=>value.y)
                             }
                         ]}
                         type="line"
