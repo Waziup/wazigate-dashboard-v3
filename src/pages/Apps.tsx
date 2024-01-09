@@ -16,6 +16,7 @@ type App1 =App &{
 type App2 =App &{
     description:string
     customApp:boolean
+    image:string
 }
 const customAppProps:App2={
     description:'',
@@ -23,6 +24,7 @@ const customAppProps:App2={
     author:'',
     customApp:true,
     name:'',
+    image:'',
     version:'',
     waziapp:{
         hook:'',
@@ -110,7 +112,9 @@ type RecomendedApp={
     id:string,
     image:string,
 }
+const inputStyle={width:'100%',padding:'8px 4px',margin:'5px 0', borderRadius:5, outline:'none',border:'1px solid  black'}
 export default function Apps() {
+    const [customAppId,setCustomAppId] = useState<App2>(customAppProps);
     const [matches] = useOutletContext<[matches: boolean]>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [loadingUninstall,setLoadingUninstall] = React.useState<boolean>(false);
@@ -144,58 +148,26 @@ export default function Apps() {
         })
         .catch(setError)
     }, []);
-    const handleCustomAppIdChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
-        console.log(e.target.value); 
-        setCustomAppId({
-            ...customAppId,
-            [e.target.id]:e.target.value 
-        })
-    }
     const handleSubmitNewCustomApp = ()=>{
-        console.log(customAppId);
         const yesNo = confirm('Are you sure you want to install this app?');
         if (!yesNo) {
             return;
         }
-        addApp(customAppId);
+        addApp(customAppId as unknown as App);
     }
-    const [customAppId,setCustomAppId] = useState<App2>(customAppProps);
     const [appToInstallId,setAppToInstallId] = useState<string>('');
-    console.log(customAppId,'custom app id');
-    
+    const handleCustomAppIdChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        setCustomAppId({
+            ...customAppId,
+            [e.target.name]:e.target.value
+        }) as unknown as App2;
+    }
     function handleInstallAppModal(){
-        setModalProps({open:true, title:'Install App', children:<>
-            <Box  width={'100%'}  bgcolor={'#fff'}>
-                <form onSubmit={(e)=>{e.preventDefault();handleSubmitNewCustomApp()}}>
-                    <Box borderBottom={'1px solid black'} px={2} py={2}>
-                        <input style={{width:'100%',padding:'8px 4px',borderRadius:5, outline:'none',border:'1px solid  black'}} 
-                            onInput={handleCustomAppIdChange}  
-                            id="name" required 
-                            placeholder="format(owner/image_name:tag)" 
-                        />
-                        <input style={{width:'100%',padding:'8px 4px',borderRadius:5, outline:'none',border:'1px solid  black'}} 
-                            onInput={handleCustomAppIdChange}  
-                            id="description" 
-                            required 
-                            placeholder="Description of app" 
-                        />
-                    </Box>
-                    <Box py={2}>
-                        <Button type='submit' variant={'contained'} sx={{mx:2}} color={'primary'}>Install</Button>
-                        <Button onClick={()=>{setCustomAppId(customAppProps);setLogs(''); closeModal()}} variant={'contained'} sx={{mx:2}} color={'error'}>Cancel</Button>
-                    </Box>
-                </form>
-            </Box>
-        </>});
+        setModalProps({open:true, title:'Install App', children:<></>});
     }
     
     function handleLogsModal(image:string, id:string){
-        console.log('ID is: ',id);
-        console.log('Image is: ',image);
         setAppToInstallId(id);
-        
-        const appToInstall = apps.find((app)=>app.id===id);
-        console.log(appToInstall);
         setModalProps({open:true, title:'Installing New App', children:<>
             <Box  width={'100%'} bgcolor={'#fff'}>
                 <Box px={2} py={1}>
@@ -305,26 +277,76 @@ export default function Apps() {
     return (
         <>
             {
-                modalProps.open &&
-                <Backdrop>
-                    <Box  width={matches?'40%':'90%'} bgcolor={'#fff'}>
-                        <Box borderBottom={'1px solid black'} px={2} py={2}>
-                            <Typography>{modalProps.title}</Typography>
+                modalProps.open && modalProps.title==='Installing New App' &&(
+                    <Backdrop>
+                        <Box  width={matches?'40%':'90%'} bgcolor={'#fff'}>
+                            <Box borderBottom={'1px solid black'} px={2} py={2}>
+                                <Typography>{modalProps.title}</Typography>
+                            </Box>
+                            {
+                                logs &&(
+                                    <Box maxWidth={'100%'} overflow={'scroll'} width={'100%'} height={200} bgcolor={'#000'}>
+                                        <Typography fontSize={10} color={'#fff'}>
+                                            {logs.logs}
+                                        </Typography>
+                                    </Box>
+                                )
+                            }
+                            <Box borderBottom={'1px solid black'}  py={2}>
+                                {modalProps.children}
+                            </Box>
                         </Box>
-                        {
-                            logs &&(
-                                <Box maxWidth={'100%'} overflow={'scroll'} width={'100%'} height={200} bgcolor={'#000'}>
-                                    <Typography fontSize={10} color={'#fff'}>
-                                        {logs}
-                                    </Typography>
-                                </Box>
-                            )
-                        }
-                        <Box borderBottom={'1px solid black'}  py={2}>
-                            {modalProps.children}
+                    </Backdrop>
+                )
+            }
+            {
+                modalProps.open && modalProps.title==='Install App' ?(
+                    <Backdrop>
+                        <Box  width={matches?'40%':'90%'} bgcolor={'#fff'}>
+                            <Box borderBottom={'1px solid black'} px={2} py={2}>
+                                <Typography>{modalProps.title}</Typography>
+                            </Box>
+                            <Box borderBottom={'1px solid black'}  py={2}></Box>
+                            <Box  width={'90%'}  bgcolor={'#fff'}>
+                                <form onSubmit={(e)=>{e.preventDefault();handleSubmitNewCustomApp()}}>
+                                    <Box borderBottom={'1px solid black'} px={2} >
+                                        <input style={inputStyle} 
+                                            onChange={handleCustomAppIdChange}  
+                                            name="name"
+                                            required
+                                            value={customAppId.name}
+                                            placeholder="Name of app " 
+                                        />
+                                        <input style={inputStyle} 
+                                            onChange={handleCustomAppIdChange}  
+                                            name="image"
+                                            required
+                                            value={customAppId.image}
+                                            placeholder="Docker Image: format(owner/image_name:tag)" 
+                                        />
+                                        <input style={inputStyle} 
+                                            onChange={handleCustomAppIdChange}  
+                                            name="author" required
+                                            value={customAppId.author} 
+                                            placeholder="Author of app" 
+                                        />
+                                        <input style={inputStyle} 
+                                            onChange={handleCustomAppIdChange}  
+                                            name="description" 
+                                            required
+                                            value={customAppId.description}
+                                            placeholder="Description of app" 
+                                        />
+                                    </Box>
+                                    <Box py={2}>
+                                        <Button type='submit' variant={'contained'} sx={{mx:2}} color={'primary'}>Install</Button>
+                                        <Button onClick={()=>{setCustomAppId(customAppProps);setLogs({done:false,logs:''}); closeModal()}} variant={'contained'} sx={{mx:2}} color={'error'}>Cancel</Button>
+                                    </Box>
+                                </form>
+                            </Box>
                         </Box>
-                    </Box>
-                </Backdrop>
+                    </Backdrop>
+                ):null
             }
             {
                 uninstLoader &&(
