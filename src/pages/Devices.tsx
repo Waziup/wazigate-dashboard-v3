@@ -189,9 +189,29 @@ function Devices() {
     const handleSubmitEditDevice=(e: React.FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
         console.log("Selected Device: ",selectedDevice);
+        const device = devices.find((dev)=>dev.id===selectedDevice?.id);
         if (selectedDevice?.meta) {
-            window.wazigate.setDeviceMeta(selectedDevice?.id as string,selectedDevice?.meta as Device)
-            window.wazigate.setDeviceName(selectedDevice.id as string,selectedDevice.name);
+            if(device?.meta!==selectedDevice?.meta){
+                console.log("Change codec: ",selectedDevice.meta.codec);
+                window.wazigate.setDeviceMeta(selectedDevice?.id as string,selectedDevice?.meta as Device)
+                .then(()=>{
+                    alert("Device meta updated");
+                    return;
+                }).catch(err=>{
+                    console.log(err);
+                    alert("Error updating device meta");
+                });
+            }
+            if(device?.name!==selectedDevice?.name){
+                window.wazigate.setDeviceName(selectedDevice.id as string,selectedDevice.name.toString())
+                .then(()=>{
+                    alert("Device name updated");
+                    return;
+                }).catch(err=>{
+                    console.log(err);
+                    alert("Error updating device name");
+                });
+            }
         }
         handleToggleEditModalClose();
         getDevicesFc();
