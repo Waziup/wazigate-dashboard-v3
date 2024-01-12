@@ -5,22 +5,23 @@ import {Box,Table,TableBody,TableCell,
   TableContainer,TableHead,
   TableSortLabel,Toolbar,Typography,Paper,
   TablePagination,TableRow,
-  Checkbox,IconButton,Tooltip,FormControlLabel,Switch
+  Checkbox,IconButton,Tooltip,FormControlLabel,Switch,
+  
 } 
 from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { visuallyHidden } from '@mui/utils';
-import { Download, HorizontalRule, TrendingDown, TrendingUp, Tune } from '@mui/icons-material';
+import { Download, Tune } from '@mui/icons-material';
 interface Data {
     name: string;
     values: number;
-    sos: JSX.Element; 
+    sos: string; 
 }
 
 function createData(
 	name: string,
 	values: number,
-	sos: JSX.Element,
+	sos: string,
 
 ): Data {
 	return {
@@ -221,7 +222,7 @@ interface Props{
 }
 export default function DeviceTable({values}:Props) {
   const rowsDate = values.map(v=>{
-    return createData(v.modified,v.value,<TrendingUp sx={{color:'#7E9B08'}}/>)
+    return createData(v.modified,v.value,'trending0')
   })
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('values');
@@ -231,7 +232,7 @@ export default function DeviceTable({values}:Props) {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
+    _event: React.MouseEvent<unknown>,
     property: keyof Data,
   ) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -269,8 +270,8 @@ export default function DeviceTable({values}:Props) {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, newPage: number) => {
-    event.preventDefault();
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
+    (event as React.MouseEvent<HTMLButtonElement, MouseEvent>).preventDefault();
     setPage(newPage);
   };
 
@@ -291,10 +292,11 @@ export default function DeviceTable({values}:Props) {
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort(rowsDate, getComparator(order, orderBy)).slice(
+      stableSort(rowsDate , getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [order, orderBy, page, rowsPerPage],
   );
 
@@ -318,13 +320,13 @@ export default function DeviceTable({values}:Props) {
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(rowsDate.name);
+                const isItemSelected = isSelected(row.name as string);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, rowsDate.name)}
+                    onClick={(event) => handleClick(event, row.name as string)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
