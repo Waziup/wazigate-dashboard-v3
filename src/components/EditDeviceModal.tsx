@@ -7,7 +7,8 @@ import { SelectElementString } from "../pages/Automation";
 import AddTextShow from "./AddTextInput";
 import { Android12Switch } from "./Switch";
 import RowContainerNormal from "./RowContainerNormal";
-import React from "react";
+import React, { useContext } from "react";
+import { DevicesContext } from "../context/devices.context";
 const style = {
     position: 'absolute',
     top: '50%',
@@ -33,6 +34,7 @@ interface Props{
 }
 export default function EditDeviceModal({changeEditMakeLoraWAN,autoGenerateLoraWANOptionsHandler, device,openModal,handleTextInputEditCodec,submitEditDevice, handleNameChange,handleChangeSelectDeviceType, handleToggleModal}:Props){
     console.log(device);
+    const {codecsList}=useContext(DevicesContext)
     if(!device)
         return;
     return(
@@ -55,7 +57,7 @@ export default function EditDeviceModal({changeEditMakeLoraWAN,autoGenerateLoraW
                         />
                         {
                             device.meta.codec &&(
-                                <SelectElementString mx={0} my={2} title='Device Codec' value={device.meta.codec} handleChange={()=>{}} conditions={['JSON','b']} />
+                                <SelectElementString mx={0} my={2} title='Device Codec' value={device.meta.codec} handleChange={()=>{}} conditions={codecsList as {id:string,name:string}[]} />
                             )
                         }
                         <RowContainerBetween additionStyles={{my:1}}>
@@ -69,10 +71,10 @@ export default function EditDeviceModal({changeEditMakeLoraWAN,autoGenerateLoraW
                             device.meta.lorawan?(
                                 <>
                                     <Box  my={2}>
-                                        <SelectElementString mx={0} title={'Label'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} />
-                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="devAddr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devAddr} text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got 0'} />
-                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="nwkSEncKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got 0'} />
-                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="appSKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.appSKey} text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
+                                        {/* <SelectElementString mx={0} title={'Label'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} /> */}
+                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="devAddr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devAddr} text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got '+device.meta.lorawan.devAddr.toString().length} />
+                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="nwkSEncKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got '+device.meta.lorawan.nwkSEncKey.toString().length} />
+                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="appSKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.appSKey} text={'AppKey (App Key)'}  placeholder={'32 digits required, got '+device.meta.lorawan.appSKey.toString().length} />
                                     </Box>
                                 </>
                             ):null

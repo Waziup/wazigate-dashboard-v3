@@ -133,6 +133,8 @@ export default function DeviceSettings(){
         }
     }
     const {state} = useLocation();
+    console.log(state);
+    
     const [codecsList, setCodecsList] = useState<{id:string,name:string}[] | null>(null);
     const loadCodecsList = () => {
         window.wazigate.get('/codecs').then(res => {
@@ -144,6 +146,7 @@ export default function DeviceSettings(){
     useEffect(()=>{
         loadCodecsList();
     },[]);
+    const autoGenerateHandlerFc=()=>{}
     return(
         <>
             <Modal
@@ -226,21 +229,25 @@ export default function DeviceSettings(){
                     </Button>
                 </RowContainerBetween>
                 <Grid m={2} container >
-                    <Grid bgcolor={'#fff'} mx={2} my={1} item md={6} px={2} py={2} borderRadius={2} lg={5} xl={5} sm={8} xs={11}>
-                        <RowContainerBetween>
-                            <Box display={'flex'} my={1} alignItems={'center'}>
-                                <Router sx={{ fontSize: 20, color:'#292F3F' }} />
-                                <Typography fontWeight={500} mx={2}  fontSize={16} color={'#292F3F'}>LoRaWAN Settings</Typography>
-                            </Box>
-                            <MoreVert sx={{color:'black', fontSize:20}} />
-                        </RowContainerBetween>
-                        <Box my={2}>
-                            <SelectElement title={'Application Type'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} />
-                            <AddTextShow text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got 0'} />
-                            <AddTextShow text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got 0'} />
-                            <AddTextShow text={'AppKey (App Key)'}  placeholder={'32 digits required, got 0'} />
-                        </Box>
-                    </Grid>
+                    {
+                        state.meta.lorawan?(
+                            <Grid bgcolor={'#fff'} mx={2} my={1} item md={6} px={2} py={2} borderRadius={2} lg={5} xl={5} sm={8} xs={11}>
+                                <RowContainerBetween>
+                                    <Box display={'flex'} my={1} alignItems={'center'}>
+                                        <Router sx={{ fontSize: 20, color:'#292F3F' }} />
+                                        <Typography fontWeight={500} mx={2}  fontSize={16} color={'#292F3F'}>LoRaWAN Settings</Typography>
+                                    </Box>
+                                    <MoreVert sx={{color:'black', fontSize:20}} />
+                                </RowContainerBetween>
+                                <Box my={2}>
+                                    <SelectElement title={'Application Type'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} />
+                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} name="devAddr" textInputValue={state.meta.lorawan.devAddr} text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got '+state.meta.lorawan.devAddr.toString().length} />
+                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} name="nwkSEncKey" textInputValue={state.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got '+state.meta.lorawan.nwkSEncKey.toString().length} />
+                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} name="appSKey" textInputValue={state.meta.lorawan.appSKey} text={'AppKey (App Key)'}  placeholder={'32 digits required, got '+state.meta.lorawan.appSKey.toString().length} />
+                                </Box>
+                            </Grid>
+                        ):null
+                    }
                     <Grid bgcolor={'#fff'} mx={2} my={1} item md={6} px={2} py={2} borderRadius={2} lg={5} xl={5} sm={8} xs={11}>
                         <RowContainerBetween>
                             <Box display={'flex'} my={1} alignItems={'center'}>
@@ -253,7 +260,7 @@ export default function DeviceSettings(){
                             <SelectElement title={'Application Type'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} />
                             {
                                 codecsList? codecsList.map((codec,id)=>(
-                                    <AddTextShow key={id} text={codec.name}  placeholder={`${id===0?'8':'32'}digits required, got 0`} />
+                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} key={id} text={codec.name}  placeholder={`${id===0?'8':'32'}digits required, got 0`} />
                                 )):null
                             }
                         </Box>
