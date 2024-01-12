@@ -16,7 +16,7 @@ export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectEl
 export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange:(event: ChangeEvent<HTMLSelectElement>)=>void,
     title:string,
-    conditions:string[] | number[], 
+    conditions: {id:string,name:string}[] , 
     value: string
     mx?:number
     my?:number
@@ -61,7 +61,7 @@ export const SelectElementString = ({handleChange,title,mx,my,  conditions,isDis
             >
                 <option selected style={{color:'#ccc'}} defaultValue={''}>select option</option>
                 {conditions.map((condition,index)=>(
-                    <option color={DEFAULT_COLORS.navbar_dark} key={index} value={condition}>{condition}</option>
+                    <option color={DEFAULT_COLORS.navbar_dark} key={index} value={condition.id}>{condition.name}</option>
                 ))}
             </NativeSelect>
         </FormControl>
