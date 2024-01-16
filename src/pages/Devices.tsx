@@ -413,7 +413,7 @@ function Devices() {
                                                 device.actuators.length > 0 ? device.actuators.map((act) => (
                                                     <Box key={act.id}>
                                                         <SensorInfo onClick={() => { 
-                                                            navigate(`/devices/${device.id}/sensors/${act.id}`, { state: { deviceId: device.id, actuatorname: act.name } }) 
+                                                                navigate(`/devices/${device.id}/actuators/${act.id}`, { state: { deviceId: device.id,actuatordId:act.id, actuatorname: act.name } }) 
                                                             }}
                                                             iconname='precision_manufacturing'
                                                             name={act.name} 
