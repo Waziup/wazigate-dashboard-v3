@@ -1,16 +1,17 @@
-import { Box, Breadcrumbs, Button, FormControl,  NativeSelect, Typography } from "@mui/material";
-import { useLocation,Link, useOutletContext } from "react-router-dom";
+import { Box, Breadcrumbs, Button, FormControl,  NativeSelect, TextField, Typography } from "@mui/material";
+import { useLocation,Link, useOutletContext, useParams } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/RowContainerBetween";
 import { Save,  Sensors,  ToggleOff, ToggleOn,  } from "@mui/icons-material";
 import RowContainerNormal from "../components/RowContainerNormal";
 import DiscreteSliderMarks from "../components/DiscreteMarks";
 import { ChangeEvent, useEffect, useState } from "react";
-import { Sensor } from "waziup";
+import { Actuator, Device, Sensor } from "waziup";
+import ontologies from "../ontologies.json";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange:(event: ChangeEvent<HTMLSelectElement>)=>void,
     title:string,
-    conditions:{id:string,name:string}[], 
+    conditions:string[], 
     value: string
     isDisabled?:boolean
     matches?:boolean
@@ -32,7 +33,7 @@ export const SelectElement = ({handleChange,title,conditions,isDisabled,matches,
                     onChange={handleChange}
                 >
                     {conditions.map((condition,index)=>(
-                        <option key={index} value={condition.id}>{condition.name}</option>
+                        <option id="" key={index} value={condition}>{condition}</option>
                     ))}
                 </NativeSelect>
             </FormControl>
