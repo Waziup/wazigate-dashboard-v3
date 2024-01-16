@@ -67,6 +67,14 @@ function App() {
                     element: <DeviceSensorSettings/>
                 },
                 {
+                    path:'/devices/:id/actuators/:sensorId',
+                    element: <DeviceSensor/>
+                },
+                {
+                    path:'/devices/:id/actuators/:sensorId/settings',
+                    element: <DeviceSensorSettings/>
+                },
+                {
                     path: '*',
                     element: <div>Not Found</div>
                 },
