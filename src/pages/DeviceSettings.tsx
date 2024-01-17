@@ -1,17 +1,20 @@
 import {  Add, MoreVert,Router,} from "@mui/icons-material";
-import { Box,Breadcrumbs,FormControl,Grid,Modal,Button,  NativeSelect,  Typography } from "@mui/material";
+import { Box,Breadcrumbs,FormControl,Grid,Modal,Button,  Typography, TextField, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import RowContainerBetween from "../components/RowContainerBetween";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ChangeEvent,useEffect,useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import {  useContext,useEffect,useState } from "react";
 import AddTextShow from "../components/AddTextInput";
-import { Actuator, Sensor } from "waziup";
+import { Actuator, Device, Sensor } from "waziup";
+import { DevicesContext } from "../context/devices.context";
+import ontologies from "../ontologies.json";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-    handleChange:(event: ChangeEvent<HTMLSelectElement>)=>void,
+    handleChange:(event: SelectChangeEvent<string>)=>void,
     title:string,
     conditions:string[] | number[], 
     value: string
     isDisabled?:boolean
     matches?:boolean
+    widthPassed?:string
 }
 const style = {
     position: 'absolute',
