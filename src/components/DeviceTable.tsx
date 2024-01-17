@@ -297,7 +297,7 @@ export default function DeviceTable({values}:Props) {
         page * rowsPerPage + rowsPerPage,
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [order, orderBy, page, rowsPerPage],
+    [order, values, orderBy, page, rowsPerPage],
   );
 
   return (
@@ -351,7 +351,7 @@ export default function DeviceTable({values}:Props) {
                     >
                       {row.name}
                     </TableCell>
-                    <TableCell align="right">{row.values}</TableCell>
+                    <TableCell  align="right">{row.values?'Running':'Stopped'}</TableCell>
                     <TableCell align="right">{row.sos}</TableCell>
                   </TableRow>
                 );
