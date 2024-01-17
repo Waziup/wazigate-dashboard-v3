@@ -32,6 +32,12 @@ interface Props{
     autoGenerateLoraWANOptionsHandler:(title:"devAddr"|"nwkSEncKey"|"appSKey")=>void
 
 }
+function toStringHelper(value:string){
+    if(value){
+        return value.toString().length;
+    }
+    return 0;
+}
 export default function EditDeviceModal({changeEditMakeLoraWAN,autoGenerateLoraWANOptionsHandler, device,openModal,handleTextInputEditCodec,submitEditDevice, handleNameChange,handleChangeSelectDeviceType, handleToggleModal}:Props){
     console.log(device);
     const {codecsList}=useContext(DevicesContext)
@@ -72,9 +78,9 @@ export default function EditDeviceModal({changeEditMakeLoraWAN,autoGenerateLoraW
                                 <>
                                     <Box  my={2}>
                                         {/* <SelectElementString mx={0} title={'Label'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} /> */}
-                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="devAddr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devAddr} text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got '+device.meta.lorawan.devAddr.toString().length} />
-                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="nwkSEncKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got '+device.meta.lorawan.nwkSEncKey.toString().length} />
-                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="appSKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.appSKey} text={'AppKey (App Key)'}  placeholder={'32 digits required, got '+device.meta.lorawan.appSKey.toString().length} />
+                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="devAddr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devAddr} text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got '+toStringHelper(device.meta.lorawan.devAddr)} />
+                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="nwkSEncKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got '+toStringHelper(device.meta.lorawan.nwkSEncKey)} />
+                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="appSKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.appSKey} text={'AppKey (App Key)'}  placeholder={'32 digits required, got '+toStringHelper(device.meta.lorawan.appSKey)} />
                                     </Box>
                                 </>
                             ):null
