@@ -22,16 +22,22 @@ function Device() {
     const {id,sensorId} = useParams();
     console.log(id);
     const getGraphValues = useCallback(function(deviceId:string, sensorId:string) {
-        window.wazigate.getSensor(sensorId).then(setSensOrActuator);
+        window.wazigate.getSensor(sensorId).then((value)=>{
+            setSensOrActuator(value)
+        });
         window.wazigate.getSensorValues(deviceId,sensorId)
         .then((res)=>{
             const values = (res as {time:string,value:number}[]).map((value)=>{
                 return {y:value.value,x:value.time}
             })
             const valuesTable = (res as {time:string,value:number}[]).map((value)=>{
+                const date = new Date(value.time);
+                const hours = String(date.getUTCHours()).padStart(2, '0');
+
+                const minutes = String(date.getUTCMinutes()).padStart(2, '0');
                 return {
                     value:value.value,
-                    modified:value.time
+                    modified: `${hours}:${minutes}`
                 }
             })
             setValues(valuesTable);
@@ -40,30 +46,44 @@ function Device() {
     },[]);
     
     useEffect(() => {
-        if(pathname.includes('actuators')){
-            window.wazigate.getActuator(sensorId as string).then(setSensOrActuator);
-            window.wazigate.getActuatorValues(id as string,sensorId as string)
-            .then((res)=>{
-                const values = (res as {time:string,value:number}[]).map((value)=>{
-                    return {y:value.value,x:value.time}
+        console.log(pathname.includes('actuators'));
+        window.wazigate.getDevice(id).then((de)=>{
+            const sensor = de.sensors.find((sensor)=>sensor.id===sensorId);
+            if(sensor){
+                setSensOrActuator(sensor);
+                window.wazigate.getSensor(sensorId as string).then(setSensOrActuator);
+                getGraphValues(id as string,sensorId as string);
+            }
+            const actuator = de.actuators.find((actuator)=>actuator.id===sensorId);
+            if(actuator){
+                setSensOrActuator(actuator);
+                window.wazigate.getActuatorValues(id as string,sensorId as string)
+                .then((res)=>{
+                    console.log('Res as actuator values',res);
+                    
+                    const values = (res as {time:string,value:number}[]).map((value)=>{
+                        return {y:value.value,x:value.time}
+                    });
+                    const valuesTable = (res as {time:string,value:number}[]).map((value)=>{
+                        const date = new Date(value.time);
+                        const hours = String(date.getUTCHours()).padStart(2, '0');
+    
+                        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                        return {
+                            value:value.value?1:0,
+                            modified: `${hours}:${minutes}`
+                        }
+                    })
+                    console.log('values',valuesTable);
+                    
+                    setValues(valuesTable);
+                    setGraphValues(values);
                 })
-                const valuesTable = (res as {time:string,value:number}[]).map((value)=>{
-                    return {
-                        value:value.value,
-                        modified:value.time
-                    }
-                })
-                setValues(valuesTable);
-                setGraphValues(values);
-            })
-        }
-        else{
-            window.wazigate.getSensor(sensorId as string).then(setSensOrActuator);
-            getGraphValues(id as string,sensorId as string);
-        }
-        window.wazigate.getDevice(id).then(setDevice);
+            }
+            setDevice(de)
+        });
     },[getGraphValues, id, pathname, sensorId]);
-    console.log(device);
+    console.log('Values for table: ',values);
     return (
         <Box sx={{height:'100%',overflowY:'scroll'}}>
             <RowContainerBetween additionStyles={{px:2,py:2}}>
@@ -74,13 +94,13 @@ function Device() {
                             <Link fontSize={14} underline="hover" color="inherit" href={`/devices/${device?.id}`}>
                                 {device?.name}
                             </Link>
-                            <Typography fontSize={14} color="text.primary">Sensors / {sensOrActuator?.name}</Typography>
+                            <Typography fontSize={14} fontWeight={300} color="inherit">{pathname.includes('actuators')?'actuators':'sensors'} / {sensOrActuator?.name.toLocaleLowerCase()}</Typography>
                         </Breadcrumbs>
                     </div>
                 </Box>
                 {
                     matches?(
-                        <Button onClick={()=>navigate(`/devices/${device?.id}/sensors/${sensOrActuator?.id}/settings`)}variant={'contained'}>
+                        <Button onClick={()=>navigate(`/devices/${device?.id}/${pathname.includes('actuators')?'actuators':'sensors'}/${sensOrActuator?.id}/settings`)}variant={'contained'}>
                             <SettingsTwoTone/>
                             SETTINGS
                         </Button>
@@ -100,20 +120,19 @@ function Device() {
                     <Chart
                         options={{
                             chart: {
-                                id: "basic-bar",
+                                // height: 350,
+                                type: 'rangeArea',
                             },
                             xaxis: {
                                 categories: graphValues.map((value)=>value.x),
-                                type: 'numeric',
+                                // type: 'numeric',
                                 
                             },
                             stroke:{
                                 curve:'smooth',
                                 width:2
                             },
-                            legend:{
-                                show:false
-                            },
+                            colors:['#4592F6'],
                         }}
                         series={[
                             {
@@ -121,7 +140,7 @@ function Device() {
                                 data: graphValues.map((value)=>value.y)
                             }
                         ]}
-                        type="line"
+                        type="area"
                         width={'100%'}
                         height={matches?350:290}
                     />
