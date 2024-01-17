@@ -279,11 +279,11 @@ export default function DeviceSettings(){
                                 
                                 <Link
                                     color="inherit"
-                                    state={{title:state.name}}
-                                    to={`/devices/${state.id}`}
+                                    state={{title:thisDevice?.name}}
+                                    to={`/devices/${id}/settings`}
                                     style={{color:'#292F3F',fontSize:15, textDecoration:'none'}}
                                 >
-                                    {state.name?state.name.slice(0,10)+'...':''}
+                                    {thisDevice?.name?thisDevice.name.slice(0,10)+'...':''}
                                 </Link>
                                 <Typography fontSize={15} color="text.primary">
                                     settings
@@ -298,7 +298,7 @@ export default function DeviceSettings(){
                 </RowContainerBetween>
                 <Grid m={2} container >
                     {
-                        state.meta.lorawan?(
+                        thisDevice?.meta.lorawan?(
                             <Grid bgcolor={'#fff'} mx={2} my={1} item md={6} px={2} py={2} borderRadius={2} lg={5} xl={5} sm={8} xs={11}>
                                 <RowContainerBetween>
                                     <Box display={'flex'} my={1} alignItems={'center'}>
