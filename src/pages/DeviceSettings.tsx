@@ -169,55 +169,106 @@ export default function DeviceSettings(){
                     onClose={()=>{setModalProps({title:'',placeholder:''}); handleToggleModal()}}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
-                    sx={{borderRadius:14}}
+                    sx={{borderRadius:10}}
                 >
-                    <Box>
+                    <Box sx={{borderRadius:10,p:2}}>
                         <Box sx={style}>
-                            <Box px={2} borderBottom={'1px solid black'}>
+                            <RowContainerBetween additionStyles={{p:1,borderBottom:'.5px solid #ccc'}}>
+
                                 {
                                     modalProps.title?(
-                                        <Typography>Enter {modalProps.title} Details</Typography>
+                                        <Typography>Create  {modalProps.title==='sensor'?'a Sensor':'an Actuator'} </Typography>
                                     ):(
                                         <Typography>Choose Type</Typography>
                                     )
                                 }
+                                <Button onClick={()=>{setModalProps({title:'',placeholder:''}); handleToggleModal()}} sx={{textTransform:'initial',color:'#ff0000'}} variant={'text'} >Cancel</Button>
+                            </RowContainerBetween>
+                            <Box p={1}>
+                                <SelectElement
+                                    conditions={['actuator','sensor']}
+                                    handleChange={(e: SelectChangeEvent)=>{setModalEls(e.target.value==='actuator'?'actuator':'sensor',e.target.value)}}
+                                    title="Type"
+                                    value={modalProps.title}
+                                />
+                                {
+                                    modalProps.title?(
+                                        <Box my={1} >
+                                            <form onSubmit={modalProps.title==='actuator'?handleCreateActuatorClick:handleCreateSensorClick}>
+                                                <TextField onInput={handleNameChange} sx={{width:'100%',my:1}} placeholder={modalProps.placeholder}  type="text" id="standard-basic" name="name" label="Name" variant="standard"></TextField>
+                                                {
+                                                    modalProps.title==='sensor' ?(
+                                                        <>
+                                                            <Box my={1}>
+                                                                <SelectElement
+                                                                    conditions={Object.keys(ontologies.sensingDevices)}
+                                                                    handleChange={handleSelectChange}
+                                                                    title="Type"
+                                                                    value={newSensOrAct.type}
+                                                                    name="sensorType" 
+                                                                    id="sensorType"
+                                                                />
+                                                            </Box>
+                                                            <Box sx={{display:'flex',alignItems:'center',my:1, justifyContent:'space-between'}}>
+                                                                <SelectElement
+                                                                    conditions={selectOptionsHelper(newSensOrAct.type,'sensor')}
+                                                                    handleChange={handleSelectChange}
+                                                                    title="Quantity"
+                                                                    value={newSensOrAct.quantity}
+                                                                    name="quantity" 
+                                                                    id="unit"
+                                                                    widthPassed="47%"
+                                                                />
+                                                                <SelectElement
+                                                                    conditions={['Motor','Switch']}
+                                                                    handleChange={()=>{}}
+                                                                    title="Unit"
+                                                                    value={newSensOrAct.unit?newSensOrAct.unit:''}
+                                                                    name="unit" 
+                                                                    id="unit"
+                                                                    widthPassed="48%"
+                                                                />
+                                                            </Box>
+                                                        </>
+                                                    ):(
+                                                        <>
+                                                            <SelectElement
+                                                                conditions={Object.keys(ontologies.actingDevices)}
+                                                                handleChange={()=>{}}
+                                                                title="Actuator Type"
+                                                                value={newSensOrAct.type}
+                                                            />
+                                                            <SelectElement
+                                                                conditions={['On','Off']}
+                                                                handleChange={()=>{}}
+                                                                title="Quantity"
+                                                                value={''}
+                                                            />
+                                                            <SelectElement
+                                                                conditions={['On','Off']}
+                                                                handleChange={()=>{}}
+                                                                title="Unit"
+                                                                value={''}
+                                                            />
+                                                        </>
+                                                    )
+                                                }
+                                                <RowContainerBetween additionStyles={{pt:2}}>
+                                                    <Box></Box>
+                                                    <Button  sx={{mx:2, color:'#fff'}} variant="contained" color="info" type="submit">Save</Button>
+                                                </RowContainerBetween>
+                                            </form>
+                                        </Box>
+                                    ):null
+                                }
                             </Box>
-                            <SelectElement
-                                conditions={['actuator','sensor']}
-                                handleChange={(e: React.ChangeEvent<HTMLSelectElement>)=>{setModalEls(e.target.value==='actuator'?'actuator':'sensor',e.target.value)}}
-                                title="Select Type"
-                                value={modalProps.title}
-                            />
-                            {
-                                modalProps.title?(
-                                    <Box p={2} borderBottom={'1px solid #000'}>
-                                        <form onSubmit={modalProps.title==='actuator'?handleCreateActuatorClick:handleCreateSensorClick}>
-                                            <input name="name" style={{outline:'none',width:'100%',borderRadius:4, border:'1px solid black',padding:'5px 2px'}} onInput={handleNameChange} required type="text" placeholder={modalProps.placeholder} />    
-                                            {
-                                                modalProps.title==='sensor' &&(
-                                                    <select required style={{outline:'none',width:'100%',borderRadius:4,margin:'10px 0',background:'none', border:'1px solid black',padding:'5px 2px'}} onChange={handleSelectChange} name="sensorType" id="sensorType">
-                                                        <option defaultValue={''} disabled selected>Select Sensor Type</option>
-                                                        <option value="WaterThermometer">Water Thermometer</option>
-                                                        <option value="WaterLevel">Water Level</option>
-                                                        <option value="WaterPollutantSensor">Water Pollutant Sensor</option>
-                                                    </select>
-                                                )
-                                            }
-                                            <Box pt={2}>
-                                                <Button sx={{mx:2, color:'#fff'}} variant="contained" color="info" type="submit">Save</Button>
-                                                <Button variant="contained" color="warning" onClick={()=>{setModalProps({title:'',placeholder:''}); handleToggleModal()}}>Close</Button>
-                                            </Box>
-                                        </form>
-                                    </Box>
-                                ):null
-                            }
                         </Box>
                     </Box>
             </Modal>
             <Box mx={2} sx={{ height: '100%',overflowY:'scroll', scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}}} m={2}>
                 <RowContainerBetween additionStyles={{mx:2}}>
                     <Box>
-                        <Typography fontWeight={700} color={'black'}>{state.name}</Typography>
+                        <Typography fontWeight={700} color={'black'}>{thisDevice?.name}</Typography>
                         <div role="presentation" onClick={handleClick}>
                             <Breadcrumbs aria-label="breadcrumb">
                                 <Link style={{color:'#292F3F', fontSize:15, textDecoration:'none'}} state={{title:'Devices'}} color="inherit" to="/devices">
