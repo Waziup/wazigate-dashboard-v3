@@ -309,9 +309,9 @@ export default function DeviceSettings(){
                                 </RowContainerBetween>
                                 <Box my={2}>
                                     <SelectElement title={'Application Type'} handleChange={()=>{}} conditions={['Tempeature','Level','Humidity']} value={'Temperature'} />
-                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} name="devAddr" textInputValue={state.meta.lorawan.devAddr} text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got '+state.meta.lorawan.devAddr.toString().length} />
-                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} name="nwkSEncKey" textInputValue={state.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got '+state.meta.lorawan.nwkSEncKey.toString().length} />
-                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} name="appSKey" textInputValue={state.meta.lorawan.appSKey} text={'AppKey (App Key)'}  placeholder={'32 digits required, got '+state.meta.lorawan.appSKey.toString().length} />
+                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} name="devAddr" textInputValue={thisDevice?.meta.lorawan.devAddr} text={'Device Addr (Device Address)'}  placeholder={'8 digits required, got '+thisDevice?.meta.lorawan.devAddr.toString().length} />
+                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} name="nwkSEncKey" textInputValue={thisDevice?.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'}  placeholder={'32 digits required, got '+thisDevice?.meta.lorawan.nwkSEncKey.toString().length} />
+                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} name="appSKey" textInputValue={thisDevice?.meta.lorawan.appSKey} text={'AppKey (App Key)'}  placeholder={'32 digits required, got '+thisDevice?.meta.lorawan.appSKey.toString().length} />
                                 </Box>
                             </Grid>
                         ):null
