@@ -76,15 +76,18 @@ export default function DeviceSettings(){
     const setModalEls = (title:string,placeholder:string) => {
         setModalProps({title,placeholder});
     }
-    const [newSensor,setNewSensor]= useState<{name:string,sensorType:string}>({name:'',sensorType:''});
+    const [thisDevice,setThisDevice] = useState<Device | null>(null);
+    const [newSensOrAct,setNewSensOrAct]= useState<{name:string,type:string,quantity:string,unit?:string}>({name:'',quantity:'', type:''});
     const handleCreateSensorClick = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('Creating a sensor',newSensor);
+        console.log('Creating a sensor',newSensOrAct);
         const sensor: Sensor = {
-            name: newSensor.name,
+            name: newSensOrAct.name,
             id: "",
             meta: {
-                kind: newSensor.sensorType
+                kind: newSensOrAct.type,
+                quantity: newSensOrAct.quantity,
+                unit: newSensOrAct.unit
             },
             value: 0,
             time: new Date(),
@@ -92,32 +95,33 @@ export default function DeviceSettings(){
             created: new Date(),
         };
         console.log(sensor);
-        window.wazigate.addSensor(state.id,sensor)
+        window.wazigate.addSensor(id as string,sensor)
         .then((res)=>{
             console.log(res);
-            handleToggleModal()
+            handleToggleModal();
+            getDevicesFc()
             navigate('/devices');
         })
         .catch((err)=>{
             console.log('Error encounted',err);
         })
     }
-    const handleSelectChange = (e:React.ChangeEvent<HTMLSelectElement>)=>{
-        console.log(e.target.value,e.target.name);
-        
-        setNewSensor({
-            sensorType:e.target.value,
-            name:newSensor.name
+    const handleSelectChange = (e: SelectChangeEvent)=>{
+        setNewSensOrAct({
+            ...newSensOrAct,
+            [e.target.name]:e.target.value
         });
     }
     const handleCreateActuatorClick = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('Creating an actuator',actuatorName);
+        console.log('Creating an actuator',newSensOrAct);
         const actuator: Actuator = {
-            name: actuatorName,
+            name: newSensOrAct.name,
             id: "",
             meta: {
-                kind:'Motor'
+                kind: newSensOrAct.type,
+                quantity: newSensOrAct.quantity,
+                unit: newSensOrAct.unit
             },
             value: false,
             time: null,
@@ -125,10 +129,11 @@ export default function DeviceSettings(){
             created: new Date(),
         };
         console.log(actuator);
-        window.wazigate.addActuator(state.id,actuator)
+        window.wazigate.addActuator(id as string,actuator)
         .then((res)=>{
             console.log(res);
-            handleToggleModal()
+            handleToggleModal();
+            getDevicesFc();
             navigate('/devices');
         })
         .catch((err)=>{
@@ -138,18 +143,11 @@ export default function DeviceSettings(){
     }
     const handleNameChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
         console.log(e.target.value,e.target.name);
-        if(modalProps.title==='sensor'){
-            setNewSensor({
-                name:e.target.value,
-                sensorType:newSensor.sensorType
-            });
-        }else{
-            setActuatorName(e.target.value);
-        }
+        setNewSensOrAct({
+            ...newSensOrAct,
+            name:e.target.value
+        });
     }
-    const {state} = useLocation();
-    console.log(state);
-    
     const [codecsList, setCodecsList] = useState<{id:string,name:string}[] | null>(null);
     const loadCodecsList = () => {
         window.wazigate.get('/codecs').then(res => {
@@ -159,8 +157,12 @@ export default function DeviceSettings(){
         });
     }
     useEffect(()=>{
+        window.wazigate.getDevice(id as string).then((de)=>{
+            setThisDevice(de);
+        });
         loadCodecsList();
-    },[]);
+
+    },[id]);
     const autoGenerateHandlerFc=()=>{}
     return(
         <>
