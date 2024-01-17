@@ -196,6 +196,7 @@ function Devices() {
                 window.wazigate.setDeviceMeta(selectedDevice?.id as string,selectedDevice?.meta as Device)
                 .then(()=>{
                     alert("Device meta updated");
+                    getDevicesFc();
                     return;
                 }).catch(err=>{
                     console.log(err);
