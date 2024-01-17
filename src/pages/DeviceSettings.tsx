@@ -24,39 +24,51 @@ const style = {
     width: 400,
     bgcolor: 'background.paper',
     boxShadow: 24,
-    p: 2,
+    borderRadius:2,
+    py: 2,
 };
-export const SelectElement = ({handleChange,title,conditions,isDisabled, value}:HTMLSelectProps)=>(
-    <Box minWidth={120} >
+export const SelectElement = ({handleChange,title,conditions,isDisabled,widthPassed,name,value}:HTMLSelectProps)=>(
+    <Box minWidth={120} width={widthPassed?widthPassed:'100%'} my={.5}>
         <Typography  fontSize={12} fontWeight={'300'} color={'#292F3F'}>{title}</Typography>
-        <FormControl disabled={isDisabled} fullWidth>
-            <NativeSelect
-                defaultValue={30}
+        <FormControl variant="standard" disabled={isDisabled} fullWidth>
+            <Select
                 inputProps={{
-                    name: 'age',
+                    name: name,
                     id: 'uncontrolled-native',
                 }}
                 sx={{fontWeight:'bold'}}
                 value={value}
                 onChange={handleChange}
             >
-                <option defaultChecked defaultValue={''} selected>Select</option>
-                {conditions.map((condition,index)=>(
-                    <option key={index} value={condition}>{condition}</option>
-                ))}
-            </NativeSelect>
+                <MenuItem defaultChecked disabled value={''}>Select</MenuItem>
+                {
+                    conditions.map((condition,index)=>(
+                        <MenuItem key={index} value={condition}>{condition}</MenuItem>
+                    ))
+                }
+            </Select>
         </FormControl>
     </Box>
 );
-
+function selectOptionsHelper(option:string,interfaceType:string):string[]{
+    const filterType = interfaceType==='sensor'?ontologies.sensingDevices:ontologies.actingDevices;
+    if (option) {
+        return (filterType)[option as keyof typeof filterType]?(
+            (filterType)[option as keyof typeof filterType]
+        ):(
+            []
+        )
+    }
+    return[]
+}
 export default function DeviceSettings(){
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
         console.info('You clicked a breadcrumb.');
     }
-    
+    const {getDevicesFc} = useContext(DevicesContext);
     const [openModal, setOpenModal] = useState<boolean>(false);
-    const [actuatorName,setActuatorName] = useState<string>('')
+    const {id} = useParams();
 
     const handleToggleModal = () => setOpenModal(!openModal);
     const navigate = useNavigate();
