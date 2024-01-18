@@ -32,12 +32,7 @@ interface Props{
     autoGenerateLoraWANOptionsHandler:(title:"devAddr"|"nwkSEncKey"|"appSKey")=>void
 
 }
-function toStringHelper(value:string){
-    if(value){
-        return value.toString().length;
-    }
-    return 0;
-}
+import { toStringHelper } from "../utils";
 export default function EditDeviceModal({changeEditMakeLoraWAN,autoGenerateLoraWANOptionsHandler, device,openModal,handleTextInputEditCodec,submitEditDevice, handleNameChange,handleChangeSelectDeviceType, handleToggleModal}:Props){
     console.log(device);
     const {codecsList}=useContext(DevicesContext)
@@ -86,7 +81,7 @@ export default function EditDeviceModal({changeEditMakeLoraWAN,autoGenerateLoraW
                             ):null
                         }
                         <Box sx={{display:'flex',justifyContent:'flex-end', alignItems:'center',pt:2}} >
-                            <Button type="submit" sx={{ color:'#fff'}} variant="contained" color="info" >EDIT</Button>
+                            <Button type="submit" sx={{ color:'#fff'}} variant="contained" color="info" >SAVE</Button>
                         </Box>
                     </Box>
                 </form>
