@@ -9,7 +9,7 @@ import CreateDeviceModalWindow from '../components/ModalCreateDevice';
 import EditDeviceModal from '../components/EditDeviceModal';
 import { DevicesContext } from '../context/devices.context';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
-import { differenceInMinutes } from '../utils';
+import { capitalizeFirstLetter, differenceInMinutes } from '../utils';
 export const SensorInfo = ({ text, name, onClick, iconname }: { text: string, name: string, onClick: () => void, iconname: string }) => (
     <RowContainerBetween onClick={onClick} additionStyles={{ my: 2, py: 1, px: .5, ":hover": { bgcolor: '#f5f5f5' } }}>
         <Box sx={{ display: 'flex', width: '50%' }}>
@@ -302,7 +302,7 @@ function Devices() {
         }
     }
     return (
-        <Box sx={{height:'100%',overflowY:'scroll'}}>
+        <Box sx={{height:'100%',overflowY:'auto'}}>
             <CreateDeviceModalWindow
                 openModal={openModal}
                 handleToggleModal={handleToggleModal}
@@ -342,13 +342,13 @@ function Devices() {
                     {
                         devices.map((device, id) => {
                             return (
-                                <Grid item m={1} key={id} md={6} lg={4} xl={4} sm={8} xs={12} >
-                                    <Box sx={{ cursor: 'pointer', ":hover": { bgcolor: '#fffff1' }, height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -5, my: -1, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
+                                <Grid  item m={1} key={id} md={6} lg={4} xl={4} sm={8} xs={12} >
+                                    <Box sx={{boxShadow: 3, cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -8, my: -1,px:1,py:.4, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
                                             <Sensors sx={{ fontSize: 15, color: '#fff' }} />
-                                            <Typography fontSize={13} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
+                                            <Typography fontSize={13} mx={1} color={'white'} component={'span'}>{device.meta?capitalizeFirstLetter(device.meta.type):''}</Typography>
                                         </Box>
-                                        <Box  sx={{ borderBottom: '1px solid black', py: 1.5, ":hover": { py: 1.5 }, px: 2, }}>
+                                        <Box  sx={{ borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5, ":hover": { py: 1.5 }, px: 2, }}>
                                             <RowContainerBetween additionStyles={{}} >
                                                 <Box onClick={() => {navigate(`${device.id}/settings`,{state:{...device}}) }}>
                                                     <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>
@@ -387,13 +387,8 @@ function Devices() {
                                                 </Box>
                                             </RowContainerBetween>
                                         </Box>
-                                        <CardContent sx={{ py: 2 }}>
-                                            <RowContainerBetween>
-                                                <Box></Box>
-                                                <Button variant="text" sx={{ bgcolor: '#F7F7F7',fontSize:10, textTransform: 'initial', color: DEFAULT_COLORS.primary_black }} startIcon={<Add color='primary' sx={{fontSize:10,}} />}>
-                                                    New Interface
-                                                </Button>
-                                            </RowContainerBetween>
+                                        <CardContent sx={{ py: 0 }}>
+                                            
                                             {
                                                 device.sensors.length > 0 ? device.sensors.map((sensor) => (
                                                     <Box key={sensor.id}>
