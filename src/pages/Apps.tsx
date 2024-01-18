@@ -1,4 +1,4 @@
-import {Box, Button, CircularProgress, FormControl,  Grid,  InputLabel, ListItemIcon, Menu,  MenuItem,  Select,SelectChangeEvent,Tooltip, Typography} from '@mui/material';
+import {Box, Button, CircularProgress, FormControl,  Grid,  InputLabel, ListItemIcon, Menu,  MenuItem,  Select,SelectChangeEvent,TextField,Tooltip, Typography} from '@mui/material';
 import { NormalText,  } from './Dashboard';
 import RowContainerBetween from '../components/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
@@ -10,6 +10,7 @@ import Backdrop from '../components/Backdrop';
 import { DevicesContext } from '../context/devices.context';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import CustomApp from '../components/CustomApp';
+import { SelectElement } from './DeviceSettings';
 type App1 =App &{
     description:string
 }
@@ -112,10 +113,9 @@ type RecomendedApp={
     id:string,
     image:string,
 }
-const inputStyle={width:'100%',padding:'8px 4px',margin:'5px 0', borderRadius:5, outline:'none',border:'1px solid  black'}
 export default function Apps() {
     const [customAppId,setCustomAppId] = useState<App2>(customAppProps);
-    const [matches] = useOutletContext<[matches: boolean]>();
+    const [matches,matchesMd] = useOutletContext<[matches: boolean,matchesMd:boolean]>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [loadingUninstall,setLoadingUninstall] = React.useState<boolean>(false);
     const open = Boolean(anchorEl)
@@ -191,6 +191,7 @@ export default function Apps() {
     }
     const [uninstLoader,setUninstLoader] = useState<boolean>(false);
     const [showAppSettings,setShowAppSettings] = useState<boolean>(false);
+    const [selectedApp,setSelectedApp] = useState<App | null>(null);
     const [appToUninstall,setAppToUninstall] = useState<App | null>(null);
     async function fetchInstallLogs(id:string){
         
@@ -306,37 +307,45 @@ export default function Apps() {
                 )
             }
             {
-                modalProps.open && modalProps.title==='Install App' ?(
+                (modalProps.open && modalProps.title==='Install App') ?(
                     <Backdrop>
                         <Box  width={matches?'40%':'90%'} bgcolor={'#fff'}>
-                            <Box borderBottom={'1px solid black'} px={2} py={2}>
+                            <RowContainerBetween additionStyles={{borderBottom:'1px solid black',p:2}}>
                                 <Typography>{modalProps.title}</Typography>
-                            </Box>
+                                <Button onClick={()=>{setCustomAppId(customAppProps);setLogs({done:false,logs:''}); closeModal()}} variant={'contained'} sx={{mx:2}} color={'error'}>Cancel</Button>
+                            </RowContainerBetween>
+
                             <Box borderBottom={'1px solid black'}  py={2}></Box>
                             <Box  width={'90%'}  bgcolor={'#fff'}>
                                 <form onSubmit={(e)=>{e.preventDefault();handleSubmitNewCustomApp()}}>
                                     <Box borderBottom={'1px solid black'} px={2} >
-                                        <input style={inputStyle} 
-                                            onChange={handleCustomAppIdChange}  
-                                            name="name"
+                                        <TextField 
+                                            id="name" 
+                                            name='name' 
+                                            onChange={handleCustomAppIdChange} 
                                             required
+                                            variant="standard" 
                                             value={customAppId.name}
-                                            placeholder="Name of app " 
                                         />
-                                        <input style={inputStyle} 
+                                        <TextField
+                                            id="image"
                                             onChange={handleCustomAppIdChange}  
                                             name="image"
                                             required
+                                            variant="standard" 
                                             value={customAppId.image}
                                             placeholder="Docker Image: format(owner/image_name:tag)" 
                                         />
-                                        <input style={inputStyle} 
+                                        <TextField
+                                            id="author"
                                             onChange={handleCustomAppIdChange}  
-                                            name="author" required
+                                            name="author"
+                                            required
                                             value={customAppId.author} 
                                             placeholder="Author of app" 
                                         />
-                                        <input style={inputStyle} 
+                                        <TextField
+                                            id="description" 
                                             onChange={handleCustomAppIdChange}  
                                             name="description" 
                                             required
@@ -344,10 +353,10 @@ export default function Apps() {
                                             placeholder="Description of app" 
                                         />
                                     </Box>
-                                    <Box py={2}>
-                                        <Button type='submit' variant={'contained'} sx={{mx:2}} color={'primary'}>Install</Button>
+                                    <RowContainerBetween additionStyles={{py:2}}>
+                                        <Box></Box>
                                         <Button onClick={()=>{setCustomAppId(customAppProps);setLogs({done:false,logs:''}); closeModal()}} variant={'contained'} sx={{mx:2}} color={'error'}>Cancel</Button>
-                                    </Box>
+                                    </RowContainerBetween>
                                 </form>
                             </Box>
                         </Box>
@@ -377,18 +386,52 @@ export default function Apps() {
                 )
             }
             {
-                showAppSettings &&(
+                showAppSettings ?(
                     <Backdrop>
-                        <Box width={matches?'40%':'90%'} bgcolor={'#fff'}>
-                            <Box borderBottom={'1px solid black'} px={2} py={2}>
-                                <Typography>App Settings</Typography>
-                            </Box>
-                            <Box px={2} py={1}>
-                                <Button onClick={()=>{setShowAppSettings(!showAppSettings)}} variant={'contained'} sx={{mx:2}} color={'error'}>CLOSE</Button>
+                        <Box zIndex={50} width={matches?matchesMd? '50%':'30%':'90%'} borderRadius={2} bgcolor={'#fff'}>
+                            <RowContainerBetween additionStyles={{p:1,borderBottom:'.5px solid #ccc'}}>
+                                <Typography fontWeight={700} fontSize={15} color={'black'}>{selectedApp?.name} Settings</Typography>
+                                <Button onClick={()=>{setShowAppSettings(!showAppSettings)}} sx={{textTransform:'initial',color:'#ff0000'}} variant={'text'} >cancel</Button>
+                            </RowContainerBetween>
+                            <form style={{padding:'0 10px'}} onSubmit={(e)=>{e.preventDefault();}}>
+                                <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #292F3F'}}>
+                                    <Typography color={'primary'} mb={.4} fontSize={12}>Device name</Typography>
+                                    <input 
+                                        autoFocus
+                                        name="name" placeholder='Enter device name' 
+                                        value={selectedApp?.name}
+                                        required
+                                        style={{border:'none',width:'100%',padding:'6px 0', outline:'none'}}
+                                    />
+                                </FormControl>
+                                <Box sx={{my:1,width:'100%', borderBottom:'1px solid #292F3F'}}>
+                                    <Typography color={'primary'} mb={.4} fontSize={12}>Author</Typography>
+                                    <Typography color={'primary'} mb={.4} fontSize={12}>{selectedApp?.author.name?(selectedApp?.author.name):(selectedApp?.author)}</Typography>
+                                </Box>
+                                <SelectElement 
+                                    id="restartPolicy" 
+                                    name='restartPolicy' 
+                                    value={(selectedApp as App)?.state?(selectedApp as App)?.state.restartPolicy:''}
+                                    handleChange={()=>{}}
+                                    conditions={['no','on-failure','always']}
+                                    title='Restart Policy'
+                                />
+                                <Box sx={{my:1,width:'100%', borderBottom:'1px solid #292F3F'}}>
+                                    <Typography color={'primary'} mb={.4} fontSize={12}>Description</Typography>
+                                    <Typography color={'primary'} mb={.4} fontSize={12}>{(selectedApp as App1)?.description as string}</Typography>
+                                </Box>
+                                <Box sx={{my:1,width:'100%', borderBottom:'1px solid #292F3F'}}>
+                                    <Typography color={'primary'} mb={.4} fontSize={12}>Version</Typography>
+                                    <Typography color={'primary'} mb={.4} fontSize={12}>{selectedApp?.version}</Typography>
+                                </Box>
+                            </form>
+                            <Box display={'flex'} alignItems={'center'} justifyContent={'space-evenly'} px={2} py={1}>
+                                <Button onClick={()=>{setShowAppSettings(!showAppSettings)}} variant={'contained'} sx={{mx:2,color:'#fff'}} color={'info'}>Uninstall</Button>
+                                <Button onClick={()=>{setShowAppSettings(!showAppSettings)}} variant={'contained'} sx={{mx:2}} color={'info'}>START</Button>
                             </Box>
                         </Box>
                     </Backdrop>
-                )
+                ):null
             }
             <Box p={3} onClick={()=> {open?handleClose():null}} sx={{overflowY:'scroll',my:2, height:'100%'}}>
                 <RowContainerBetween>
@@ -434,35 +477,34 @@ export default function Apps() {
                                                                         aria-controls={open ? 'demo-positioned-menu' : undefined}
                                                                         aria-haspopup="true"
                                                                         aria-expanded={open ? 'true' : undefined}
-                                                                        // onClick={handleClick}
                                                                         {...bindTrigger(popupState)}
                                                                         >
                                                                         <MoreVert sx={{color:'black'}}/>
                                                                     </Button>
                                                                     
                                                                     <Menu {...bindMenu(popupState)}>
-                                                                    <MenuItem onClick={()=>{popupState.close}} value={app.id} >
-                                                                        <ListItemIcon>
-                                                                            <Settings fontSize="small" />
-                                                                        </ListItemIcon>
-                                                                        Settings
-                                                                    </MenuItem>
-                                                                    {
-                                                                        idx?(
-                                                                            <MenuItem value={idx} onClick={()=>{setAppToUninstallFc(idx);popupState.close}}>
-                                                                                <ListItemIcon>
-                                                                                    <DeleteForever fontSize="small" />
-                                                                                </ListItemIcon>
-                                                                                Uninstall
-                                                                            </MenuItem>
-                                                                        ):null
-                                                                    }
-                                                                    <MenuItem value={idx} onClick={()=>{startOrStopApp(app.id,app.state.running);popupState.close}}>
-                                                                        <ListItemIcon>
-                                                                            <DeleteForever fontSize="small" />
-                                                                        </ListItemIcon>
-                                                                        {app.state?app.state.running?'Stop':'Start':'Start'}
-                                                                    </MenuItem>
+                                                                        <MenuItem onClick={()=>{ setSelectedApp(app);setShowAppSettings(!showAppSettings); popupState.close;}} value={app.id} >
+                                                                            <ListItemIcon>
+                                                                                <Settings fontSize="small" />
+                                                                            </ListItemIcon>
+                                                                            Settings
+                                                                        </MenuItem>
+                                                                        {
+                                                                            idx?(
+                                                                                <MenuItem value={idx} onClick={()=>{setAppToUninstallFc(idx);popupState.close}}>
+                                                                                    <ListItemIcon>
+                                                                                        <DeleteForever fontSize="small" />
+                                                                                    </ListItemIcon>
+                                                                                    Uninstall
+                                                                                </MenuItem>
+                                                                            ):null
+                                                                        }
+                                                                        <MenuItem value={idx} onClick={()=>{startOrStopApp(app.id,app.state.running);popupState.close}}>
+                                                                            <ListItemIcon>
+                                                                                <DeleteForever fontSize="small" />
+                                                                            </ListItemIcon>
+                                                                            {app.state?app.state.running?'Stop':'Start':'Start'}
+                                                                        </MenuItem>
                                                                     </Menu>
                                                                 </React.Fragment>
                                                             )}
