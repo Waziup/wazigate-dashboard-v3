@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
-import { DEFAULT_COLORS } from '../constants';
+import { DEFAULT_COLORS } from '../../constants';
 
 const marks = [
     {

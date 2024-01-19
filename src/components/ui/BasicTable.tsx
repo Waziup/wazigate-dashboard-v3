@@ -1,8 +1,8 @@
 import {Table,TableBody,TableCell,TableContainer,TableHead,TableRow,Paper, Typography, Box} from '@mui/material';
-import { DEFAULT_COLORS } from '../constants';
+import { DEFAULT_COLORS } from '../../constants';
 import { Sensors,History, DeviceHub } from '@mui/icons-material';
 import { Device } from 'waziup';
-import { differenceInMinutes } from '../utils';
+import { differenceInMinutes } from '../../utils';
 function createData(
   name: string,
   runtime: number,
