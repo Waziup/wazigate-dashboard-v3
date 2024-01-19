@@ -144,152 +144,178 @@ function DeviceSettings() {
             created: new Date(),
         };
         console.log(actuator);
-        window.wazigate.addActuator(state.id,actuator)
-        .then((res)=>{
-            console.log(res);
-            handleToggleModal()
-            navigate('/devices');
-        })
-        .catch((err)=>{
-            console.log('Error encounted',err);
-            handleToggleModal();
-        })
+        window.wazigate.addActuator(id as string, actuator)
+            .then((res) => {
+                console.log(res);
+                handleToggleModal();
+                getDevicesFc();
+                navigate('/devices');
+            })
+            .catch((err) => {
+                console.log('Error encounted', err);
+                handleToggleModal();
+            })
     }
-    const handleNameChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
-        console.log(e.target.value,e.target.name);
-        if(modalProps.title==='sensor'){
-            setSensorName({
-                name:e.target.value,
-                sensorType:sensorName.sensorType
-            });
-        }else{
-            setActuatorName(e.target.value);
-        }
-    }
-    const handleSelectChange = (e:React.ChangeEvent<HTMLSelectElement>)=>{
-        console.log(e.target.value,e.target.name);
-        
-        setSensorName({
-            sensorType:e.target.value,
-            name:sensorName.name
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(e.target.value, e.target.name);
+        setNewSensOrAct({
+            ...newSensOrAct,
+            name: e.target.value
         });
     }
-    console.log(actuators)
+    const handleSelectChange = (e: SelectChangeEvent) => {
+        console.log(e.target.value, e.target.name);
+        const unitSymbol = e.target.name === 'unit' ? ontologies.units[e.target.value as keyof typeof ontologies.units].label : newSensOrAct.unit;
+        let icon = '';
+        if(e.target.name === 'type' && modalProps.title==='sensor'){
+            icon = ontologies.sensingDevices[e.target.value as keyof typeof ontologies.sensingDevices].icon;
+        }else if(e.target.name === 'type' && modalProps.title==='actuator'){
+            console.log(ontologies.actingDevices[e.target.value as keyof typeof ontologies.actingDevices]);
+            icon = ontologies.actingDevices[e.target.value as keyof typeof ontologies.actingDevices].icon;
+        }else{
+            icon = newSensOrAct.icon;
+        }
+        console.log(icon,unitSymbol);
+        
+        setNewSensOrAct({
+            ...newSensOrAct,
+            [e.target.name]: e.target.value,
+            unitSymbol,
+            icon,
+        });
+    }
+    if (isError) {
+        return (
+            <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} height={'100%'} alignItems={'center'}>
+                <Box component={'img'} src="/404.svg" width={200} height={200} />
+                <Typography>Hi there</Typography>
+                <Typography>Error Encountered while fetching, refresh.</Typography>
+            </Box>
+        )
+    }
+    const handleCloseModal = () => {
+        setModalProps({ title: '', placeholder: '', });
+        setNewSensOrAct(initialState); 
+        handleToggleModal()
+    }
     return (
         <>
             <Modal
-                    open={openModal}
-                    onClose={handleToggleModal}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box>
-                        <Box sx={style}>
-                            <Box px={2} borderBottom={'1px solid black'}>
-                                <Typography>Enter {modalProps.title} Details</Typography>
-                            </Box>
-                            <Box p={2} borderBottom={'1px solid #000'}>
-                                <form onSubmit={modalProps.title==='actuator'?handleCreateActuatorClick:handleCreateSensorClick}>
-                                    <input name="name" style={{outline:'none',width:'100%',borderRadius:4, border:'1px solid black',padding:'5px 2px'}} onInput={handleNameChange} required type="text" placeholder={modalProps.placeholder} />    
-                                    {
-                                        modalProps.title==='sensor' &&(
-                                            <select required style={{outline:'none',width:'100%',borderRadius:4,margin:'10px 0',background:'none', border:'1px solid black',padding:'5px 2px'}} onChange={handleSelectChange} name="sensorType" id="sensorType">
-                                                <option defaultValue={''} disabled selected>Select Sensor Type</option>
-                                                <option value="WaterThermometer">Water Thermometer</option>
-                                                <option value="WaterLevel">Water Level</option>
-                                                <option value="WaterPollutantSensor">Water Pollutant Sensor</option>
-                                            </select>
-                                        )
-                                    }
-                                    <Box pt={2}>
-                                        <Button sx={{mx:2, color:'#fff'}} variant="contained" color="info" type="submit">Save</Button>
-                                        <Button variant="contained" color="warning" onClick={handleToggleModal}>Close</Button>
+                open={openModal}
+                onClose={handleCloseModal}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                sx={{ borderRadius: 10 }}
+            >
+                <Box sx={{ borderRadius: 10, p: 2 }}>
+                    <Box sx={style}>
+                        <RowContainerBetween additionStyles={{ p: 1, borderBottom: '.5px solid #ccc' }}>
+                            {
+                                modalProps.title ? (
+                                    <Typography>Create  {modalProps.title === 'sensor' ? 'a Sensor' : 'an Actuator'} </Typography>
+                                ) : (
+                                    <Typography>Choose Type</Typography>
+                                )
+                            }
+                            <Button onClick={handleCloseModal} sx={{ textTransform: 'initial', color: '#ff0000' }} variant={'text'}>Cancel</Button>
+                        </RowContainerBetween>
+                        <Box p={1}>
+                            <SelectElement
+                                conditions={['actuator', 'sensor']}
+                                handleChange={(e: SelectChangeEvent) => { setNewSensOrAct(initialState); setModalEls(e.target.value === 'actuator' ? 'actuator' : 'sensor', e.target.value) }}
+                                title="Type"
+                                value={modalProps.title}
+                            />
+                            {
+                                modalProps.title ? (
+                                    <Box borderRadius={2} my={1} >
+                                        <form style={{borderRadius:2}} onSubmit={modalProps.title === 'actuator' ? handleCreateActuatorClick : handleCreateSensorClick}>
+                                            <TextField onInput={handleNameChange} sx={{ width: '100%', my: 1 }} placeholder={modalProps.placeholder} type="text" id="standard-basic" required name="name" label="Name" variant="standard"></TextField>
+                                            {
+                                                modalProps.title === 'sensor' ? (
+                                                    <CreateSensorModal newSensOrAct={newSensOrAct} handleSelectChange={handleSelectChange} />
+                                                ) : (
+                                                    <CreateActuatorModal newSensOrAct={newSensOrAct} handleSelectChange={handleSelectChange} />
+                                                )
+                                            }
+                                            <RowContainerBetween additionStyles={{ pt: 2 }}>
+                                                <Box></Box>
+                                                <Button sx={{ mx: 2, color: '#fff' }} variant="contained" color="info" type="submit">Save</Button>
+                                            </RowContainerBetween>
+                                        </form>
                                     </Box>
-                                </form>
-                            </Box>
+                                ) : null
+                            }
                         </Box>
                     </Box>
+                </Box>
             </Modal>
-            <Box p={3} sx={{position:'relative',width:'100%', height:'100%'}}>
+            <Box p={matches?3:1} sx={{ position: 'relative', width: '100%',overflowY:'auto', height: '100%' }}>
                 <RowContainerBetween>
                     <Box>
-                        <Typography fontWeight={700} color={'black'}>{state.name}</Typography>
+                        <Typography fontWeight={700} color={'black'}>{device?.name}</Typography>
                         <div role="presentation" onClick={handleClick}>
                             <Breadcrumbs aria-label="breadcrumb">
-                                <Link style={{color:'black'}} state={{title:'Devices'}} color="inherit" to="/devices">
+                                <Link style={{ color: 'black' }} state={{ title: 'Devices' }} color="inherit" to="/devices">
                                     Devices
                                 </Link>
-                                {/* <Link
-                                    underline="hover"
-                                    color="inherit"
-                                    href="/material-ui/getting-started/installation/"
-                                >
-                                    Device 1
-                                </Link> */}
                                 <Typography color="text.primary">
-                                    {state.name?state.name.slice(0,10)+'...':''}
+                                    {device ? device.name.slice(0, 10) + '...' : ''}
                                 </Typography>
                             </Breadcrumbs>
                         </div>
                     </Box>
-                    <Button onClick={()=>{navigate(`/devices/${state.id}/settings`,{state})}} color="info" variant={'contained'}>
-                        <SettingsTwoTone sx={{color:'#fff'}}/>
-                        <Typography color={'#fff'}>Settings</Typography>
-                    </Button>
+                    <Box>
+                        <PrimaryIconButton title="Settings" iconname="settingstwotone" onClick={() => { navigate(`/devices/${device?.id}/settings`) }} />
+                        <PrimaryIconButton title="New Interface" iconname="add" onClick={handleToggleModal} />
+                    </Box>
                 </RowContainerBetween>
                 {
-                    (actuators as Actuator[])?.length===0 && sensors.length===0 &&(
+                    (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0 && (
                         <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} height={'100%'} alignItems={'center'}>
-                            <Box component={'img'} src="/404.svg" width={200} height={200}/>
+                            <Box component={'img'} src="/404.svg" width={200} height={200} />
                             <Typography>Hi there</Typography>
                             <Typography>No Sensors and Actuators found found</Typography>
                         </Box>
                     )
                 }
-                <Grid container my={2} spacing={2}>
-                    {
-                        actuators?.map((act)=>(
-                            <Grid md={4} item sx={{bgcolor:'#fff',mx:2,borderRadius:2}}>
-                                <Typography>{act.name}</Typography>
-                            </Grid>
-                        ))
-                    }
-                    
-                </Grid>
-                <Grid container my={2} spacing={2}>
-                    {
-                        sensors.length===0?(
-                            <Box>
-                                <Typography>No Sensors found</Typography>
-                            </Box>
-                        ):(sensors.map((sens)=>(
-                            <Grid md={4} item sx={{bgcolor:'#fff',mx:2,borderRadius:2}}>
-                                <Typography>{sens.name}</Typography>
-                            </Grid>
-                        )))
-                    }
-                </Grid>
-                <Box sx={{ height: 320, flexGrow: 1 }}>
-                    <SpeedDial ariaLabel="Add device"
-                        sx={{ position: 'absolute', bottom: 30, right: 16 }}
-                        icon={<SpeedDialIcon />}
-                    >
-                        <SpeedDialAction
-                            key={'1'}
-                            icon={<Add />}
-                            tooltipTitle={'Sensor'}
-                            tooltipOpen
-                            onClick={()=>{setModalEls('sensor','Sensor Name'); handleToggleModal()}}
-                        />
-                        <SpeedDialAction
-                            key={'2'}
-                            icon={<Add />}
-                            tooltipOpen
-                            sx={{fontSize:10}}
-                            onClick={()=>{setModalEls('actuator','Actuator Name'); handleToggleModal()}}
-                            tooltipTitle={'Actuator'}
-                        />
-                    </SpeedDial>
+                <Box mt={2}>
+                    <Typography fontWeight={700} color={'black'}>Sensors</Typography>
+                    <Grid container my={2} spacing={1}>
+                        {
+                            device?.sensors.length === 0 ? (
+                                <Box>
+                                    <Typography>No Sensors found</Typography>
+                                </Box>
+                            ) : (device?.sensors.map((sens) => (
+                                <SensorActuatorItem deviceId={device.id} sensActuator={sens} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
+                                    <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28} >
+                                        {sens.value} {sens.meta.unitSymbol}
+                                    </Typography>
+                                </SensorActuatorItem>
+                                
+                            )))
+                        }
+                    </Grid>
+                    <Typography fontWeight={700} color={'black'}>Actuators</Typography>
+                    <Grid container my={2} spacing={1}>
+                        {
+                            device?.actuators?.map((act) => (
+                                <SensorActuatorItem deviceId={device.id} sensActuator={act} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
+                                    <Typography fontWeight={100} fontSize={15} color={'#2BBBAD'}>
+                                        Status: 
+                                        <Typography component={'span'} fontSize={15} fontWeight={300} color={act.value?'#2BBBAD':'#ff0000'}>{act.value ? '  Running' : '   Stopped'}</Typography>
+                                    </Typography>
+                                    <RowContainerBetween>
+                                        <Typography fontWeight={100} color={'rgba(0,0,0,.7)'} fontSize={15}>{act.value?'Stop':'Start'}</Typography>
+                                        <Android12Switch checked={act.value} onChange={() => { }} color='info' />
+                                    </RowContainerBetween>
+                                </SensorActuatorItem>
+                                
+                            ))
+                        }
+
+                    </Grid>
                 </Box>
             </Box>
         </>
