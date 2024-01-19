@@ -1,11 +1,48 @@
-import {  Add,  SettingsTwoTone } from "@mui/icons-material";
-import { Box, Breadcrumbs, Button, Modal,  Typography, SpeedDial, SpeedDialAction, SpeedDialIcon, Grid, } from "@mui/material";
-import RowContainerBetween from "../components/RowContainerBetween";
-// import { SelectElement } from "./Automation";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Box, Breadcrumbs, Button, Modal, Typography, Grid, SelectChangeEvent, TextField, FormControl, MenuItem, Select, } from "@mui/material";
+import RowContainerBetween from "../components/shared/RowContainerBetween";
+import ontologies from '../assets/ontologies.json';
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import React, { useEffect,useState } from "react";
-import { Sensor,Actuator } from "waziup";
+import React, { useContext, useEffect, useState } from "react";
+import { Sensor, Actuator, Device } from "waziup";
+import { DevicesContext } from "../context/devices.context";
+import PrimaryIconButton from "../components/shared/PrimaryIconButton";
+import CreateSensorModal from "../components/ui/CreateSensorModal";
+import CreateActuatorModal from "../components/ui/CreateActuatorModal";
+import { Android12Switch } from "../components/shared/Switch";
+import SensorActuatorItem from "../components/shared/SensorActuatorItem";
+export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+    handleChange: (event: SelectChangeEvent<string>) => void,
+    title: string,
+    conditions: string[] | number[],
+    value: string
+    isDisabled?: boolean
+    matches?: boolean
+    widthPassed?: string
+}
+export const SelectElement = ({ handleChange, title, conditions, isDisabled, widthPassed, name, value }: HTMLSelectProps) => (
+    <Box minWidth={120} width={widthPassed ? widthPassed : '100%'} my={.5}>
+        <Typography fontSize={12} fontWeight={'300'} color={'#292F3F'}>{title}</Typography>
+        <FormControl variant="standard" disabled={isDisabled} fullWidth>
+            <Select
+                inputProps={{
+                    name: name,
+                    id: 'uncontrolled-native',
+                }}
+                sx={{ fontWeight: 'bold' }}
+                value={value}
+                onChange={handleChange}
+            >
+                <MenuItem defaultChecked disabled value={''}>Select</MenuItem>
+                {
+                    conditions.map((condition, index) => (
+                        <MenuItem key={index} value={condition}>{condition}</MenuItem>
+                    ))
+                }
+            </Select>
+        </FormControl>
+    </Box>
+);
 const style = {
     position: 'absolute',
     top: '50%',
