@@ -53,35 +53,59 @@ const style = {
     boxShadow: 24,
     py: 2,
 };
+const initialState = {
+    name: '',
+    type: '',
+    quantity: '',
+    icon: '',
+    unitSymbol:''
+}
 function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
     }
-    const {state} = useLocation();
     const navigate = useNavigate();
-    const [sensors, setSensors] = useState<Sensor[]>([]);
-    const [actuators,setActuators] = useState<Actuator[]>();
-    const [sensorName,setSensorName]= useState<{name:string,sensorType:string}>({name:'',sensorType:''});
     const [openModal, setOpenModal] = useState<boolean>(false);
-    const [actuatorName,setActuatorName] = useState<string>('')
-    const [modalProps, setModalProps] = useState<{title:string,placeholder:string}>({title:'',placeholder:''});
-
-
+    const [newSensOrAct, setNewSensOrAct] = useState<{ name: string, unitSymbol?:string, type: string,icon:string, quantity: string, unit?: string }>(initialState);
+    const [device, setDevice] = useState<Device | null>(null);
+    const [isError, setIsError] = useState<boolean>(false);
+    const [modalProps, setModalProps] = useState<{ title: string, placeholder: string }>({ title: '', placeholder: '' });
+    const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
+    const { getDevicesFc } = useContext(DevicesContext)
+    const { id } = useParams();
     useEffect(() => {
-        window.wazigate.getSensors(state.id).then(setSensors);
-        window.wazigate.getActuators(state.id).then(setActuators);
-    }, [state]);
-    const setModalEls = (title:string,placeholder:string) => {
-        setModalProps({title,placeholder});
+        window.wazigate.getDevice(id)
+            .then((dev) => {
+                setDevice(dev);
+            })
+            .catch((err) => {
+                console.log('Error encounted', err);
+                setIsError(true);
+            })
+    }, [id]);
+    const setModalEls = (title: string, placeholder: string) => {
+        setModalProps({ title, placeholder });
     }
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
     const handleCreateSensorClick = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('Creating a sensor',sensorName);
+        console.log('Creating a sensor', newSensOrAct);
         const sensor: Sensor = {
-            name: sensorName.name,
+            name: newSensOrAct.name,
             id: "",
             meta: {
-                kind: sensorName.sensorType
+                kind: newSensOrAct.type,
+                quantity: newSensOrAct.quantity,
+                unit: newSensOrAct.unit,
+                icon: newSensOrAct.icon,
+                unitSymbol:newSensOrAct.unitSymbol
             },
             value: 0,
             time: new Date(),
@@ -89,25 +113,30 @@ function DeviceSettings() {
             created: new Date(),
         };
         console.log(sensor);
-        window.wazigate.addSensor(state.id,sensor)
-        .then((res)=>{
-            console.log(res);
-            handleToggleModal()
-            navigate('/devices');
-        })
-        .catch((err)=>{
-            console.log('Error encounted',err);
-        })
+        window.wazigate.addSensor(id as string, sensor)
+            .then((res) => {
+                console.log(res);
+                handleToggleModal();
+                getDevicesFc()
+                navigate('/devices');
+            })
+            .catch((err) => {
+                console.log('Error encounted', err);
+            })
     }
     const handleToggleModal = () => setOpenModal(!openModal);
     const handleCreateActuatorClick = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('Creating an actuator',actuatorName);
+        console.log('Creating an actuator', newSensOrAct);
         const actuator: Actuator = {
-            name: actuatorName,
+            name: newSensOrAct.name,
             id: "",
             meta: {
-                kind:'Motor'
+                kind: newSensOrAct.type,
+                quantity: newSensOrAct.quantity,
+                unit: newSensOrAct.unit,
+                icon: newSensOrAct.icon,
+                unitSymbol:newSensOrAct.unitSymbol
             },
             value: false,
             time: null,
