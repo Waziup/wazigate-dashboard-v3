@@ -1,9 +1,9 @@
-import { ExpandLess,SettingsRemoteSharp,Apps, ExpandMore,Dashboard, SettingsTwoTone, Wifi, WifiLock, Logout, HelpCenter} from '@mui/icons-material';
+import { ExpandLess,SettingsRemoteSharp,Apps, ExpandMore,Dashboard, SettingsTwoTone, Wifi, WifiLock, Logout, HelpCenter, DashboardOutlined} from '@mui/icons-material';
 import { Box, Collapse, List,  ListItemIcon, ListItemText, SxProps, Theme, Typography} from '@mui/material';
 import React, { CSSProperties } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { DEFAULT_COLORS } from '../../constants';
-import NoImageProfile from '../NoImageProfile';
+import NoImageProfile from '../shared/NoImageProfile';
 
 export const IconStyle: SxProps<Theme> = {
     color:'inherit',
@@ -34,6 +34,7 @@ const styleFuncSmall = ({isActive,}:{isActive:boolean}):CSSProperties=>{
         // backgroundColor:isActive?'white':'',
         display:'flex',
         alignItems:'center',
+        alignSelf:'center',
         justifyContent: 'space-between',
         borderRadius:4,
         textDecoration:'none',
@@ -43,7 +44,7 @@ const styleFuncSmall = ({isActive,}:{isActive:boolean}):CSSProperties=>{
 const NavigationItem = ({path,otherItem,icon,onClick, text}:{location:string,  otherItem?:JSX.Element,additionalStyles?:CSSProperties, path:string,onClick?:()=> void, icon:React.ReactNode,text:string}) => {
     return(
         <NavLink state={{title:text}} to={path} onClick={onClick} style={styleFunc}>
-            <Box display='flex' alignItems='center'>
+            <Box display='flex' width={'87%'} alignItems='center'>
                 <ListItemIcon>
                     {icon}
                 </ListItemIcon>
@@ -73,26 +74,26 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
     const location = useLocation().pathname;
     return (
         <Box position={'relative'} height={'100%'} display={'flex'}  flexDirection={'column'} alignItems={'center'}>
-            <Box component={'img'} src={'/wazigate.svg'} width={'80%'} height={100} />
+            <Box component={'img'} src={'/wazigate.svg'} width={'70%'} mb={1} height={50} />
             {
                 !matchesMd?(
 
                     <>
-                        <List sx={{ width: '87%', maxWidth: 360,}} component="nav" aria-labelledby="nested-list-subheader">
-                            <Box my={1} borderBottom={'0.1px solid #ccc'}>
-                                <NavigationItem 
-                                    location={location} 
-                                    path={'/dashboard'} 
-                                    icon={<Dashboard sx={{...IconStyle,color:location==='/dashboard'?'#292F3F':'white'}} />} 
-                                    text={'Dashboard'} 
-                                />
-                            </Box>
+                        <Box my={1} width={'100%'} alignSelf={'center'} mx={'auto'} py={1} borderBottom={'0.05px solid #ebebeb'}>
                             <NavigationItem 
                                 location={location} 
-                                path={'/devices'} 
-                                icon={<SettingsRemoteSharp sx={{...IconStyle,color:location==='/devices'?'#292F3F':'white'}} />} 
-                                text={'Devices'} 
+                                path={'/dashboard'} 
+                                icon={<DashboardOutlined sx={{...IconStyle,color:location==='/dashboard'?'#292F3F':'white'}} />} 
+                                text={'Dashboard'} 
                             />
+                        </Box>
+                        <List sx={{ width: '87%', maxWidth: 360, }} component="nav" aria-labelledby="nested-list-subheader">
+                                <NavigationItem 
+                                    location={location} 
+                                    path={'/devices'} 
+                                    icon={<SettingsRemoteSharp sx={{...IconStyle,color:location.includes('/devices')?'#292F3F':'white'}} />} 
+                                    text={'Devices'} 
+                                />
                             {/* <NavigationItem location={location} path={'/automation'} icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'black':'white'}} />} text={'Automation'} /> */}
                             <NavigationItem location={location} 
                                 path={'/settings'} 
@@ -117,19 +118,19 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     />
                                 </List>
                             </Collapse>
-                            <NavigationItem location={location} path={'/apps'} icon={<Apps sx={{...IconStyle,color:location==='/apps'?'#292F3F':'white'}} />} text={'Apps'} />
+                            <NavigationItem location={location} path={'/apps'} icon={<Apps sx={{...IconStyle,color:location.includes('/apps')?'#292F3F':'white'}} />} text={'Apps'} />
                         </List>
-                        <Box position={'absolute'} alignItems={'center'} bottom={0} width={'100%'} >
-                            <NavLink style={{textDecoration:'none',}} to={'/help'}>
-                                <Box display={'flex'} alignItems={'center'}>
+                        <Box position={'absolute'} display={'flex'}  justifyContent={'center'} flexDirection={'column'} alignItems={'center'} bottom={0} width={'100%'} >
+                            <NavLink style={{textDecoration:'none',width:'100%'}} to={'/help'}>
+                                <Box display={'flex'} p={2} alignItems={'center'}>
                                     <ListItemIcon>  
                                         <HelpCenter sx={{color:'white'}} />
                                     </ListItemIcon>
                                     <ListItemText sx={{color:'white'}} primary={'Help and feedback'} />
                                 </Box>
                             </NavLink>
-                            <Link style={{textDecoration:'none',borderBottom:'1px solid white'}} to={'/user'}>
-                                <Box display={'flex'} >
+                            <Link style={{textDecoration:'none',textDecorationColor:'none',width:'100%', color:'#fff',borderBottom:'1px solid #fff',padding:'4px 0', borderTop:'1px solid white'}} to={'/user'}>
+                                <Box display={'flex'} px={2}>
                                     <NoImageProfile/>
                                     <Box>
                                         <Typography>John Doe</Typography>
@@ -137,8 +138,8 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     </Box>
                                 </Box>
                             </Link>
-                            <Box px={'10%'} display={'flex'} py={1} alignItems={'center'}>
-                                <Logout sx={{color:'white'}} />
+                            <Box width={'100%'} px={2} display={'flex'} py={1.5} alignItems={'center'}>
+                                <Logout sx={{color:'white',mr:1,}} />
                                 <Typography sx={{color:'white'}}>Logout</Typography>
                             </Box>
                         </Box>
