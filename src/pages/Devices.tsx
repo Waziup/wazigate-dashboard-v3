@@ -3,7 +3,7 @@ import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { DeleteOutline, ModeOutlined, MoreVert, Sensors, } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
 import { useNavigate, } from 'react-router-dom';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
 import EditDeviceModal from '../components/ui/EditDeviceModal';
@@ -45,6 +45,11 @@ function Devices() {
     const handleToggleEditModal = () => {
         setOpenEditModal(!openEditModal);
     }
+    useEffect(()=>{
+        if (devices.length===0) {
+            getDevicesFc();
+        }
+    },[devices, getDevicesFc])
     const handleToggleEditModalClose = () => {
         setSelectedDevice(null);
         setOpenEditModal(!openEditModal);

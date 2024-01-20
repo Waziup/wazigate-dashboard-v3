@@ -146,12 +146,15 @@ export default function Apps() {
         })
     }
     useEffect(() => {
+        if(apps.length ===0){
+            getApps()
+        }
         window.wazigate.get<RecomendedApp[]>('apps?available')
             .then((appsr) => {
                 setRecommendedApps(appsr);
             })
             .catch(setError)
-    }, []);
+    }, [apps, getApps]);
     const handleSubmitNewCustomApp = () => {
         const yesNo = confirm('Are you sure you want to install this app?');
         if (!yesNo) {
