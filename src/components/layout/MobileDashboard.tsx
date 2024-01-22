@@ -12,7 +12,7 @@ const Item = ({ more, color, children, title }: { more: string, children: React.
 );
 import { useContext } from "react";
 import { DevicesContext } from "../../context/devices.context";
-import { differenceInMinutes } from "../../utils";
+import { differenceInMinutes, isActiveDevice } from "../../utils";
 export default function MobileDashboard() {
     const { devices, apps } = useContext(DevicesContext);
     console.log(apps);
@@ -42,11 +42,13 @@ export default function MobileDashboard() {
                                 <Box sx={{ py: 1.5, px: 2, }}>
                                     <RowContainerBetween>
                                         <Typography color={'black'} fontSize={18} fontWeight={500}>{dev.name}</Typography>
-                                        <Typography color={DEFAULT_COLORS.primary_blue} lineHeight={.8} fontWeight={300}>active</Typography>
+                                        <Typography color={isActiveDevice(dev.modified)? DEFAULT_COLORS.primary_blue:'#88888D'} lineHeight={.8} fontWeight={300}>
+                                            {isActiveDevice(dev.modified ) ? 'active' : 'offline'}
+                                        </Typography>
                                     </RowContainerBetween>
                                     <RowContainerBetween>
-                                        <Typography fontSize={13} color={'#797979'}>Last updated: {differenceInMinutes(dev.modified)}mins ago</Typography>
-                                        <Typography fontSize={10} color={'#797979'} my={1} lineHeight={.8} fontWeight={300}>ff</Typography>
+                                        <Typography fontSize={13} color={'#797979'}>Last updated: {differenceInMinutes(dev.modified)} secs ago</Typography>
+                                        <Typography fontSize={10} color={'#797979'} my={1} lineHeight={.8} fontWeight={300}></Typography>
                                     </RowContainerBetween>
                                 </Box>
                             </Box>
