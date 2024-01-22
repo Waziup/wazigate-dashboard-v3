@@ -13,3 +13,10 @@ export function toStringHelper(value:string){
 export function capitalizeFirstLetter(value:string){
     return value.charAt(0).toUpperCase() + value.slice(1);
 }
+export function isActiveDevice(modifiedTime: Date): boolean{
+    const now = new Date();
+    const modified = new Date(modifiedTime);
+    const diff = now.getTime() - modified.getTime();
+    const diffInMinutes = Math.floor(diff / 1000 / 60);
+    return diffInMinutes < 7;
+}
