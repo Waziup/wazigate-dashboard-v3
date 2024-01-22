@@ -42,20 +42,20 @@ function valuetext(value: number) {
 }
 
 export default function DiscreteMarks({matches}:{matches:boolean}) {
-  return (
-    <Box sx={{ width: matches?'35%':'90%',mx:matches?2:'auto' }}>
-      <Slider
-            aria-label="Custom marks"
-            defaultValue={40}
-            getAriaValueText={valuetext}
-            step={5}
-            min={0}
-            max={140}
-            
-            sx={{color:DEFAULT_COLORS.primary_blue,fontSize:10, width:1}}
-            valueLabelDisplay="auto"
-            marks={marks}
-      />
-    </Box>
-  );
+    return (
+        <Box sx={{ width: matches?'35%':'90%',mx:matches?2:'auto' }}>
+            <Slider
+                aria-label="Custom marks"
+                defaultValue={40}
+                getAriaValueText={valuetext}
+                step={5}
+                min={0}
+                max={140}
+                
+                sx={{color:DEFAULT_COLORS.primary_blue,fontSize:10, width:1,fontWeight:100}}
+                valueLabelDisplay="auto"
+                marks={marks}
+            />
+        </Box>
+    );
 }

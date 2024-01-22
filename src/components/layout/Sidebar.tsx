@@ -73,19 +73,21 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
     };
     const location = useLocation().pathname;
     return (
-        <Box position={'relative'} height={'100%'} display={'flex'}  flexDirection={'column'} alignItems={'center'}>
+        <Box position={'relative'} height={'100%'} width={'100%'} display={'flex'}  flexDirection={'column'} alignItems={'center'}>
             <Box component={'img'} src={'/wazigate.svg'} width={'70%'} mb={1} height={50} />
             {
                 !matchesMd?(
 
                     <>
                         <Box my={1} width={'100%'} alignSelf={'center'} mx={'auto'} py={1} borderBottom={'0.05px solid #ebebeb'}>
-                            <NavigationItem 
-                                location={location} 
-                                path={'/dashboard'} 
-                                icon={<DashboardOutlined sx={{...IconStyle,color:location==='/dashboard'?'#292F3F':'white'}} />} 
-                                text={'Dashboard'} 
-                            />
+                            <Box width={'87%'} alignSelf={'center'} mx={'auto'}>
+                                <NavigationItem 
+                                    location={location} 
+                                    path={'/dashboard'} 
+                                    icon={<DashboardOutlined sx={{...IconStyle,color:location==='/dashboard'?'#292F3F':'white'}} />} 
+                                    text={'Dashboard'} 
+                                />
+                            </Box>
                         </Box>
                         <List sx={{ width: '87%', maxWidth: 360, }} component="nav" aria-labelledby="nested-list-subheader">
                                 <NavigationItem 

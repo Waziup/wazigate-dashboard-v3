@@ -15,7 +15,7 @@ function Device() {
     const { pathname } = useLocation();
     const [device, setDevice] = useState<Device | null>(null);
     const [sensOrActuator, setSensOrActuator] = useState<Sensor | Actuator | null>(null)
-    const [values, setValues] = useState<{ value: number, modified: string }[]>([]);
+    const [values, setValues] = useState<{ value: number | string, modified: string }[]>([]);
     const [graphValues, setGraphValues] = useState<{ y: number, x: string }[]>([]);
     const [matches] = useOutletContext<[matches: boolean]>();
 
@@ -71,7 +71,7 @@ function Device() {
 
                             const minutes = String(date.getUTCMinutes()).padStart(2, '0');
                             return {
-                                value: value.value ? 1 : 0,
+                                value: value.value ? 'Running' : 'Stopped',
                                 modified: `${hours}:${minutes}`
                             }
                         })
@@ -87,15 +87,15 @@ function Device() {
     console.log('Values for table: ', values);
     return (
         <Box sx={{ height: '100%', overflowY: 'scroll' }}>
-            <RowContainerBetween additionStyles={{ py: 2 }}>
+            <RowContainerBetween additionStyles={{ p: 2 }}>
                 <Box>
                     <Typography fontWeight={500} fontSize={18} color={'black'}>{device?.name}</Typography>
                     <div role="presentation" onClick={handleClick}>
                         <Breadcrumbs aria-label="breadcrumb">
-                            <Link  style={{fontSize:14,textDecoration:'underline',color:'inherit'}} to={`/devices/${device?.id}`}>
+                            <Link  style={{fontSize:14,textDecoration:'none',color:'inherit'}} to={`/devices/${device?.id}`}>
                                 {device?.name}
                             </Link>
-                            <Typography fontSize={14} fontWeight={300} color="inherit">{pathname.includes('actuators') ? 'actuators' : 'sensors'} / {sensOrActuator?.name.toLocaleLowerCase()}</Typography>
+                            <Typography fontSize={14} fontWeight={300} color="inherit">{pathname.includes('actuators') ? 'actuators' : 'sensors'} <span style={{fontSize:14,color:'inherit',fontWeight:500}}>/</span>  {sensOrActuator?.name.toLocaleLowerCase()}</Typography>
                         </Breadcrumbs>
                     </div>
                 </Box>
