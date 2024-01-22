@@ -392,7 +392,7 @@ function Devices() {
                                                             onClick={() => {
                                                                 navigate(`/devices/${device.id}/sensors/${sensor.id}`, { state: { devicename: device.name, sensorId: sensor.id, deviceId: device.id, sensorname: sensor.name } })
                                                             }}
-                                                            iconname='device_thermostat'
+                                                            iconname={sensor.meta.icon}
                                                             name={sensor.name}
                                                             text={sensor.value}
                                                         />
@@ -407,7 +407,7 @@ function Devices() {
                                                         <SensorActuatorInfo onClick={() => {
                                                             navigate(`/devices/${device.id}/actuators/${act.id}`, { state: { deviceId: device.id, actuatordId: act.id, actuatorname: act.name } })
                                                         }}
-                                                            iconname='precision_manufacturing'
+                                                            iconname={act.meta.icon}
                                                             name={act.name}
                                                             text={act.value ? 'Running' : 'Closed'}
                                                         />
