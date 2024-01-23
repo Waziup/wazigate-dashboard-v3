@@ -11,7 +11,6 @@ function Layout() {
     const [open, setOpen] = useState(false);
     const handleToggle = () => { setOpen(!open) }
     const { state, pathname } = useLocation();
-    console.log(pathname);
     return (
         <>
             {
@@ -25,28 +24,30 @@ function Layout() {
                         </Grid>
                     </Grid>
                 ) : (
-                    <Box sx={{ height: '100vh', bgcolor: '#F0F2F5', overflow: 'hidden' }}>
+                    <Box sx={{  bgcolor: '#F0F2F5', overflow: 'hidden' }}>
                         <RowContainerBetween additionStyles={{ bgcolor: 'primary.main' }} >
                             <Box sx={{ display: 'flex', py: 2, alignItems: 'center' }} >
                                 <Menu onClick={handleToggle} sx={{ mx: 2, color: 'white', cursor: 'pointer' }} />
                                 <Typography color={'white'} fontWeight={'600'}>{state ? state.title : 'Title'}</Typography>
                             </Box>
                             {
-                                pathname.includes('/sensors') ? (
-                                    <Link to={''}>
-                                        <SettingsOutlined onClick={handleToggle} sx={{ color: 'white', mx: 1, }} />
+                                (pathname.endsWith('/settings')) ? (
+                                    null
+                                ) : (pathname.includes('/sensors') || pathname.includes('/actuators'))?(
+                                    <Link to={pathname+'/settings'} state={{title:'Settings'}}>
+                                        <SettingsOutlined sx={{ color: 'white', mx: 1, }} />
                                     </Link>
-                                ) : (
-                                    <Search sx={{ color: 'white', mx: 1 }} />
-                                )
+                                ):<Search sx={{ color: 'white', mx: 1 }} />
                             }
                         </RowContainerBetween>
                         <Box onClick={handleToggle} sx={{ position: 'absolute', top: 0, display: open ? 'flex' : 'none', height: '100%', width: '100%', bgcolor: 'rgba(0,0,0,.5)', zIndex: 99 }}>
-                            <Box sx={{ bgcolor: 'primary.main', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '65%' }}>
+                            <Box sx={{ bgcolor: 'primary.main', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '50%' }}>
                                 <Sidebar matchesMd={matchesMd} />
                             </Box>
                         </Box>
-                        <Outlet context={[matches]} />
+                        <Box sx={{overflowY:'scroll',height:'100%',mb:4}}>
+                            <Outlet context={[matches]} />
+                        </Box>
                     </Box>
                 )
             }
