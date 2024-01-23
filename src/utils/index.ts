@@ -11,6 +11,9 @@ export function toStringHelper(value:string){
     return 0;
 }
 export function capitalizeFirstLetter(value:string){
+    if(!value){
+        return '';
+    }
     return value.charAt(0).toUpperCase() + value.slice(1);
 }
 export function isActiveDevice(modifiedTime: Date): boolean{
