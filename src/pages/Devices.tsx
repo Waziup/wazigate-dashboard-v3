@@ -102,8 +102,6 @@ function Devices() {
     }
     const handleChangeSelect = (event: SelectChangeEvent<string>) => {
         setSelectedValue(event.target.value);
-        console.log(event.target.value);
-
         setNewDevice({
             ...newDevice,
             meta: {
@@ -128,6 +126,7 @@ function Devices() {
         setNewDevice({
             ...newDevice,
             meta: {
+                ...newDevice.meta,
                 codec: event.target.value
             }
         })
@@ -339,7 +338,7 @@ function Devices() {
                     {
                         devices.map((device, id) => {
                             return (
-                                <Grid item m={1} key={id} md={6} lg={4} xl={4} sm={8} xs={12} >
+                                <Grid item m={1} key={id} md={6} lg={3.5} xl={4} sm={8} xs={12} >
                                     <Box sx={{ boxShadow: 3, cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -8, my: -1, px: 1, py: .4, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
                                             <Sensors sx={{ fontSize: 15, color: '#fff' }} />
