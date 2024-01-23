@@ -1,13 +1,12 @@
-import { SettingsTwoTone, ToggleOff } from "@mui/icons-material";
-import { Box, Typography, Button, Breadcrumbs } from "@mui/material";
+import { Box, Typography, Breadcrumbs } from "@mui/material";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import EnhancedTable from "../components/ui/DeviceTable";
 import { useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Chart from 'react-apexcharts';
-import { DEFAULT_COLORS } from "../constants";
 import { useCallback, useEffect, useState } from "react";
 import type { Actuator, Device, Sensor } from "waziup";
 import { Link } from "react-router-dom";
+import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 function Device() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
@@ -101,22 +100,15 @@ function Device() {
                 </Box>
                 {
                     matches ? (
-                        <Button onClick={() => navigate(`/devices/${device?.id}/${pathname.includes('actuators') ? 'actuators' : 'sensors'}/${sensOrActuator?.id}/settings`)} variant={'contained'}>
-                            <SettingsTwoTone />
-                            SETTINGS
-                        </Button>
+                        <PrimaryIconButton title={'SETTINGS'} iconname={'settings_two_ton'} onClick={() => navigate(`/devices/${device?.id}/${pathname.includes('actuators') ? 'actuators' : 'sensors'}/${sensOrActuator?.id}/settings`)} />
                     ) : null
                 }
             </RowContainerBetween>
             <Box bgcolor={'#fff'} display={'flex'} width={'100%'} pt={matches ? 5 : 2} flexDirection={'column'} alignItems={'center'} justifyContent={'center'}>
                 <Box width={matches ? '85%' : '95%'} mb={3}>
                     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Typography color={'#1D2129'} fontSize={18} fontWeight={500}>Current Temperature</Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Typography fontWeight={100} fontSize={18} color={'#949494'}>°F</Typography>
-                            <ToggleOff sx={{ color: DEFAULT_COLORS.secondary_gray, fontSize: 40, }} />
-                            <Typography fontWeight={100} fontSize={18} color={'#949494'}>°C</Typography>
-                        </Box>
+                        <Typography color={'#1D2129'} fontSize={15} fontWeight={500}>Readings</Typography>
+                        
                     </Box>
                     <Chart
                         options={{

@@ -251,25 +251,25 @@ function DeviceSettings() {
                 </Box>
             </Modal>
             <Box p={matches?3:1} sx={{ position: 'relative', width: '100%',overflowY:'auto', height: '100%' }}>
-                <RowContainerBetween>
+                <Box display={'flex'} justifyContent={'space-between'}>
                     <Box>
-                        <Typography fontWeight={700} color={'black'}>{device?.name}</Typography>
+                        <Typography fontWeight={600} fontSize={24} color={'black'}>{device?.name}</Typography>
                         <div role="presentation" onClick={handleClick}>
                             <Breadcrumbs aria-label="breadcrumb">
-                                <Link style={{ color: 'black' }} state={{ title: 'Devices' }} color="inherit" to="/devices">
+                                <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/devices">
                                     Devices
                                 </Link>
-                                <Typography color="text.primary">
+                                <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
                                     {device ? device.name.slice(0, 10) + '...' : ''}
-                                </Typography>
+                                </p>
                             </Breadcrumbs>
                         </div>
                     </Box>
                     <Box>
-                        <PrimaryIconButton title="Settings" iconname="settingstwotone" onClick={() => { navigate(`/devices/${device?.id}/settings`) }} />
-                        <PrimaryIconButton title="New Interface" iconname="add" onClick={handleToggleModal} />
+                        <PrimaryIconButton hideText={!matches} title="Settings" iconname="settingstwotone" onClick={() => { navigate(`/devices/${device?.id}/settings`) }} />
+                        <PrimaryIconButton hideText={!matches} title="New Interface" iconname="add" onClick={handleToggleModal} />
                     </Box>
-                </RowContainerBetween>
+                </Box>
                 {
                     (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0 && (
                         <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} height={'100%'} alignItems={'center'}>
