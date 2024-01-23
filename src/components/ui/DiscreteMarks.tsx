@@ -2,59 +2,32 @@ import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import { DEFAULT_COLORS } from '../../constants';
 
-const marks = [
-    {
-        value: 0,
-        label: 'instant',
-    },
-    {
-        value: 20,
-        label: '20s',
-    },
-    {
-        value: 40,
-        label: '40s',
-    },
-    {
-        value: 60,
-        label: '1m',
-    },
-    {
-        value:80,
-        label:'5m'
-    },
-    {
-        value:100,
-        label:'15m'
-    },
-    {
-        value:120,
-        label:'30m'
-    },
-    {
-        value:140,
-        label:'1h'
-    },
-];
-
 function valuetext(value: number) {
-  return `${value}°C`;
+    return labels[value];
 }
 
-export default function DiscreteMarks({matches}:{matches:boolean}) {
+function valueLabelFormat(value: number) {
+    return labels[value];
+}
+const labels = ["0s", "5s", "10s", "20s", "30s", "1m", "2m", "5m", "10m", "15m", "30m", "1h", "2h", "4h", "12h", "1D", "2D", "10D"];
+const marks = ["instant", "", "", "20s", "", "1m", "", "5m", "", "15m", "", "1h", "", "4h", "", "1D", "", "10D"];
+
+export default function DiscreteMarks({matches,onSliderChange,value}:{value:string, onSliderChange:(value:string)=>void, matches:boolean}) {
+    
     return (
         <Box sx={{ width: matches?'35%':'90%',mx:matches?2:'auto' }}>
             <Slider
-                aria-label="Custom marks"
-                defaultValue={40}
+                aria-labelledby="sync-interval-input"
+                defaultValue={4}
                 getAriaValueText={valuetext}
-                step={5}
-                min={0}
-                max={140}
-                
+                valueLabelFormat={valueLabelFormat}
+                step={null}
+                max={marks.length-1}
+                value={labels.indexOf(value)}
+                onChange={(_e,value)=>onSliderChange(value.toString())}
                 sx={{color:DEFAULT_COLORS.primary_blue,fontSize:10, width:1,fontWeight:100}}
                 valueLabelDisplay="auto"
-                marks={marks}
+                marks={marks.map((label, value) => ({ value, label }))}
             />
         </Box>
     );
