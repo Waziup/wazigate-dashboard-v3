@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup'
 import {useForm,SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { DevicesContext } from '../context/devices.context';
 
 interface RegistrationInput{
@@ -54,20 +54,16 @@ export default function Login() {
         resolver: yupResolver(schema),
     });
     const {setAccessToken,token} = useContext(DevicesContext);
-    useEffect(()=>{
-        if(token){
-            console.log(token);
-            window.wazigate.setToken(token);
-            navigate('/dashboard',{state:{title:'Dashboard'}})
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[token])
+    
     const onSubmit:SubmitHandler<RegistrationInput> = async (data: {username:string,password:string}) => {
         try {
             window.wazigate.authToken(data.username,data.password)
             .then((res)=>{
                 setAccessToken(res)
                 handleClose()
+                console.log(token);
+                window.wazigate.setToken(token);
+                navigate('/dashboard',{state:{title:'Dashboard'}})
             })
             .catch((err)=>{
                 if(err.message && err.message==='Failed to fetch'){
