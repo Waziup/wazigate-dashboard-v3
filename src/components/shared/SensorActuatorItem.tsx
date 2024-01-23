@@ -23,7 +23,7 @@ export default function SensorActuatorItem({ sensActuator: sens,anchorEl,handleC
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const navigate = useNavigate();
     return (
-        <Grid lg={3} xl={3} md={4} xs={6} sm={3.5} onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(sens)?'actuators':'sensors'}/${sens.id}`)}}  item sx={{ bgcolor: '#fff',cursor:'pointer', mx: matches?2:1, borderRadius: 2 }}>
+        <Grid lg={3} my={1} xl={3} md={4} xs={5.5} sm={3.5} onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(sens)?'actuators':'sensors'}/${sens.id}`)}}  item sx={{ bgcolor: '#fff',cursor:'pointer', mx: matches?2:1, borderRadius: 2 }}>
             <RowContainerBetween additionStyles={{px:matches?1:.3}}>
                 <RowContainerNormal>
                     <SVGIcon
