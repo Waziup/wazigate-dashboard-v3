@@ -1,4 +1,4 @@
-import { createContext, useEffect,useState } from "react";
+import { createContext, useCallback, useEffect,useState } from "react";
 import { App, Device } from "waziup";
 interface ContextValues{
     devices: Device[]
@@ -8,6 +8,8 @@ interface ContextValues{
     getApps:()=>void,
     codecsList?:{id:string,name:string}[] | null,
     addApp:(app:App)=>void
+    token:string
+    setAccessToken:(token:string) =>void
 }
 export const DevicesContext = createContext<ContextValues>({
     devices:[],
@@ -24,11 +26,16 @@ export const DevicesContext = createContext<ContextValues>({
     addApp(app) {
         console.log(app);
     },
-    codecsList:[]
+    codecsList:[],
+    token:'',
+    setAccessToken(userData) {
+        console.log(userData);
+    }
 });
 
 export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     const [devices, setDevices] = useState<Device[]>([]);
+    const [token,setToken] = useState<string>('');
     const setAppsFc = ((apps:App[])=>setApps(apps));
     const [apps, setApps] = useState<App[]>([]);
     const addApp = (app:App)=>{
@@ -45,11 +52,34 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             setDevices(devFilter);
         });
     }
+    const setAccessToken = useCallback(async (accessToken:string)=>{
+        setToken(accessToken);
+        window.localStorage.removeItem('token');
+        window.localStorage.setItem('token',accessToken as unknown as string);
+    },[]);
+    useEffect(()=>{
+        const fc = () => {
+            if(token){
+                window.wazigate.setToken(token);
+                getDevices();
+                getApps();
+            }
+            else{
+                const token = window.localStorage.getItem('token');
+                if(token){
+                    window.wazigate.setToken(token as unknown as string);
+                    setAccessToken(token);
+                }
+            }
+        }
+        fc();
+    },[setAccessToken, token]);
+
     useEffect(() => {
-        getDevices();
-        getApps();
-        loadCodecsList();
-    }, []);
+        if(token){
+            loadCodecsList();
+        }
+    }, [token]);
     const [codecsList, setCodecsList] = useState<{id:string,name:string}[] | null>(null);
     const loadCodecsList = () => {
         window.wazigate.get('/codecs').then(res => {
@@ -65,6 +95,8 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         setAppsFc,
         getApps,
         addApp,
+        token,
+        setAccessToken,
         codecsList
     }
     return(
