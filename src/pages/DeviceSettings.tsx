@@ -1,7 +1,7 @@
 import { MoreVert, Router, } from "@mui/icons-material";
 import { Box, Breadcrumbs, FormControl, Typography, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
-import { Link, useParams } from "react-router-dom";
+import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import AddTextShow from "../components/shared/AddTextInput";
 import type { Device, } from "waziup";
@@ -48,7 +48,7 @@ export default function DeviceSettings() {
     }
     const { codecsList } = useContext(DevicesContext);
     const { id } = useParams();
-
+    const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const [thisDevice, setThisDevice] = useState<Device | null>(null);
 
     useEffect(() => {
@@ -85,7 +85,7 @@ export default function DeviceSettings() {
                         </div>
                     </Box>
                 </RowContainerBetween>
-                <Box m={2} width={'50%'}>
+                <Box m={2} width={matches?'50%':'90%'}>
                     {
                         thisDevice?.meta.lorawan ? (
                             <Box bgcolor={'#fff'} mx={2} my={1} px={2} py={2} borderRadius={2} >
