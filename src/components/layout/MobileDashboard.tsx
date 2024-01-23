@@ -12,10 +12,15 @@ const Item = ({ more, color, children, title }: { more: string, children: React.
 );
 import { useContext } from "react";
 import { DevicesContext } from "../../context/devices.context";
-import { differenceInMinutes, isActiveDevice } from "../../utils";
+import { capitalizeFirstLetter, differenceInMinutes, isActiveDevice } from "../../utils";
+import { useNavigate } from "react-router-dom";
 export default function MobileDashboard() {
     const { devices, apps } = useContext(DevicesContext);
     console.log(apps);
+    const navigate = useNavigate();
+    const handleNav = (devId: string,devName:string) => {
+        navigate(`/devices/${devId}`,{state:{title:devName,backUrl:'/devices',backTitle:'Devices',showBack:true}});
+    }
     return (
         <Box sx={{ overflowY: 'scroll', height: '100%' }} >
             <Stack direction={'row'} overflow={'scroll'} m={2} spacing={1}>
@@ -35,9 +40,9 @@ export default function MobileDashboard() {
                     {
                         devices.map((dev, id) => (
 
-                            <Box onClick={() => { }} key={id} sx={{ cursor: 'pointer', my: 1, ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, width: '100%', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
+                            <Box onClick={() => { handleNav(dev.id,dev.name) }} key={id} sx={{ cursor: 'pointer', my: 1, ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, width: '100%', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
                                 <Box sx={{ position: 'absolute', top: -5, my: -1, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
-                                    <Typography fontSize={10} mx={1} color={'white'} component={'span'}>WaziDev</Typography>
+                                    <Typography fontSize={10} mx={1} color={'white'} component={'span'}>{capitalizeFirstLetter(dev.meta.type)}</Typography>
                                 </Box>
                                 <Box sx={{ py: 1.5, px: 2, }}>
                                     <RowContainerBetween>
