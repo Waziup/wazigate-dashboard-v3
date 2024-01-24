@@ -16,16 +16,26 @@ export const ListItemButtonStyle:SxProps<Theme> ={
         color:'#000',
     },
 }
-const styleFunc = ({isActive,}:{isActive:boolean}):CSSProperties=>{
-    return{
-        color:isActive?DEFAULT_COLORS.primary_black:'#fff',
-        backgroundColor:isActive?'white':'',
-        display:'flex',
+const commonstyle = {
+    display:'flex',
         alignItems:'center',
         justifyContent: 'space-between',
         borderRadius:4,
         textDecoration:'none',
         padding:'7px 10px',
+}
+const styleFunc = ({isActive,}:{isActive:boolean}):CSSProperties=>{
+    return{
+        color:isActive?DEFAULT_COLORS.primary_black:'#fff',
+        backgroundColor:isActive?'white':'',
+        ...commonstyle
+    }
+}
+const styleFunc1 = ({isActive,}:{isActive:boolean}):CSSProperties=>{
+    return{
+        color:isActive?DEFAULT_COLORS.primary_black:'inherit',
+        backgroundColor:isActive?'#D4E3F5':'inherit',
+        ...commonstyle
     }
 }
 const styleFuncSmall = ({isActive,}:{isActive:boolean}):CSSProperties=>{
@@ -97,29 +107,37 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     text={'Devices'} 
                                 />
                             {/* <NavigationItem location={location} path={'/automation'} icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'black':'white'}} />} text={'Automation'} /> */}
-                            <NavigationItem location={location} 
-                                path={'/settings'} 
-                                icon={<SettingsTwoTone sx={{...IconStyle,color:location==='/settings'?'#292F3F':'white'}} />} 
-                                text={'Settings'}
-                                otherItem={open ? <ExpandLess onClick={handleClick} /> : <ExpandMore onClick={handleClick} />}
-                            />
-                            
-                            <Collapse in={open} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    <NavigationItem 
-                                        location={location} 
-                                        path={'/settings/networking'} 
-                                        icon={<Wifi sx={{...IconStyle,ml:2, color:location.includes('/settings')?'#292F3F':'white'}} />} 
-                                        text={'Networking'}
-                                    />
-                                    <NavigationItem
-                                        location={location}
-                                        path={'/settings/maintenance'}
-                                        icon={<WifiLock sx={{...IconStyle,ml:2, color:location.includes('/settings')?'#292F3F':'white'}} />}
-                                        text={'Maintenance'}
-                                    />
-                                </List>
-                            </Collapse>
+                            <Box sx={{bgcolor:location.includes('/settings')? '#fff':'inherit',borderRadius:2}}>
+                                <NavigationItem location={location} 
+                                    path={'/settings'} 
+                                    icon={
+                                        <SettingsTwoTone sx={{...IconStyle,color:location.includes('/settings')?'#292F3F':'white'}} />} 
+                                    text={'Settings'}
+                                    otherItem={open ? <ExpandLess onClick={handleClick} /> : <ExpandMore onClick={handleClick} />}
+                                />
+                                
+                                <Collapse in={open} timeout="auto" unmountOnExit>
+                                    <List component="div" disablePadding>
+                                        <NavLink state={{title:'Networking'}} to={'/settings/networking'} style={styleFunc1}>
+                                            <Box display='flex' width={'87%'} alignItems='center'>
+                                                <ListItemIcon>
+                                                    <Wifi sx={{...IconStyle,ml:2, color:location.includes('/settings')?'#292F3F':'white'}} />
+                                                </ListItemIcon>
+                                                <ListItemText sx={{fontSize:1}} primary='Networking' />
+                                            </Box>
+                                        </NavLink>
+                                        <NavLink state={{title:'Maintenance'}} to={'/settings/maintenance'} style={styleFunc1}>
+                                            <Box display='flex' width={'87%'} alignItems='center'>
+                                                <ListItemIcon>
+                                                    <WifiLock sx={{...IconStyle,ml:2, color:location.includes('/settings')?'#292F3F':'white'}} />
+                                                </ListItemIcon>
+                                                <ListItemText sx={{fontSize:1}} primary='Maintenance' />
+                                            </Box>
+                                        </NavLink>
+                                        
+                                    </List>
+                                </Collapse>
+                            </Box>
                             <NavigationItem location={location} path={'/apps'} icon={<Apps sx={{...IconStyle,color:location.includes('/apps')?'#292F3F':'white'}} />} text={'Apps'} />
                         </List>
                         <Box position={'absolute'} display={'flex'}  justifyContent={'center'} flexDirection={'column'} alignItems={'center'} bottom={0} width={'100%'} >
