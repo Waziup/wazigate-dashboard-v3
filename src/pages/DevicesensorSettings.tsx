@@ -22,6 +22,16 @@ function DeviceSensorSettings() {
     const [conditions, setConditions] = useState<string[]>([]);
     const navigate = useNavigate();
     const { getDevicesFc } = useContext(DevicesContext);
+    const handleToggleEnableSwitch = () => {
+        setSensOrActuator({
+            ...sensOrActuator!,
+            meta: {
+                ...sensOrActuator?.meta,
+                doNotSync: !sensOrActuator?.meta.doNotSync
+            }
+        })
+    
+    }
     useEffect(() => {
         window.wazigate.getDevice(id).then((de) => {
             const sensor = de.sensors.find((sensor) => sensor.id === sensorId);
@@ -64,35 +74,63 @@ function DeviceSensorSettings() {
             }
         })
     }
-    const generateConditions = () => {
-        if ((ontologies.actingDevices)[sensOrActuator?.meta.kind as keyof typeof ontologies.actingDevices]) {
-            return (ontologies.actingDevices)[sensOrActuator?.meta.kind as keyof typeof ontologies.actingDevices].quantities
-        } else {
-            setSensOrActuator({
-                ...sensOrActuator!,
-                meta: {
-                    ...sensOrActuator?.meta,
-                    quantity: ''
-                }
+    const handleChangeSensorOrActuatorSubmittion = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if(pathname.includes('sensors')){
+            window.wazigate.setSensorName(id as string, sensOrActuator?.id as string, sensOrActuator?.name as string).then(() => {
+                window.wazigate.setSensorMeta(id as string, sensOrActuator?.id as string, sensOrActuator?.meta as Sensor['meta']).then(() => {
+                    alert('Success');
+                    getDevicesFc()
+                    navigate('/devices');
+                }).catch((err) => {
+                    alert('Error');
+                    console.log(err);
+                });
+            }).catch((err) => {
+                alert('Error');
+                console.log(err);
             });
-            return []
+        }else if(pathname.includes('actuators')){
+            window.wazigate.setActuatorName(id as string, sensOrActuator?.id as string, sensOrActuator?.name as string).then(() => {
+                window.wazigate.setActuatorMeta(id as string, sensOrActuator?.id as string, sensOrActuator?.meta as Actuator['meta']).then(() => {
+                    alert('Success');
+                    getDevicesFc()
+                    navigate('/devices');
+                }).catch((err) => {
+                    alert('Error');
+                    console.log(err);
+                });
+            }).catch((err) => {
+                alert('Error');
+                console.log(err);
+            });
+        }else{
+            return;
         }
     }
+    const handleTextInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSensOrActuator({
+            ...sensOrActuator!,
+            name: event.target.value as string,
+        })
+    }
+    console.log(sensOrActuator?.meta);
+    
     return (
         <Box height={'100%'}>
             <Box p={2} px={3}>
-                <Typography fontWeight={500} fontSize={18} color={'black'}>Device 1</Typography>
+                <Typography fontWeight={600} fontSize={18} color={'black'}>{device?.name}</Typography>
                 <div role="presentation" onClick={() => { }}>
                     <Breadcrumbs aria-label="breadcrumb">
-                        <Link style={{ fontSize: 12, textDecoration: 'none' }} color="inherit" to="/devices">
-                            Device
+                        <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/devices">
+                            Devices
                         </Link>
                         {
                             matches ? (
                                 <Link
-                                    style={{ fontSize: 12, textDecoration: 'none' }}
-                                    color="inherit"
-                                    to={"/devices/" + device?.id + "/settings"}
+                                    style={{ fontSize: 14, color: 'black', fontWeight: '300', textDecoration: 'none' }}
+                                    color="black"
+                                    to={"/devices/" + device?.id}
                                     state={{ ...device }}
                                 >
                                     {device?.name}
