@@ -6,6 +6,7 @@ import {Box,Table,TableBody,TableCell,
   TableSortLabel,Toolbar,Typography,Paper,
   TablePagination,TableRow,
   Checkbox,IconButton,Tooltip,FormControlLabel,Switch,
+  Icon,
   
 } 
 from '@mui/material';
@@ -14,13 +15,13 @@ import { visuallyHidden } from '@mui/utils';
 import { Download, Tune } from '@mui/icons-material';
 interface Data {
     name: string;
-    values: number;
+    values: number | string;
     sos: string; 
 }
 
 function createData(
 	name: string,
-	values: number,
+	values: number | string,
 	sos: string,
 
 ): Data {
@@ -209,8 +210,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       ) : (
         <Tooltip title="Filter list">
           <IconButton>
+            <Tune sx={{mx:1}}/>
             <Download/>
-            <Tune />
           </IconButton>
         </Tooltip>
       )}
@@ -218,11 +219,14 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   );
 }
 interface Props{
-  values:{value:number,modified:string}[]
+  values:{
+    value:number | string,
+    modified:string
+  }[]
 }
 export default function DeviceTable({values}:Props) {
-  const rowsDate = values.map(v=>{
-    return createData(v.modified,v.value,'trending0')
+  const rowsDate = values.map((v,idx,arr)=>{
+    return createData(v.modified,v.value,arr[idx]>arr[idx+1]?'trending_up':arr[idx]===arr[idx+1]?'trending_flat':'trending_down')
   })
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('values');
@@ -351,8 +355,11 @@ export default function DeviceTable({values}:Props) {
                     >
                       {row.name}
                     </TableCell>
-                    <TableCell  align="right">{row.values?'Running':'Stopped'}</TableCell>
-                    <TableCell align="right">{row.sos}</TableCell>
+                    <TableCell  align="right">{row.values}</TableCell>
+                    <TableCell align="right">
+                      <Icon sx={{color:row.sos==='trending_up'?'#7E9B08':row.sos==='trending_down'?'#ff0000':'#000000'}}>{row.sos}</Icon>
+                      {/* {row.sos} */}
+                    </TableCell>
                   </TableRow>
                 );
               })}

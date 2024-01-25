@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { DEFAULT_COLORS } from '../constants';
+import { DEFAULT_COLORS } from '../../constants';
 
 function NoImageProfile() {
     return (

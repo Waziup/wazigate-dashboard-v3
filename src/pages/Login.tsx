@@ -5,7 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup'
 import {useForm,SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { DevicesContext } from '../context/devices.context';
+
 interface RegistrationInput{
     username:string
     password:string
@@ -20,19 +22,25 @@ interface TextInputProps {
 }
 const TextInput = ({children,label}:TextInputProps)=>(
     <Box py={1}>
-        <Box component={'p'} sx={{color:DEFAULT_COLORS.third_dark,fontWeight:'300',display:'flex'}}>{label} <Box component={'p'} sx={{color:DEFAULT_COLORS.orange}}>*</Box></Box>
+        <Box  sx={{color:DEFAULT_COLORS.third_dark,fontWeight:'300',display:'flex'}}>
+            {label} 
+            <Box component={'p'} sx={{color:DEFAULT_COLORS.orange}}>{' '}*</Box></Box>
         {children}
     </Box>
 );
 const reToken = () => {
-    window.wazigate.set<string>("auth/retoken", {}).then(
+    const oldToken = window.localStorage.getItem('token');
+    window.wazigate.set<string>("auth/retoken", {
+        token: oldToken,
+    }).then(
         (res) => {
-            console.log("Referesh token", res);
+            console.log("Refresh token", res);
             window.localStorage.setItem('token',res as unknown as string);
             // setTimeout(reToken, 1000 * 60 * 8); // Referesh the token every 10-2 minutes
         },
         (error) => {
             console.log(error);
+            // window.location.href='/'
         }
     );
 }
@@ -45,17 +53,19 @@ export default function Login() {
     const {handleSubmit,register} = useForm<RegistrationInput>({
         resolver: yupResolver(schema),
     });
+    const {setAccessToken,token} = useContext(DevicesContext);
+    
     const onSubmit:SubmitHandler<RegistrationInput> = async (data: {username:string,password:string}) => {
-        const userData = {
-            "username": data.username,
-            "password": data.password,
-        }
         try {
-            window.wazigate.set(`auth/token`,userData)
-            .then((res) => {
-                window.localStorage.setItem('token',res as unknown as string);
+            window.wazigate.authToken(data.username,data.password)
+            .then((res)=>{
+                setAccessToken(res)
+                handleClose()
+                console.log(token);
+                window.wazigate.setToken(token);
                 navigate('/dashboard',{state:{title:'Dashboard'}})
-            }).catch(err=>{
+            })
+            .catch((err)=>{
                 if(err.message && err.message==='Failed to fetch'){
                     setErrorMessage('Check if the backend server is running')
                 }else{
@@ -63,9 +73,8 @@ export default function Login() {
                 }
                 handleClose()
             })
-            
         } catch (error ) {
-            console.log('Error encountered: ',error)
+            setErrorMessage((error as {message:string}).message)
         }
     }
     const theme = useTheme();

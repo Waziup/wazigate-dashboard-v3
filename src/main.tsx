@@ -10,14 +10,10 @@ declare global {
         wazigate: waziup.Waziup;
     }
 }
-console.log(waziup);
-window.addEventListener('beforeunload', () => {
-    window.localStorage.removeItem('token');
-});    
 waziup.connect({
     host: VITE_WAZIGATE_API_URL,
-}).then((wazigate: waziup.Waziup) => {
-    window.wazigate = wazigate;
+}).then((res) => {
+    window.wazigate = res.waziup;
     console.log('Connected to Wazigate')
     ReactDOM.createRoot(document.getElementById('root')!).render(
         <React.StrictMode>
@@ -26,5 +22,5 @@ waziup.connect({
     )
 }).catch(()=>{
     console.log('Cannot connect to Wazigate');
-    (document.getElementById("dashboard") as HTMLElement).innerHTML = "<div style='margin-top: 20%;color:black; text-align: center;border: 1px solid #BBB;border-radius: 5px;padding: 5%;margin-left: 10%;margin-right: 10%;background-color: #EEE;'><h1>Wazigate is not accessible...</h1></div>";
+    (document.getElementById("dashboard") as HTMLElement).innerHTML = "<div style='margin-top: 50%;color:black; text-align: center;border: 1px solid #BBB;border-radius: 5px;padding: 5%;margin-left: 10%;margin-right: 10%;background-color: #EEE;'><h1>Wazigate is not accessible...</h1></div>";
 })

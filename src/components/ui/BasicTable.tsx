@@ -1,8 +1,8 @@
 import {Table,TableBody,TableCell,TableContainer,TableHead,TableRow,Paper, Typography, Box} from '@mui/material';
-import { DEFAULT_COLORS } from '../constants';
+import { DEFAULT_COLORS } from '../../constants';
 import { Sensors,History, DeviceHub } from '@mui/icons-material';
 import { Device } from 'waziup';
-import { differenceInMinutes } from '../utils';
+import { differenceInMinutes } from '../../utils';
 function createData(
   name: string,
   runtime: number,
@@ -50,7 +50,7 @@ export default function BasicTable({devices}:Props) {
                                         <Typography fontSize={[10,11,11,12,10]} color={DEFAULT_COLORS.primary_black}>
                                             {row.name.split('*')[0]}
                                         </Typography> 
-                                        <Typography fontSize={[10,11,11,12,10]}  color='#797979'>Last updated: {row.name.split('*')[1]} seconds</Typography>
+                                        <Typography fontSize={[10,11,11,12,10]}  color='#797979'>Last updated {row.name.split('*')[1]} secs</Typography>
                                     </Box>
                                 </Box>
                             </TableCell>

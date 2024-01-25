@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 changes.txt
 src/app
+/system_apps/*

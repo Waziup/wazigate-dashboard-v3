@@ -12,9 +12,11 @@ import User from './pages/User'
 import Device from './pages/Device'
 import Docspage from './pages/Docspage'
 import DeviceSensorSettings from './pages/DevicesensorSettings';
-import { Box, createTheme, ThemeProvider, Typography } from '@mui/material'
+import { Box, createTheme, ThemeProvider } from '@mui/material'
 import DeviceSettings from './pages/DeviceSettings'
 import { DevicesProvider } from './context/devices.context'
+import SettingsNetworking from './pages/SettingsNetworking'
+import SettingsMaintenance from './pages/SettingsMaintenance'
 function App() {
     
 
@@ -92,11 +94,11 @@ function App() {
                 },
                 {
                     path:'/settings/networking',
-                    element: <Box><Typography>Coming soon</Typography></Box>
+                    element: <SettingsNetworking/>
                 },
                 {
                     path:'/settings/maintenance',
-                    element: <Box><Typography>Coming soon</Typography></Box>
+                    element: <SettingsMaintenance/>
                 },
                 {
                     path:'/user',
