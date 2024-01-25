@@ -1,15 +1,17 @@
-import { Box, Breadcrumbs, Button,  SelectChangeEvent, TextField, Typography } from "@mui/material";
+import { Box, Breadcrumbs,Button,SelectChangeEvent,TextField,Typography,Icon } from "@mui/material";
 import { useLocation, Link, useOutletContext, useParams, useNavigate } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
-import { ArrowForward, Save, ToggleOff, ToggleOn, } from "@mui/icons-material";
+import { ArrowForward } from "@mui/icons-material";
 import RowContainerNormal from "../components/shared/RowContainerNormal";
 import DiscreteSliderMarks from "../components/ui/DiscreteMarks";
-import {  useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Actuator, Device, Sensor } from "waziup";
 import ontologies from "../assets/ontologies.json";
 import { DevicesContext } from "../context/devices.context";
 import SelectElementString from "../components/shared/SelectElementString";
+import PrimaryIconButton from "../components/shared/PrimaryIconButton";
+import React from "react";
 
 function DeviceSensorSettings() {
     const [matches] = useOutletContext<[matches: boolean]>();
@@ -98,89 +100,73 @@ function DeviceSensorSettings() {
                             ) : <Typography fontSize={15} color="text.primary">...</Typography>
                         }
                         <Link
-                            style={{ fontSize: 12, textDecoration: 'none' }}
-                            color="inherit"
+                            style={{ fontSize: 14, color: 'black', fontWeight: '300', textDecoration: 'none' }}
+                            color="black"
                             to={"/devices/" + device?.id + "/sensors/" + sensOrActuator?.id}
                         >
                             {sensOrActuator?.name}
                         </Link>
-                        <Typography fontSize={12} color="text.primary">Settings</Typography>
+                        <Typography fontSize={14} fontWeight={300} color="text.primary">Settings</Typography>
                     </Breadcrumbs>
                 </div>
             </Box>
             <Box bgcolor={matches ? '#fff' : 'inherit'} height={'100%'} width={'100%'} px={2} pt={matches ? 2 : 2}  >
-                <Typography color={'#292F3F'}>Setup the sensor type, quantity and unit</Typography>
-                <Box my={2} width={matches ? '30%' : '100%'}>
-                    <TextField id="name" value={(sensOrActuator)?.name} variant="standard" />
+                <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Setup the sensor type, quantity and unit</Typography>
+                <Box my={2} width={matches ? '100%' : '100%'}>
                     {
-
+                        
                         pathname.includes('actuators') ? (
-                            <>
-                                <SelectElementString matches={matches}
-                                    isDisabled={false}
-                                    title={`${sensOrActuator?.name} Kind`}
-                                    handleChange={handleChange}
-                                    conditions={conditions}
-                                    value={sensOrActuator?.meta.kind}
-                                    name="kind"
-                                />
-                                <SelectElementString matches={matches}
-                                    isDisabled={false}
-                                    title={`${sensOrActuator?.name} Quantity`}
-                                    handleChange={handleChange}
-                                    conditions={generateConditions()}
-                                    value={sensOrActuator?.meta.quantity}
-                                    name="quantity"
-                                />
-                                {
-                                    (ontologies.quantities)[sensOrActuator?.meta.quantity as keyof typeof ontologies.quantities] ? (
-                                        <SelectElementString matches={matches}
-                                            isDisabled={false}
-                                            title={`${sensOrActuator?.name} Unit`}
-                                            handleChange={handleChange}
-                                            conditions={(() => {
-                                                if ((ontologies.quantities)[sensOrActuator?.meta.quantity as keyof typeof ontologies.quantities]) {
-                                                    return (ontologies.quantities)[sensOrActuator?.meta.quantity as keyof typeof ontologies.quantities].units
-                                                } else {
-                                                    setSensOrActuator({
-                                                        ...sensOrActuator!,
-                                                        meta: {
-                                                            ...sensOrActuator?.meta,
-                                                            unit: ''
-                                                        }
-                                                    });
-                                                    return []
-                                                }
-                                            })()}
-                                            value={sensOrActuator?.meta.unit}
-                                            name="unit"
-                                        />
-                                    ) : null
-                                }
-                                <Box width={matches ? '40%' : '90%'}>
+                            <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
+                                <TextField sx={{ width: '30%' }} onChange={handleTextInputChange} id="name" value={(sensOrActuator)?.name} variant="standard" />
+                                <Box width={'30%'}>
+                                    <SelectElementString matches={matches}
+                                        isDisabled={false}
+                                        title={`${sensOrActuator?.name} Kind`}
+                                        handleChange={handleChange}
+                                        conditions={conditions}
+                                        value={sensOrActuator?.meta.kind}
+                                        name="kind"
+                                    />
+                                    <SelectElementString matches={matches}
+                                        isDisabled={false}
+                                        title={`${sensOrActuator?.name} Quantity`}
+                                        handleChange={handleChange}
+                                        conditions={quantitiesCondition}
+                                        value={sensOrActuator?.meta.quantity}
+                                        name="quantity"
+                                    />
+                                    <SelectElementString matches={matches}
+                                        isDisabled={false}
+                                        title={`${sensOrActuator?.name} Unit`}
+                                        handleChange={handleChange}
+                                        conditions={unitsCondition}
+                                        value={sensOrActuator?.meta.unit}
+                                        name="unit"
+                                    />
+                                </Box>
+                                <Box width={matches ? '100%' : '90%'}>
                                     <RowContainerNormal additionStyles={{ width: '100%' }}>
-                                        <Button sx={{ mx: 1, px: 2 }} startIcon={<Save />} variant={'contained'}>Save</Button>
+                                        <PrimaryIconButton iconname="save" onClick={() => { }} title="SAVE" />
                                         <Button sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
                                     </RowContainerNormal>
                                 </Box>
-                            </>
-                        ) : (
-                            <>
-                                <SelectElementString matches={matches}
-                                    isDisabled={false}
-                                    title={`${sensOrActuator?.name} Type`}
-                                    handleChange={handleChange}
-                                    conditions={(conditions)}
-                                    value={sensOrActuator?.meta.kind}
-                                    name="kind"
-                                />
+
                                 <Box width={matches ? '30%' : '90%'}>
-                                    <RowContainerNormal>
-                                        <Button sx={{ mx: 1 }} startIcon={<Save />} variant={'contained'}>Save</Button>
-                                        <Button sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
-                                    </RowContainerNormal>
+                                    <form onSubmit={addActuatorValueSubmit}>
+                                        <Typography color={'primary'} mb={.4} fontSize={12}>Add a value with the current time stamp</Typography>
+                                        <input
+                                            autoFocus
+                                            onInput={onInputChange}
+                                            name="name" placeholder='Enter device name'
+                                            required
+                                            style={{ border: 'none', width: '100%', padding: '6px 0', borderBottom: '1px solid #292F3F', outline: 'none' }}
+                                        />
+                                        <Button type="submit" sx={{ mx: 1, mt: 2, color: '#fff' }} color="info" startIcon={<ArrowForward />} variant={'contained'}>Push</Button>
+                                    </form>
                                 </Box>
-                            </>
+                            </form>
+                        ) : (
+                            null
                         )
                     }
                 </Box>
@@ -188,37 +174,49 @@ function DeviceSensorSettings() {
 
                 {
                     pathname.includes('sensors') ? (
-                        <>
-                            <Box width={matches ? '30%' : '90%'}>
-                                <Typography my={3} color={'#292F3F'}>Setup sync and sync interface</Typography>
-                                <RowContainerBetween additionStyles={{ mt: 3 }}>
-                                    <Typography fontSize={15} color={'#292F3F'}>Sync Sensor</Typography>
-                                    <ToggleOff sx={{ color: DEFAULT_COLORS.secondary_gray, fontSize: 40, }} />
-                                </RowContainerBetween>
-                                <RowContainerBetween>
-                                    <Typography fontSize={15} color={'#292F3F'}>Sync Interval</Typography>
-                                    <ToggleOn sx={{ color: DEFAULT_COLORS.primary_blue, fontSize: 40, }} />
-                                </RowContainerBetween>
-                            </Box>
-                            <DiscreteSliderMarks matches={matches} />
-                        </>
-                    ) : (
-                        <>
-                            <Box width={matches ? '30%' : '90%'}>
-                                <form onSubmit={addActuatorValueSubmit}>
-                                    <Typography color={'primary'} mb={.4} fontSize={12}>Add a value with the current time stamp</Typography>
-                                    <input
-                                        autoFocus
-                                        onInput={onInputChange}
-                                        name="name" placeholder='Enter device name'
-                                        required
-                                        style={{ border: 'none', width: '100%', padding: '6px 0', borderBottom: '1px solid #292F3F', outline: 'none' }}
+                        <form style={{margin:'5px 0'}} onSubmit={handleChangeSensorOrActuatorSubmittion} >
+                            <Box width={matches ? '40%' : '100%'}>
+
+                                <TextField required sx={{ width: '100%' }} id="name" value={(sensOrActuator)?.name} variant="standard" />
+                                <Box sx={{ mt: 2 }}>
+                                    <SelectElementString matches={matches}
+                                        isDisabled={false}
+                                        title={`${sensOrActuator?.name} Type`}
+                                        handleChange={handleChange}
+                                        conditions={(conditions)}
+                                        value={sensOrActuator?.meta.kind}
+                                        name="kind"
                                     />
-                                    <Button type="submit" sx={{ mx: 1, mt: 2, color: '#fff' }} color="info" startIcon={<ArrowForward />} variant={'contained'}>Push</Button>
-                                </form>
+                                </Box>
+                                <Box >
+                                    <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Setup sync and sync-interface</Typography>
+                                    <RowContainerBetween additionStyles={{ my: 3 }}>
+                                        <Typography fontSize={15} color={'#292F3F'}>Sync Sensor</Typography>
+                                        <Icon 
+                                            onClick={handleToggleEnableSwitch}
+                                            sx={{ color: sensOrActuator?.meta.doNotSync ? DEFAULT_COLORS.secondary_gray : DEFAULT_COLORS.primary_blue, fontSize: 40, }} 
+                                            >{
+                                                sensOrActuator?.meta.doNotSync ? 'toggle_off' : 'toggle_on'}
+                                        </Icon>
+                                    </RowContainerBetween>
+                                    <Typography fontSize={15} color={'#292F3F'}>Sync Interval</Typography>
+                                    
+                                </Box>
                             </Box>
-                        </>
-                    )
+                            <DiscreteSliderMarks 
+                                value={sensOrActuator?.meta.syncInterval || "5s"}
+                                onSliderChange={onSliderChange} 
+                                matches={matches} 
+                            />
+                            <Box sx={{ width: '100%', mt: 2 }}>
+
+                                <RowContainerBetween additionStyles={{ width: matches ? '20%' : '90%', mt: 2 }} >
+                                    <PrimaryIconButton type="submit" iconname="save" onClick={() => { }} title="SAVE" />
+                                    <Button sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
+                                </RowContainerBetween>
+                            </Box>
+                        </form>
+                    ) : null
                 }
             </Box>
         </Box>
