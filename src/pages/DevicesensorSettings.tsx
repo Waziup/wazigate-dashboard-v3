@@ -63,6 +63,33 @@ function DeviceSensorSettings() {
                 console.log(err);
             });
     }
+    const [quantitiesCondition, setQuantitiesCondition] = React.useState<string[]>([]);
+    const [unitsCondition, setUnitsCondition] = React.useState<string[]>([]);
+    React.useEffect(() => {
+        if (sensOrActuator?.meta.kind) {
+            setQuantitiesCondition(
+                (ontologies.actingDevices)[sensOrActuator?.meta?.kind as keyof typeof ontologies.actingDevices] ?
+                    (ontologies.actingDevices)[sensOrActuator?.meta?.kind as keyof typeof ontologies.actingDevices].quantities : []);
+        }
+    }, [sensOrActuator?.meta.kind]);
+    useEffect(() => {
+        setSensOrActuator(sensOrActuator)
+    },[sensOrActuator]);
+    React.useEffect(() => {
+        if (sensOrActuator?.meta.quantity) {
+            setUnitsCondition((ontologies.quantities)[sensOrActuator?.meta?.quantity as keyof typeof ontologies.quantities].units);
+        }
+    }, [sensOrActuator?.meta.quantity])
+    const onSliderChange=(val:string)=>{
+        console.log(val,'slider value');
+        setSensOrActuator({
+            ...sensOrActuator!,
+            meta: {
+                ...sensOrActuator?.meta,
+                syncInterval: val
+            }
+        })
+    }
     const handleChange = (event: SelectChangeEvent<string>) => {
         const unit = event.target.name === 'unit' ? ontologies.units[event.target.value as keyof typeof ontologies.units].label : sensOrActuator?.meta.unit;
         setSensOrActuator({
