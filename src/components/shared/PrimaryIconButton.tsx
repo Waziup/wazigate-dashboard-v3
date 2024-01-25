@@ -4,11 +4,20 @@ interface Props{
     iconname:string;
     type?:'submit'|'button'
     onClick:()=>void;
+    hideText?:boolean
 }
-export default function PrimaryIconButton({title,iconname, type, onClick}:Props) {
+export default function PrimaryIconButton({title,iconname,hideText, type, onClick}:Props) {
     return (
-        <Button type={type} startIcon={<Icon sx={{ color: '#fff' }} >{iconname}</Icon>} sx={{mx:1}} onClick={onClick} color="info" variant={'contained'}>
-            <Typography fontSize={14} fontWeight={'700'} color={'#fff'}>{title}</Typography>
-        </Button>
+        <>
+            {
+                hideText? (
+                    <Button color="info" variant={'contained'} sx={{mx:.4}} startIcon={<Icon onClick={onClick} sx={{ color: '#fff', }} >{iconname}</Icon>}/>
+                ):(
+                    <Button type={type} startIcon={<Icon sx={{ color: '#fff' }} >{iconname}</Icon>} sx={{mx:1}} onClick={onClick} color="info" variant={'contained'}>
+                        <Typography color={'#fff'} fontSize={14} fontWeight={500}>{title}</Typography>
+                    </Button>
+                )
+            }
+        </>
     )
 }
