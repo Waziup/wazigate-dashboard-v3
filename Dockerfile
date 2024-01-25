@@ -19,7 +19,7 @@
 FROM node:alpine3.19 as production
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm install --force
 COPY . .
 ENV VITE_WAZIGATE_API_URL=http://localhost
 RUN npm run build
