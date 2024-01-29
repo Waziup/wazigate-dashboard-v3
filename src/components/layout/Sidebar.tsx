@@ -18,11 +18,12 @@ export const ListItemButtonStyle:SxProps<Theme> ={
 }
 const commonstyle = {
     display:'flex',
-        alignItems:'center',
-        justifyContent: 'space-between',
-        borderRadius:4,
-        textDecoration:'none',
-        padding:'7px 10px',
+    alignItems:'center',
+    justifyContent: 'space-between',
+    borderRadius:4,
+    textDecoration:'none',
+    padding:'7px 10px',
+    width:'100%'
 }
 const styleFunc = ({isActive,}:{isActive:boolean}):CSSProperties=>{
     return{
@@ -53,15 +54,15 @@ const styleFuncSmall = ({isActive,}:{isActive:boolean}):CSSProperties=>{
 }
 const NavigationItem = ({path,otherItem,icon,onClick, text}:{location:string,  otherItem?:JSX.Element,additionalStyles?:CSSProperties, path:string,onClick?:()=> void, icon:React.ReactNode,text:string}) => {
     return(
-        <NavLink state={{title:text}} to={path} onClick={onClick} style={styleFunc}>
-            <Box display='flex' width={'87%'} alignItems='center'>
-                <ListItemIcon>
-                    {icon}
-                </ListItemIcon>
-                <ListItemText sx={{fontSize:1}} primary={text} />
-            </Box>
+        <Box display='flex' justifyContent={'space-between'} width={'100%'} px={1} alignItems='center'>
+            <NavLink state={{title:text}} to={path} onClick={onClick} style={styleFunc}>
+                    <ListItemIcon>
+                        {icon}
+                    </ListItemIcon>
+                    <ListItemText sx={{fontSize:1}} primary={text} />
+            </NavLink>
             {otherItem}
-        </NavLink>
+        </Box>
     )
 }
 const NavigationSmall = ({path,otherItem,icon,onClick, }:{location:string,otherItem?:JSX.Element,additionalStyles?:CSSProperties,title:string, path:string,onClick?:()=> void, icon:React.ReactNode,}) => {
@@ -113,7 +114,7 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     icon={
                                         <SettingsTwoTone sx={{...IconStyle,color:location.includes('/settings')?'#292F3F':'white'}} />} 
                                     text={'Settings'}
-                                    otherItem={open ? <ExpandLess onClick={handleClick} /> : <ExpandMore onClick={handleClick} />}
+                                    otherItem={open ? <ExpandLess sx={{cursor:'pointer'}} onClick={handleClick} /> : <ExpandMore sx={{cursor:'pointer'}} onClick={handleClick} />}
                                 />
                                 
                                 <Collapse in={open} timeout="auto" unmountOnExit>
