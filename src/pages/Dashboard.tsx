@@ -1,7 +1,7 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import { Router, CloudOff, Wifi, WaterDrop, } from '@mui/icons-material';
 import BasicTable from "../components/ui/BasicTable";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, } from "react";
 import { DEFAULT_COLORS } from "../constants";
 import { useOutletContext } from "react-router-dom";
 import MobileDashboard from "../components/layout/MobileDashboard";
@@ -53,33 +53,12 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
 export const NormalText = ({ title }: { title: string }) => (<Typography color={DEFAULT_COLORS.navbar_dark}>{title}</Typography>)
 function Dashboard() {
     const { devices, apps } = useContext(DevicesContext);
-    useEffect(() => {
-        const fb = async () => {
-            window.wazigate.getDevices().then((res) => {
-                console.log('Devices: ', res);
-            }).catch(err => {
-                console.log('Error encountered: ', err)
-            });
-        }
-        fb()
-    }, [])
     const [matches] = useOutletContext<[matches: boolean]>();
     console.log(devices);
     //curl -X GET "http://waziup.github.io/apps/waziup.wazigate-system/net" -H "accept: application/json"
-    const fetchNet = async () => {
-        const res = await fetch('https://waziup.github.io/apps/waziup.wazigate-system/net', {
-            headers: {
-                'accept': 'application/json'
-            }
-        });
-        const data = await res.json();
-        console.log(data);
-    }
-    useEffect(() => {
-        fetchNet();
-    }, [])
+    
     return (
-        <Box sx={{ height: '100%', overflowY: 'scroll' }}>
+        <Box sx={{ height: '100%', overflowY: 'auto' }}>
             {
                 matches ? (
                     <Box p={3} sx={{ width: '100%' }}>

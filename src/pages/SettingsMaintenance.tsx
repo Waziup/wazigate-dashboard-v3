@@ -5,10 +5,14 @@ import SSHTabMaintenance from "../components/ui/SSHTab.maintenance";
 import ContainersTabMaintenance from "../components/ui/ContainersTab.maintenance";
 import ExportTabMaintenance from "../components/ui/ExportTab.maintenance";
 import LogsTabMaintenance from "../components/ui/LogsTab.maintenance";
-const BTN = ({title,icon,onClick,activeTab,idx}:{idx:string,title:string,activeTab:string, icon:string,onClick:(idx:string)=>void})=>(
-    <Box bgcolor={activeTab===idx?'#D1ECF1':'inherit'} >
-        <Button onClick={()=>onClick(idx)} sx={{color:activeTab===idx?'#000':'#fff',py:1,px:2}}  variant="text" startIcon={<Icon sx={{color:activeTab===idx?'#000':'#fff'}} >{icon}</Icon>}>
-            {title}
+import { useOutletContext } from "react-router-dom";
+const BTN = ({title,icon,onClick,activeTab,children,idx}:{idx:string,title:string,activeTab:string,children?:React.ReactNode, icon?:string,onClick:(idx:string)=>void})=>(
+    <Box  bgcolor={activeTab===idx?'#D1ECF1':'inherit'} >
+        <Button onClick={()=>onClick(idx)} sx={{display:'flex',alignItems:'center', color:activeTab===idx?'#000':'#fff',py:1,px:2}}  variant="text" startIcon={
+            icon?<Icon sx={{color:activeTab===idx?'#000':'#fff'}} >{icon}</Icon>:null
+            }>
+                {children}
+                {title}
         </Button>
     </Box>
 );
@@ -18,10 +22,13 @@ const PendingTab =()=>(
         <Typography>isPending</Typography>
     </Box>
 )
+interface Props{
+    matches?:boolean
+}
 type Tabs={
     [key:string]:{
         title:string,
-        component:()=>JSX.Element
+        component:({ matches }: Props)=>JSX.Element
     }
 }
 const tabs:Tabs = {
@@ -54,21 +61,30 @@ export default function SettingsMaintenance() {
             setActiveTab(newValue);
         });
     };
+    const [matches] = useOutletContext<[matches: boolean]>();
     const TabComponent = tabs[activeTab].component;
     return (
         <Box position={'relative'}>
-            <Stack bgcolor={'primary.main'}  direction={'row'} spacing={0}>
+            <Stack bgcolor={'primary.main'} overflow={'auto'}  direction={'row'} spacing={0}>
                 <BTN activeTab={activeTab} idx='0' onClick={handleTabChange} title={'Resources'} icon={'folder_copy'}/>
                 <BTN activeTab={activeTab} idx='1' onClick={handleTabChange} title={'SSH'} icon={'terminal_outlined'}/>
-                <BTN activeTab={activeTab} idx='2'onClick={handleTabChange} title={'Containers'} icon={'terminal_outlined'}/>
+                <BTN activeTab={activeTab} idx='2'onClick={handleTabChange} title={'Containers'}>
+                    <Box component={'img'} mr={.5} src="/docker.svg" color={activeTab?'#fff':'#000'} height={20} width={20} />
+                </BTN>
                 <BTN activeTab={activeTab} idx='3' onClick={handleTabChange} title={'Logs'} icon={'description'}/>
-                <BTN activeTab={activeTab} idx='4' onClick={handleTabChange} title={'Export gateway data'} icon={'terminal_outlined'}/>
+                <Box minWidth={240}>
+                    <BTN activeTab={activeTab} idx='4' onClick={handleTabChange} title={'Export gateway data'}>
+                        <Box component={'img'} mr={.5} src="/export_notes.svg" color={activeTab?'#fff':'#000'} height={15} width={15} />
+                    </BTN>
+                </Box>
             </Stack>
             {
                 isPending?(
                     <PendingTab/>
                 ):(
-                    <TabComponent/>
+                    <TabComponent
+                        matches={matches}
+                    />
                 )
             }
         </Box>

@@ -1,6 +1,9 @@
 import { Box,Typography } from '@mui/material'
-
-export default function LogsTabMaintenance() {
+interface Props{
+    matches?:boolean
+}
+export default function LogsTabMaintenance({matches}:Props) {
+    console.log(matches);
     return (
         <Box>
             <Typography>Logs tab</Typography>
