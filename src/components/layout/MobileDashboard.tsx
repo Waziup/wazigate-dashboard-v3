@@ -22,8 +22,8 @@ export default function MobileDashboard() {
         navigate(`/devices/${devId}`,{state:{title:devName,backUrl:'/devices',backTitle:'Devices',showBack:true}});
     }
     return (
-        <Box sx={{ overflowY: 'scroll', height: '100%' }} >
-            <Stack direction={'row'} overflow={'scroll'} m={2} spacing={1}>
+        <Box sx={{ overflowY: 'auto', height: '100%' }} >
+            <Stack direction={'row'} overflow={'auto'} m={2} spacing={1}>
                 <Item color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
                     <Router sx={{ fontSize: 20, color: 'black' }} />
                 </Item>

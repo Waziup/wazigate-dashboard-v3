@@ -41,11 +41,11 @@ function Layout() {
                             }
                         </RowContainerBetween>
                         <Box onClick={handleToggle} sx={{ position: 'absolute', top: 0, display: open ? 'flex' : 'none', height: '100%', width: '100%', bgcolor: 'rgba(0,0,0,.5)', zIndex: 99 }}>
-                            <Box sx={{ bgcolor: 'primary.main', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '50%' }}>
+                            <Box sx={{ bgcolor: 'primary.main', display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '65%' }}>
                                 <Sidebar matchesMd={matchesMd} />
                             </Box>
                         </Box>
-                        <Box sx={{overflowY:'scroll',height:'100%',mb:4}}>
+                        <Box sx={{overflowY:'auto',height:'100%',mb:4}}>
                             <Outlet context={[matches]} />
                         </Box>
                     </Box>

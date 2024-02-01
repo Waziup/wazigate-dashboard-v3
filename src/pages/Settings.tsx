@@ -78,7 +78,7 @@ function Settings() {
         setIsSetDateManual(!isSetDateManual);
     }
     return (
-        <Box sx={{ p: 3, overflowY: 'scroll', height: '100%' }}>
+        <Box sx={{ p: 3, overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
             <Box>
                 <Typography fontWeight={700} color={'black'}>Devices</Typography>
                 <Typography sx={{ color: DEFAULT_COLORS.secondary_black }}>Setup your Wazigate Edge Apps</Typography>

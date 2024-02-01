@@ -297,7 +297,7 @@ export default function Apps() {
                             </Box>
                             {
                                 logs && (
-                                    <Box maxWidth={'100%'} overflow={'scroll'} width={'100%'} height={200} bgcolor={'#000'}>
+                                    <Box maxWidth={'100%'} overflow={'auto'} width={'100%'} height={200} bgcolor={'#000'}>
                                         <Typography fontSize={10} color={'#fff'}>
                                             {logs.logs}
                                         </Typography>
@@ -438,7 +438,7 @@ export default function Apps() {
                     </Backdrop>
                 ) : null
             }
-            <Box p={3} onClick={() => { open ? handleClose() : null }} sx={{ overflowY: 'scroll', my: 2, height: '100%' }}>
+            <Box p={3} onClick={() => { open ? handleClose() : null }} sx={{ overflowY: 'auto', my: 2, height: '100%' }}>
                 <RowContainerBetween>
                     <Box maxWidth={'50%'}>
                         <Typography fontWeight={700} fontSize={20} color={'black'}>Apps</Typography>
@@ -494,16 +494,13 @@ export default function Apps() {
                                                                             </ListItemIcon>
                                                                             Settings
                                                                         </MenuItem>
-                                                                        {
-                                                                            idx ? (
-                                                                                <MenuItem value={idx} onClick={() => { setAppToUninstallFc(idx); popupState.close }}>
-                                                                                    <ListItemIcon>
-                                                                                        <DeleteForever fontSize="small" />
-                                                                                    </ListItemIcon>
-                                                                                    Uninstall
-                                                                                </MenuItem>
-                                                                            ) : null
-                                                                        }
+                                                                        <MenuItem value={idx} onClick={() => { setAppToUninstallFc(idx); popupState.close }}>
+                                                                            <ListItemIcon>
+                                                                                <DeleteForever fontSize="small" />
+                                                                            </ListItemIcon>
+                                                                            Uninstall
+                                                                        </MenuItem>
+                                                                        
                                                                         <MenuItem value={idx} onClick={() => { startOrStopApp(app.id, app.state.running); popupState.close }}>
                                                                             <ListItemIcon>
                                                                                 <DeleteForever fontSize="small" />
