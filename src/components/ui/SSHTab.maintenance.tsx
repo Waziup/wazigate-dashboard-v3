@@ -1,5 +1,10 @@
 import { Box, Typography } from '@mui/material';
-export default function SSHTabMaintenance() {
+interface Props{
+    matches?:boolean
+}
+export default function SSHTabMaintenance({matches}:Props) {
+    console.log(matches);
+    
     return (
         <Box>
             <Typography>SSH tab</Typography>
