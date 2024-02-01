@@ -2,24 +2,79 @@ import { Box, Stack, Typography,LinearProgress,styled,linearProgressClasses } fr
 import ReactSpeedometer from "react-d3-speedometer";
 import Chart from 'react-apexcharts';
 // import { useEffect } from "react";
-
+/**
+    this.state = {
+          
+            series: [{
+              data: data.slice()
+            }],
+            options: {
+              chart: {
+                id: 'realtime',
+                height: 350,
+                type: 'line',
+                animations: {
+                  enabled: true,
+                  easing: 'linear',
+                  dynamicAnimation: {
+                    speed: 1000
+                  }
+                },
+                toolbar: {
+                  show: false
+                },
+                zoom: {
+                  enabled: false
+                }
+              },
+              dataLabels: {
+                enabled: false
+              },
+              stroke: {
+                curve: 'smooth'
+              },
+              title: {
+                text: 'Dynamic Updating Chart',
+                align: 'left'
+              },
+              markers: {
+                size: 0
+              },
+              xaxis: {
+                type: 'datetime',
+                range: XAXISRANGE,
+              },
+              yaxis: {
+                max: 100
+              },
+              legend: {
+                show: false
+              },
+            },
+          
+          
+          };
+        }
+ */
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 20,
     borderRadius: 5,
     [`&.${linearProgressClasses.colorPrimary}`]: {
-      backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+      backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 300 : 800],
     },
     [`& .${linearProgressClasses.bar}`]: {
       borderRadius: 5,
       backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
     },
 }));
-export default function ResourcesTabMaintenance() {
+interface Props{
+    matches?:boolean
+}
+export default function ResourcesTabMaintenance({matches}:Props) {
     
     return (
-        <Box m={3}>
-            <Typography>Resources tab</Typography>
-            <Stack direction={'row'} justifyContent={'space-evenly'} spacing={2}>
+        <Box  sx={{ p: 3, overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100vh' }}>
+            <Stack direction={matches?'row':'column'} justifyContent={'space-evenly'} spacing={2}>
                 <ReactSpeedometer
                     maxValue={100}
                     value={3}
@@ -56,83 +111,58 @@ export default function ResourcesTabMaintenance() {
 
             </Stack>
             <Box mt={3} width={'80%'}>
-                <Typography>Storage</Typography>
                 <Box mt={1}>
-                    <Typography>Used: 1.2GB of 4GB</Typography>
+                    <Typography>Disk:<span style={{color:'black',fontWeight:'bold'}}>1.2GB</span> of <span style={{color:'black',fontWeight:'bold'}}>4GB</span> used</Typography>
                     <BorderLinearProgress variant="determinate" value={30} />
                 </Box>
             </Box>
             <Chart
                 options={{
                     chart: {
-                        // height: 350,
-                        type: 'rangeArea',
+                        id: 'realtime',
+                        height: 600,
+                        type: 'line',
+                        animations: {
+                            enabled: true,
+                            easing: 'linear',
+                            dynamicAnimation: {
+                                speed: 1000
+                            }
+                        },
+                        toolbar: {
+                            show: false
+                        },
+                        zoom: {
+                            enabled: false
+                        }
                     },
                     xaxis: {
                         categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                        // type: 'numeric',
-
+                    },
+                    yaxis: {
+                        max: 100
+                    },
+                    legend: {
+                        show: true
                     },
                     stroke: {
                         curve: 'smooth',
                         width: 2
                     },
-                    colors: ['#4592F6'],
+                    colors: ['#4592F6', '#ac64ad', '#F6BB45'],
                 }}
                 series={[
                     {
-                        name: "series-1",
-                        data: [
-                            {
-                                x: 'Mon',
-                                y: [
-                                    1,
-                                    10
-                                ]
-                            },
-                            {
-                                x: 'Tue',
-                                y: [
-                                    5,
-                                    15
-                                ]
-                            },
-                            {
-                                x: 'Wed',
-                                y: [
-                                    3,
-                                    10
-                                ]
-                            },
-                            {
-                                x: 'Thu',
-                                y: [
-                                    5,
-                                    12
-                                ]
-                            },
-                            {
-                                x: 'Fri',
-                                y: [
-                                    4,
-                                    15
-                                ]
-                            },
-                            {
-                                x: 'Sat',
-                                y: [
-                                    2,
-                                    10
-                                ]
-                            },
-                            {
-                                x: 'Sun',
-                                y: [
-                                    1,
-                                    10
-                                ]
-                            },
-                        ]
+                        name: 'CPU',
+                        data: [30, 40, 25, 50, 49, 21, 70]
+                    },
+                    {
+                        name: 'Memory',
+                        data: [23, 12, 54, 61, 32, 56, 81]
+                    },
+                    {
+                        name: 'Disk',
+                        data: [25, 30, 24, 31, 42, 50, 70]
                     }
                 ]}
                 type="area"
