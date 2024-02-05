@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup'
 import {useForm,SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup';
-import { useContext, useState } from 'react';
+import {useContext,  useState } from 'react';
 import { DevicesContext } from '../context/devices.context';
 
 interface RegistrationInput{
@@ -53,7 +53,7 @@ export default function Login() {
     const {handleSubmit,register} = useForm<RegistrationInput>({
         resolver: yupResolver(schema),
     });
-    const {setAccessToken,token} = useContext(DevicesContext);
+    const {setAccessToken} = useContext(DevicesContext);
     
     const onSubmit:SubmitHandler<RegistrationInput> = async (data: {username:string,password:string}) => {
         try {
@@ -61,8 +61,8 @@ export default function Login() {
             .then((res)=>{
                 setAccessToken(res)
                 handleClose()
-                console.log(token);
-                window.wazigate.setToken(token);
+                // console.log(token);
+                // window.wazigate.setToken(token);
                 navigate('/dashboard',{state:{title:'Dashboard'}})
             })
             .catch((err)=>{
