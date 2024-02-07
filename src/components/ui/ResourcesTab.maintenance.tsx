@@ -1,61 +1,9 @@
 import { Box, Stack, Typography,LinearProgress,styled,linearProgressClasses } from "@mui/material";
 import ReactSpeedometer from "react-d3-speedometer";
 import Chart from 'react-apexcharts';
-// import { useEffect } from "react";
-/**
-    this.state = {
-          
-            series: [{
-              data: data.slice()
-            }],
-            options: {
-              chart: {
-                id: 'realtime',
-                height: 350,
-                type: 'line',
-                animations: {
-                  enabled: true,
-                  easing: 'linear',
-                  dynamicAnimation: {
-                    speed: 1000
-                  }
-                },
-                toolbar: {
-                  show: false
-                },
-                zoom: {
-                  enabled: false
-                }
-              },
-              dataLabels: {
-                enabled: false
-              },
-              stroke: {
-                curve: 'smooth'
-              },
-              title: {
-                text: 'Dynamic Updating Chart',
-                align: 'left'
-              },
-              markers: {
-                size: 0
-              },
-              xaxis: {
-                type: 'datetime',
-                range: XAXISRANGE,
-              },
-              yaxis: {
-                max: 100
-              },
-              legend: {
-                show: false
-              },
-            },
-          
-          
-          };
-        }
- */
+import { getUsageInfo,UsageInfo } from "../../utils/systemapi";
+import { useEffect,useState } from "react";
+import { humanFileSize } from "../../utils";
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 20,
     borderRadius: 5,
@@ -72,12 +20,31 @@ interface Props{
 }
 export default function ResourcesTabMaintenance({matches}:Props) {
     
+    const [usageInfo, setUsageInfo] = useState<UsageInfo>({
+        cpu_usage:'',
+        mem_usage:{total:'',used:''}, 
+        disk: {
+            available: '',
+            device: '',
+            mountpoint: '',
+            percent: '',
+            size: '',
+            used: ''
+        },
+        temp:''
+    });
+    useEffect(() => {
+        getUsageInfo().then((res) => {
+            console.log(res);
+            setUsageInfo(res);
+        });
+    },[]);
     return (
         <Box  sx={{ p: 3, overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100vh' }}>
             <Stack direction={matches?'row':'column'} justifyContent={'space-evenly'} spacing={2}>
                 <ReactSpeedometer
                     maxValue={100}
-                    value={3}
+                    value={parseInt(usageInfo.cpu_usage)}
                     // needleColor="black"
                     startColor="#fbe9e7"
                     height={200}
@@ -87,8 +54,12 @@ export default function ResourcesTabMaintenance({matches}:Props) {
                     currentValueText="CPU: ${value} %"
                 />
                 <ReactSpeedometer
-                    maxValue={100}
-                    value={30}
+                    maxValue={Math.round(
+                        parseInt(usageInfo.mem_usage.total) / 1024
+                    )}
+                    value={Math.round(
+                        parseInt(usageInfo.mem_usage.used) / 1024
+                    )}
                     // needleColor="black"
                     startColor="#e3f2fd"
                     height={200}
@@ -99,7 +70,7 @@ export default function ResourcesTabMaintenance({matches}:Props) {
                 />
                 <ReactSpeedometer
                     maxValue={100}
-                    value={40}
+                    value={parseInt(usageInfo.temp)}
                     // needleColor="black"
                     startColor="#fff3e0"
                     height={200}
@@ -112,7 +83,7 @@ export default function ResourcesTabMaintenance({matches}:Props) {
             </Stack>
             <Box mt={3} width={'80%'}>
                 <Box mt={1}>
-                    <Typography>Disk:<span style={{color:'black',fontWeight:'bold'}}>1.2GB</span> of <span style={{color:'black',fontWeight:'bold'}}>4GB</span> used</Typography>
+                    <Typography>Disk:<span style={{color:'black',fontWeight:'bold'}}>{humanFileSize(parseFloat(usageInfo.mem_usage.used))}</span> of <span style={{color:'black',fontWeight:'bold'}}>{humanFileSize(parseFloat(usageInfo.mem_usage.total))}</span> used</Typography>
                     <BorderLinearProgress variant="determinate" value={30} />
                 </Box>
             </Box>
@@ -154,7 +125,7 @@ export default function ResourcesTabMaintenance({matches}:Props) {
                 series={[
                     {
                         name: 'CPU',
-                        data: [30, 40, 25, 50, 49, 21, 70]
+                        data: [31, 40, 28, 51, 42, 109, 100]
                     },
                     {
                         name: 'Memory',
