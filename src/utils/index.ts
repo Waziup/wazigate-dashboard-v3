@@ -23,3 +23,11 @@ export function isActiveDevice(modifiedTime: Date): boolean{
     const diffInMinutes = Math.floor(diff / 1000 / 60);
     return diffInMinutes < 7;
 }
+export function humanFileSize(size: number ) {
+    const  i = Math.floor(Math.log(size) / Math.log(1024));
+    return (
+        ((size / Math.pow(1024, i)).toFixed(2) as unknown as number) * 1 +
+        " " +
+        ["B", "kB", "MB", "GB", "TB"][i]
+    );
+}
