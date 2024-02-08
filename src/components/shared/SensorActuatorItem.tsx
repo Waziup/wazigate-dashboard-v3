@@ -1,5 +1,4 @@
-import { MoreVert, Delete, Settings } from '@mui/icons-material'
-import { Grid, Typography, Button, Menu, MenuItem, ListItemIcon } from '@mui/material';
+import { Grid, Typography,  } from '@mui/material';
 import RowContainerBetween from './RowContainerBetween'
 import RowContainerNormal from './RowContainerNormal'
 import SVGIcon from './SVGIcon'
@@ -7,6 +6,7 @@ import { useNavigate, useOutletContext } from 'react-router-dom'
 import ontologiesicons from '../../assets/ontologies.svg';
 import { Sensor,Actuator } from 'waziup';
 import ontologies from '../../assets/ontologies.json';
+import MenuComponent from './MenuDropDown';
 interface SensorActuatorItemProps {
     sensActuator: Sensor | Actuator;
     open:boolean,
@@ -19,7 +19,7 @@ interface SensorActuatorItemProps {
 const isActuator = (sensActuator: Sensor | Actuator): sensActuator is Actuator => {
     return Object.keys(ontologies.actingDevices).includes(sensActuator.meta.kind);
 }
-export default function SensorActuatorItem({ sensActuator: sens,anchorEl,handleClose,open,children,deviceId, handleClickMenu }: SensorActuatorItemProps) {
+export default function SensorActuatorItem({ sensActuator: sens,handleClose,open,children,deviceId}: SensorActuatorItemProps) {
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const navigate = useNavigate();
     return (
@@ -32,28 +32,21 @@ export default function SensorActuatorItem({ sensActuator: sens,anchorEl,handleC
                     />
                     <Typography fontSize={12}>{sens.name}</Typography>
                 </RowContainerNormal>
-                <Button
-                    aria-controls={open ? 'basic-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                    onClick={handleClickMenu}
-                >
-                    <MoreVert sx={{fontSize:16,cursor:'pointer'}} />
-                </Button>
-                <Menu id="sensor-menu" anchorEl={anchorEl} open={open} onClose={handleClose} MenuListProps={{'aria-labelledby': 'basic-button',}} >
-                    <MenuItem onClick={handleClose}>
-                        <ListItemIcon>
-                            <Delete fontSize="small" />
-                        </ListItemIcon>
-                        <Typography variant="inherit">Delete</Typography>
-                    </MenuItem>
-                    <MenuItem onClick={handleClose}>
-                        <ListItemIcon>
-                            <Settings fontSize="small" />
-                        </ListItemIcon>
-                        <Typography variant="inherit">Settings</Typography>
-                    </MenuItem>
-                </Menu>
+                <MenuComponent
+                    open={open}
+                    menuItems={[
+                        {
+                            icon: 'delete',
+                            text: 'Delete',
+                            clickHandler: handleClose
+                        },
+                        {
+                            icon: 'settings',
+                            text: 'Settings',
+                            clickHandler: handleClose
+                        }
+                    ]}
+                />
             </RowContainerBetween>
             {children}
         </Grid>
