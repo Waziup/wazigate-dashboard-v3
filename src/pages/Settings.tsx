@@ -11,7 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { useState, useEffect } from 'react';
-import { shutdown,reboot, getTime, getTimezones,getNetworkDevices,Devices, } from '../utils/systemapi';
+import {setTime, shutdown,reboot,getBuildNr, getTime, getTimezones,getNetworkDevices,Devices, } from '../utils/systemapi';
 
 import { Android12Switch } from '../components/shared/Switch';
 import SelectElementString from '../components/shared/SelectElementString';
@@ -31,11 +31,16 @@ const RowContainer = ({ children, additionStyles }: { children: React.ReactNode,
             {children}
         </RowContainerBetween>
     </>
-)
+);
+function padZero(t: number): string {
+    if (t < 10) return "0"+t;
+    return ""+t;
+}
 function Settings() {
     const [matches] = useOutletContext<[matches: boolean]>();
     const today = new Date();
     const [currentTime, setCurrentTime] = useState<string>('');
+    const [buildNr, setBuildNr] = useState<string>('');
     const [networkDevices, setNetworkDevices] = useState<Devices>({});
     const [isSetDateManual, setIsSetDateManual] = useState<boolean>(false);
     const [data, setData] = useState<{
@@ -46,8 +51,29 @@ function Settings() {
     const [wazigateID, setWazigateID] = useState<string>(''); 
     const [timezones, setTimezones] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const convTime = (date: Date) => {
+        //console.log("convTime_Date: " + date)
+        return `${date.getFullYear()}-${padZero(date.getMonth()+1)}-${padZero(date.getDate())}T${padZero(date.getHours())}:${padZero(date.getMinutes())}`
+    }
+    
+    const submitTime = () => {
+        const date_and_time = convTime(data?.time as Date);
+        setTime(date_and_time).then(
+            () => {
+                alert("Time set successfully");
+            },
+            (error) => {
+                alert("Error setting time: " + error);
+            }
+        );
+    }
     function loopLoad() {
         setLoading(true);
+        getBuildNr()
+        .then((res) => {
+            setBuildNr(res);
+        });
+
         getTime().then(
           (res) => {
             setData({
@@ -174,7 +200,7 @@ function Settings() {
                                         </DemoItem>
                                     </DemoContainer>
                                 </LocalizationProvider>
-                                <Button disabled={!isSetDateManual} variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} startIcon={<Save />}>
+                                <Button onClick={submitTime} disabled={!isSetDateManual} variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} startIcon={<Save />}>
                                     Save
                                 </Button>
                             </Box>
@@ -193,13 +219,23 @@ function Settings() {
                             </Button>
                         </RowContainerNormal>
                     </GridItem>
+                    <GridItem matches={matches} text='Wazigate ID' icon={<PowerSettingsNew sx={IconStyle} />}>
+                        <RowContainer>
+                            <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
+                                Wazigate ID
+                            </Typography>
+                            <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
+                                {wazigateID}
+                            </Typography>
+                        </RowContainer>
+                    </GridItem>
                     <GridItem matches={matches} text='Wazigate Version' icon={<PowerSettingsNew sx={IconStyle} />}>
                         <RowContainer>
                             <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
                                 Wazigate Version
                             </Typography>
                             <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
-                                {wazigateID}
+                                {buildNr}
                             </Typography>
                         </RowContainer>
                     </GridItem>
