@@ -4,6 +4,8 @@ import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import dayjs from 'dayjs';
+import { useSearchParams } from 'react-router-dom';
+import TextInputField from '../shared/TextInputField';
 interface Props{
     matches?:boolean
 }
@@ -72,7 +74,7 @@ export default function ExportTabMaintenance({matches}:Props) {
                         <Box bgcolor={'#D4E3F5'} display={'flex'} justifyContent={'space-between'} borderRadius={1} p={1} m={2}>
                             <Box width={'45%'}>
                                 <Typography>From:</Typography>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <LocalizationProvider  dateAdapter={AdapterDayjs}>
                                     <DemoContainer
                                         components={[
                                             'DatePicker',
@@ -80,7 +82,13 @@ export default function ExportTabMaintenance({matches}:Props) {
                                         ]}
                                     >
                                         <DemoItem label="">
-                                            <DesktopDatePicker  sx={{ p: 0 }} defaultValue={dayjs(today.toLocaleDateString().toString().replaceAll('/', '-' + " "))} />
+                                            <DesktopDatePicker 
+                                                onChange={(newValue) => {
+                                                    updateSearchParams('from',(newValue as dayjs.Dayjs).toString())
+                                                } }
+                                                sx={{ p: 0 }} 
+                                                defaultValue={dayjs(searchParams.get('from')?searchParams.get('from'):today.toLocaleDateString().toString().replaceAll('/', '-' + " "))} 
+                                            />
                                         </DemoItem>
                                     </DemoContainer>
                                 </LocalizationProvider>
@@ -94,14 +102,41 @@ export default function ExportTabMaintenance({matches}:Props) {
                                         ]}
                                     >
                                         <DemoItem label="">
-                                            <DesktopDatePicker  sx={{ p: 0 }} defaultValue={dayjs(today.toLocaleDateString().toString().replaceAll('/', '-' + " "))} />
+                                            <DesktopDatePicker  
+                                                sx={{ p: 0 }} 
+                                                onChange={(newValue) => {
+                                                    updateSearchParams('to',(newValue as dayjs.Dayjs).toString())
+                                                } }
+                                                defaultValue={dayjs(searchParams.get('to')?searchParams.get('to'):today.toLocaleDateString().toString().replaceAll('/', '-' + " "))} 
+                                            />
                                         </DemoItem>
                                     </DemoContainer>
                                 </LocalizationProvider>
                             </Box>
-                            
+                            <Box>
+                                <Typography>Bin Size in seconds: </Typography>
+                                <TextInputField
+                                    label="Bin Size in seconds"
+                                    onChange={(ev) => {
+                                        updateSearchParams('duration',ev.target.value)
+                                    }}
+                                    value={searchParams.get('duration')?searchParams.get('duration') as string:'0' }
+                                />
+                                <br/>
+                            </Box>
+                            <Box>
+                                <Typography>Omit deviating values (20%) in between bins : </Typography>
+                                <input type="checkbox" id="clear" name="clear"
+                                    onChange={(ev) => {
+                                        setSearchParams({
+                                            ...Object.fromEntries(searchParams),
+                                            'check':ev.currentTarget.checked?'true':'false'
+                                        })
+                                    }}>
+                                </input>
+                            </Box>
                         </Box>
-                        <Button variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
+                        <Button variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} href={'http://wazigate-dashboard-stable.staging.waziup.io/exportbins?from='+searchParams.get('from')+'&to='+searchParams.get('to')+'&duration='+searchParams.get('duration')+'s'+'&check='+searchParams.get('check')} >
                             EXPORT
                         </Button>
                     </GridItemEl>
