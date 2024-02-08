@@ -31,7 +31,14 @@ const GridItemEl=({ children, text, additionStyles, icon }: { additionStyles?: S
 )
 export default function ExportTabMaintenance({matches}:Props) {
     console.log(matches);
+    const [searchParams,setSearchParams]=useSearchParams()
     const today = new Date();
+    const updateSearchParams=(key:string,value:string)=>{
+        setSearchParams({
+            ...Object.fromEntries(searchParams),
+            [key]:value
+        })
+    }
     return (
         <Box p={2}>
             <Typography fontWeight={900} fontSize={20}>Export Usage Data</Typography>
@@ -44,15 +51,15 @@ export default function ExportTabMaintenance({matches}:Props) {
                         <Typography m={1} fontSize={12} color={'#666666'}>
                             You can export the data of all sensors and actuators to a tree of CSV files:
                         </Typography>
-                        <Button variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
+                        <Button href='http://wazigate-dashboard-stable.staging.waziup.io/exporttree' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
                             EXPORT
                         </Button>
                     </GridItemEl>
                     <GridItemEl icon={'precision_manufacturing'} text={'Export Actuator data'} >
                         <Typography m={1} fontSize={12} color={'#666666'}>
-                            You can export the data of all sensors and actuators to a tree of CSV files:
+                            You can export the data of all sensors and actuators to one CSV file:
                         </Typography>
-                        <Button variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
+                        <Button href='http://wazigate-dashboard-stable.staging.waziup.io/exportall' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
                             EXPORT
                         </Button>
                     </GridItemEl>
