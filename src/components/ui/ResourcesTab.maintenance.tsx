@@ -18,8 +18,17 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 interface Props{
     matches?:boolean
 }
+type UsageInfoGraph = {
+    cpu_usage:number[]
+    mem_usage:number[],
+    temp:number[]
+}
 export default function ResourcesTabMaintenance({matches}:Props) {
-    
+    const [usageGraph,setUsageGraph] = useState<UsageInfoGraph>({
+        cpu_usage:[0],
+        mem_usage:[0],
+        temp:[0],
+    })
     const [usageInfo, setUsageInfo] = useState<UsageInfo>({
         cpu_usage:'',
         mem_usage:{total:'',used:''}, 
@@ -38,6 +47,17 @@ export default function ResourcesTabMaintenance({matches}:Props) {
             console.log(res);
             setUsageInfo(res);
         });
+        const fetchInterval = setInterval(()=>{
+            getUsageInfo().then((res) => {
+                setUsageGraph({
+                    cpu_usage: usageGraph.cpu_usage.length>50?[...usageGraph.cpu_usage.filter((_x,i)=>i),parseInt(res.cpu_usage)]:[...usageGraph.cpu_usage,parseInt(res.cpu_usage)],
+                    mem_usage: usageGraph.mem_usage.length>50?[...usageGraph.mem_usage.filter((_x,i)=>i),parseInt(res.mem_usage.used)]:[...usageGraph.cpu_usage,parseInt(res.mem_usage.used)],
+                    temp: usageGraph.temp.length>50?[...usageGraph.temp.filter((_x,i)=>i),parseInt(res.temp)]:[...usageGraph.cpu_usage,parseInt(res.temp)], 
+                })
+            });
+        },2000);
+        return ()=>clearInterval(fetchInterval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
     return (
         <Box  sx={{ p: 3, overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100vh' }}>
@@ -108,7 +128,7 @@ export default function ResourcesTabMaintenance({matches}:Props) {
                         }
                     },
                     xaxis: {
-                        categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        type:'datetime'
                     },
                     yaxis: {
                         max: 100
@@ -125,15 +145,15 @@ export default function ResourcesTabMaintenance({matches}:Props) {
                 series={[
                     {
                         name: 'CPU',
-                        data: [31, 40, 28, 51, 42, 109, 100]
+                        data: usageGraph.cpu_usage,
                     },
                     {
                         name: 'Memory',
-                        data: [23, 12, 54, 61, 32, 56, 81]
+                        data: usageGraph.mem_usage
                     },
                     {
-                        name: 'Disk',
-                        data: [25, 30, 24, 31, 42, 50, 70]
+                        name: 'Temperature',
+                        data: usageGraph.temp
                     }
                 ]}
                 type="area"
