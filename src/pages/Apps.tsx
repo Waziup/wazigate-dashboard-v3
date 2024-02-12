@@ -100,11 +100,11 @@ const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHand
 
     </FormControl>
 );
-export const GridItem = ({ children }: { children: React.ReactNode }) => (
+export const GridItem = ({ children,disabled }: {disabled?:boolean, children: React.ReactNode }) => (
     <Grid item md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={1} >
         <Box minHeight={100} sx={{ px: 2, py: 1, position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
             {children}
-            <Button sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>OPEN</Button>
+            <Button disabled={disabled} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>OPEN</Button>
         </Box>
     </Grid>
 );
@@ -464,7 +464,7 @@ export default function Apps() {
                                             />
                                         ) : (
 
-                                            <GridItem key={app.id}>
+                                            <GridItem disabled={app.state.running} key={app.id}>
                                                 <Box px={.4} display={'flex'} alignItems={'center'} sx={{ position: 'absolute', top: -5, my: -1, }} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
                                                     <Box component={'img'} src='/wazi_sig.svg' />
                                                     <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
