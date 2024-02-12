@@ -49,6 +49,7 @@ export default function ResourcesTabMaintenance({matches}:Props) {
         });
         const fetchInterval = setInterval(()=>{
             getUsageInfo().then((res) => {
+                setUsageInfo(res);
                 setUsageGraph({
                     cpu_usage: usageGraph.cpu_usage.length>50?[...usageGraph.cpu_usage.filter((_x,i)=>i),parseInt(res.cpu_usage)]:[...usageGraph.cpu_usage,parseInt(res.cpu_usage)],
                     mem_usage: usageGraph.mem_usage.length>50?[...usageGraph.mem_usage.filter((_x,i)=>i),parseInt(res.mem_usage.used)]:[...usageGraph.cpu_usage,parseInt(res.mem_usage.used)],
