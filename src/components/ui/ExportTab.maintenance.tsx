@@ -1,11 +1,10 @@
-import { Box,Grid, Typography,Icon,Button, styled,Paper,SxProps,Theme, } from '@mui/material';
+import { Box,Grid, Typography,Icon,Button, styled,Paper,SxProps,Theme, FormControl, } from '@mui/material';
 import { DEFAULT_COLORS } from '../../constants';
 import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'react-router-dom';
-import TextInputField from '../shared/TextInputField';
 interface Props{
     matches?:boolean
 }
@@ -71,69 +70,79 @@ export default function ExportTabMaintenance({matches}:Props) {
                         <Typography m={1} fontSize={12} color={'#666666'}>
                             You can export the data of all sensors and actuators to one CSV file. Additionally it also includes custom timespans and all data can be summarized in time bins. This is perfect for machine learning applications
                         </Typography>
-                        <Box bgcolor={'#D4E3F5'} display={'flex'} justifyContent={'space-between'} borderRadius={1} p={1} m={2}>
-                            <Box width={'45%'}>
-                                <Typography>From:</Typography>
-                                <LocalizationProvider  dateAdapter={AdapterDayjs}>
-                                    <DemoContainer
-                                        components={[
-                                            'DatePicker',
+                        <Box bgcolor={'#D4E3F5'}  borderRadius={1} p={1} m={2}>
+                            <Box display={'flex'} justifyContent={'space-between'}>
+                                <Box width={'45%'}>
+                                    <Typography>From:</Typography>
+                                    <LocalizationProvider  dateAdapter={AdapterDayjs}>
+                                        <DemoContainer
+                                            components={[
+                                                'DatePicker',
 
-                                        ]}
-                                    >
-                                        <DemoItem label="">
-                                            <DesktopDatePicker 
-                                                onChange={(newValue) => {
-                                                    updateSearchParams('from',(newValue as dayjs.Dayjs).toString())
-                                                } }
-                                                sx={{ p: 0 }} 
-                                                defaultValue={dayjs(searchParams.get('from')?searchParams.get('from'):today.toLocaleDateString().toString().replaceAll('/', '-' + " "))} 
-                                            />
-                                        </DemoItem>
-                                    </DemoContainer>
-                                </LocalizationProvider>
+                                            ]}
+                                        >
+                                            <DemoItem label="">
+                                                <DesktopDatePicker 
+                                                    onChange={(newValue) => {
+                                                        updateSearchParams('from',(newValue as dayjs.Dayjs).toISOString())
+                                                    } }
+                                                    sx={{ p: 0 }} 
+                                                    defaultValue={dayjs(searchParams.get('from')?searchParams.get('from'):today.toLocaleDateString().toString().replaceAll('/', '-' + " "))} 
+                                                />
+                                            </DemoItem>
+                                        </DemoContainer>
+                                    </LocalizationProvider>
+                                </Box>
+                                <Box>
+                                    <Typography>To:</Typography>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DemoContainer
+                                            components={[
+                                                'DatePicker',
+                                            ]}
+                                        >
+                                            <DemoItem label="">
+                                                <DesktopDatePicker  
+                                                    sx={{ p: 0 }} 
+                                                    onChange={(newValue) => {
+                                                        updateSearchParams('to',(newValue as dayjs.Dayjs).toISOString())
+                                                    } }
+                                                    defaultValue={dayjs(searchParams.get('to')?searchParams.get('to'):today.toLocaleDateString().toString().replaceAll('/', '-' + " "))} 
+                                                />
+                                            </DemoItem>
+                                        </DemoContainer>
+                                    </LocalizationProvider>
+                                </Box>
                             </Box>
-                            <Box>
-                                <Typography>To:</Typography>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DemoContainer
-                                        components={[
-                                            'DatePicker',
-                                        ]}
-                                    >
-                                        <DemoItem label="">
-                                            <DesktopDatePicker  
-                                                sx={{ p: 0 }} 
-                                                onChange={(newValue) => {
-                                                    updateSearchParams('to',(newValue as dayjs.Dayjs).toString())
-                                                } }
-                                                defaultValue={dayjs(searchParams.get('to')?searchParams.get('to'):today.toLocaleDateString().toString().replaceAll('/', '-' + " "))} 
-                                            />
-                                        </DemoItem>
-                                    </DemoContainer>
-                                </LocalizationProvider>
-                            </Box>
-                            <Box>
-                                <Typography>Bin Size in seconds: </Typography>
-                                <TextInputField
-                                    label="Bin Size in seconds"
-                                    onChange={(ev) => {
-                                        updateSearchParams('duration',ev.target.value)
-                                    }}
-                                    value={searchParams.get('duration')?searchParams.get('duration') as string:'0' }
-                                />
-                                <br/>
-                            </Box>
-                            <Box>
-                                <Typography>Omit deviating values (20%) in between bins : </Typography>
-                                <input type="checkbox" id="clear" name="clear"
-                                    onChange={(ev) => {
-                                        setSearchParams({
-                                            ...Object.fromEntries(searchParams),
-                                            'check':ev.currentTarget.checked?'true':'false'
-                                        })
-                                    }}>
-                                </input>
+                            <Box display={'flex'} justifyContent={'space-between'}>
+                                <Box m={1}>
+                                    {/* <Typography  fontSize={12} color={'#666666'}>Bin Size in seconds: </Typography> */}
+                                    <FormControl sx={{width:'100%',bgcolor:'#D4E3F5', borderBottom:'1px solid #292F3F'}}>
+                                        <Typography color={'#666666'} mb={.4} fontSize={12}>Bin Size in seconds</Typography>
+                                        <input 
+                                            autoFocus 
+                                            onChange={(ev) => {
+                                                updateSearchParams('duration',ev.target.value)
+                                            }}
+                                            type='number'
+                                            value={searchParams.get('duration') as string}    
+                                            name="name" placeholder='Enter device name' 
+                                            required
+                                            style={{border:'none',width:'100%',background:'none', padding:'6px 0', outline:'none'}}
+                                        />
+                                    </FormControl>
+                                </Box>
+                                <Box m={1}>
+                                    <Typography fontSize={12} color={'#666666'}>Omit deviating values (20%) in between bins : </Typography>
+                                    <input type="checkbox" id="clear" name="clear"
+                                        onChange={(ev) => {
+                                            setSearchParams({
+                                                ...Object.fromEntries(searchParams),
+                                                'check':ev.currentTarget.checked?'true':'false'
+                                            })
+                                        }}>
+                                    </input>
+                                </Box>
                             </Box>
                         </Box>
                         <Button variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} href={'http://wazigate-dashboard-stable.staging.waziup.io/exportbins?from='+searchParams.get('from')+'&to='+searchParams.get('to')+'&duration='+searchParams.get('duration')+'s'+'&check='+searchParams.get('check')} >
