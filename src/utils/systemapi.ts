@@ -2,7 +2,7 @@
 // chromium-browser --disable-web-security --user-data-dir="./tmp"
 
 // const URL = "http://10.42.0.33:5000/";
-const URL = "../";
+const URL = "/apps/waziup.wazigate-system/ui/";
 
 async function failResp(resp: Response) {
   const text = await resp.text();
