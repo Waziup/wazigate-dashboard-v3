@@ -206,19 +206,7 @@ function Settings() {
                             </Box>
                         </Box>
                     </GridItem>
-                    <GridItem matches={matches} text='Gateway Power' icon={<PowerSettingsNew sx={IconStyle} />}>
-                        <RowContainerNormal additionStyles={{ m: 1, borderRadius: 1, p: 1 }}>
-                            <Button onClick={shutdown} variant="contained" sx={{ mx: 1, fontWeight: 'bold', bgcolor: 'info.main' }} startIcon={<PowerSettingsNew />}>
-                                Shutdown
-                            </Button>
-                            <Button onClick={reboot} variant="contained" sx={{ mx: 1, fontWeight: 'bold', bgcolor: 'info.main' }} startIcon={<RestartAlt />}>
-                                Restart
-                            </Button>
-                            <Button variant="contained" sx={{ mx: 1, fontWeight: 'bold', bgcolor: 'info.main' }} startIcon={<Logout />}>
-                                Logout
-                            </Button>
-                        </RowContainerNormal>
-                    </GridItem>
+                    
                     <GridItem matches={matches} text='Wazigate ID' icon={<PowerSettingsNew sx={IconStyle} />}>
                         <RowContainer>
                             <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
@@ -238,6 +226,19 @@ function Settings() {
                                 {buildNr}
                             </Typography>
                         </RowContainer>
+                    </GridItem>
+                    <GridItem matches={matches} text='Gateway Power' icon={<PowerSettingsNew sx={IconStyle} />}>
+                        <RowContainerNormal additionStyles={{ m: 1, borderRadius: 1, p: 1 }}>
+                            <Button onClick={shutdown} variant="contained" sx={{ mx: 1, fontWeight: 'bold', bgcolor: 'info.main' }} startIcon={<PowerSettingsNew />}>
+                                Shutdown
+                            </Button>
+                            <Button onClick={reboot} variant="contained" sx={{ mx: 1, fontWeight: 'bold', bgcolor: 'info.main' }} startIcon={<RestartAlt />}>
+                                Restart
+                            </Button>
+                            <Button variant="contained" sx={{ mx: 1, fontWeight: 'bold', bgcolor: 'info.main' }} startIcon={<Logout />}>
+                                Logout
+                            </Button>
+                        </RowContainerNormal>
                     </GridItem>
                 </Grid>
             </Box>
