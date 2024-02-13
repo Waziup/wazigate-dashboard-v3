@@ -1,10 +1,11 @@
-import { MoreVert, InfoOutlined } from '@mui/icons-material';
-import { Box, Button, Grid, ListItemIcon, Menu, MenuItem, Typography } from '@mui/material';
+
+import { Backdrop, Box,  Grid, Typography } from '@mui/material';
 import RowContainerBetween from '../shared/RowContainerBetween';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Android12Switch } from '../shared/Switch';
 import RowContainerNormal from '../shared/RowContainerNormal';
-import { cInfo, getAllContainers } from '../../utils/systemapi';
+import { cInfo, getAllContainers, getContainerLogs } from '../../utils/systemapi';
+import MenuComponent from '../shared/MenuDropDown';
 interface Props{
     matches?:boolean
 }
@@ -12,9 +13,25 @@ export default function ContainersTabMaintenance({matches}:Props) {
     console.log(matches);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [containers, setContainers] = React.useState<cInfo[]>([]);
+    const [logs,setLogs] = useState<{success:boolean,logs:string}>({success:false,logs:''});
+    const [openModal,setOpenModal] = useState(false);
     const open = Boolean(anchorEl);
-    const handleClickMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
+    const handleClickMenu = (id:string) => {
+        handleClose();
+        getContainerLogs(id,10)
+        .then((res)=>{
+            setLogs({
+                success:true,
+                logs:res
+            });
+            setOpenModal(true)
+        }).catch((err)=>{
+            console.log(err);
+            setLogs({
+                success:false,
+                logs:'Error Encountered, could not fetch logs'
+            });
+        })
     };
     useEffect(() => {
         getAllContainers().then((res) => {
@@ -27,6 +44,28 @@ export default function ContainersTabMaintenance({matches}:Props) {
     };
     return (
         <>
+            <Backdrop open={openModal}>
+                <Box width={matches ? '40%' : '90%'} bgcolor={'#fff'}>
+                    <Box borderBottom={'1px solid black'} px={2} py={2}>
+                        <Typography>Container Logs</Typography>
+                    </Box>
+                    {
+                        logs.success? (
+                            <Box maxWidth={'90%'} overflow={'auto'} width={'90%'} height={200} bgcolor={'#000'}>
+                                <Typography fontSize={10} color={'#fff'}>
+                                    {logs.logs}
+                                </Typography>
+                            </Box>
+                        ):(
+                            <Box maxWidth={'90%'} overflow={'auto'} width={'90%'} height={200} bgcolor={'#fff'}>
+                                <Typography fontSize={18} fontWeight={900} color={'#ff0000'}>
+                                    {logs.logs}
+                                </Typography>
+                            </Box>
+                        )
+                    }
+                </Box>
+            </Backdrop>
             <Box p={3}>
                 <Grid container>
                     {
@@ -40,22 +79,16 @@ export default function ContainersTabMaintenance({matches}:Props) {
                                             <Typography fontSize={10} color={'#666'}>Up 20 mins ago</Typography>
                                         </Box>
                                     </RowContainerNormal>
-                                    <Button
-                                        aria-controls={open ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open ? 'true' : undefined}
-                                        onClick={handleClickMenu}
-                                    >
-                                        <MoreVert sx={{ fontSize: 16, cursor: 'pointer' }} />
-                                    </Button>
-                                    <Menu id="sensor-menu" anchorEl={anchorEl} open={open} onClose={handleClose} MenuListProps={{ 'aria-labelledby': 'basic-button', }}>
-                                        <MenuItem onClick={handleClose}>
-                                            <ListItemIcon>
-                                                <InfoOutlined fontSize="small" />
-                                            </ListItemIcon>
-                                            <Typography variant="inherit">Info</Typography>
-                                        </MenuItem>
-                                    </Menu>
+                                    <MenuComponent
+                                        menuItems={[
+                                            {
+                                                icon:'info_outlined',
+                                                text:'Logs',
+                                                clickHandler:()=>{handleClickMenu(container.Id)}
+                                            }
+                                        ]}
+                                        open={open}
+                                    />
                                 </RowContainerBetween>
                                 <Box p={2}>
                                     <Typography fontWeight={100} fontSize={15} color={'#2BBBAD'}>
