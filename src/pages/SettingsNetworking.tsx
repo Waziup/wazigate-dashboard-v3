@@ -1,9 +1,9 @@
-import { Box, Breadcrumbs, Paper,styled, Grid,Icon, SxProps,  Theme, Typography, CircularProgress } from "@mui/material";
+import { Box, Breadcrumbs,ListItemText, Paper,styled, Grid,Icon, SxProps,  Theme, Typography, CircularProgress, Grow, LinearProgress } from "@mui/material";
 import { Link, useOutletContext } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import RowContainerNormal from "../components/shared/RowContainerNormal";
-import { CellTower, LockOutlined, MoreVert } from "@mui/icons-material";
+import { CellTower, LockOutlined } from "@mui/icons-material";
 import { Android12Switch } from "../components/shared/Switch";
 import PrimaryButton from "../components/shared/PrimaryButton";
 import { getWiFiScan, AccessPoint, setWiFiConnect, WifiReq } from "../utils/systemapi";
@@ -31,6 +31,9 @@ const GridItem = ({ children, xs,md,additionStyles }: {xs:number,md:number,spaci
 );
 const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
 import TextInputField from "../components/shared/TextInputField";
+import { Cloud } from "waziup";
+import MenuComponent from "../components/shared/MenuDropDown";
+import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 export default function SettingsNetworking() {
     const [matches] = useOutletContext<[matches:boolean]>();
     const [scanLoading,setScanLoading]=useState<boolean>(false);
@@ -47,6 +50,85 @@ export default function SettingsNetworking() {
             setScanLoading(false);
         });
     }
+    const [clouds, setClouds] = useState<Cloud[]>([]);
+    const [saving, setSaving] = useState(false);
+    const [selectedCloud, setSelectedCloud] = useState<Cloud | null>(null);
+    const [hasUnsavedChanges, sethasUnsavedChanges] = useState(false);
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        setSelectedCloud({
+            ...selectedCloud,
+            [name]:value
+        } as Cloud);
+        sethasUnsavedChanges(true);
+    };
+    const handleRenameClick = () => {
+        const oldName = selectedCloud?.name || selectedCloud?.id;
+        const newCloudName = prompt("New cloud name:", oldName);
+        if (newCloudName) {
+            setSelectedCloud({
+                ...selectedCloud,
+                name:newCloudName
+            } as Cloud);
+            window.wazigate.set(`clouds/${selectedCloud?.id}/name`, newCloudName).then(() => {
+                // OK
+            }, (err) =>  {
+                alert("Can not change cloud name:\n"+err);
+                setSelectedCloud({
+                    ...selectedCloud,
+                    name:oldName
+                } as Cloud);
+            })
+        }
+    }
+    const handleSaveClick = () => {
+        if(hasUnsavedChanges){
+            Promise.all([
+                window.wazigate.set(`clouds/${selectedCloud?.id as string}/rest`, selectedCloud?.rest),
+                window.wazigate.set(`clouds/${selectedCloud?.id}/mqtt`, selectedCloud?.mqtt),
+                window.wazigate.setCloudCredentials(selectedCloud?.id as string, selectedCloud?.username as string, selectedCloud?.token as string),
+            ]).then(() => {
+                sethasUnsavedChanges(false);
+            }, (err: Error) => {
+                alert("There was an error saving the changes:\n" + err);
+            });
+        }else{
+            alert('No changes');
+        }
+    }
+    const handleEnabledChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (hasUnsavedChanges) {
+            alert("Save all changes before activating the synchronization!");
+            return
+        }
+        const enabled = event.target.checked;
+        setSelectedCloud({
+            ...selectedCloud,
+            paused: !enabled
+        } as Cloud);
+        setSaving(true);
+        const timer = new Promise(resolve => setTimeout(resolve, 2000));
+        window.wazigate.setCloudPaused(selectedCloud?.id as string, !enabled).then(() => {
+            timer.then(() => {
+                setSaving(false);
+            })
+        }, (err: Error) => {
+            setSaving(false);
+            setSelectedCloud({
+                ...selectedCloud,
+                paused: !enabled
+            } as Cloud);
+            if(enabled) {
+                alert("There was an error activating the sync!\n Check your credentials and try again.\n\nThe server said:\n" + err);
+            } else {
+                alert("There was an error saving the changes:\n" + err);
+            }
+        });
+    }
+    useEffect(() => {
+        window.wazigate.getClouds().then((clouds) => setClouds(Object.values(clouds)));
+    }, []);
     const submitHandler = (event: React.FormEvent) => {
         event.preventDefault();
         const target = event.target as HTMLFormElement;
@@ -82,26 +164,56 @@ export default function SettingsNetworking() {
             </Box>
             <Grid container>
                 <GridItem spacing={2} md={4.6} xs={12} matches={matches} additionStyles={{}}>
-                    <GridItemEl text={'Network'} icon={'cell_tower'}>
-                        <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc'}}>
-                            <RowContainerNormal>
-                                <Box component={'img'} src='/wazilogo.svg' mx={2} />
-                                <Typography>Waziup Cloud</Typography>
-                            </RowContainerNormal>
-                            <MoreVert/>
-                        </RowContainerBetween>
-                        <Box px={2}>
-                            <RowContainerNormal>
-                                <Android12Switch color="info" checked />
-                                <Typography>Active Sync</Typography>
-                            </RowContainerNormal>
-                            <TextInputField label="REST Address *" onChange={()=>{}} value={'Wazidev'} />
-                            <TextInputField label="MQTT Address *" onChange={()=>{}} value={'Wazidev'} />
-                            <TextInputField label="Username" onChange={()=>{}} value={'johndoe@gmail.com'} />
-                            <TextInputField label="Password" onChange={()=>{}} value={'******'} />
-
-                        </Box>
-                    </GridItemEl>
+                    {
+                        clouds.map((cloud)=>(
+                            <GridItemEl text={cloud.name} icon={'cloud'}>
+                                <Grow in={saving}>
+                                    <LinearProgress />
+                                </Grow>
+                                <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc'}}>
+                                    <RowContainerNormal>
+                                        <Box component={'img'} src='/wazilogo.svg' mx={2} />
+                                        <ListItemText
+                                            primary={cloud.name || cloud.id}
+                                            secondary={`ID ${cloud.id}`}
+                                        />
+                                    </RowContainerNormal>
+                                    <MenuComponent
+                                        open={false}
+                                        menuItems={[
+                                            {
+                                                text: 'Rename',
+                                                icon: 'edit',
+                                                clickHandler:handleRenameClick
+                                            }
+                                        ]}
+                                    />
+                                </RowContainerBetween>
+                                <Box px={2}>
+                                    <RowContainerNormal>
+                                        <Android12Switch 
+                                            checked={!cloud.paused}
+                                            onChange={handleEnabledChange}
+                                            color="info" 
+                                        />
+                                        <Typography>Active Sync</Typography>
+                                    </RowContainerNormal>
+                                    <TextInputField label="REST Address *" name="rest" onChange={handleInputChange} value={'Wazidev'} />
+                                    <TextInputField label="MQTT Address *" name="mqtt" onChange={handleInputChange} value={'Wazidev'} />
+                                    <TextInputField label="Username" name="username" onChange={handleInputChange} value={'johndoe@gmail.com'} />
+                                    <TextInputField label="Password" name="password" onChange={handleInputChange} value={'******'} />
+                                </Box>
+                                <Grow in={hasUnsavedChanges}>
+                                    <PrimaryIconButton
+                                        iconname="save"
+                                        onClick={handleSaveClick}
+                                        type="button"
+                                        title="SAVE"
+                                    />
+                                </Grow>
+                            </GridItemEl>
+                        ))
+                    }
                     {
                         selectedWifi && (
                             <GridItemEl text={'Access Point'} icon={'power_settings_new'}>
@@ -152,12 +264,6 @@ export default function SettingsNetworking() {
                             </Box>
                         )
                     }
-                    <Box>
-                        <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc',p:1}}>
-                            <Typography>Hesdcscs</Typography>
-                            <Icon sx={IconStyle}>wifi_outlined</Icon>
-                        </RowContainerBetween>
-                    </Box>
                 </GridItem>
             </Grid>
         </Box>
