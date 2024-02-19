@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Button, Modal, Typography, Grid, SelectChangeEvent, TextField, FormControl, MenuItem, Select, } from "@mui/material";
+import { Box, Breadcrumbs, Button, Modal, Typography, Grid, SelectChangeEvent, TextField, FormControl, MenuItem, Select, SpeedDial, SpeedDialAction, SpeedDialIcon, } from "@mui/material";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import ontologies from '../assets/ontologies.json';
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
@@ -11,6 +11,7 @@ import CreateSensorModal from "../components/ui/CreateSensorModal";
 import CreateActuatorModal from "../components/ui/CreateActuatorModal";
 import { Android12Switch } from "../components/shared/Switch";
 import SensorActuatorItem from "../components/shared/SensorActuatorItem";
+import { PlusOne } from "@mui/icons-material";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: SelectChangeEvent<string>) => void,
     title: string,
@@ -321,6 +322,14 @@ function DeviceSettings() {
 
                     </Grid>
                 </Box>
+                {
+                    !matches ? (
+                        <SpeedDial ariaLabel='New Device' sx={{ position: 'absolute', bottom: 16, right: 16 }} icon={<SpeedDialIcon />}>
+                            <SpeedDialAction key={'New Sensor'} icon={<PlusOne />} tooltipTitle={'New Sensor'} onClick={() => { setModalEls('sensor', 'Sensor Name'); handleToggleModal() }} />
+                            <SpeedDialAction key={'New Actuator'} icon={<PlusOne />} tooltipTitle={'New Actuator'} onClick={() => { setModalEls('actuator', 'Actuator Name'); handleToggleModal() }} />
+                        </SpeedDial>
+                    ): null
+                }
             </Box>
         </>
     );
