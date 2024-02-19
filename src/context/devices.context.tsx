@@ -1,5 +1,6 @@
 import { createContext, useCallback, useEffect,useState } from "react";
 import { App, Device } from "waziup";
+import { Devices,getNetworkDevices } from "../utils/systemapi";
 interface ContextValues{
     devices: Device[]
     apps: App[],
@@ -9,6 +10,8 @@ interface ContextValues{
     codecsList?:{id:string,name:string}[] | null,
     addApp:(app:App)=>void
     token:string
+    netWorkDevices:Devices | null 
+    setNetWorkDevices:()=>void
     setAccessToken:(token:string) =>void
 }
 export const DevicesContext = createContext<ContextValues>({
@@ -30,7 +33,9 @@ export const DevicesContext = createContext<ContextValues>({
     token:'',
     setAccessToken(userData) {
         console.log(userData);
-    }
+    },
+    netWorkDevices:null,
+    setNetWorkDevices:()=>{},
 });
 
 export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
@@ -53,6 +58,11 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             setDevices(devFilter);
         });
     }
+    const [netWorkDevices, setNetWorkDevices] = useState<Devices | null>(null);
+    const setNetWorkDevicesFc = useCallback(async ()=>{
+        const netWorkDevices = await getNetworkDevices();
+        setNetWorkDevices(netWorkDevices);
+    },[]);
     const setAccessToken = useCallback(async (accessToken:string)=>{
         setToken(accessToken);
         window.localStorage.removeItem('token');
@@ -95,6 +105,8 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         getDevicesFc:getDevices,
         setAppsFc,
         getApps,
+        netWorkDevices,
+        setNetWorkDevices:setNetWorkDevicesFc,
         addApp,
         token,
         setAccessToken,
