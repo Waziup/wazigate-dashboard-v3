@@ -377,7 +377,7 @@ export async function getConf() {
     return await resp.json();
 }
 
-export async function setConf(data: string) {
+export async function setConf(data: { fan_trigger_temp:number,oled_halt_timeout:number }) {
   const resp = await fetch(URL + "conf", {
     method: "POST",
     headers: {
