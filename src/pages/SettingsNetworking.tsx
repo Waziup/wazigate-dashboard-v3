@@ -3,10 +3,10 @@ import { Link, useOutletContext } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import RowContainerNormal from "../components/shared/RowContainerNormal";
-import { CellTower, LockOutlined } from "@mui/icons-material";
+import { CellTower, DesktopWindowsOutlined, LockOutlined, ModeFanOffOutlined } from "@mui/icons-material";
 import { Android12Switch } from "../components/shared/Switch";
 import PrimaryButton from "../components/shared/PrimaryButton";
-import { getWiFiScan, AccessPoint, setWiFiConnect, WifiReq } from "../utils/systemapi";
+import { getWiFiScan,setConf as setConfFc, AccessPoint,getConf, setWiFiConnect, WifiReq } from "../utils/systemapi";
 import { useEffect, useState } from "react";
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -54,6 +54,10 @@ export default function SettingsNetworking() {
     const [saving, setSaving] = useState(false);
     const [selectedCloud, setSelectedCloud] = useState<Cloud | null>(null);
     const [hasUnsavedChanges, sethasUnsavedChanges] = useState(false);
+    const [conf, setConf] = useState<{fan_trigger_temp:string,oled_halt_timeout:string }>({
+        fan_trigger_temp:'',
+        oled_halt_timeout:''
+    });
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const name = event.target.name;
         const value = event.target.value;
@@ -126,8 +130,36 @@ export default function SettingsNetworking() {
             }
         });
     }
+    const submitConf = (event: React.FormEvent) => {
+        event.preventDefault();
+        const formData = new FormData(event.target as HTMLFormElement);
+        const fan_trigger_temp =formData.get('fan')?.toString();
+        const oled_halt_timeout = formData.get('oled')?.toString();
+        const data = {
+          fan_trigger_temp: parseInt(fan_trigger_temp as string),
+          oled_halt_timeout: parseInt(oled_halt_timeout as string,10),
+        };
+        setConfFc(data).then(
+          (msg:string) => {
+            alert(msg);
+          }, 
+          (error) => {
+            alert(error);
+          }
+        );
+    };
     useEffect(() => {
         window.wazigate.getClouds().then((clouds) => setClouds(Object.values(clouds)));
+        getConf().then((conf) => {
+            setConf(conf);
+        }).catch((err) => {
+            setConf({
+                fan_trigger_temp:'',
+                oled_halt_timeout:''
+            });
+            console.log(err);
+        });
+        
     }, []);
     const submitHandler = (event: React.FormEvent) => {
         event.preventDefault();
@@ -215,7 +247,7 @@ export default function SettingsNetworking() {
                         ))
                     }
                     {
-                        selectedWifi && (
+                        selectedWifi ? (
                             <GridItemEl text={'Access Point'} icon={'power_settings_new'}>
                                 <Box p={2}>
                                     <form onSubmit={submitHandler}>
@@ -229,14 +261,36 @@ export default function SettingsNetworking() {
                                             sx={{fontSize:20,mx:1}}/>} 
                                             label="Access Point Pasword" 
                                             onChange={()=>{}} 
-                                            value={'Wazidev'} 
+                                            value={''} 
                                         />
                                         <PrimaryButton title="Save" onClick={()=>{}} type="button" />
                                     </form>
                                 </Box>
                             </GridItemEl>
-                        )
+                        ):null
                     }
+                    <GridItemEl text={'Misc. Settings'} icon={'settings_outlined'}>
+                        <Box p={2}>
+                            <form onSubmit={submitConf}>
+                                <TextInputField 
+                                    icon={<ModeFanOffOutlined sx={{fontSize:20,mx:1}}/>} 
+                                    label="Fan Trigger Temperature (C)" 
+                                    onChange={()=>{}} 
+                                    name="fan"
+                                    value={
+                                        conf ? (conf?.fan_trigger_temp as unknown as string) : "Loading..."} 
+                                />
+                                <TextInputField 
+                                    icon={<DesktopWindowsOutlined sx={{fontSize:20,mx:1}}/>} 
+                                    label="OLED halt timeout (seconds)" 
+                                    onChange={()=>{}}
+                                    name="oled"
+                                    value={   conf ? (conf?.oled_halt_timeout as unknown as string) : "Loading..."}
+                                />
+                                <PrimaryButton title="Save" onClick={()=>{}} type="button" />
+                            </form>
+                        </Box>
+                    </GridItemEl>
                 </GridItem>
                 <GridItem md={7} xs={12} matches={matches}  additionStyles={{bgcolor:'#fff'}}>
                     <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', alignItems: 'center' }} p={1} >
