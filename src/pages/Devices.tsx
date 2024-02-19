@@ -1,8 +1,8 @@
-import { Box, Button, Grid, CardContent, Typography, ListItemIcon, Menu, MenuItem, SelectChangeEvent, } from '@mui/material';
+import { Box, Button, Grid, CardContent, Typography, ListItemIcon, Menu, MenuItem, SelectChangeEvent, SpeedDial, SpeedDialAction, SpeedDialIcon, } from '@mui/material';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
-import { DeleteOutline, ModeOutlined, MoreVert, Sensors, } from '@mui/icons-material';
+import { DeleteOutline, ModeOutlined, MoreVert, PlusOne, Sensors, } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
-import { useNavigate, } from 'react-router-dom';
+import { useNavigate, useOutletContext, } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
 import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
@@ -34,6 +34,7 @@ function Devices() {
     const { devices, getDevicesFc } = useContext(DevicesContext);
     const [selectedDevice, setSelectedDevice] = useState<null | Device>(null);
     const [newDevice, setNewDevice] = useState<Device>(initialNewDevice);
+    const [matches] = useOutletContext<[matches: boolean]>();
     const handleToggleModal = () => {
         setOpenModal(!openModal);
         if (!openModal) {
@@ -422,6 +423,18 @@ function Devices() {
                         })
                     }
                 </Grid>
+                {
+                    !matches ? (
+                        <SpeedDial ariaLabel='New Device' sx={{ position: 'absolute', bottom: 16, right: 16 }} icon={<SpeedDialIcon />}>
+                            <SpeedDialAction
+                                key={'New Device'}
+                                icon={<PlusOne />}
+                                onClick={handleToggleModal}
+                                tooltipTitle='New Device'
+                            />
+                        </SpeedDial>
+                    ): null
+                }
             </Box>
         </Box>
     );
