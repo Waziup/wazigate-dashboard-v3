@@ -1,6 +1,6 @@
 import { Box, Button, Grid, CardContent, Typography, ListItemIcon, Menu, MenuItem, SelectChangeEvent, SpeedDial, SpeedDialAction, SpeedDialIcon, } from '@mui/material';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
-import { DeleteOutline, ModeOutlined, MoreVert, PlusOne, Sensors, } from '@mui/icons-material';
+import { Add, DeleteOutline, ModeOutlined, MoreVert, Sensors, } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
 import { useNavigate, useOutletContext, } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
@@ -330,10 +330,14 @@ function Devices() {
                 changeEditMakeLoraWAN={changeEditMakeLoraWAN}
                 autoGenerateLoraWANOptionsHandler={autoGenerateLoraWANOptions}
             />
-            <Box sx={{ p: 3, height: '100%' }}>
+            <Box sx={{ px:2, py:3,  height: '100%' }}>
                 <RowContainerBetween>
                     <Typography fontWeight={700} color={'black'}>Devices</Typography>
-                    <PrimaryIconButton title={'New Device'} iconname={'add'} onClick={handleToggleModal} />
+                    {
+                        matches?(
+                            <PrimaryIconButton title={'New Device'} iconname={'add'} onClick={handleToggleModal} />
+                        ):null
+                    }
                 </RowContainerBetween>
                 <Grid container my={2} spacing={2}>
                     {
@@ -425,10 +429,10 @@ function Devices() {
                 </Grid>
                 {
                     !matches ? (
-                        <SpeedDial ariaLabel='New Device' sx={{ position: 'absolute', bottom: 16, right: 16 }} icon={<SpeedDialIcon />}>
+                        <SpeedDial color='info' ariaLabel='New Device' sx={{color:'#499', position: 'absolute', bottom: 16, right: 16 }} icon={<SpeedDialIcon />}>
                             <SpeedDialAction
                                 key={'New Device'}
-                                icon={<PlusOne />}
+                                icon={<Add />}
                                 onClick={handleToggleModal}
                                 tooltipTitle='New Device'
                             />
