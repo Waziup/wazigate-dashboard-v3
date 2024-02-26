@@ -112,7 +112,7 @@ function Settings() {
         return () => { clearInterval(timer); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    const apConn = networkDevices.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP");
+    const apConn = networkDevices.wlan0? networkDevices.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP"): null;
     const eth0 = networkDevices.eth0;
     function handleSetDateManually() {
         setIsSetDateManual(!isSetDateManual);
@@ -138,7 +138,7 @@ function Settings() {
                             <RowContainer>
                                 <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
                                     {
-                                        atob(apConn?.['802-11-wireless']?.ssid as unknown as string) || 'WAZIGATE-AP'
+                                        apConn?atob(apConn?.['802-11-wireless']?.ssid as unknown as string) || 'WAZIGATE-AP': ''
                                     }
                                     </Typography>
                                 <CheckCircle sx={{ color: DEFAULT_COLORS.primary_black, fontSize: 17 }} />
