@@ -100,11 +100,16 @@ const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHand
 
     </FormControl>
 );
-export const GridItem = ({ children,disabled }: {disabled?:boolean, children: React.ReactNode }) => (
+interface AppProp{
+    disabled?:boolean,
+    appUrl?:string
+    children: React.ReactNode
+}
+export const GridItem = ({appUrl, children,disabled }:AppProp) => (
     <Grid item md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={1} >
         <Box minHeight={100} sx={{ px: 2, py: 1, position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
             {children}
-            <Button disabled={disabled} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>OPEN</Button>
+            <Button href={appUrl?appUrl:''} disabled={disabled} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>OPEN</Button>
         </Box>
     </Grid>
 );
@@ -438,11 +443,15 @@ export default function Apps() {
                     </Backdrop>
                 ) : null
             }
-            <Box p={3} onClick={() => { open ? handleClose() : null }} sx={{ overflowY: 'auto', my: 2, height: '100%' }}>
+            <Box px={2} onClick={() => { open ? handleClose() : null }} sx={{ overflowY: 'auto', my: 2, height: '100%' }}>
                 <RowContainerBetween>
-                    <Box maxWidth={'50%'}>
+                    <Box >
                         <Typography fontWeight={700} fontSize={20} color={'black'}>Apps</Typography>
-                        <Typography fontSize={matches ? 15 : 13} sx={{ color: DEFAULT_COLORS.secondary_black }}>Setup your Wazigate Edge Apps</Typography>
+                        {
+                            matches?(
+                                <Typography fontSize={matches ? 15 : 13} sx={{ color: DEFAULT_COLORS.secondary_black }}>Setup your Wazigate Edge Apps</Typography>
+                            ):null
+                        }
                     </Box>
                     <DropDown
                         customAppInstallHandler={handleInstallAppModal}
@@ -464,7 +473,7 @@ export default function Apps() {
                                             />
                                         ) : (
 
-                                            <GridItem disabled={app.state.running} key={app.id}>
+                                            <GridItem appUrl={(Object.values(app.waziapp.menu? app.waziapp?.menu:{df:{href:''}})[0]).href} disabled={app.state.running} key={app.id}>
                                                 <Box px={.4} display={'flex'} alignItems={'center'} sx={{ position: 'absolute', top: -5, my: -1, }} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
                                                     <Box component={'img'} src='/wazi_sig.svg' />
                                                     <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
