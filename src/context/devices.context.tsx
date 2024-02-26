@@ -72,8 +72,9 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         const fc = () => {
             if(token){
                 window.wazigate.setToken(token);
-                getDevices();
+                window.wazigate.subscribe<Device>("devices", getDevices);
                 getApps();
+                return () => window.wazigate.unsubscribe("devices", getDevices);
             }
             else{
                 const token = window.localStorage.getItem('token');
