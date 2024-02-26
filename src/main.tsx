@@ -14,6 +14,13 @@ waziup.connect({
     host: VITE_WAZIGATE_API_URL,
 }).then((res) => {
     window.wazigate = res.waziup;
+    window.wazigate.connectMQTT(() => {
+        console.log("MQTT Connected.");
+    }, (err: Error) => {
+        console.error("MQTT Err", err);
+    }, {
+        reconnectPeriod: 0,
+    });
     console.log('Connected to Wazigate')
     ReactDOM.createRoot(document.getElementById('root')!).render(
         <React.StrictMode>
