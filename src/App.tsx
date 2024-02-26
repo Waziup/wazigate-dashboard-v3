@@ -16,10 +16,11 @@ import { Box, createTheme, ThemeProvider } from '@mui/material'
 import DeviceSettings from './pages/DeviceSettings'
 import { DevicesProvider } from './context/devices.context'
 import SettingsNetworking from './pages/SettingsNetworking'
-import SettingsMaintenance from './pages/SettingsMaintenance'
+import SettingsMaintenance from './pages/SettingsMaintenance';
+import AppUI from './pages/App';
 function App() {
-    
 
+    
     const theme = createTheme({
         palette: {
             primary: {
@@ -87,6 +88,10 @@ function App() {
                 {
                     path:'/apps',
                     element:<Apps/>
+                },
+                {
+                    path:'#/apps/:id',
+                    element: <AppUI/>
                 },
                 {
                     path:'/settings',
