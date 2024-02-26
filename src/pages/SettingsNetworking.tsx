@@ -3,7 +3,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import RowContainerNormal from "../components/shared/RowContainerNormal";
-import { CellTower, DesktopWindowsOutlined, LockOutlined, ModeFanOffOutlined } from "@mui/icons-material";
+import { CellTower, DesktopWindowsOutlined, LockOutlined, ModeFanOffOutlined, WifiOutlined } from "@mui/icons-material";
 import { Android12Switch } from "../components/shared/Switch";
 import PrimaryButton from "../components/shared/PrimaryButton";
 import { getWiFiScan,setConf as setConfFc, AccessPoint,getConf, setWiFiConnect, WifiReq } from "../utils/systemapi";
@@ -205,10 +205,13 @@ export default function SettingsNetworking() {
                                 <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc'}}>
                                     <RowContainerNormal>
                                         <Box component={'img'} src='/wazilogo.svg' mx={2} />
-                                        <ListItemText
-                                            primary={cloud.name || cloud.id}
-                                            secondary={`ID ${cloud.id}`}
-                                        />
+                                        <Box>
+                                            <ListItemText
+                                                primary={cloud.name || cloud.id}
+                                                secondary={`ID ${cloud.id}`}
+                                                
+                                            />
+                                        </Box>
                                     </RowContainerNormal>
                                     <MenuComponent
                                         open={false}
@@ -269,7 +272,7 @@ export default function SettingsNetworking() {
                             </GridItemEl>
                         ):null
                     }
-                    <GridItemEl text={'Misc. Settings'} icon={'settings_outlined'}>
+                    <GridItemEl text={'Misc. Settings'} icon={'settings'}>
                         <Box p={2}>
                             <form onSubmit={submitConf}>
                                 <TextInputField 
@@ -292,9 +295,9 @@ export default function SettingsNetworking() {
                         </Box>
                     </GridItemEl>
                 </GridItem>
-                <GridItem md={7} xs={12} matches={matches}  additionStyles={{bgcolor:'#fff'}}>
+                <GridItem md={7} xs={12} matches={matches}  additionStyles={{bgcolor:'#fff',width:'100%'}}>
                     <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', alignItems: 'center' }} p={1} >
-                        <Icon sx={IconStyle}>wifi_outlined</Icon>
+                        <WifiOutlined sx={IconStyle}/>
                         <Typography color={'#212529'} fontWeight={500}>Available Wifi</Typography>
                     </Box>
                     <Box bgcolor={'#D4E3F5'} p={1}>
@@ -312,7 +315,7 @@ export default function SettingsNetworking() {
                                 </RowContainerBetween>
                             </Box>
                         )):(
-                            <Box>
+                            <Box sx={{mx:'auto',flexDirection:'column',alignItems:'center',justifyContent:'center',width:'100%'}}>
                                 <Typography>Checking for available networks</Typography>
                                 <CircularProgress />
                             </Box>
