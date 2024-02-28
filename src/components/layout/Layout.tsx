@@ -1,7 +1,7 @@
 import { Box, Grid, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Link, Outlet, useLocation, } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import { Menu, Search, SettingsOutlined } from '@mui/icons-material';
+import { Menu, SettingsOutlined } from '@mui/icons-material';
 import RowContainerBetween from '../shared/RowContainerBetween';
 import { useState } from 'react';
 function Layout() {
@@ -9,7 +9,7 @@ function Layout() {
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const matchesMd = useMediaQuery(theme.breakpoints.between('sm', 'md'));
     const [open, setOpen] = useState(false);
-    const handleToggle = () => { setOpen(!open) }
+    const handleToggle = () => {setOpen(!open)}
     const { state, pathname } = useLocation();
     return (
         <>
@@ -37,7 +37,7 @@ function Layout() {
                                     <Link to={pathname+'/settings'} state={{title:'Settings'}}>
                                         <SettingsOutlined sx={{ color: 'white', mx: 1, }} />
                                     </Link>
-                                ):<Search sx={{ color: 'white', mx: 1 }} />
+                                ):null
                             }
                         </RowContainerBetween>
                         <Box onClick={handleToggle} sx={{ position: 'absolute', top: 0, display: open ? 'flex' : 'none', height: '100%', width: '100%', bgcolor: 'rgba(0,0,0,.5)', zIndex: 99 }}>
