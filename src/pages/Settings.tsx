@@ -10,7 +10,7 @@ import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {setTime, shutdown,reboot,getBuildNr, getTime, getTimezones,getNetworkDevices,Devices, } from '../utils/systemapi';
 
 import { Android12Switch } from '../components/shared/Switch';
@@ -112,8 +112,11 @@ function Settings() {
         return () => { clearInterval(timer); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    const apConn = networkDevices.wlan0? networkDevices.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP"): null;
-    const eth0 = networkDevices.eth0;
+    const [apConn,eth0] = useMemo(() => {
+        const apCn = networkDevices.wlan0? networkDevices.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP"): null
+        const eth0 = networkDevices.eth0;
+        return [apCn, eth0]; 
+    },[networkDevices]);
     function handleSetDateManually() {
         setIsSetDateManual(!isSetDateManual);
     }

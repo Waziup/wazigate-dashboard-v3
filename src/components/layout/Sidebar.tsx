@@ -114,7 +114,7 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     icon={
                                         <SettingsTwoTone sx={{...IconStyle,color:location.includes('/settings')?'#292F3F':'white'}} />} 
                                     text={'Settings'}
-                                    otherItem={open ? <ExpandLess sx={{cursor:'pointer'}} onClick={handleClick} /> : <ExpandMore sx={{cursor:'pointer'}} onClick={handleClick} />}
+                                    otherItem={open ? <ExpandLess sx={{cursor:'pointer',color:location.includes('/settings')? '#fff':'inherit',borderRadius:2}} onClick={handleClick} /> : <ExpandMore sx={{cursor:'pointer',color:location.includes('/settings')? '#fff':'inherit',borderRadius:2}} onClick={handleClick} />}
                                 />
                                 
                                 <Collapse in={open} timeout="auto" unmountOnExit>
