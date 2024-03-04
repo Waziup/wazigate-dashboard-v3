@@ -473,7 +473,7 @@ export default function Apps() {
                                             />
                                         ) : (
 
-                                            <GridItem appUrl={(Object.values(app.waziapp.menu? app.waziapp?.menu:{df:{href:''}})[0]).href} disabled={app.state.running} key={app.id}>
+                                            <GridItem appUrl={(Object.values(app.waziapp.menu? app.waziapp?.menu:{df:{href:''}})[0]).href} disabled={app.state ?app.state.running:true} key={app.id}>
                                                 <Box px={.4} display={'flex'} alignItems={'center'} sx={{ position: 'absolute', top: -5, my: -1, }} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
                                                     <Box component={'img'} src='/wazi_sig.svg' />
                                                     <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
@@ -510,7 +510,7 @@ export default function Apps() {
                                                                             Uninstall
                                                                         </MenuItem>
                                                                         
-                                                                        <MenuItem value={idx} onClick={() => { startOrStopApp(app.id, app.state.running); popupState.close }}>
+                                                                        <MenuItem value={idx} onClick={() => { startOrStopApp(app.id, app.state ?app.state.running:false); popupState.close }}>
                                                                             <ListItemIcon>
                                                                                 <DeleteForever fontSize="small" />
                                                                             </ListItemIcon>
