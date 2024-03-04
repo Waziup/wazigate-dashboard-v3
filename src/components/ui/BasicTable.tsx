@@ -5,7 +5,7 @@ import { Device } from 'waziup';
 import { differenceInMinutes } from '../../utils';
 function createData(
   name: string,
-  runtime: number,
+  runtime: string,
   interfaces: number,
   status: boolean,
 ) {
@@ -17,7 +17,7 @@ interface Props{
 }
 export default function BasicTable({devices}:Props) {
     const rowsData = devices.map((dev)=>{
-        return createData(dev.name+'*'+differenceInMinutes(dev.modified),32,4,false)
+        return createData(dev.name+'*'+differenceInMinutes(dev.modified),dev.modified.getHours().toString()+'h',4,false)
     });
     return (
         <TableContainer component={Paper}>
