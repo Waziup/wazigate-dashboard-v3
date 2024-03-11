@@ -29,5 +29,5 @@ waziup.connect({
     )
 }).catch(()=>{
     console.log('Cannot connect to Wazigate');
-    (document.getElementById("dashboard") as HTMLElement).innerHTML = "<div style='margin-top: 50%;color:black; text-align: center;border: 1px solid #BBB;border-radius: 5px;padding: 5%;margin-left: 10%;margin-right: 10%;background-color: #EEE;'><h1>Wazigate is not accessible...</h1></div>";
+    (document.getElementById("dashboard") as HTMLElement).innerHTML = "<div style='margin-top: 10%;color:black; text-align: center;border: 1px solid #BBB;border-radius: 5px;padding: 5%;margin-left: 10%;margin-right: 10%;background-color: #EEE;'><h1>Wazigate is not accessible...</h1></div>";
 })
