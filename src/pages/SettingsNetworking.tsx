@@ -41,10 +41,10 @@ export default function SettingsNetworking() {
     const [selectedWifi,setSelectedWifi]=useState<AccessPoint|undefined>(undefined);
     const scan = () => {
         setScanLoading(true);
-        getWiFiScan().then((res) => {
-            console.log(res);
-            setWifiList(res);
+        getWiFiScan()
+        .then((res) => {
             setScanLoading(false);
+            setWifiList(res);
         }).catch((err) => {
             console.log(err);
             setScanLoading(false);
@@ -171,11 +171,11 @@ export default function SettingsNetworking() {
           autoConnect: true
         };
         setScanLoading(true)
-            setWiFiConnect(data).then(() => {
-                setScanLoading(false)
-                setSelectedWifi(undefined);
-            });
-        };
+        setWiFiConnect(data).then(() => {
+            setScanLoading(false)
+            setSelectedWifi(undefined);
+        });
+    };
     useEffect(() => {
         scan();
     },[]);
@@ -266,7 +266,7 @@ export default function SettingsNetworking() {
                                             onChange={()=>{}} 
                                             value={''} 
                                         />
-                                        <PrimaryButton title="Save" onClick={()=>{}} type="button" />
+                                        <PrimaryButton title="Save" onClick={()=>{}} type="submit" />
                                     </form>
                                 </Box>
                             </GridItemEl>
@@ -307,19 +307,21 @@ export default function SettingsNetworking() {
                         <Typography color={'#666'}>Please select a network</Typography>
                     </Box>
                     {
-                        scanLoading?wifiList.map((wifi) => (
-                            <Box key={wifi.ssid} onClick={()=>setSelectedWifi(wifi)}>
-                                <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc',p:1}}>
-                                    <Typography>{wifi.ssid}</Typography>
-                                    <Icon sx={IconStyle}>wifi_outlined</Icon>
-                                </RowContainerBetween>
-                            </Box>
-                        )):(
-                            <Box sx={{mx:'auto',flexDirection:'column',alignItems:'center',justifyContent:'center',width:'100%'}}>
+                        scanLoading?
+                            <Box sx={{mx:'auto',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',width:'100%'}}>
                                 <Typography>Checking for available networks</Typography>
                                 <CircularProgress />
                             </Box>
-                        )
+                        :(
+                            wifiList.map((wifi) => (
+                                <Box key={wifi.ssid} onClick={()=>setSelectedWifi(wifi)}>
+                                    <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc',p:1}}>
+                                        <Typography>{wifi.ssid}</Typography>
+                                        <Icon sx={IconStyle}>wifi_outlined</Icon>
+                                    </RowContainerBetween>
+                                </Box>
+                            )
+                        ))
                     }
                 </GridItem>
             </Grid>
