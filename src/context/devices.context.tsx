@@ -69,12 +69,13 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         window.localStorage.setItem('token',accessToken as unknown as string);
     },[]);
     useEffect(()=>{
-        const fc = () => {
+        const fc = async () => {
             if(token){
-                window.wazigate.setToken(token);
+                await window.wazigate.setToken(token);
                 getApps();
-                window.wazigate.subscribe<Device>("devices", getDevices);
-                return () => window.wazigate.unsubscribe("devices", getDevices);
+                getDevices();
+                window.wazigate.subscribe<Device[]>("devices", getDevices);
+                return async () => window.wazigate.unsubscribe("devices", getDevices);
             }
             else{
                 const token = window.localStorage.getItem('token');
