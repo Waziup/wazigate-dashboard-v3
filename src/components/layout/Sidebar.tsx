@@ -108,13 +108,13 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     text={'Devices'} 
                                 />
                             {/* <NavigationItem location={location} path={'/automation'} icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'black':'white'}} />} text={'Automation'} /> */}
-                            <Box sx={{bgcolor:location.includes('/settings')? '#fff':'inherit',borderRadius:2}}>
+                            <Box sx={{bgcolor:location ===('/settings')? '#fff':'inherit',borderRadius:2}}>
                                 <NavigationItem location={location} 
                                     path={'/settings'} 
                                     icon={
-                                        <SettingsTwoTone sx={{...IconStyle,color:location.includes('/settings')?'#292F3F':'white'}} />} 
+                                        <SettingsTwoTone sx={{...IconStyle,color:location ===('/settings')?'#292F3F':'white'}} />} 
                                     text={'Settings'}
-                                    otherItem={open ? <ExpandLess sx={{cursor:'pointer',color:location.includes('/settings')? '#fff':'inherit',borderRadius:2}} onClick={handleClick} /> : <ExpandMore sx={{cursor:'pointer',color:location.includes('/settings')? '#fff':'inherit',borderRadius:2}} onClick={handleClick} />}
+                                    otherItem={open ? <ExpandLess sx={{cursor:'pointer',color:location === '/settings'? '#000':'#fff',borderRadius:2}} onClick={handleClick} /> : <ExpandMore sx={{cursor:'pointer',color:location ==='/settings'? '#000':'#fff',borderRadius:2}} onClick={handleClick} />}
                                 />
                                 
                                 <Collapse in={open} timeout="auto" unmountOnExit>
@@ -154,15 +154,17 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                 <Box display={'flex'} px={2}>
                                     <NoImageProfile/>
                                     <Box>
-                                        <Typography>John Doe</Typography>
-                                        <Typography fontSize={13} >johndoe@waziup.org</Typography>
+                                        <Typography>Wazigate User</Typography>
+                                        <Typography fontSize={13}>admin</Typography>
                                     </Box>
                                 </Box>
                             </Link>
-                            <Box width={'100%'} px={2} display={'flex'} py={1.5} alignItems={'center'}>
-                                <Logout sx={{color:'white',mr:1,}} />
-                                <Typography sx={{color:'white'}}>Logout</Typography>
-                            </Box>
+                            <Link style={{textDecoration:'none',textDecorationColor:'none',width:'100%', color:'#fff',borderBottom:'1px solid #fff',padding:'4px 0', borderTop:'1px solid white'}} to={'/'}>
+                                <Box width={'100%'} px={2} display={'flex'} alignItems={'center'}>
+                                    <Logout sx={{color:'white',mr:1,}} />
+                                    <Typography>Logout</Typography>
+                                </Box>
+                            </Link>
                         </Box>
                     </>
                 ):(
