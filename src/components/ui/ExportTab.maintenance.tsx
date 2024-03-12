@@ -52,7 +52,7 @@ export default function ExportTabMaintenance({matches}:Props) {
                         <Typography m={1} fontSize={12} color={'#666666'}>
                             You can export the data of all sensors and actuators to a tree of CSV files:
                         </Typography>
-                        <Button href='http://wazigate-dashboard-stable.staging.waziup.io/exporttree' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
+                        <Button href='/exporttree' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
                             EXPORT
                         </Button>
                     </GridItemEl>
@@ -60,7 +60,7 @@ export default function ExportTabMaintenance({matches}:Props) {
                         <Typography m={1} fontSize={12} color={'#666666'}>
                             You can export the data of all sensors and actuators to one CSV file:
                         </Typography>
-                        <Button href='http://wazigate-dashboard-stable.staging.waziup.io/exportall' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
+                        <Button href='/exportall' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
                             EXPORT
                         </Button>
                     </GridItemEl>
@@ -145,7 +145,7 @@ export default function ExportTabMaintenance({matches}:Props) {
                                 </Box>
                             </Box>
                         </Box>
-                        <Button variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} href={'http://wazigate-dashboard-stable.staging.waziup.io/exportbins?from='+searchParams.get('from')+'&to='+searchParams.get('to')+'&duration='+searchParams.get('duration')+'s'+'&check='+searchParams.get('check')} >
+                        <Button variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} href={'/exportbins?from='+searchParams.get('from')+'&to='+searchParams.get('to')+'&duration='+searchParams.get('duration')+'s'+'&check='+searchParams.get('check')} >
                             EXPORT
                         </Button>
                     </GridItemEl>
