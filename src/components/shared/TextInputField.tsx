@@ -2,7 +2,7 @@ import { FormControl, Typography, Box, TextField, SxProps, Theme } from '@mui/ma
 import React from 'react';
 interface InputFieldProps extends React.ComponentProps<typeof TextField> {
     label: string,
-    value: string,
+    value?: string,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
     name?: string,
     required?: boolean,
@@ -13,7 +13,7 @@ interface InputFieldProps extends React.ComponentProps<typeof TextField> {
     rows?: number
     icon?: React.ReactNode
 }
-export default function TextInputField({onChange,value,label,icon, name}:InputFieldProps) {
+export default function TextInputField({onChange,value,label,icon,placeholder, name}:InputFieldProps) {
     return (
         <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #ccc'}}>
             <Typography textAlign={'left'} color={'primary'} mb={.4} fontSize={12}>{label}</Typography>
@@ -22,7 +22,7 @@ export default function TextInputField({onChange,value,label,icon, name}:InputFi
                 <input 
                     onInput={onChange} 
                     name={name} 
-                    placeholder='Enter device name' 
+                    placeholder={placeholder?placeholder:'Enter device name'} 
                     value={value}
                     required
                     
