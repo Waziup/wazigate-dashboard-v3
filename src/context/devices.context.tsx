@@ -48,8 +48,7 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     }
     const getApps = ()=>{
         window.wazigate.getApps().then((res)=>{
-            const appsFilter = res.filter((_app,id)=>id);
-            setApps(appsFilter);
+            setApps(res);
         });
     }
     const getDevices = ()=>{

@@ -75,6 +75,9 @@ function DeviceSettings() {
     const { getDevicesFc } = useContext(DevicesContext)
     const { id } = useParams();
     useEffect(() => {
+        if (!id) {
+            navigate('/devices');
+        }
         window.wazigate.getDevice(id)
             .then((dev) => {
                 setDevice(dev);
@@ -83,6 +86,7 @@ function DeviceSettings() {
                 console.log('Error encounted', err);
                 setIsError(true);
             })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
     const setModalEls = (title: string, placeholder: string) => {
         setModalProps({ title, placeholder });
@@ -280,7 +284,7 @@ function DeviceSettings() {
                         <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} height={'100%'} alignItems={'center'}>
                             <Box component={'img'} src="/404.svg" width={200} height={200} />
                             <Typography>Hi there</Typography>
-                            <Typography>No Sensors and Actuators found found</Typography>
+                            <Typography>No Sensors and Actuators for this device, create one.</Typography>
                         </Box>
                     )
                 }
