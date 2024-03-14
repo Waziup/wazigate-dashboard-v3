@@ -4,13 +4,15 @@ import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
 import { DeleteForever, Download, FiberNew, MoreVert, Settings, } from '@mui/icons-material';
 import React, { useState, useEffect, useContext } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { StartAppConfig, type App } from 'waziup';
 import Backdrop from '../components/Backdrop';
 import { DevicesContext } from '../context/devices.context';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import CustomApp from '../components/CustomApp';
 import { SelectElement } from './DeviceSettings';
+import { LoadingButton } from '@mui/lab';
+import { returnAppURL } from '../utils';
 type App1 = App & {
     description: string
 }
@@ -46,7 +48,6 @@ const customAppProps: App2 = {
         health: '',
         paused: 'unhealthy',
         restartPolicy: '',
-
     }
 }
 const onCloseHandler = () => {
@@ -55,14 +56,13 @@ const onCloseHandler = () => {
             (document.activeElement as HTMLElement).blur();
         }
     }, 0);
-
 }
 const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHandler, age }: { customAppInstallHandler: () => void, matches: boolean, recommendedApps: RecomendedApp[], handleChange: (e: SelectChangeEvent) => void, age: string }) => (
     <FormControl sx={{ p: 0, border: 'none', width: matches ? '35%' : '45%', }}>
         <InputLabel id="demo-simple-select-helper-label">Install App</InputLabel>
         <Select sx={{ width: '100%', py: 0, }}
-            labelId="demo-simple-select-helper-label"
-            id="demo-simple-select-helper"
+            labelId="Recommended Apps"
+            id="recommeded_apps _selecter"
             onClose={onCloseHandler}
             value={age} label="Age" onChange={handleChange}>
             {
@@ -109,7 +109,9 @@ export const GridItem = ({appUrl, children,disabled }:AppProp) => (
     <Grid item md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={1} >
         <Box minHeight={100} sx={{ px: 2, py: 1, position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
             {children}
-            <Button href={appUrl?appUrl:''} disabled={disabled} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>OPEN</Button>
+            <Link to={appUrl?appUrl:''} >
+                <Button disabled={disabled} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>OPEN</Button>
+            </Link>
         </Box>
     </Grid>
 );
@@ -183,9 +185,7 @@ export default function Apps() {
         setModalProps({
             open: true, title: 'Installing New App', children: <>
                 <Box width={'100%'} bgcolor={'#fff'}>
-                    <Box px={2} py={1}>
-                        <Button onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'error'}>CLOSE</Button>
-                    </Box>
+                    
                 </Box>
             </>
         });
@@ -311,6 +311,16 @@ export default function Apps() {
                             }
                             <Box borderBottom={'1px solid black'} py={2}>
                                 {modalProps.children}
+                                <Box px={2} py={1}>
+                                    {
+                                        logs.done?(
+                                            <Button onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CLOSE</Button>
+                                        ):(
+                                            <LoadingButton disabled loading={true} onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CLOSE</LoadingButton>
+                                        )
+                                        
+                                    }
+                                </Box>
                             </Box>
                         </Box>
                     </Backdrop>
@@ -472,8 +482,7 @@ export default function Apps() {
                                                 app={app}
                                             />
                                         ) : (
-
-                                            <GridItem appUrl={idx >1?(Object.values(app.waziapp.menu? app.waziapp?.menu:{df:{href:''}})[0]).href:''} disabled={app.state ?app.state.running:true} key={app.id}>
+                                            <GridItem appUrl={returnAppURL(app)} disabled={app.state ?app.state.running:true} key={app.id}>
                                                 <Box px={.4} display={'flex'} alignItems={'center'} sx={{ position: 'absolute', top: -5, my: -1, }} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
                                                     <Box component={'img'} src='/wazi_sig.svg' />
                                                     <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
