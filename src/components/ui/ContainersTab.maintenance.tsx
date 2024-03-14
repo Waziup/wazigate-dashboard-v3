@@ -44,7 +44,7 @@ export default function ContainersTabMaintenance({matches}:Props) {
     return (
         <>
             <Backdrop open={openModal}>
-                <Box width={matches ? '40%' : '90%'} bgcolor={'#fff'}>
+                <Box sx={{width: matches?'40%':'90%',zIndex:99,bgcolor:'#fff'}}>
                     <RowContainerBetween additionStyles={{ borderBottom: '1px solid black', px: 2, py: 2 }}>
                         <Typography>Container Logs</Typography>
                         <Button onClick={() =>{setOpenModal(false)}} sx={{ textTransform: 'initial', color: '#ff0000' }} variant={'text'} >cancel</Button>
@@ -67,8 +67,8 @@ export default function ContainersTabMaintenance({matches}:Props) {
                     }
                 </Box>
             </Backdrop>
-            <Box p={3}>
-                <Grid container>
+            <Box px={2}>
+                <Grid spacing={2} py={2} container>
                     {
                         containers.map((container, id) => (
                             <Grid key={id} lg={4} my={1} xl={4} md={6} xs={12} sm={6} item sx={{ bgcolor: '#fff', cursor: 'pointer', borderRadius: 2 }}>
