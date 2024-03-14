@@ -90,7 +90,7 @@ function App() {
                     element:<Apps/>
                 },
                 {
-                    path:'#/apps/:id',
+                    path:'/apps/:id/:id2/',
                     element: <AppUI/>
                 },
                 {
@@ -112,6 +112,10 @@ function App() {
                 {
                     path:'/help',
                     element: <Docspage/>
+                },
+                {
+                    path:'/docs',
+                    element: <iframe width="100%" height="100%" className="app" src="/docs/" />
                 }
             ]
         }
