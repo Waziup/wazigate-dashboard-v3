@@ -24,7 +24,7 @@ export default function MenuComponent({open,menuItems}:Props) {
                         <Menu {...bindMenu(popupState)}>
                             {
                                 menuItems.map((item,id)=>(
-                                    <MenuItem key={id} onClick={item.clickHandler}>
+                                    <MenuItem key={id} onClick={()=>{popupState.close; item.clickHandler()}}>
                                         <ListItemIcon>
                                             <Icon fontSize='small'>{item.icon}</Icon>
                                         </ListItemIcon>
