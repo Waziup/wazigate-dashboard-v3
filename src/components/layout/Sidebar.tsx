@@ -52,9 +52,18 @@ const styleFuncSmall = ({isActive,}:{isActive:boolean}):CSSProperties=>{
         padding:'7px 10px',
     }
 }
-const NavigationItem = ({path,otherItem,icon,onClick, text}:{location:string,  otherItem?:JSX.Element,additionalStyles?:CSSProperties, path:string,onClick?:()=> void, icon:React.ReactNode,text:string}) => {
+interface NavigationItemProps{
+    location:string,
+    path:string,
+    icon:React.ReactNode,
+    text?:string,
+    title?:string,
+    otherItem?:JSX.Element,
+    onClick?:()=> void
+}
+const NavigationItem = ({path,otherItem,icon,onClick,location, text}:NavigationItemProps) => {
     return(
-        <Box display='flex' justifyContent={'space-between'} width={'100%'} px={1} alignItems='center'>
+        <Box sx={{borderRadius:4, display:'flex',bgcolor:location===path?'#fff':'',justifyContent:'space-between',width:'100%',px:1,alignItems:'center'}}>
             <NavLink state={{title:text}} to={path} onClick={onClick} style={styleFunc}>
                     <ListItemIcon>
                         {icon}
@@ -65,7 +74,7 @@ const NavigationItem = ({path,otherItem,icon,onClick, text}:{location:string,  o
         </Box>
     )
 }
-const NavigationSmall = ({path,otherItem,icon,onClick, }:{location:string,otherItem?:JSX.Element,additionalStyles?:CSSProperties,title:string, path:string,onClick?:()=> void, icon:React.ReactNode,}) => {
+const NavigationSmall = ({path,otherItem,icon,onClick, }:NavigationItemProps) => {
     return(
         <NavLink to={path} onClick={onClick} style={styleFuncSmall}>
             <Box display='flex' alignItems='center'>
@@ -96,7 +105,8 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     location={location} 
                                     path={'/dashboard'} 
                                     icon={<DashboardOutlined sx={{...IconStyle,color:location==='/dashboard'?'#292F3F':'white'}} />} 
-                                    text={'Dashboard'} 
+                                    text={'Dashboard'}
+                                    onClick={()=>setOpen(false)}
                                 />
                             </Box>
                         </Box>
@@ -105,14 +115,16 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     location={location} 
                                     path={'/devices'} 
                                     icon={<SettingsRemoteSharp sx={{...IconStyle,color:location.includes('/devices')?'#292F3F':'white'}} />} 
-                                    text={'Devices'} 
+                                    text={'Devices'}
+                                    onClick={()=>setOpen(false)}
                                 />
                             {/* <NavigationItem location={location} path={'/automation'} icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'black':'white'}} />} text={'Automation'} /> */}
-                            <Box sx={{bgcolor:location ===('/settings')? '#fff':'inherit',borderRadius:2}}>
-                                <NavigationItem location={location} 
-                                    path={'/settings'} 
+                            <Box sx={{bgcolor:(location==='/settings' || location==='/settings/networking' || location==='/settings/maintenance')? '#fff':'inherit',borderRadius:2}}>
+                                <NavigationItem 
+                                    location={location} 
+                                    path={'/settings'}
                                     icon={
-                                        <SettingsTwoTone sx={{...IconStyle,color:location ===('/settings')?'#292F3F':'white'}} />} 
+                                        <SettingsTwoTone sx={{...IconStyle,color:(location==='/settings' || location==='/settings/networking' || location==='/settings/maintenance')?'#292F3F':'#fff'}} />} 
                                     text={'Settings'}
                                     otherItem={open ? <ExpandLess sx={{cursor:'pointer',color:location === '/settings'? '#000':'#fff',borderRadius:2}} onClick={handleClick} /> : <ExpandMore sx={{cursor:'pointer',color:location ==='/settings'? '#000':'#fff',borderRadius:2}} onClick={handleClick} />}
                                 />
@@ -139,7 +151,12 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     </List>
                                 </Collapse>
                             </Box>
-                            <NavigationItem location={location} path={'/apps'} icon={<Apps sx={{...IconStyle,color:location.includes('/apps')?'#292F3F':'white'}} />} text={'Apps'} />
+                            <NavigationItem 
+                                onClick={()=>setOpen(false)}
+                                location={location} 
+                                path={'/apps'} 
+                                icon={<Apps sx={{...IconStyle,color:location.includes('/apps')?'#292F3F':'white'}} />} text={'Apps'} 
+                            />
                         </List>
                         <Box position={'absolute'} display={'flex'}  justifyContent={'center'} flexDirection={'column'} alignItems={'center'} bottom={0} width={'100%'} >
                             <NavLink style={{textDecoration:'none',width:'100%'}} to={'/help'}>
@@ -181,6 +198,7 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                             location={location} 
                             path={'/devices'}
                             title='Devices'
+                            onClick={()=>setOpen(false)}
                             icon={<SettingsRemoteSharp sx={{...IconStyle,color:location==='/devices'?'#292F3F':'white'}} />} 
                         />
                         {/* <NavigationSmall 
@@ -218,6 +236,7 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                             location={location} 
                             path={'/apps'} 
                             title='Apps'
+                            onClick={()=>setOpen(false)}
                             icon={<Apps sx={{...IconStyle,color:location==='/apps'?'black':'white'}} />} 
                         />
                         <Box position={'absolute'} display={'flex'} flexDirection={'column'} alignItems={'center'} bottom={0} width={'100%'} >
