@@ -1,3 +1,4 @@
+import { App } from "waziup";
 export function differenceInMinutes(date:Date){
     const now = new Date();
     const diff = (now.getTime() - date.getTime()) / 1000;
@@ -30,4 +31,18 @@ export function humanFileSize(size: number ) {
         " " +
         ["B", "kB", "MB", "GB", "TB"][i]
     );
+}
+export function removeFirstChar(value:string){
+    if(value && value.startsWith('#')&& value.length>1){
+        return value.slice(1);
+    }
+    return value;
+}
+export function returnAppURL(app:App): string{
+    if(app.waziapp.menu){
+        return removeFirstChar(Object.values(app.waziapp.menu? app.waziapp.menu:[]).length>0?Object.values(app.waziapp.menu? app.waziapp.menu:[])[0].href:'')
+    }else if(app.id.includes('lora')){
+        return `/apps/waziup/${app.name}`;
+    }
+    return ''
 }
