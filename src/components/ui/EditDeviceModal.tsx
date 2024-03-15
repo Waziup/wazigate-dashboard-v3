@@ -30,11 +30,11 @@ interface Props {
     submitEditDevice: (e: React.FormEvent<HTMLFormElement>) => void
     changeEditMakeLoraWAN: () => void,
     autoGenerateLoraWANOptionsHandler: (title: "devAddr" | "nwkSEncKey" | "appSKey") => void
-
+    handleChangeDeviceCodec: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 import { toStringHelper } from "../../utils";
 import PrimaryButton from "../shared/PrimaryButton";
-export default function EditDeviceModal({ changeEditMakeLoraWAN, autoGenerateLoraWANOptionsHandler, device, openModal, handleTextInputEditCodec, submitEditDevice, handleNameChange, handleChangeSelectDeviceType, handleToggleModal }: Props) {
+export default function EditDeviceModal({handleChangeDeviceCodec, changeEditMakeLoraWAN, autoGenerateLoraWANOptionsHandler, device, openModal, handleTextInputEditCodec, submitEditDevice, handleNameChange, handleChangeSelectDeviceType, handleToggleModal }: Props) {
     console.log(device);
     const { codecsList } = useContext(DevicesContext)
     if (!device)
@@ -43,7 +43,7 @@ export default function EditDeviceModal({ changeEditMakeLoraWAN, autoGenerateLor
         <Modal open={openModal} sx={{ borderRadius: 2 }} onClose={handleToggleModal} >
             <Box sx={style}>
                 <form onSubmit={submitEditDevice}>
-                    <Box p={2}>
+                    <Box px={2} py={.6}>
                         <RowContainerBetween additionStyles={{ p: 2 }}>
                             <Box></Box>
                             <Close onClick={handleToggleModal} sx={{ cursor: 'pointer', color: 'black', fontSize: 20 }} />
@@ -57,11 +57,14 @@ export default function EditDeviceModal({ changeEditMakeLoraWAN, autoGenerateLor
                             value={device.meta.type}
                             options={[{ name: 'Wazidev Board', id: 'wazidev', imageurl: 'wazidev.svg' }, { name: 'Generic board', id: 'genericboard', imageurl: '/WaziAct.svg' }]}
                         />
-                        {
-                            device.meta.codec && (
-                                <SelectElementString mx={0} my={2} title='Device Codec' value={device.meta.codec} handleChange={() => { }} conditions={codecsList as { id: string, name: string }[]} />
-                            )
-                        }
+                        <SelectElementString 
+                            mx={0} my={2} 
+                            title='Device Codec'
+                            name="codec"
+                            value={device.meta.codec} 
+                            handleChange={handleChangeDeviceCodec} 
+                            conditions={codecsList as { id: string, name: string }[]} 
+                        />
                         <RowContainerBetween additionStyles={{ my: 1 }}>
                             <RowContainerNormal>
                                 <Router sx={{ mx: 1, fontSize: 20, color: 'primary.main' }} />
