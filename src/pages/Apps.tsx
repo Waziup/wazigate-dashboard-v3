@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, FormControl, Grid, InputLabel, ListItemIcon, Menu, MenuItem, Select, SelectChangeEvent, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, FormControl, Grid, InputLabel, ListItemIcon, Menu, MenuItem, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material';
 import { NormalText, } from './Dashboard';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
@@ -13,6 +13,7 @@ import CustomApp from '../components/CustomApp';
 import { SelectElement } from './DeviceSettings';
 import { LoadingButton } from '@mui/lab';
 import { returnAppURL } from '../utils';
+import TextInputField from '../components/shared/TextInputField';
 type App1 = App & {
     description: string
 }
@@ -334,38 +335,45 @@ export default function Apps() {
                                 <Typography>{modalProps.title}</Typography>
                                 <Button onClick={() => { setCustomAppId(customAppProps); setLogs({ done: false, logs: '' }); closeModal() }} variant={'contained'} sx={{ mx: 2 }} color={'error'}>Cancel</Button>
                             </RowContainerBetween>
-
-                            <Box borderBottom={'1px solid black'} py={2}></Box>
                             <Box width={'90%'} bgcolor={'#fff'}>
                                 <form onSubmit={(e) => { e.preventDefault(); handleSubmitNewCustomApp() }}>
                                     <Box borderBottom={'1px solid black'} px={2} >
-                                        <TextField
-                                            id="name"
+                                        <TextInputField
+                                            placeholder='Enter app name'
+                                            label='Name'
+                                            required
                                             name='name'
-                                            onChange={handleCustomAppIdChange}
-                                            required
-                                            variant="standard"
                                             value={customAppId.name}
-                                        />
-                                        <TextField
-                                            id="image"
                                             onChange={handleCustomAppIdChange}
-                                            name="image"
-                                            required
-                                            variant="standard"
-                                            value={customAppId.image}
-                                            placeholder="Docker Image: format(owner/image_name:tag)"
                                         />
-                                        <TextField
+                                        <TextInputField
+                                            placeholder="Docker Image: format(owner/image_name:tag)"
+                                            label='Image'
+                                            required
+                                            name='image'
+                                            value={customAppId.image}
+                                            onChange={handleCustomAppIdChange}
+                                        />
+                                        <TextInputField
+                                            placeholder="Enter Author"
+                                            label='Author'
+                                            required
+                                            name='author'
+                                            value={customAppId.version}
+                                            onChange={handleCustomAppIdChange}
+                                        />
+                                        <TextInputField
                                             id="author"
                                             onChange={handleCustomAppIdChange}
                                             name="author"
                                             required
+                                            label='Author'
                                             value={customAppId.author}
                                             placeholder="Author of app"
                                         />
-                                        <TextField
+                                        <TextInputField
                                             id="description"
+                                            label='description'
                                             onChange={handleCustomAppIdChange}
                                             name="description"
                                             required
