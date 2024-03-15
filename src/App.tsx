@@ -115,7 +115,7 @@ function App() {
                 },
                 {
                     path:'/docs',
-                    element: <iframe width="100%" height="100%" className="app" src="/docs/" />
+                    element: <Box height={'100vh'}><iframe width="100%" height="100%" className="app" src="/docs/" /></Box>
                 }
             ]
         }
