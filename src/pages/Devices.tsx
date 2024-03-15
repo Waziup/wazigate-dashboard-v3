@@ -112,7 +112,6 @@ function Devices() {
         })
     };
     const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.name, e.target.value);
         setNewDevice({
             ...newDevice,
             meta: {
@@ -123,7 +122,17 @@ function Devices() {
             }
         })
     }
+    
     const handleChangeDeviceCodec = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        if(selectedDevice){
+            setSelectedDevice({
+                ...selectedDevice,
+                meta: {
+                    ...selectedDevice.meta,
+                    codec: event.target.value
+                }
+            }) as unknown as Device
+        }
         setNewDevice({
             ...newDevice,
             meta: {
@@ -213,6 +222,7 @@ function Devices() {
                     });
             }
         }
+        setSelectedDevice(null);
         handleToggleEditModalClose();
         getDevicesFc();
         navigate('/devices')
@@ -324,6 +334,7 @@ function Devices() {
                 openModal={openEditModal}
                 handleChangeSelectDeviceType={handleChangeSelectDeviceType}
                 handleToggleModal={handleToggleEditModalClose}
+                handleChangeDeviceCodec={handleChangeDeviceCodec}
                 handleNameChange={handleEditSelectedDeviceName}
                 handleTextInputEditCodec={handleTextInputEditCodec}
                 submitEditDevice={handleSubmitEditDevice}
