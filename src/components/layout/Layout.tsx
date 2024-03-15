@@ -24,7 +24,7 @@ function Layout() {
                         </Grid>
                     </Grid>
                 ) : (
-                    <Box sx={{  bgcolor: '#F0F2F5', overflow: 'hidden' }}>
+                    <Box sx={{height:'100vh',  bgcolor: '#F0F2F5', overflow: 'hidden' }}>
                         <RowContainerBetween additionStyles={{ bgcolor: 'primary.main' }} >
                             <Box sx={{ display: 'flex', py: 2, alignItems: 'center' }} >
                                 <Menu onClick={handleToggle} sx={{ mx: 2, color: 'white', cursor: 'pointer' }} />
@@ -34,6 +34,10 @@ function Layout() {
                                 (pathname.endsWith('/settings')) ? (
                                     null
                                 ) : (pathname.includes('/sensors') || pathname.includes('/actuators'))?(
+                                    <Link to={pathname+'/settings'} state={{title:'Settings'}}>
+                                        <SettingsOutlined sx={{ color: 'white', mx: 1, }} />
+                                    </Link>
+                                ):(pathname.includes('/devices/'))?(
                                     <Link to={pathname+'/settings'} state={{title:'Settings'}}>
                                         <SettingsOutlined sx={{ color: 'white', mx: 1, }} />
                                     </Link>
