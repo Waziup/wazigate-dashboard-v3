@@ -4,12 +4,13 @@ import { Sensors,History, DeviceHub } from '@mui/icons-material';
 import { Device } from 'waziup';
 import { differenceInMinutes } from '../../utils';
 function createData(
+    devType: string,
   name: string,
   runtime: string,
   interfaces: number,
   status: boolean,
 ) {
-  return { name, runtime, interfaces, status };
+  return {devType, name, runtime, interfaces, status };
 }
 
 interface Props{
@@ -17,7 +18,7 @@ interface Props{
 }
 export default function BasicTable({devices}:Props) {
     const rowsData = devices.map((dev)=>{
-        return createData(dev.name+'*'+differenceInMinutes(dev.modified),dev.modified.getHours().toString()+'h',4,false)
+        return createData(dev.meta.type,dev.name+'*'+differenceInMinutes(dev.modified),dev.modified.getHours().toString()+'h',4,false)
     });
     return (
         <TableContainer component={Paper}>
@@ -42,9 +43,9 @@ export default function BasicTable({devices}:Props) {
                         >
                             <TableCell width={260}  >
                                 <Box alignItems={'center'} display={'flex'}>
-                                    <Box height={'50%'} borderRadius={1} mx={.5} p={.5} bgcolor={DEFAULT_COLORS.primary_blue}>
-                                        <Sensors sx={{fontSize:15, color:'#fff'}}/>
-                                        <Typography fontSize={10} color={'white'} component={'span'}>WaziDev</Typography>
+                                    <Box height={'50%'} borderRadius={1} mx={.5} px={.3} bgcolor={DEFAULT_COLORS.primary_blue}>
+                                        <Sensors sx={{fontSize:10, color:'#fff'}}/>
+                                        <Typography fontSize={10} color={'white'} component={'span'}>{row.devType}</Typography>
                                     </Box>
                                     <Box>
                                         <Typography fontSize={[10,11,11,12,10]} color={DEFAULT_COLORS.primary_black}>

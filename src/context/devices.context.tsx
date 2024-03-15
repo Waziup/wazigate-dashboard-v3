@@ -10,7 +10,7 @@ interface ContextValues{
     codecsList?:{id:string,name:string}[] | null,
     addApp:(app:App)=>void
     token:string
-    netWorkDevices:Devices | null 
+    networkDevices:Devices | null 
     setNetWorkDevices:()=>void
     setAccessToken:(token:string) =>void
 }
@@ -34,7 +34,7 @@ export const DevicesContext = createContext<ContextValues>({
     setAccessToken(userData) {
         console.log(userData);
     },
-    netWorkDevices:null,
+    networkDevices:null,
     setNetWorkDevices:()=>{},
 });
 
@@ -57,7 +57,7 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             setDevices(devFilter);
         });
     }
-    const [netWorkDevices, setNetWorkDevices] = useState<Devices | null>(null);
+    const [networkDevices, setNetWorkDevices] = useState<Devices | null>(null);
     const setNetWorkDevicesFc = useCallback(async ()=>{
         const netWorkDevices = await getNetworkDevices();
         setNetWorkDevices(netWorkDevices);
@@ -106,7 +106,7 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         getDevicesFc:getDevices,
         setAppsFc,
         getApps,
-        netWorkDevices,
+        networkDevices,
         setNetWorkDevices:setNetWorkDevicesFc,
         addApp,
         token,
