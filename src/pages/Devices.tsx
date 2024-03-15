@@ -1,6 +1,6 @@
-import { Box, Button, Grid, CardContent, Typography, ListItemIcon, Menu, MenuItem, SelectChangeEvent, SpeedDial, SpeedDialAction, SpeedDialIcon, } from '@mui/material';
+import { Box,  Grid, CardContent, Typography, SelectChangeEvent, SpeedDial, SpeedDialAction, SpeedDialIcon, } from '@mui/material';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
-import { Add, DeleteOutline, ModeOutlined, MoreVert, Sensors, } from '@mui/icons-material';
+import { Add,  Sensors, } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
 import { useNavigate, useOutletContext, } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
@@ -8,10 +8,10 @@ import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
 import EditDeviceModal from '../components/ui/EditDeviceModal';
 import { DevicesContext } from '../context/devices.context';
-import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import { capitalizeFirstLetter, differenceInMinutes } from '../utils';
 import PrimaryIconButton from '../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
+import MenuComponent from '../components/shared/MenuDropDown';
 
 
 const initialNewDevice: Device = {
@@ -355,37 +355,27 @@ function Devices() {
                                                     <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>
                                                     <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>Last Updated {Math.round(differenceInMinutes(device.modified) / 60)} mins ago</Typography>
                                                 </Box>
-                                                <Box position={'relative'}>
-                                                    <PopupState variant="popover" popupId="demo-popup-menu">
-                                                        {(popupState) => (
-                                                            <React.Fragment>
-                                                                <Button id="demo-positioned-button"
-                                                                    aria-controls={open ? 'demo-positioned-menu' : undefined}
-                                                                    aria-haspopup="true"
-                                                                    aria-expanded={open ? 'true' : undefined}
-                                                                    {...bindTrigger(popupState)}
-                                                                >
-                                                                    <MoreVert sx={{ color: 'black' }} />
-                                                                </Button>
-
-                                                                <Menu {...bindMenu(popupState)}>
-                                                                    <MenuItem onClick={() => { handleSelectDevice(device); popupState.close }} value={device.id} >
-                                                                        <ListItemIcon>
-                                                                            <ModeOutlined fontSize="small" />
-                                                                        </ListItemIcon>
-                                                                        Edit
-                                                                    </MenuItem>
-                                                                    <MenuItem value={id} onClick={() => { handleDeleteDevice(device); popupState.close }}>
-                                                                        <ListItemIcon>
-                                                                            <DeleteOutline fontSize="small" />
-                                                                        </ListItemIcon>
-                                                                        Uninstall
-                                                                    </MenuItem>
-                                                                </Menu>
-                                                            </React.Fragment>
-                                                        )}
-                                                    </PopupState>
-                                                </Box>
+                                                <MenuComponent
+                                                    open={open}
+                                                    menuItems={[
+                                                        {
+                                                            clickHandler() {
+                                                                handleSelectDevice(device);
+                                                                handleClose();
+                                                            },
+                                                            icon:'mode_outlined',
+                                                            text:'Edit'
+                                                        },
+                                                        {
+                                                            clickHandler() {
+                                                                handleDeleteDevice(device);
+                                                                handleClose();
+                                                            },
+                                                            icon:'delete_outline',
+                                                            text:'Uninstall'
+                                                        }
+                                                    ]}
+                                                />
                                             </RowContainerBetween>
                                         </Box>
                                         <CardContent sx={{ py: 0 }}>
