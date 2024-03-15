@@ -1,4 +1,4 @@
-import { Box, Button,Icon, Stack, Typography } from "@mui/material";
+import { Box, Button,CircularProgress,Icon, Stack, Typography } from "@mui/material";
 import React, { useTransition } from "react";
 import ResourcesTabMaintenance from "../components/ui/ResourcesTab.maintenance";
 import SSHTabMaintenance from "../components/ui/SSHTab.maintenance";
@@ -18,8 +18,9 @@ const BTN = ({title,icon,onClick,activeTab,children,idx}:{idx:string,title:strin
 );
 
 const PendingTab =()=>(
-    <Box>
-        <Typography>isPending</Typography>
+    <Box sx={{position:'absolute',top:0,left:0,width:'100%',height:'100%',display:'flex',justifyContent:'center',alignItems:'center',bgcolor:'rgba(255,255,255,0.5)'}}>
+        <CircularProgress />
+        <Typography>Loading...</Typography>
     </Box>
 )
 interface Props{
@@ -64,7 +65,7 @@ export default function SettingsMaintenance() {
     const [matches] = useOutletContext<[matches: boolean]>();
     const TabComponent = tabs[activeTab].component;
     return (
-        <Box position={'relative'}>
+        <Box sx={{ overflowY: 'auto', my: 2, height: '100%',position:'relative' }}>
             <Stack bgcolor={'primary.main'} overflow={'auto'}  direction={'row'} spacing={0}>
                 <BTN activeTab={activeTab} idx='0' onClick={handleTabChange} title={'Resources'} icon={'folder_copy'}/>
                 <BTN activeTab={activeTab} idx='1' onClick={handleTabChange} title={'SSH'} icon={'terminal_outlined'}/>

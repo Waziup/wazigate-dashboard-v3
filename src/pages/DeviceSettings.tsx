@@ -85,7 +85,7 @@ export default function DeviceSettings() {
                         </div>
                     </Box>
                 </RowContainerBetween>
-                <Box m={2} width={matches?'50%':'90%'}>
+                <Box m={2} width={matches?'50%':'95%'}>
                     {
                         thisDevice?.meta.lorawan ? (
                             <Box bgcolor={'#fff'} mx={2} my={1} px={2} py={2} borderRadius={2} >
@@ -105,7 +105,7 @@ export default function DeviceSettings() {
                             </Box>
                         ) : null
                     }
-                    <Box bgcolor={'#fff'} mx={2} my={1} px={2} py={2} borderRadius={2}>
+                    <Box bgcolor={'#fff'} mx={2} my={2} px={2} py={2} borderRadius={2}>
                         <RowContainerBetween>
                             <Box display={'flex'} my={1} alignItems={'center'}>
                                 <Box component={'img'} src={'/box_download.svg'} width={20} height={20} />
