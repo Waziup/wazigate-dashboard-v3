@@ -22,12 +22,21 @@ type UsageInfoGraph = {
     cpu_usage:number[]
     mem_usage:number[],
     temp:number[]
+    xaxis:string[]
+}
+const returnDate = (i:number)=>{
+    const date = new Date();
+    date.setSeconds(date.getSeconds()-i);
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
 }
 export default function ResourcesTabMaintenance({matches}:Props) {
     const [usageGraph,setUsageGraph] = useState<UsageInfoGraph>({
         cpu_usage:[0],
         mem_usage:[0],
         temp:[0],
+        xaxis:[],
     })
     const [usageInfo, setUsageInfo] = useState<UsageInfo>({
         cpu_usage:'',
@@ -50,18 +59,19 @@ export default function ResourcesTabMaintenance({matches}:Props) {
         const fetchInterval = setInterval(()=>{
             getUsageInfo().then((res) => {
                 setUsageInfo(res);
-                setUsageGraph({
-                    cpu_usage: usageGraph.cpu_usage.length>50?[...usageGraph.cpu_usage.filter((_x,i)=>i),parseInt(res.cpu_usage)]:[...usageGraph.cpu_usage,parseInt(res.cpu_usage)],
-                    mem_usage: usageGraph.mem_usage.length>50?[...usageGraph.mem_usage.filter((_x,i)=>i),parseInt(res.mem_usage.used)]:[...usageGraph.cpu_usage,parseInt(res.mem_usage.used)],
-                    temp: usageGraph.temp.length>50?[...usageGraph.temp.filter((_x,i)=>i),parseInt(res.temp)]:[...usageGraph.cpu_usage,parseInt(res.temp)], 
-                })
+                setUsageGraph((prev)=>({
+                    cpu_usage: prev.cpu_usage.length>50?[...prev.cpu_usage.slice(),parseInt(res.cpu_usage)]:[...prev.cpu_usage,parseInt(res.cpu_usage)],
+                    mem_usage: prev.mem_usage.length>50?[...prev.mem_usage.slice(),Math.round(parseInt(res.mem_usage.used)/1024)]:[...prev.mem_usage,Math.round(parseInt(res.mem_usage.used)/1024)],
+                    temp: prev.temp.length>50?[...prev.temp.slice(),parseInt(res.temp)]:[...prev.temp,parseInt(res.temp)],
+                    xaxis: prev.xaxis.length>50?[...prev.xaxis.slice(),returnDate(0)]:[...prev.xaxis,returnDate(0)]
+                }));
             });
         },2000);
         return ()=>clearInterval(fetchInterval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
     return (
-        <Box  sx={{ p: 3, overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100vh' }}>
+        <Box  sx={{ overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100vh' }}>
             <Stack direction={matches?'row':'column'} justifyContent={'space-evenly'} spacing={2}>
                 <ReactSpeedometer
                     maxValue={100}
@@ -112,7 +122,7 @@ export default function ResourcesTabMaintenance({matches}:Props) {
                 options={{
                     chart: {
                         id: 'realtime',
-                        height: 600,
+                        height: 400,
                         type: 'line',
                         animations: {
                             enabled: true,
@@ -129,10 +139,13 @@ export default function ResourcesTabMaintenance({matches}:Props) {
                         }
                     },
                     xaxis: {
-                        type:'datetime'
+                        categories: usageGraph.xaxis
                     },
-                    yaxis: {
-                        max: 100
+                    dataLabels:{
+                        enabled:false
+                    },
+                    markers:{
+                        size:0
                     },
                     legend: {
                         show: true
@@ -141,7 +154,7 @@ export default function ResourcesTabMaintenance({matches}:Props) {
                         curve: 'smooth',
                         width: 2
                     },
-                    colors: ['#4592F6', '#ac64ad', '#F6BB45'],
+                    colors: ['#4592F6', '#F35E19', '#54C6BF'],
                 }}
                 series={[
                     {
@@ -157,9 +170,9 @@ export default function ResourcesTabMaintenance({matches}:Props) {
                         data: usageGraph.temp
                     }
                 ]}
-                type="area"
+                type="line"
                 width={'100%'}
-                height={290}
+                height={400}
             />
         </Box>
     )
