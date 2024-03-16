@@ -1,15 +1,15 @@
 
-import { Backdrop, Box,  Button,  Grid, Typography } from '@mui/material';
+import { Backdrop, Box,  Button,  Grid, ListItemText, Typography } from '@mui/material';
 import RowContainerBetween from '../shared/RowContainerBetween';
 import React, { useEffect, useState } from 'react';
 import RowContainerNormal from '../shared/RowContainerNormal';
-import { cInfo, getAllContainers, getContainerLogs } from '../../utils/systemapi';
+import { cInfo, getAllContainers, getContainerLogs, setContainerAction } from '../../utils/systemapi';
 import MenuComponent from '../shared/MenuDropDown';
+import { Android12Switch } from '../shared/Switch';
 interface Props{
     matches?:boolean
 }
 export default function ContainersTabMaintenance({matches}:Props) {
-    console.log(matches);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [containers, setContainers] = React.useState<cInfo[]>([]);
     const [logs,setLogs] = useState<{success:boolean,logs:string}>({success:false,logs:''});
@@ -32,6 +32,19 @@ export default function ContainersTabMaintenance({matches}:Props) {
             });
         })
     };
+    const startStopContainer =(containerId:string,action:string)=>{
+        setContainerAction(containerId, action)
+        .then((msg) => {
+            alert('Started successfully: '+msg);
+            getAllContainers().then((cInfo) => {
+                setContainers(cInfo);
+            })
+        })
+        .catch((error) => {
+            alert('Error Encountered'+ error);
+            console.log(error);
+        });
+    }
     useEffect(() => {
         getAllContainers().then((res) => {
             console.log(res);
@@ -71,13 +84,15 @@ export default function ContainersTabMaintenance({matches}:Props) {
                 <Grid spacing={2} py={2} container>
                     {
                         containers.map((container, id) => (
-                            <Grid key={id} lg={4} my={1} xl={4} md={6} xs={12} sm={6} item sx={{ bgcolor: '#fff', cursor: 'pointer', borderRadius: 2 }}>
+                            <Grid key={id} lg={3.6} m={1} xl={3.6} md={6} xs={12} sm={6} item sx={{ bgcolor: '#fff', cursor: 'pointer', borderRadius: 2 }}>
                                 <RowContainerBetween additionStyles={{ p: matches ? 1 : .3 }}>
                                     <RowContainerNormal>
                                         <Box component={'img'} src={'/docker.svg'} width={30} height={30} />
                                         <Box mx={.5}>
-                                            <Typography fontSize={12}>{container.Names[0]}</Typography>
-                                            <Typography fontSize={10} color={'#666'}>{container.State}</Typography>
+                                            <ListItemText
+                                                primary={container.Names[0]}
+                                                secondary={`State ${container.State}`}
+                                            />
                                         </Box>
                                     </RowContainerNormal>
                                     <MenuComponent
@@ -96,6 +111,18 @@ export default function ContainersTabMaintenance({matches}:Props) {
                                         Status: {container.Status}
                                     </Typography>
                                 </Box>
+                                <RowContainerBetween>
+                                    <Typography>
+                                        {
+                                            container.State==='running' ? 'Stop' : 'Start'
+                                        }
+                                    </Typography>
+                                    <Android12Switch 
+                                        checked={container.State==='running' ? true : false}
+                                        onChange={()=>{startStopContainer(container.Id,container.State==='running' ? 'stop' : 'start')}}
+                                        color="info" 
+                                    />
+                                </RowContainerBetween>
                             </Grid>
                         ))
                     }
