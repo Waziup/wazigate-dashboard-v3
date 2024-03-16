@@ -3,7 +3,7 @@ import React from 'react';
 interface InputFieldProps extends React.ComponentProps<typeof TextField> {
     label: string,
     value?: string,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void,
     name?: string,
     required?: boolean,
     placeholder?: string,

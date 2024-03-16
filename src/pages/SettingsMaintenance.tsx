@@ -65,7 +65,7 @@ export default function SettingsMaintenance() {
     const [matches] = useOutletContext<[matches: boolean]>();
     const TabComponent = tabs[activeTab].component;
     return (
-        <Box sx={{ overflowY: 'auto', my: 2, height: '100%',position:'relative' }}>
+        <Box sx={{ overflowY: 'auto', height: '100%',position:'relative' }}>
             <Stack bgcolor={'primary.main'} overflow={'auto'}  direction={'row'} spacing={0}>
                 <BTN activeTab={activeTab} idx='0' onClick={handleTabChange} title={'Resources'} icon={'folder_copy'}/>
                 <BTN activeTab={activeTab} idx='1' onClick={handleTabChange} title={'SSH'} icon={'terminal_outlined'}/>
