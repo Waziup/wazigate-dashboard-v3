@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs,ListItemText, Paper,styled, Grid,Icon, SxProps,  Theme, Typography, CircularProgress, Grow, LinearProgress } from "@mui/material";
+import { Box, Breadcrumbs,ListItemText,  Grid,Icon, SxProps,  Theme, Typography, CircularProgress, Grow, LinearProgress, Modal } from "@mui/material";
 import { Link, useOutletContext } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
@@ -6,39 +6,37 @@ import RowContainerNormal from "../components/shared/RowContainerNormal";
 import { CellTower, DesktopWindowsOutlined, LockOutlined, ModeFanOffOutlined, WifiOutlined } from "@mui/icons-material";
 import { Android12Switch } from "../components/shared/Switch";
 import PrimaryButton from "../components/shared/PrimaryButton";
-import { getWiFiScan,setConf as setConfFc, AccessPoint,getConf, setWiFiConnect, WifiReq } from "../utils/systemapi";
-import { useEffect, useState } from "react";
-const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
-    textAlign: 'center',
-    marginBottom: theme.spacing(2),
-    color: theme.palette.text.secondary,
-}));
-const GridItemEl=({ children, text, additionStyles, icon }: { additionStyles?: SxProps<Theme>, text: string, children: React.ReactNode, icon: string })=>(
-    <Item sx={additionStyles}>
-        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', alignItems: 'center' }} p={1} >
-            <Icon sx={IconStyle}>{icon}</Icon>
-            <Typography color={'#212529'} fontWeight={500}>{text}</Typography>
-        </Box>
-        {children}
-    </Item>
-)
-const GridItem = ({ children, xs,md,additionStyles }: {xs:number,md:number,spacing?:number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode,  }) => (
-    <Grid m={1} item xs={xs} md={md} spacing={3} sx={additionStyles} borderRadius={2}  >
+import { getWiFiScan,setConf as setConfFc, AccessPoint,getConf, setWiFiConnect, WifiReq, setAPMode, setAPInfo } from "../utils/systemapi";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import GridItemEl from "../components/shared/GridItemElement";
+const GridItem = ({ children,matches,lg, xs,md,additionStyles }: {xs:number,md:number,lg:number,spacing?:number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode,  }) => (
+    <Grid m={matches?2:0} lg={lg} sm={12} xl={4.8} item xs={xs} md={md} spacing={3} sx={additionStyles} borderRadius={2}  >
         {children}
     </Grid>
 );
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 2,
+    borderRadius: 2,
+};
 const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
 import TextInputField from "../components/shared/TextInputField";
 import { Cloud } from "waziup";
 import MenuComponent from "../components/shared/MenuDropDown";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
+import { DevicesContext } from "../context/devices.context";
 export default function SettingsNetworking() {
     const [matches] = useOutletContext<[matches:boolean]>();
     const [scanLoading,setScanLoading]=useState<boolean>(false);
     const [wifiList,setWifiList]=useState<AccessPoint[]>([]);
-    const [selectedWifi,setSelectedWifi]=useState<AccessPoint|undefined>(undefined);
+    const [selectedWifi,setSelectedWifi]=useState<AccessPoint & {password?:string}|undefined>(undefined);
+    const {networkDevices} = useContext(DevicesContext)
     const scan = () => {
         setScanLoading(true);
         getWiFiScan()
@@ -101,33 +99,32 @@ export default function SettingsNetworking() {
             alert('No changes');
         }
     }
-    const handleEnabledChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleEnabledChange = (_event: React.ChangeEvent<HTMLInputElement>,checked: boolean) => {
         if (hasUnsavedChanges) {
             alert("Save all changes before activating the synchronization!");
             return
         }
-        const enabled = event.target.checked;
         setSelectedCloud({
             ...selectedCloud,
-            paused: !enabled
+            paused: checked
         } as Cloud);
         setSaving(true);
         const timer = new Promise(resolve => setTimeout(resolve, 2000));
-        window.wazigate.setCloudPaused(selectedCloud?.id as string, !enabled).then(() => {
+        window.wazigate.setCloudPaused(selectedCloud?.id as string, !checked)
+        .then(() => {
+            alert("Sync activated!");
             timer.then(() => {
                 setSaving(false);
             })
-        }, (err: Error) => {
+        })
+        .catch((err:Error)=>{
+
             setSaving(false);
             setSelectedCloud({
                 ...selectedCloud,
-                paused: !enabled
+                paused: !checked
             } as Cloud);
-            if(enabled) {
-                alert("There was an error activating the sync!\n Check your credentials and try again.\n\nThe server said:\n" + err);
-            } else {
-                alert("There was an error saving the changes:\n" + err);
-            }
+            alert("There was an error activating the sync!\n Check your credentials and try again.\n\nThe server said:\n" + err);
         });
     }
     const submitConf = (event: React.FormEvent) => {
@@ -148,8 +145,20 @@ export default function SettingsNetworking() {
           }
         );
     };
+    const switchToAPMode = () => {
+        // this.setState({ switchToAPModeLoading: true });
+        setAPMode().then(()=>{
+            alert('Switched to AP Mode');
+        })
+        .catch((error) => {
+            alert(error);
+        });
+    };
     useEffect(() => {
-        window.wazigate.getClouds().then((clouds) => setClouds(Object.values(clouds)));
+        window.wazigate.getClouds().then((clouds) => {
+            setClouds(Object.values(clouds));
+            setSelectedCloud(Object.values(clouds)? Object.values(clouds)[0]:null);
+        });
         getConf().then((conf) => {
             setConf(conf);
         }).catch((err) => {
@@ -176,155 +185,222 @@ export default function SettingsNetworking() {
             setSelectedWifi(undefined);
         });
     };
+    const submitSSID = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const formEl =document.getElementById('submitform') as HTMLFormElement;
+        const data = {
+            SSID: formEl.SSID.value,
+            password: formEl.password.value,
+        }
+        console.log("data from submitSSID form: ",data);
+        
+        setAPInfo(data).then(
+          (msg) => {
+            alert('Success'+msg);
+          })
+          .catch((error) => {
+            alert('Error encountered'+error);
+          }
+        );
+      };
     useEffect(() => {
         scan();
     },[]);
+    const apConn = useMemo(() => {
+        const apConn = networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP");
+        return apConn; 
+    },[networkDevices]);
+    console.log('ApCONN: ',apConn);
     return (
-        <Box p={2.5} sx={{ position: 'relative', width: '100%',overflowY:'auto', height: '100vh' }}>
-            <Box>
-                <Typography fontWeight={600} fontSize={24} color={'black'}>Wifi</Typography>
-                <div role="presentation" >
-                    <Breadcrumbs aria-label="breadcrumb">
-                        <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/settings">
-                            Settings
-                        </Link>
-                        <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
-                            wifi
-                        </p>
-                    </Breadcrumbs>
-                </div>
-            </Box>
-            <Grid container>
-                <GridItem spacing={2} md={4.6} xs={12} matches={matches} additionStyles={{}}>
-                    {
-                        clouds.map((cloud)=>(
-                            <GridItemEl text={cloud.name} icon={'cloud'}>
-                                <Grow in={saving}>
-                                    <LinearProgress />
-                                </Grow>
-                                <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc'}}>
-                                    <RowContainerNormal>
-                                        <Box component={'img'} src='/wazilogo.svg' mx={2} />
-                                        <Box>
-                                            <ListItemText
-                                                primary={cloud.name || cloud.id}
-                                                secondary={`ID ${cloud.id}`}
-                                                
-                                            />
-                                        </Box>
-                                    </RowContainerNormal>
-                                    <MenuComponent
-                                        open={false}
-                                        menuItems={[
-                                            {
-                                                text: 'Rename',
-                                                icon: 'edit',
-                                                clickHandler:handleRenameClick
-                                            }
-                                        ]}
-                                    />
-                                </RowContainerBetween>
-                                <Box px={2}>
-                                    <RowContainerNormal>
-                                        <Android12Switch 
-                                            checked={!cloud.paused}
-                                            onChange={handleEnabledChange}
-                                            color="info" 
+        <>
+            <Modal
+                open={selectedWifi !== undefined}
+                onClose={() => setSelectedWifi(undefined)}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <form id="submitform" onSubmit={submitHandler}>
+                        <TextInputField 
+                            icon={<CellTower sx={{fontSize:20,mx:1}}/>} 
+                            label="Access Point SSID"
+                            value={selectedWifi?.ssid}
+                            name="SSID"
+                            placeholder="Enter SSID"
+                        />
+                        <TextInputField 
+                            icon={<LockOutlined 
+                            sx={{fontSize:20,mx:1}}/>} 
+                            label="Access Point Pasword" 
+                            placeholder="Enter password" 
+                            name="password"
+                        />
+                        <PrimaryButton title="Save" onClick={()=>{}} type="submit" />
+                    </form>
+                </Box>
+            </Modal>
+            <Box p={2.5} sx={{ position: 'relative', width: '100%',overflowY:'auto', height: '100vh' }}>
+                <Box>
+                    <Typography fontWeight={600} fontSize={24} color={'black'}>Wifi</Typography>
+                    <div role="presentation" >
+                        <Breadcrumbs aria-label="breadcrumb">
+                            <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/settings">
+                                Settings
+                            </Link>
+                            <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
+                                wifi
+                            </p>
+                        </Breadcrumbs>
+                    </div>
+                </Box>
+                <Grid container>
+                    
+                    <GridItem lg={4} spacing={2} md={4.6} xs={12} matches={matches} additionStyles={{}}>
+                        {
+                            clouds.map((cloud)=>(
+                                <GridItemEl text={cloud.name} icon={'cloud'}>
+                                    <Grow in={saving}>
+                                        <LinearProgress />
+                                    </Grow>
+                                    <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc'}}>
+                                        <RowContainerNormal>
+                                            <Box component={'img'} src='/wazilogo.svg' mx={2} />
+                                            <Box>
+                                                <ListItemText
+                                                    primary={cloud.name || cloud.id}
+                                                    secondary={`ID ${cloud.id}`}
+                                                />
+                                            </Box>
+                                        </RowContainerNormal>
+                                        <MenuComponent
+                                            open={false}
+                                            menuItems={[
+                                                {
+                                                    text: 'Rename',
+                                                    icon: 'edit',
+                                                    clickHandler:handleRenameClick
+                                                }
+                                            ]}
                                         />
-                                        <Typography>Active Sync</Typography>
-                                    </RowContainerNormal>
-                                    <TextInputField label="REST Address *" name="rest" onChange={handleInputChange} value={'Wazidev'} />
-                                    <TextInputField label="MQTT Address *" name="mqtt" onChange={handleInputChange} value={'Wazidev'} />
-                                    <TextInputField label="Username" name="username" onChange={handleInputChange} value={'johndoe@gmail.com'} />
-                                    <TextInputField label="Password" name="password" onChange={handleInputChange} value={'******'} />
-                                </Box>
-                                <Grow in={hasUnsavedChanges}>
-                                    <PrimaryIconButton
-                                        iconname="save"
-                                        onClick={handleSaveClick}
-                                        type="button"
-                                        title="SAVE"
-                                    />
-                                </Grow>
-                            </GridItemEl>
-                        ))
-                    }
-                    {
-                        selectedWifi ? (
-                            <GridItemEl text={'Access Point'} icon={'power_settings_new'}>
-                                <Box p={2}>
-                                    <form onSubmit={submitHandler}>
-                                        <TextInputField 
-                                            icon={<CellTower sx={{fontSize:20,mx:1}}/>} 
-                                            label="Access Point SSID" onChange={()=>{}} 
-                                            value={selectedWifi.ssid} 
-                                        />
-                                        <TextInputField 
-                                            icon={<LockOutlined 
-                                            sx={{fontSize:20,mx:1}}/>} 
-                                            label="Access Point Pasword" 
-                                            onChange={()=>{}} 
-                                            value={''} 
-                                        />
-                                        <PrimaryButton title="Save" onClick={()=>{}} type="submit" />
-                                    </form>
-                                </Box>
-                            </GridItemEl>
-                        ):null
-                    }
-                    <GridItemEl text={'Misc. Settings'} icon={'settings'}>
-                        <Box p={2}>
-                            <form onSubmit={submitConf}>
-                                <TextInputField 
-                                    icon={<ModeFanOffOutlined sx={{fontSize:20,mx:1}}/>} 
-                                    label="Fan Trigger Temperature (C)" 
-                                    onChange={()=>{}} 
-                                    name="fan"
-                                    value={
-                                        conf ? (conf?.fan_trigger_temp as unknown as string) : "Loading..."} 
-                                />
-                                <TextInputField 
-                                    icon={<DesktopWindowsOutlined sx={{fontSize:20,mx:1}}/>} 
-                                    label="OLED halt timeout (seconds)" 
-                                    onChange={()=>{}}
-                                    name="oled"
-                                    value={   conf ? (conf?.oled_halt_timeout as unknown as string) : "Loading..."}
-                                />
-                                <PrimaryButton title="Save" onClick={()=>{}} type="button" />
-                            </form>
-                        </Box>
-                    </GridItemEl>
-                </GridItem>
-                <GridItem md={7} xs={12} matches={matches}  additionStyles={{bgcolor:'#fff',width:'100%'}}>
-                    <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', alignItems: 'center' }} p={1} >
-                        <WifiOutlined sx={IconStyle}/>
-                        <Typography color={'#212529'} fontWeight={500}>Available Wifi</Typography>
-                    </Box>
-                    <Box bgcolor={'#D4E3F5'} p={1}>
-                        <Typography>Connection activated | Access Point Mode</Typography>
-                    </Box>
-                    <Box p={1} borderBottom={'1px solid #ccc'}>
-                        <Typography color={'#666'}>Please select a network</Typography>
-                    </Box>
-                    {
-                        scanLoading?
-                            <Box sx={{mx:'auto',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',width:'100%'}}>
-                                <Typography>Checking for available networks</Typography>
-                                <CircularProgress />
-                            </Box>
-                        :(
-                            wifiList.map((wifi) => (
-                                <Box key={wifi.ssid} onClick={()=>setSelectedWifi(wifi)}>
-                                    <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc',p:1}}>
-                                        <Typography>{wifi.ssid}</Typography>
-                                        <Icon sx={IconStyle}>wifi_outlined</Icon>
                                     </RowContainerBetween>
+                                    <Box px={2}>
+                                        <RowContainerNormal>
+                                            <Android12Switch 
+                                                checked={!cloud.paused}
+                                                onChange={handleEnabledChange}
+                                                color="info" 
+                                            />
+                                            <Typography>Active Sync</Typography>
+                                        </RowContainerNormal>
+                                        <TextInputField placeholder="REST Address" label="REST Address *" name="rest" onChange={handleInputChange} value={cloud.rest} />
+                                        <TextInputField placeholder="MQTT Address" label="MQTT Address *" name="mqtt" onChange={handleInputChange} value={cloud.mqtt} />
+                                        <TextInputField placeholder="Username" label="Username" name="username" onChange={handleInputChange} value={cloud.username} />
+                                        <TextInputField placeholder="****" label="Password" name="password" onChange={handleInputChange} value={cloud.password} />
+                                    </Box>
+                                    <Grow in={hasUnsavedChanges}>
+                                        <PrimaryIconButton
+                                            iconname="save"
+                                            onClick={handleSaveClick}
+                                            type="button"
+                                            title="SAVE"
+                                        />
+                                    </Grow>
+                                </GridItemEl>
+                            ))
+                        }
+                        <GridItemEl text={'Access Point'} icon={'power_settings_new'}>
+                            <Box p={2}>
+                                <form onSubmit={submitSSID}>
+                                    <TextInputField 
+                                        icon={<CellTower sx={{fontSize:20,mx:1}}/>} 
+                                        label="Access Point SSID" 
+                                        value={apConn? atob(apConn["802-11-wireless"]?.ssid as string) : ""}
+                                        name="SSID"
+                                        placeholder="Enter SSID"
+                                    />
+                                    <TextInputField 
+                                        icon={<LockOutlined 
+                                        sx={{fontSize:20,mx:1}}/>} 
+                                        label="Access Point Pasword" 
+                                        placeholder="Enter password"
+                                        onChange={()=>{}} 
+                                        name="password"
+                                    />
+                                    <PrimaryButton title="Save" onClick={()=>{}} type="submit" />
+                                </form>
+                            </Box>
+                        </GridItemEl>
+                        
+                        <GridItemEl text={'Access Point Mode'} icon={'settings'}>
+                            <Box p={2}>
+                                <Typography fontSize={13} color={'#FA9E0E'}>
+                                    Warning: If you're using WiFi to access your gateway, 
+                                    after pressing this button you will need to connect to the Wazigate Hotspot in prder to control
+                                    your gateway
+                                </Typography>
+                                <PrimaryButton title="Switch " onClick={switchToAPMode} type="button" />
+                            </Box>
+                        </GridItemEl>
+                        <GridItemEl text={'Misc. Settings'} icon={'settings'}>
+                            <Box p={2}>
+                                <form onSubmit={submitConf}>
+                                    <TextInputField 
+                                        icon={<ModeFanOffOutlined sx={{fontSize:20,mx:1}}/>} 
+                                        label="Fan Trigger Temperature (C)" 
+                                        onChange={(e)=>{setConf({
+                                            ...conf,
+
+                                            fan_trigger_temp:e.target.value
+                                        })}} 
+                                        name="fan"
+                                        value={conf ? (conf?.fan_trigger_temp as unknown as string) : "Loading..."} 
+                                    />
+                                    <TextInputField 
+                                        icon={<DesktopWindowsOutlined sx={{fontSize:20,mx:1}}/>} 
+                                        label="OLED halt timeout (seconds)" 
+                                        onChange={(e)=>{setConf({
+                                            ...conf,
+                                            oled_halt_timeout:e.target.value
+                                        })}}
+                                        name="oled"
+                                        value={   conf ? (conf?.oled_halt_timeout as unknown as string) : "Loading..."}
+                                    />
+                                    <PrimaryButton title="Save" onClick={()=>{}} type="button" />
+                                </form>
+                            </Box>
+                        </GridItemEl>
+                    </GridItem>
+                    <GridItem lg={7} md={6} xs={12} matches={matches}  additionStyles={{bgcolor:'#fff',width:'100%'}}>
+                        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', alignItems: 'center' }} p={1} >
+                            <WifiOutlined sx={IconStyle}/>
+                            <Typography color={'#212529'} fontWeight={500}>Available Wifi</Typography>
+                        </Box>
+                        <Box bgcolor={'#D4E3F5'} p={1}>
+                            <Typography>Connection activated | Access Point Mode</Typography>
+                        </Box>
+                        <Box p={1} borderBottom={'1px solid #ccc'}>
+                            <Typography color={'#666'}>Please select a network</Typography>
+                        </Box>
+                        {
+                            scanLoading?
+                                <Box sx={{mx:'auto',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',width:'100%'}}>
+                                    <Typography>Checking for available networks</Typography>
+                                    <CircularProgress />
                                 </Box>
-                            )
-                        ))
-                    }
-                </GridItem>
-            </Grid>
-        </Box>
+                            :(
+                                wifiList.map((wifi) => (
+                                    <Box key={wifi.ssid} onClick={()=>setSelectedWifi(wifi)}>
+                                        <RowContainerBetween additionStyles={{cursor:'pointer',":hover":{bgcolor:'#ccc'},borderBottom:'1px solid #ccc',p:1}}>
+                                            <Typography>{wifi.ssid}</Typography>
+                                            <Icon sx={IconStyle}>wifi_outlined</Icon>
+                                        </RowContainerBetween>
+                                    </Box>
+                                )
+                            ))
+                        }
+                    </GridItem>
+                </Grid>
+            </Box>
+        </>
     )
 }

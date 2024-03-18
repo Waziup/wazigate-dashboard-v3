@@ -106,7 +106,7 @@ function DeviceSettings() {
             name: newSensOrAct.name,
             id: "",
             meta: {
-                kind: newSensOrAct.type,
+                type: newSensOrAct.type,
                 quantity: newSensOrAct.quantity,
                 unit: newSensOrAct.unit,
                 icon: newSensOrAct.icon,
@@ -137,7 +137,7 @@ function DeviceSettings() {
             name: newSensOrAct.name,
             id: "",
             meta: {
-                kind: newSensOrAct.type,
+                type: newSensOrAct.type,
                 quantity: newSensOrAct.quantity,
                 unit: newSensOrAct.unit,
                 icon: newSensOrAct.icon,
@@ -210,7 +210,7 @@ function DeviceSettings() {
                 onClose={handleCloseModal}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-                sx={{ borderRadius: 10 }}
+                sx={{ borderRadius: 10, width: matches ? '40%' : '90%' }}
             >
                 <Box sx={{ borderRadius: 10, p: 2 }}>
                     <Box sx={style}>

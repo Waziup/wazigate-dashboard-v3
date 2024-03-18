@@ -66,12 +66,16 @@ function DeviceSensorSettings() {
     const [quantitiesCondition, setQuantitiesCondition] = React.useState<string[]>([]);
     const [unitsCondition, setUnitsCondition] = React.useState<string[]>([]);
     React.useEffect(() => {
-        if (sensOrActuator?.meta.kind) {
+        if (sensOrActuator?.meta.type && pathname.includes('actuators')) {
             setQuantitiesCondition(
-                (ontologies.actingDevices)[sensOrActuator?.meta?.kind as keyof typeof ontologies.actingDevices] ?
-                    (ontologies.actingDevices)[sensOrActuator?.meta?.kind as keyof typeof ontologies.actingDevices].quantities : []);
+                (ontologies.actingDevices)[sensOrActuator?.meta?.type as keyof typeof ontologies.actingDevices] ?
+                    (ontologies.actingDevices)[sensOrActuator?.meta?.type as keyof typeof ontologies.actingDevices].quantities : []);
+        }else if(sensOrActuator?.meta.type && pathname.includes('sensors')){
+            setQuantitiesCondition(
+                (ontologies.sensingDevices)[sensOrActuator?.meta?.type as keyof typeof ontologies.sensingDevices] ?
+                    (ontologies.sensingDevices)[sensOrActuator?.meta?.type as keyof typeof ontologies.sensingDevices].quantities : []);
         }
-    }, [sensOrActuator?.meta.kind]);
+    }, [pathname, sensOrActuator?.meta.type]);
     useEffect(() => {
         setSensOrActuator(sensOrActuator)
     },[sensOrActuator]);
@@ -135,14 +139,37 @@ function DeviceSensorSettings() {
             return;
         }
     }
+    const deleteSensorOrActuator = () => {
+        const confDelete = window.confirm(`Are you sure you want to delete ${sensOrActuator?.name}?`);
+        if (!confDelete) return;
+        if (pathname.includes('sensors')) {
+            window.wazigate.deleteSensor(id as string, sensOrActuator?.id as string).then(() => {
+                alert('Success');
+                getDevicesFc()
+                navigate('/devices');
+            }).catch((err) => {
+                alert('Error');
+                console.log(err);
+            });
+        } else if (pathname.includes('actuators')) {
+            window.wazigate.deleteActuator(id as string, sensOrActuator?.id as string).then(() => {
+                alert('Success');
+                getDevicesFc()
+                navigate('/devices');
+            }).catch((err) => {
+                alert('Error');
+                console.log(err);
+            });
+        } else {
+            return;
+        }
+    }
     const handleTextInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSensOrActuator({
             ...sensOrActuator!,
             name: event.target.value as string,
         })
     }
-    console.log(sensOrActuator?.meta);
-    
     return (
         <Box height={'100%'}>
             <Box p={2} px={3}>
@@ -175,47 +202,49 @@ function DeviceSensorSettings() {
                     </Breadcrumbs>
                 </div>
             </Box>
-            <Box bgcolor={matches ? '#fff' : 'inherit'} height={'100%'} width={'100%'} px={2} pt={matches ? 2 : 2}  >
+            <Box bgcolor={matches ? '#fff' : 'inherit'} height={'100%'} width={'100%'} px={2} pt={matches ? 2 : .5}  >
                 <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Setup the sensor type, quantity and unit</Typography>
                 <Box my={2} width={matches ? '100%' : '100%'}>
+                    <>
+                        <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
+                            <TextField sx={{width:matches ? '30%' : '90%'}} onChange={handleTextInputChange} id="name" value={(sensOrActuator)?.name} variant="standard" />
+                            <Box width={matches ? '30%' : '90%'}>
+                                <SelectElementString matches={matches}
+                                    isDisabled={false}
+                                    title={`${sensOrActuator?.name} Type`}
+                                    handleChange={handleChange}
+                                    conditions={conditions}
+                                    value={sensOrActuator?.meta.type}
+                                    name="type"
+                                />
+                                <SelectElementString matches={matches}
+                                    isDisabled={false}
+                                    title={`${sensOrActuator?.name} Quantity`}
+                                    handleChange={handleChange}
+                                    conditions={quantitiesCondition}
+                                    value={sensOrActuator?.meta.quantity}
+                                    name="quantity"
+                                />
+                                <SelectElementString matches={matches}
+                                    isDisabled={false}
+                                    title={`${sensOrActuator?.name} Unit`}
+                                    handleChange={handleChange}
+                                    conditions={unitsCondition}
+                                    value={sensOrActuator?.meta.unit}
+                                    name="unit"
+                                />
+                            </Box>
+                            <Box width={matches ? '100%' : '90%'}>
+                                <RowContainerNormal additionStyles={{ width: '100%' }}>
+                                    <PrimaryIconButton type="submit" iconname="save" onClick={() => { }} title="SAVE" />
+                                    <Button sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
+                                </RowContainerNormal>
+                            </Box>
+                        </form>
+                    </>
                     {
-                        
                         pathname.includes('actuators') ? (
-                            <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
-                                <TextField sx={{ width: '30%' }} onChange={handleTextInputChange} id="name" value={(sensOrActuator)?.name} variant="standard" />
-                                <Box width={'30%'}>
-                                    <SelectElementString matches={matches}
-                                        isDisabled={false}
-                                        title={`${sensOrActuator?.name} Kind`}
-                                        handleChange={handleChange}
-                                        conditions={conditions}
-                                        value={sensOrActuator?.meta.kind}
-                                        name="kind"
-                                    />
-                                    <SelectElementString matches={matches}
-                                        isDisabled={false}
-                                        title={`${sensOrActuator?.name} Quantity`}
-                                        handleChange={handleChange}
-                                        conditions={quantitiesCondition}
-                                        value={sensOrActuator?.meta.quantity}
-                                        name="quantity"
-                                    />
-                                    <SelectElementString matches={matches}
-                                        isDisabled={false}
-                                        title={`${sensOrActuator?.name} Unit`}
-                                        handleChange={handleChange}
-                                        conditions={unitsCondition}
-                                        value={sensOrActuator?.meta.unit}
-                                        name="unit"
-                                    />
-                                </Box>
-                                <Box width={matches ? '100%' : '90%'}>
-                                    <RowContainerNormal additionStyles={{ width: '100%' }}>
-                                        <PrimaryIconButton iconname="save" onClick={() => { }} title="SAVE" />
-                                        <Button sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
-                                    </RowContainerNormal>
-                                </Box>
-
+                            <>
                                 <Box width={matches ? '30%' : '90%'}>
                                     <form onSubmit={addActuatorValueSubmit}>
                                         <Typography color={'primary'} mb={.4} fontSize={12}>Add a value with the current time stamp</Typography>
@@ -229,33 +258,19 @@ function DeviceSensorSettings() {
                                         <Button type="submit" sx={{ mx: 1, mt: 2, color: '#fff' }} color="info" startIcon={<ArrowForward />} variant={'contained'}>Push</Button>
                                     </form>
                                 </Box>
-                            </form>
+                            </>
                         ) : (
                             null
                         )
                     }
                 </Box>
-
-
                 {
                     pathname.includes('sensors') ? (
                         <form style={{margin:'5px 0'}} onSubmit={handleChangeSensorOrActuatorSubmittion} >
                             <Box width={matches ? '40%' : '100%'}>
-
-                                <TextField required sx={{ width: '100%' }} id="name" value={(sensOrActuator)?.name} variant="standard" />
-                                <Box sx={{ mt: 2 }}>
-                                    <SelectElementString matches={matches}
-                                        isDisabled={false}
-                                        title={`${sensOrActuator?.name} Type`}
-                                        handleChange={handleChange}
-                                        conditions={(conditions)}
-                                        value={sensOrActuator?.meta.kind}
-                                        name="kind"
-                                    />
-                                </Box>
-                                <Box >
-                                    <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Setup sync and sync-interface</Typography>
-                                    <RowContainerBetween additionStyles={{ my: 3 }}>
+                                <Box>
+                                    <Typography sx={{fontWeight:500,fontSize:20,my:3,color:'#292F3F'}}>Setup sync and sync-interface</Typography>
+                                    <RowContainerBetween additionStyles={{ my: .5 }}>
                                         <Typography fontSize={15} color={'#292F3F'}>Sync Sensor</Typography>
                                         <Icon 
                                             onClick={handleToggleEnableSwitch}
@@ -265,17 +280,15 @@ function DeviceSensorSettings() {
                                         </Icon>
                                     </RowContainerBetween>
                                     <Typography fontSize={15} color={'#292F3F'}>Sync Interval</Typography>
-                                    
                                 </Box>
                             </Box>
                             <DiscreteSliderMarks 
-                                value={sensOrActuator?.meta.syncInterval || "5s"}
+                                value={sensOrActuator?.meta.syncInterval ?sensOrActuator.meta.syncInterval:"5s"}
                                 onSliderChange={onSliderChange} 
                                 matches={matches} 
                             />
                             <Box sx={{ width: '100%', mt: 2 }}>
-
-                                <RowContainerBetween additionStyles={{ width: matches ? '20%' : '90%', mt: 2 }} >
+                                <RowContainerBetween additionStyles={{ width: matches ? '20%' : '90%',  }} >
                                     <PrimaryIconButton type="submit" iconname="save" onClick={() => { }} title="SAVE" />
                                     <Button sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
                                 </RowContainerBetween>
@@ -283,6 +296,12 @@ function DeviceSensorSettings() {
                         </form>
                     ) : null
                 }
+                <Box width={matches ? '30%' : '90%'}>
+                    <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Delete {sensOrActuator?.name}</Typography>
+                    <RowContainerBetween additionStyles={{ width: '100%' }}>
+                        <PrimaryIconButton iconname="delete" onClick={deleteSensorOrActuator} title="DELETE" />
+                    </RowContainerBetween>
+                </Box>
             </Box>
         </Box>
     );

@@ -32,17 +32,25 @@ export function humanFileSize(size: number ) {
         ["B", "kB", "MB", "GB", "TB"][i]
     );
 }
-export function removeFirstChar(value:string){
+export function removeFirstChar(value:string,capitalize?:boolean){
     if(value && value.startsWith('#')&& value.length>1){
+        const val = value.slice(1);
+        if(capitalize){
+            return capitalizeFirstLetter(val);
+        }
         return value.slice(1);
     }
     return value;
 }
 export function returnAppURL(app:App): string{
-    if(app.waziapp.menu){
-        return removeFirstChar(Object.values(app.waziapp.menu? app.waziapp.menu:[]).length>0?Object.values(app.waziapp.menu? app.waziapp.menu:[])[0].href:'')
-    }else if(app.id.includes('lora')){
+    if(app.id.includes('lora')){
         return `/apps/waziup/${app.name}`;
+    }else if(app.waziapp.menu){
+        return removeFirstChar(Object.values(app.waziapp.menu? app.waziapp.menu:[]).length>0?Object.values(app.waziapp.menu? app.waziapp.menu:[])[0].href:'')
+    }else{
+        return ''
     }
-    return ''
+}
+export const removeSpecialChars = (value:string) => {
+    return value.replace(/[/""]/gi, '');
 }

@@ -7,35 +7,22 @@ interface Props{
 export default function LogsTabMaintenance({matches}:Props) {
     console.log(matches);
     const [data, setData] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
-    const loopLoad = ()=> {
-        setLoading(true);
-        window.wazigate.getID()
-        .then((id) => {
-            getContainerLogs(id, 50)
-            .then((res) => {
-                setData(res);
-                setLoading(false);
-            },() => {
-                setLoading(false);
-            });
-        }).catch((err) => {
-            console.log(err);
-        });
+    const loopLoad = async ()=> {
+        try{
+            const id = await window.wazigate.getID();
+            const res = await getContainerLogs(id, 50);
+            setData(res);
+        }catch(err){
+            setData('Error Encountered, could not fetch logs '+err);
+        }
+        const id = await window.wazigate.getID();
+        const res = await getContainerLogs(id, 50);
+        setData(res);
     }
     useEffect(() => {
         const interval = setInterval(loopLoad,2000);
         return () => clearInterval(interval);
     }, []);
-    if (loading) {
-        return (
-            <Box>
-                <Typography>
-                    Loading...
-                </Typography>
-            </Box>
-        )
-    }
     return (
         <Box>
             <Typography>

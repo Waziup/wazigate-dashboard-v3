@@ -1,5 +1,5 @@
 import { Check, Save } from "@mui/icons-material";
-import { Alert, Box, CircularProgress, Snackbar, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Alert, Box, CircularProgress, ListItemText, Snackbar, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import RowContainerNormal from "../components/shared/RowContainerNormal";
@@ -10,6 +10,7 @@ import {useForm, SubmitHandler } from 'react-hook-form';
 import Backdrop from "../components/Backdrop";
 
 interface User {
+    ID?: string
     name: string;
     username:string;
     password: string;
@@ -35,27 +36,29 @@ const TextInput = ({ children, label }: TextInputProps) => (
 )
 const textinputStyle = { width: '100%', fontSize: 18, border: 'none', background: 'none', color: DEFAULT_COLORS.third_dark, padding: 2, borderBottom: '1px solid #D5D6D8', outline: 'none' }
 function User() {
-    const {handleSubmit,register} = useForm<User>({
+    const {handleSubmit,register} = useForm<Omit<User,'ID'>>({
         resolver: yupResolver(schema),
     });
     const handleNavigate = () => { }
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const [loading, setLoading] = useState(false);
-    const [profile, setProfile] = useState<Omit<User,'newPasswordConfirm'> | null>(null);
+    const [profile, setProfile] = useState<User  | null>(null);
     const [err, setErr] = useState(false);
     const [msg, setMsg] = useState("");
     const loadProfile = () => {
         setLoading(true);
         window.wazigate.getProfile().then((res) => {
             setLoading(false);
-            setProfile(res);
+            setProfile({
+                ...res,
+                newPasswordConfirm: '',
+            });
         },
         (error) => {
             setLoading(false);
             console.log(error);
-        }
-        );
+        });
     };
     useEffect(()=>{
         loadProfile();
@@ -77,7 +80,6 @@ function User() {
         setLoading(true);
         window.wazigate.set<User>("auth/profile", formData)
         .then(() => {
-
             setLoading(false);
             setErr(false);
         })
@@ -103,9 +105,10 @@ function User() {
                     <Box sx={{ display: 'flex', py: 2, width: '100%', borderBottom: '1px solid #D5D6D8', alignItems: 'center', }}>
                         <Box component={'img'} src='/wazilogo.svg' mx={2} />
                         {/*  */}
-                        <Box>
-                            <Typography sx={{ fontWeight: 500, color: DEFAULT_COLORS.third_dark }}>{profile?.name}</Typography>
-                        </Box>
+                        <ListItemText
+                            primary={profile?.name}
+                            secondary={`ID ${profile?.ID}`}
+                        />
                     </Box>
                     <Box py={.5} px={1} width={'100%'} borderBottom={'1px solid #D5D6D8'}>
                         <Typography fontWeight={200} fontSize={13} color={'#9CA4AB'}>PROFILES</Typography>
@@ -135,7 +138,7 @@ function User() {
 
                             <TextInput label='Username'>
                                 <input
-                                    type={'password'} 
+                                    type={'text'} 
                                     {...register('password')}
                                     placeholder={'admin'}
                                     readOnly
@@ -147,8 +150,9 @@ function User() {
                                 <input 
                                     type={'text'} 
                                     {...register('newPassword')}
-                                    placeholder={'admin'} 
+                                    placeholder={'****'} 
                                     style={textinputStyle}
+                                    value={profile?.newPassword}
 
                                 />
                             </TextInput>
@@ -156,7 +160,7 @@ function User() {
                                 <input 
                                     type={'text'} 
                                     {...register('newPasswordConfirm')}
-                                    placeholder={'admin'} 
+                                    placeholder={'****'}
                                     style={textinputStyle}
                                 />
                             </TextInput>

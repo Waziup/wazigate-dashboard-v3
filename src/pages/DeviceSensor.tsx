@@ -83,7 +83,6 @@ function Device() {
             setDevice(de)
         });
     }, [getGraphValues, id, pathname, sensorId]);
-    console.log('Values for table: ', values);
     return (
         <Box sx={{ height: '100%', overflowY: 'scroll' }}>
             <RowContainerBetween additionStyles={{ p: 2 }}>

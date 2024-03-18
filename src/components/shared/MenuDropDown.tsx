@@ -4,7 +4,7 @@ import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import React from 'react'
 interface Props{
     open:boolean
-    menuItems:{icon:string,text:string,clickHandler:()=>void}[]
+    menuItems:({icon:string,text:string,clickHandler:()=>void} |null)[] 
 }
 export default function MenuComponent({open,menuItems}:Props) {
     return (
@@ -23,12 +23,12 @@ export default function MenuComponent({open,menuItems}:Props) {
 
                         <Menu {...bindMenu(popupState)}>
                             {
-                                menuItems.map((item,id)=>(
-                                    <MenuItem key={id} onClick={()=>{popupState.close; item.clickHandler()}}>
+                                menuItems.map((item,id)=> item&&(
+                                    <MenuItem key={id} onClick={()=>{popupState.close; item?.clickHandler()}}>
                                         <ListItemIcon>
-                                            <Icon fontSize='small'>{item.icon}</Icon>
+                                            <Icon fontSize='small'>{item?.icon}</Icon>
                                         </ListItemIcon>
-                                        {item.text}
+                                        {item?.text}
                                     </MenuItem>
                                 ))
                             }
