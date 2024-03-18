@@ -283,11 +283,13 @@ export default function Apps() {
             restart: "no"
         }
         window.wazigate.startStopApp(appId, config)
-            .then(() => {
-                getApps();
-            }).catch(() => {
-                getApps()
-            })
+        .then(() => {
+            alert('App ' + appId + ' ' + (running ? 'stopped' : 'started') + ' successfully');
+            getApps();
+        }).catch(() => {
+            alert('Could not ' + (running ? 'stop' : 'start') + ' ' + appId);
+            getApps()
+        })
 
     }
     if (error) {
@@ -514,12 +516,11 @@ export default function Apps() {
                                                                 text: 'Uninstall',
                                                                 clickHandler: () => { setAppToUninstallFc(idx) }
                                                             },
-                                                            {
-                                                                icon: 'delete_forever',
+                                                            app.state?{
+                                                                icon: `pause`,
                                                                 text: app.state ? app.state.running ? 'Stop' : 'Start' : 'Start',
                                                                 clickHandler: () => { startOrStopApp(app.id, app.state ? app.state.running : false) }
-                                                            }
-                                                        
+                                                            }:null
                                                         ]}
                                                     />
                                                 </Box>
