@@ -94,7 +94,7 @@ function Devices() {
             handleToggleModal();
             getDevicesFc();
         }).catch(err => {
-            console.log('Error encountered: ', err)
+            alert('Error encountered: ' + err);
         });
     }
     const [selectedValue, setSelectedValue] = useState('');
@@ -155,12 +155,11 @@ function Devices() {
                 getDevicesFc();
             })
             .catch(err => {
-                console.log(err);
+                alert('Error encountered: ' + err);
             })
         }
     }
     function handleSelectDevice(device: Device) {
-        console.log(device);
         setSelectedDevice(device);
         handleClose();
         handleToggleEditModal();
@@ -185,7 +184,6 @@ function Devices() {
         }
     }
     const handleTextInputEditCodec = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.name, e.target.value);
         setNewDevice({
             ...newDevice,
             meta: {
@@ -196,19 +194,16 @@ function Devices() {
     }
     const handleSubmitEditDevice = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("Selected Device: ", selectedDevice);
         const device = devices.find((dev) => dev.id === selectedDevice?.id);
         if (selectedDevice?.meta) {
             if (device?.meta !== selectedDevice?.meta) {
-                console.log("Change codec: ", selectedDevice.meta.codec);
                 window.wazigate.setDeviceMeta(selectedDevice?.id as string, selectedDevice?.meta as Device)
                     .then(() => {
                         alert("Device meta updated");
                         getDevicesFc();
                         return;
                     }).catch(err => {
-                        console.log(err);
-                        alert("Error updating device meta");
+                        alert("Error updating device meta"+err);
                     });
             }
             if (device?.name !== selectedDevice?.name) {
@@ -217,8 +212,7 @@ function Devices() {
                         alert("Device name updated");
                         return;
                     }).catch(err => {
-                        console.log(err);
-                        alert("Error updating device name");
+                        alert("Error updating device name"+err);
                     });
             }
         }
