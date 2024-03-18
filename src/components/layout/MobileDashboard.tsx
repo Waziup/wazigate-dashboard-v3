@@ -10,17 +10,21 @@ const Item = ({ more, color, children, title }: { more: string, children: React.
         <Typography color={color} fontSize={13} fontWeight={300}>{more}</Typography>
     </Box>
 );
-import { useContext } from "react";
+import { useContext,useMemo } from "react";
 import { DevicesContext } from "../../context/devices.context";
 import { capitalizeFirstLetter, differenceInMinutes, isActiveDevice } from "../../utils";
 import { useNavigate } from "react-router-dom";
 export default function MobileDashboard() {
-    const { devices, apps } = useContext(DevicesContext);
-    console.log(apps);
+    const { devices,networkDevices, apps } = useContext(DevicesContext);
     const navigate = useNavigate();
     const handleNav = (devId: string,devName:string) => {
         navigate(`/devices/${devId}`,{state:{title:devName,backUrl:'/devices',backTitle:'Devices',showBack:true}});
     }
+    const [apConn,eth0] = useMemo(() => {
+        const apCn = networkDevices?.wlan0? networkDevices.wlan0.AvailableConnections.find(conn => conn.connection.id === networkDevices.wlan0.ActiveConnectionId): null
+        const eth0 = networkDevices?.eth0;
+        return [apCn, eth0]; 
+    },[networkDevices]);
     return (
         <Box sx={{ overflowY: 'auto', height: '100%' }} >
             <Stack direction={'row'} overflow={'auto'} m={2} spacing={1}>
@@ -30,9 +34,17 @@ export default function MobileDashboard() {
                 <Item color="#E9C68F" title="Cloud Synchronization" more="3h ago" >
                     <CloudOff sx={{ fontSize: 20, color: '#D9D9D9' }} />
                 </Item>
-                <Item color={DEFAULT_COLORS.secondary_black} title="Access point mode" more="Wifi Name: 'Wazigate E55344'" >
-                    <Wifi sx={{ fontSize: 20, color: 'black' }} />
-                </Item>
+                {
+                    (eth0 && eth0.IP4Config)?(
+                        <Item color={DEFAULT_COLORS.secondary_black} title="Ethernet Connection" more={`IP Address: ${(eth0 && eth0.IP4Config)?eth0.IP4Config.Addresses[0].Address:''}`} >
+                            <Wifi sx={{ fontSize: 20, color: 'black' }} />
+                        </Item>
+                    ):(
+                        <Item color={DEFAULT_COLORS.secondary_black} title="Wifi Connection" more={`Wifi Name: ${apConn?.connection.id}`} >
+                            <Wifi sx={{ fontSize: 20, color: 'black' }} />
+                        </Item>
+                    )
+                }
             </Stack>
             <Box mt={2} px={1}>
                 <Typography color={'#666666'}>Device status</Typography>
