@@ -136,10 +136,13 @@ export default function ResourcesTabMaintenance({matches}:Props) {
                         },
                         zoom: {
                             enabled: false
-                        }
+                        },
                     },
                     xaxis: {
-                        categories: usageGraph.xaxis
+                        categories: usageGraph.xaxis,
+                        labels:{
+                            show: false
+                        }
                     },
                     dataLabels:{
                         enabled:false
