@@ -71,8 +71,8 @@ export default function ExportTabMaintenance({matches}:Props) {
                             You can export the data of all sensors and actuators to one CSV file. Additionally it also includes custom timespans and all data can be summarized in time bins. This is perfect for machine learning applications
                         </Typography>
                         <Box bgcolor={'#D4E3F5'}  borderRadius={1} p={1} m={2}>
-                            <Box display={'flex'} justifyContent={'space-between'}>
-                                <Box width={'45%'}>
+                            <Box display={'flex'} flexDirection={matches?'row':'column'} justifyContent={'space-between'}>
+                                <Box width={matches?'45%':'90%'}>
                                     <Typography>From:</Typography>
                                     <LocalizationProvider  dateAdapter={AdapterDayjs}>
                                         <DemoContainer
@@ -93,7 +93,7 @@ export default function ExportTabMaintenance({matches}:Props) {
                                         </DemoContainer>
                                     </LocalizationProvider>
                                 </Box>
-                                <Box>
+                                <Box width={matches?'45%':'90%'}>
                                     <Typography>To:</Typography>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DemoContainer

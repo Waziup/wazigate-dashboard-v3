@@ -62,7 +62,7 @@ export default function ContainersTabMaintenance({matches}:Props) {
     return (
         <>
             <Backdrop open={openModal}>
-                <Box sx={{width: matches?'40%':'90%',zIndex:199,bgcolor:'#fff'}}>
+                <Box sx={{width: matches?'40%':'90%',zIndex:999,bgcolor:'#fff'}}>
                     <RowContainerBetween additionStyles={{ borderBottom: '1px solid black', px: 2, py: 2 }}>
                         <Typography>Container Logs</Typography>
                         <Button onClick={() =>{setOpenModal(false)}} sx={{ textTransform: 'initial', color: '#ff0000' }} variant={'text'} >cancel</Button>

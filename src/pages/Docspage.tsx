@@ -2,11 +2,11 @@ import { Box, Typography } from '@mui/material';
 import { DEFAULT_COLORS } from '../constants';
 import { DataObject, DescriptionOutlined, MailOutline } from '@mui/icons-material';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, To } from 'react-router-dom';
 interface TextElement extends React.HTMLAttributes<HTMLSpanElement> {
     children?: React.ReactNode;
     text: string;
-    path: string;
+    path: To;
 }
 const TextEL = ({children,path,text}:TextElement)=>(
     <Link to={path} style={{textDecoration:'none',cursor:'pointer'}}>
@@ -29,7 +29,7 @@ function Docspage() {
                     <TextEL path='/docs' text='API Documentation'>
                         <DataObject/>
                     </TextEL>
-                    <TextEL path='' text='Contact'>
+                    <TextEL path='mailto:admin@waziup.org' text='Contact'>
                         <MailOutline/>
                     </TextEL>
                 </Box>

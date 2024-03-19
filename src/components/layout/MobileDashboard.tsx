@@ -12,7 +12,7 @@ const Item = ({ more, color, children, title }: { more: string, children: React.
 );
 import { useContext,useMemo } from "react";
 import { DevicesContext } from "../../context/devices.context";
-import { capitalizeFirstLetter, differenceInMinutes, isActiveDevice } from "../../utils";
+import { capitalizeFirstLetter, differenceInMinutes, isActiveDevice, returnAppURL } from "../../utils";
 import { useNavigate } from "react-router-dom";
 export default function MobileDashboard() {
     const { devices,networkDevices, apps } = useContext(DevicesContext);
@@ -78,7 +78,7 @@ export default function MobileDashboard() {
                 <Box display={'flex'} flexDirection={'column'} mt={1} borderRadius={2} bgcolor={'#fff'} alignItems={'center'}>
                     {
                         apps.map((app, id) => (
-                            <Box onClick={() => { }} key={id} sx={{ cursor: 'pointer', ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, borderBottom: '1px solid #E2E2E2', width: '95%', height: '100%', position: 'relative', px: 1, bgcolor: 'white', }}>
+                            <Box onClick={() => {navigate(returnAppURL(app)) }} key={id} sx={{ cursor: 'pointer', ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, borderBottom: '1px solid #E2E2E2', width: '95%', height: '100%', position: 'relative', px: 1, bgcolor: 'white', }}>
                                 <RowContainerBetween>
                                     <RowContainerNormal >
                                         <WaterDrop sx={{ fontSize: 40, color: DEFAULT_COLORS.primary_blue }} />
