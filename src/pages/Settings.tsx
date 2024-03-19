@@ -71,19 +71,6 @@ function Settings() {
         .catch(()=>{
             setReponseMessage("Error setting time zone");
         });
-        // setTimezone(input.value).then(
-        //   (res) => {
-        //     this.setState({
-        //       loading: false,
-        //       timezone: input.value,
-        //     });
-        //     Notify("The time zone set");
-        //   },
-        //   (error) => {
-        //     Notify(error);
-        //     this.setState({ loading: false });
-        //   }
-        // );
       };
     useEffect(() => {
         window.wazigate.getID().then(setWazigateID);

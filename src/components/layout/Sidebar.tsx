@@ -124,6 +124,7 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                 <NavigationItem 
                                     location={location} 
                                     path={'/settings'}
+                                    onClick={()=>setOpen(true)}
                                     icon={
                                         <SettingsTwoTone sx={{...IconStyle,color:(location==='/settings' || location==='/settings/networking' || location==='/settings/maintenance')?'#292F3F':'#fff'}} />} 
                                     text={'Settings'}

@@ -408,7 +408,7 @@ function Devices() {
                                                         }}
                                                             iconname={act.meta.icon}
                                                             name={act.name}
-                                                            text={act.value ? 'Running' : 'Closed'}
+                                                            text={act.meta.quantity==='Boolean' ? act.value ? 'Running' : 'Closed': act.value}
                                                         />
                                                     </Box>
                                                 )) : (

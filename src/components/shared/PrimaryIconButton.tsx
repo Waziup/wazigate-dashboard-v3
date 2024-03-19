@@ -3,7 +3,7 @@ interface Props{
     title:string;
     iconname:string;
     type?:'submit'|'button'
-    onClick:()=>void;
+    onClick?:()=>void;
     hideText?:boolean
 }
 export default function PrimaryIconButton({title,iconname,hideText, type, onClick}:Props) {
