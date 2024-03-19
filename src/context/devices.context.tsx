@@ -73,6 +73,7 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
                 await window.wazigate.setToken(token);
                 getApps();
                 getDevices();
+                setNetWorkDevicesFc();
                 window.wazigate.subscribe<Device[]>("devices", getDevices);
                 return async () => window.wazigate.unsubscribe("devices", getDevices);
             }
@@ -85,7 +86,7 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             }
         }
         fc();
-    },[setAccessToken, token]);
+    },[setAccessToken, setNetWorkDevicesFc, token]);
 
     useEffect(() => {
         if(token){
