@@ -16,17 +16,29 @@ interface SensorActuatorItemProps {
     handleClickMenu?:(event: React.MouseEvent<HTMLButtonElement>)=>void,
     children?:React.ReactNode
     deviceId:string
+    callbackFc?:()=>void,
 }
 const isActuator = (sensActuator: Sensor | Actuator): sensActuator is Actuator => {
     return Object.keys(ontologies.actingDevices).includes(sensActuator.meta.type);
 }
-export default function SensorActuatorItem({ sensActuator: sens,handleClose,open,children,deviceId}: SensorActuatorItemProps) {
+export default function SensorActuatorItem({ callbackFc, sensActuator: sens,handleClose,open,children,deviceId}: SensorActuatorItemProps) {
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const navigate = useNavigate();
+    const handleDelete = () => {
+        const cf = confirm(`Are you sure you want to delete ${sens.name}?`);
+        if (!cf) return;
+        window.wazigate.deleteSensor(deviceId, sens.id).then(() => {
+            handleClose();
+            callbackFc &&callbackFc();
+            navigate(`/devices/${deviceId}`);
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
     return (
-        <Grid lg={3} my={1} xl={3} md={4} xs={5.2} sm={5.2} onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(sens)?'actuators':'sensors'}/${sens.id}`)}}  item sx={{ bgcolor: '#fff',cursor:'pointer', mx: matches?2:1, borderRadius: 2 }}>
+        <Grid lg={3} my={1} xl={3} md={4} xs={5.2} sm={5.2}  item sx={{ bgcolor: '#fff',cursor:'pointer', mx: matches?2:1, borderRadius: 2 }}>
             <RowContainerBetween additionStyles={{px:matches?1:.3}}>
-                <RowContainerNormal>
+                <RowContainerNormal onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(sens)?'actuators':'sensors'}/${sens.id}`)}} >
                     <SVGIcon
                         src={`${ontologiesicons}#${sens.meta.icon}`}
                         style={{ width: 20, height: 20, marginRight: 5 }}
@@ -39,12 +51,12 @@ export default function SensorActuatorItem({ sensActuator: sens,handleClose,open
                         {
                             icon: 'delete',
                             text: 'Delete',
-                            clickHandler: handleClose
+                            clickHandler: handleDelete
                         },
                         {
                             icon: 'settings',
                             text: 'Settings',
-                            clickHandler: handleClose
+                            clickHandler: ()=>{navigate(`/devices/${deviceId}/${isActuator(sens)?'actuators':'sensors'}/${sens.id}`);}
                         }
                     ]}
                 />
