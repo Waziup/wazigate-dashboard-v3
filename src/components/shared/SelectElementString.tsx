@@ -1,26 +1,26 @@
 import { SelectChangeEvent, Box, Typography, FormControl, Select, MenuItem } from "@mui/material";
 
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-    handleChange:(event: SelectChangeEvent<string>)=>void,
+    handleChange:(event: SelectChangeEvent)=>void,
     title:string,
     conditions:string[] | number[], 
     value: string
     isDisabled?:boolean
     matches?:boolean
+    name?:string
     widthPassed?:string
 }
-export default function SelectElementString({handleChange,title,conditions,isDisabled,widthPassed,name,value}:HTMLSelectProps){
+export default function SelectElementString({handleChange,name,title,conditions,isDisabled,widthPassed,value}:HTMLSelectProps){
     return(
         <Box minWidth={120} width={widthPassed?widthPassed:'100%'} my={.5}>
             <Typography  fontSize={12} fontWeight={'300'} color={'#292F3F'}>{title}</Typography>
             <FormControl variant="standard" disabled={isDisabled} fullWidth>
                 <Select
-                    inputProps={{
-                        name: name,
-                        id: 'uncontrolled-native',
-                    }}
                     sx={{fontWeight:'bold'}}
                     value={value}
+                    labelId="select-label"
+                    id="select"
+                    name={name}
                     onChange={handleChange}
                 >
                     <MenuItem defaultChecked disabled value={''}>Select</MenuItem>
