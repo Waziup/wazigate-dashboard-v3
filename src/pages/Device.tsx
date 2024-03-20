@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Button, Modal, Typography, Grid, SelectChangeEvent, TextField, FormControl, MenuItem, Select, SpeedDial, SpeedDialAction, SpeedDialIcon, } from "@mui/material";
+import { Box, Breadcrumbs, Button, Typography, Grid, SelectChangeEvent, TextField, FormControl, MenuItem, Select, SpeedDial, SpeedDialAction, SpeedDialIcon, } from "@mui/material";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import ontologies from '../assets/ontologies.json';
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
@@ -12,6 +12,7 @@ import CreateActuatorModal from "../components/ui/CreateActuatorModal";
 import { Android12Switch } from "../components/shared/Switch";
 import SensorActuatorItem from "../components/shared/SensorActuatorItem";
 import { PlusOne } from "@mui/icons-material";
+import Backdrop from "../components/Backdrop";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: SelectChangeEvent<string>) => void,
     title: string,
@@ -71,7 +72,7 @@ function DeviceSettings() {
     const [device, setDevice] = useState<Device | null>(null);
     const [isError, setIsError] = useState<boolean>(false);
     const [modalProps, setModalProps] = useState<{ title: string, placeholder: string }>({ title: '', placeholder: '' });
-    const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
+    const [matches,matchesMd] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const { getDevicesFc } = useContext(DevicesContext)
     const { id } = useParams();
     useEffect(() => {
@@ -198,6 +199,19 @@ function DeviceSettings() {
             </Box>
         )
     }
+    const handleSwitchChange = (actuatorId:string,value:boolean | number) => {
+        window.wazigate.addActuatorValue(id as string, actuatorId, !value)
+        .then(() => {
+            alert('Success');
+            getDevicesFc()
+            navigate('/devices');
+        })
+        .catch((err) => {
+           alert('Error encounted'+err);
+            getDevicesFc();
+            navigate('/devices')
+        })
+    }
     const handleCloseModal = () => {
         setModalProps({ title: '', placeholder: '', });
         setNewSensOrAct(initialState); 
@@ -205,56 +219,54 @@ function DeviceSettings() {
     }
     return (
         <>
-            <Modal
-                open={openModal}
-                onClose={handleCloseModal}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-                sx={{ borderRadius: 10, width: matches ? '40%' : '90%' }}
-            >
-                <Box sx={{ borderRadius: 10, p: 2 }}>
-                    <Box sx={style}>
-                        <RowContainerBetween additionStyles={{ p: 1, borderBottom: '.5px solid #ccc' }}>
-                            {
-                                modalProps.title ? (
-                                    <Typography>Create  {modalProps.title === 'sensor' ? 'a Sensor' : 'an Actuator'} </Typography>
-                                ) : (
-                                    <Typography>Choose Type</Typography>
-                                )
-                            }
-                            <Button onClick={handleCloseModal} sx={{ textTransform: 'initial', color: '#ff0000' }} variant={'text'}>Cancel</Button>
-                        </RowContainerBetween>
-                        <Box p={1}>
-                            <SelectElement
-                                conditions={['actuator', 'sensor']}
-                                handleChange={(e: SelectChangeEvent) => { setNewSensOrAct(initialState); setModalEls(e.target.value === 'actuator' ? 'actuator' : 'sensor', e.target.value) }}
-                                title="Type"
-                                value={modalProps.title}
-                            />
-                            {
-                                modalProps.title ? (
-                                    <Box borderRadius={2} my={1} >
-                                        <form style={{borderRadius:2}} onSubmit={modalProps.title === 'actuator' ? handleCreateActuatorClick : handleCreateSensorClick}>
-                                            <TextField onInput={handleNameChange} sx={{ width: '100%', my: 1 }} placeholder={modalProps.placeholder} type="text" id="standard-basic" required name="name" label="Name" variant="standard"></TextField>
-                                            {
-                                                modalProps.title === 'sensor' ? (
-                                                    <CreateSensorModal newSensOrAct={newSensOrAct} handleSelectChange={handleSelectChange} />
-                                                ) : (
-                                                    <CreateActuatorModal newSensOrAct={newSensOrAct} handleSelectChange={handleSelectChange} />
-                                                )
-                                            }
-                                            <RowContainerBetween additionStyles={{ pt: 2 }}>
-                                                <Box></Box>
-                                                <Button sx={{ mx: 2, color: '#fff' }} variant="contained" color="info" type="submit">Save</Button>
-                                            </RowContainerBetween>
-                                        </form>
-                                    </Box>
-                                ) : null
-                            }
+            {
+                openModal?(
+                    <Backdrop>
+                        <Box width={matches ? matchesMd ? '50%' : '30%' : '90%'} sx={{zIndex:50, borderRadius: 10, p: 2 }}>
+                            <Box sx={style}>
+                                <RowContainerBetween additionStyles={{ p: 1, borderBottom: '.5px solid #ccc' }}>
+                                    {
+                                        modalProps.title ? (
+                                            <Typography>Create  {modalProps.title === 'sensor' ? 'a Sensor' : 'an Actuator'} </Typography>
+                                        ) : (
+                                            <Typography>Choose Type</Typography>
+                                        )
+                                    }
+                                    <Button onClick={handleCloseModal} sx={{ textTransform: 'initial', color: '#ff0000' }} variant={'text'}>Cancel</Button>
+                                </RowContainerBetween>
+                                <Box p={1}>
+                                    <SelectElement
+                                        conditions={['actuator', 'sensor']}
+                                        handleChange={(e: SelectChangeEvent) => { setNewSensOrAct(initialState); setModalEls(e.target.value === 'actuator' ? 'actuator' : 'sensor', e.target.value) }}
+                                        title="Type"
+                                        value={modalProps.title}
+                                    />
+                                    {
+                                        modalProps.title ? (
+                                            <Box borderRadius={2} my={1} >
+                                                <form style={{borderRadius:2}} onSubmit={modalProps.title === 'actuator' ? handleCreateActuatorClick : handleCreateSensorClick}>
+                                                    <TextField onInput={handleNameChange} sx={{ width: '100%', my: 1 }} placeholder={modalProps.placeholder} type="text" id="name" required name="name" label="Name" variant="standard"></TextField>
+                                                    {
+                                                        modalProps.title === 'sensor' ? (
+                                                            <CreateSensorModal newSensOrAct={newSensOrAct} handleSelectChange={handleSelectChange} />
+                                                        ) : (
+                                                            <CreateActuatorModal newSensOrAct={newSensOrAct} handleSelectChange={handleSelectChange} />
+                                                        )
+                                                    }
+                                                    <RowContainerBetween additionStyles={{ pt: 2 }}>
+                                                        <Box></Box>
+                                                        <Button sx={{ mx: 2, color: '#fff' }} variant="contained" color="info" type="submit">Save</Button>
+                                                    </RowContainerBetween>
+                                                </form>
+                                            </Box>
+                                        ) : null
+                                    }
+                                </Box>
+                            </Box>
                         </Box>
-                    </Box>
-                </Box>
-            </Modal>
+                    </Backdrop>
+                ):null
+            }
             <Box p={matches?3:1} sx={{ position: 'relative', width: '100%',overflowY:'auto', height: '100%' }}>
                 <RowContainerBetween>
                     <Box>
@@ -297,7 +309,7 @@ function DeviceSettings() {
                                     <Typography>No Sensors found</Typography>
                                 </Box>
                             ) : (device?.sensors.map((sens) => (
-                                <SensorActuatorItem deviceId={device.id} sensActuator={sens} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
+                                <SensorActuatorItem callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={sens} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
                                     <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28} >
                                         {sens.value} {sens.meta.unitSymbol}
                                     </Typography>
@@ -310,14 +322,22 @@ function DeviceSettings() {
                     <Grid container my={2} spacing={1}>
                         {
                             device?.actuators?.map((act) => (
-                                <SensorActuatorItem deviceId={device.id} sensActuator={act} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
+                                <SensorActuatorItem callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={act} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
                                     <Typography fontWeight={100} fontSize={15} color={'#2BBBAD'}>
                                         Status: 
                                         <Typography component={'span'} fontSize={15} fontWeight={300} color={act.value?'#2BBBAD':'#ff0000'}>{act.value ? '  Running' : '   Stopped'}</Typography>
                                     </Typography>
                                     <RowContainerBetween>
                                         <Typography fontWeight={100} color={'rgba(0,0,0,.7)'} fontSize={15}>{act.value?'Stop':'Start'}</Typography>
-                                        <Android12Switch checked={act.value} onChange={() => { }} color='info' />
+                                        {
+                                            act.meta.quantity==='Boolean' ? (
+                                                <Android12Switch checked={act.value} onChange={() => {handleSwitchChange(act.id,act.value) }} color='info' />
+                                            ):(
+                                                <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28}>
+                                                    {act.value} {act.meta.unitSymbol}
+                                                </Typography>
+                                            )
+                                        }
                                     </RowContainerBetween>
                                 </SensorActuatorItem>
                                 
