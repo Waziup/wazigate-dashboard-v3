@@ -69,7 +69,7 @@ export default function Login() {
                 if(err.message && err.message==='Failed to fetch'){
                     setErrorMessage('Check if the backend server is running')
                 }else{
-                    setErrorMessage('Invalid username or password')
+                    setErrorMessage(err as string);
                 }
                 handleClose()
             })

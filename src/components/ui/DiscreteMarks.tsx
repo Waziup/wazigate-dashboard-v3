@@ -17,7 +17,7 @@ export default function DiscreteMarks({matches,onSliderChange,value}:{value:stri
         onSliderChange(labels[newValue as number]);
     }
     return (
-        <Box sx={{ width: matches?'35%':'90%',mx:matches?2:'auto' }}>
+        <Box sx={{ width: '90%',mx:matches?2:'auto' }}>
             <Slider
                 defaultValue={4}
                 valueLabelFormat={valueLabelFormat}
