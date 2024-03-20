@@ -10,7 +10,7 @@ import {useForm, SubmitHandler } from 'react-hook-form';
 import Backdrop from "../components/Backdrop";
 
 interface User {
-    ID?: string
+    id?: string
     name: string;
     username:string;
     password: string;
@@ -36,7 +36,7 @@ const TextInput = ({ children, label }: TextInputProps) => (
 )
 const textinputStyle = { width: '100%', fontSize: 18, border: 'none', background: 'none', color: DEFAULT_COLORS.third_dark, padding: 2, borderBottom: '1px solid #D5D6D8', outline: 'none' }
 function User() {
-    const {handleSubmit,register} = useForm<Omit<User,'ID'>>({
+    const {handleSubmit,setValue} = useForm<Omit<User,'ID'>>({
         resolver: yupResolver(schema),
     });
     const handleNavigate = () => { }
@@ -54,18 +54,30 @@ function User() {
                 ...res,
                 newPasswordConfirm: '',
             });
+            setValue('username',res.username);
+            setValue('name',res.name)
         },
         (error) => {
             setLoading(false);
             console.log(error);
         });
     };
+    const onTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setValue(e.target.name as keyof Omit<User,'ID'>, e.target.value);
+        setProfile({
+            name: profile?.name ?? '',
+            username: profile?.username ?? '',
+            password: profile?.password ?? '',
+            newPassword: profile?.newPassword ?? '',
+            newPasswordConfirm: profile?.newPasswordConfirm ?? '',
+            [e.target.name]: e.target.value ?? '',
+        }) as unknown as User;
+    }
     useEffect(()=>{
         loadProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
     const saveProfile: SubmitHandler<User> = (data:User) => {
-        
-        //Validation
         if (data.password.length > 0 && data.newPassword != data.newPasswordConfirm) {
             setErr(true);
             setMsg("The new password doesn't match with the confirm new password!");
@@ -74,7 +86,7 @@ function User() {
     
         const formData = {
             "name": data.name,
-            "password": data.name,
+            "password": data.password,
             "newPassword": data.newPassword,
         };
         setLoading(true);
@@ -82,7 +94,15 @@ function User() {
         .then(() => {
             setLoading(false);
             setErr(false);
+            loadProfile();
+            alert("Profile updated successfully!");
         })
+        .catch((error) => {
+            setLoading(false);
+            console.log(error);
+            setErr(true);
+            setMsg(error as string);
+        });
     };
     const handleClose = () => {setErr(false)}
 
@@ -107,7 +127,7 @@ function User() {
                         {/*  */}
                         <ListItemText
                             primary={profile?.name}
-                            secondary={`ID ${profile?.ID}`}
+                            secondary={`ID ${profile?.id}`}
                         />
                     </Box>
                     <Box py={.5} px={1} width={'100%'} borderBottom={'1px solid #D5D6D8'}>
@@ -128,8 +148,9 @@ function User() {
                         <Box p={2}>
                             <TextInput label='Name'>
                                 <input 
-                                    type={'text'} 
-                                    {...register('name')}
+                                    type={'text'}
+                                    onChange={onTextInputChange}
+                                    name="name"
                                     placeholder={'admin'} 
                                     value={profile?.name}
                                     style={textinputStyle}
@@ -139,17 +160,30 @@ function User() {
                             <TextInput label='Username'>
                                 <input
                                     type={'text'} 
-                                    {...register('password')}
-                                    placeholder={'admin'}
+                                    onChange={onTextInputChange}
+                                    name="username"
+                                    placeholder={'name'}
                                     readOnly
                                     value={profile?.username}
                                     style={textinputStyle}
                                 />
                             </TextInput>
+                            <TextInput label='Password'>
+                                <input 
+                                    type={'text'}
+                                    onChange={onTextInputChange}
+                                    name="password"
+                                    placeholder={'****'} 
+                                    style={textinputStyle}
+                                    value={profile?.password}
+
+                                />
+                            </TextInput>
                             <TextInput label='New Password'>
                                 <input 
-                                    type={'text'} 
-                                    {...register('newPassword')}
+                                    type={'text'}
+                                    onChange={onTextInputChange}
+                                    name="newPassword"
                                     placeholder={'****'} 
                                     style={textinputStyle}
                                     value={profile?.newPassword}
@@ -159,13 +193,15 @@ function User() {
                             <TextInput label='Confirm New Password' type="text" placeholder="admin">
                                 <input 
                                     type={'text'} 
-                                    {...register('newPasswordConfirm')}
+                                    onChange={onTextInputChange}
+                                    name="newPasswordConfirm"
+                                    value={profile?.newPasswordConfirm}
                                     placeholder={'****'}
                                     style={textinputStyle}
                                 />
                             </TextInput>
                             <Box display={'flex'} justifyContent={'center'} py={1}>
-                                <button onClick={handleNavigate} style={{ width: '50%', border: 'none', justifyContent: 'center', display: 'flex', alignItems: 'center', borderRadius: 5, outline: 'none', padding: 10, backgroundColor: '#2BBBAD', color: 'white' }}>
+                                <button type="submit" onClick={handleNavigate} style={{ width: '50%', border: 'none', justifyContent: 'center', display: 'flex', alignItems: 'center', borderRadius: 5, outline: 'none', padding: 10, backgroundColor: '#2BBBAD', color: 'white' }}>
                                     <Save sx={{ fontSize: 20 }} />
                                     SAVE
                                 </button>
