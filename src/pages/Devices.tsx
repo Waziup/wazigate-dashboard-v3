@@ -12,8 +12,6 @@ import { capitalizeFirstLetter, differenceInMinutes } from '../utils';
 import PrimaryIconButton from '../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
 import MenuComponent from '../components/shared/MenuDropDown';
-
-
 const initialNewDevice: Device = {
     actuators: [],
     created: new Date(),
@@ -348,13 +346,13 @@ function Devices() {
                     {
                         devices.map((device, id) => {
                             return (
-                                <Grid item m={1} key={id} md={6} lg={3.5} xl={4} sm={8} xs={12} >
+                                <Grid item m={1} key={id} md={5.5} lg={3.5} xl={3.5} sm={8} xs={12} >
                                     <Box sx={{ boxShadow: 3, cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -8, my: -1, px: 1, py: .4, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
                                             <Sensors sx={{ fontSize: 15, color: '#fff' }} />
                                             <Typography fontSize={13} mx={1} color={'white'} component={'span'}>{device.meta ? capitalizeFirstLetter(device.meta.type) : ''}</Typography>
                                         </Box>
-                                        <Box sx={{ borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5, ":hover": { py: 1.5 }, px: 2, }}>
+                                        <Box sx={{ borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5, ":hover": { py: 1.5 }, px: 1, }}>
                                             <RowContainerBetween additionStyles={{}} >
                                                 <Box onClick={() => { navigate(`${device.id}`) }}>
                                                     <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>
