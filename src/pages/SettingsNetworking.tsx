@@ -84,69 +84,65 @@ export default function SettingsNetworking() {
             })
         }
     }
-    const handleSaveClick = () => {
+    const handleSaveClick =async () => {
         if(hasUnsavedChanges){
-            Promise.all([
-                window.wazigate.set(`clouds/${selectedCloud?.id as string}/rest`, selectedCloud?.rest),
-                window.wazigate.set(`clouds/${selectedCloud?.id}/mqtt`, selectedCloud?.mqtt),
-                window.wazigate.setCloudCredentials(selectedCloud?.id as string, selectedCloud?.username as string, selectedCloud?.token as string),
+            setLoading(true);
+            await Promise.all([
+                await window.wazigate.set(`clouds/${selectedCloud?.id as string}/rest`, selectedCloud?.rest).catch((err: Error) => {alert("Error saving REST address:\n" + err);return}),
+                await window.wazigate.set(`clouds/${selectedCloud?.id}/mqtt`, selectedCloud?.mqtt).catch((err: Error) => {alert("Error saving MQTT address:\n" + err);return}),
+                await window.wazigate.setCloudCredentials(selectedCloud?.id as string, selectedCloud?.username as string, selectedCloud?.token as string).catch((err: Error) => {alert("Error saving credentials:\n" + err);return;}),
             ]).then(() => {
                 sethasUnsavedChanges(false);
-            }, (err: Error) => {
+                setLoading(false);
+                alert("Changes saved!");
+            })
+            .catch((err: Error) => {
                 alert("There was an error saving the changes:\n" + err);
+                setLoading(false);
             });
         }else{
             alert('No changes');
         }
     }
-    const handleEnabledChange = (_event: React.ChangeEvent<HTMLInputElement>,checked: boolean) => {
+    const handleEnabledChange =async (_event: React.ChangeEvent<HTMLInputElement>,checked: boolean) => {
         if (hasUnsavedChanges) {
             alert("Save all changes before activating the synchronization!");
             return
         }
-        setSelectedCloud({
-            ...selectedCloud,
-            paused: checked
-        } as Cloud);
         setSaving(true);
         const timer = new Promise(resolve => setTimeout(resolve, 2000));
-        window.wazigate.setCloudPaused(selectedCloud?.id as string, !checked)
+        await window.wazigate.setCloudPaused(selectedCloud?.id as string, !checked)
         .then(() => {
             alert("Sync activated!");
+            fcInit();
             timer.then(() => {
                 setSaving(false);
             })
         })
         .catch((err:Error)=>{
-
             setSaving(false);
-            setSelectedCloud({
-                ...selectedCloud,
-                paused: !checked
-            } as Cloud);
             alert("There was an error activating the sync!\n Check your credentials and try again.\n\nThe server said:\n" + err);
         });
     }
     const submitConf = (event: React.FormEvent) => {
         event.preventDefault();
-        const formData = new FormData(event.target as HTMLFormElement);
-        const fan_trigger_temp =formData.get('fan')?.toString();
-        const oled_halt_timeout = formData.get('oled')?.toString();
         const data = {
-          fan_trigger_temp: parseInt(fan_trigger_temp as string),
-          oled_halt_timeout: parseInt(oled_halt_timeout as string,10),
+          fan_trigger_temp: parseInt(conf.fan_trigger_temp as string,10),
+          oled_halt_timeout: parseInt(conf.oled_halt_timeout as string,10)
         };
-        setConfFc(data).then(
-          (msg:string) => {
-            alert(msg);
-          }, 
-          (error) => {
-            alert(error);
-          }
-        );
+
+        setConfFc(data)
+        .then(()=>{
+            alert('Settings saved');
+        })
+        .catch((err) => {
+            alert('Error:'+err);
+        });
     };
     const switchToAPMode = () => {
         // this.setState({ switchToAPModeLoading: true });
+        const resp = confirm('Are you sure you want to switch to AP Mode?');
+        if (!resp) return;
         setAPMode().then(()=>{
             alert('Switched to AP Mode');
         })
