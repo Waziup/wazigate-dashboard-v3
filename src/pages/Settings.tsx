@@ -11,7 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { useState, useEffect, useMemo } from 'react';
-import {setTime, shutdown,reboot,getBuildNr, getTime, getTimezones,getNetworkDevices,Devices, setTimezone, } from '../utils/systemapi';
+import {setTime, shutdown,reboot,getBuildNr,getTimezoneAuto, getTime, getTimezones,getNetworkDevices,Devices, setTimezone, } from '../utils/systemapi';
 
 import { Android12Switch } from '../components/shared/Switch';
 import SelectElementString from '../components/shared/SelectElementString';
@@ -40,6 +40,7 @@ function Settings() {
     const [responseMessage , setReponseMessage] = useState<string>('');
     const [networkDevices, setNetworkDevices] = useState<Devices>({});
     const [isSetDateManual, setIsSetDateManual] = useState<boolean>(false);
+    const [isSetTimezoneAuto, setIsSetTimezoneAuto] = useState<boolean>(false);
     const [data, setData] = useState<{
         time: Date | null,
         utc: Date | null,
@@ -71,8 +72,22 @@ function Settings() {
         .catch(()=>{
             setReponseMessage("Error setting time zone");
         });
-      };
+    };
     useEffect(() => {
+        const isAuto = window.localStorage.getItem('timezoneAuto') === 'true';
+        setIsSetTimezoneAuto(isAuto);
+        if(isAuto){
+            getTimezoneAuto()
+            .then((res) => {
+                setData({
+                    time: null,
+                    utc: null,
+                    zone: res
+                });
+            }).catch(()=>{
+                setIsSetTimezoneAuto(false);
+            });
+        }
         window.wazigate.getID().then(setWazigateID);
         getNetworkDevices().then((res) => {
             setNetworkDevices(res);
@@ -95,11 +110,11 @@ function Settings() {
                     setData({
                         time: isNaN(Date.parse(res.time)) ? null : new Date(res.time),
                         utc: isNaN(Date.parse(res.utc)) ? null : new Date(res.utc),
-                        zone: res.zone,
+                        zone: isSetTimezoneAuto? data? data.zone: '': res.zone
                     });
                 }
             );
-        }, 30000);
+        }, 3000);
         const timer = setInterval(() => {
             setCurrentTime(dayjs().format('HH:mm:ss'));
         }, 5000);
@@ -123,6 +138,28 @@ function Settings() {
             window.close();
         }
     }
+    const switchTimezoneAuto = (val:boolean) => {
+        setIsSetTimezoneAuto(val);
+    }
+    useEffect(() => {
+        if(isSetTimezoneAuto){
+            getTimezoneAuto()
+            .then((res) => {
+                setData({
+                    time: data?.time || null,
+                    utc: data?.utc || null,
+                    zone: res
+                })
+                window.localStorage.setItem('timezoneAuto', 'true');
+            }).catch(()=>{
+                setIsSetTimezoneAuto(false);
+            });
+        }else{
+            window.localStorage.setItem('timezoneAuto', 'false');
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[isSetTimezoneAuto])
+
     const rebootHandler = () => {
         const res = window.confirm("Are you sure you want to reboot?");
         if (res) {
@@ -189,7 +226,7 @@ function Settings() {
                         </GridItemEl>
                     </GridItem>
                     <GridItem bgcolor md={4.6} xs={12} matches={matches} >
-                        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', p: 1, alignItems: 'center' }} p={1} >
+                        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', alignItems: 'center' }} p={1} >
                             <AccessTime sx={IconStyle} />
                             <Typography color={'#212529'} fontWeight={500}>Time Settings</Typography>
                         </Box>
@@ -214,17 +251,21 @@ function Settings() {
                                     }
                                 </Typography>
                             </RowContainer>
-                            <Box bgcolor={'#D4E3F5'} borderRadius={1} p={1} m={1}>
+                            <Box bgcolor={isSetTimezoneAuto?'#fff':'#D4E3F5'} borderRadius={1} p={1} m={1}>
                                 <RowContainerBetween additionStyles={{ m: 1, px: 1 }}>
-                                    <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>Set TimeZone</Typography>
-                                    <Android12Switch checked color='info' />
+                                    <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>Set TimeZone Automatically</Typography>
+                                    <Android12Switch onChange={(_e,checked)=>switchTimezoneAuto(checked)} checked={isSetTimezoneAuto} color='info' />
                                 </RowContainerBetween>
-                                <SelectElementString
-                                    conditions={timezones}
-                                    handleChange={handleSaveTimezone}
-                                    title='Time Zone'
-                                    value={data? data.zone:''}
-                                />
+                                {
+                                    isSetTimezoneAuto?(null):(
+                                        <SelectElementString
+                                            conditions={timezones}
+                                            handleChange={handleSaveTimezone}
+                                            title='Time Zone'
+                                            value={data? data.zone:''}
+                                        />
+                                    )
+                                }
                             </Box>
                             <Box bgcolor={'#D4E3F5'} borderRadius={1} p={1} m={1}>
                                 <RowContainerBetween additionStyles={{ m: 1, }}>
