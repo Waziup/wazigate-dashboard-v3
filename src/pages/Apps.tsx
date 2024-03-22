@@ -127,6 +127,7 @@ export default function Apps() {
     const [matches, matchesMd] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [loadingUninstall, setLoadingUninstall] = React.useState<boolean>(false);
+    const [loading, setLoading] = React.useState<boolean>(false);
     const open = Boolean(anchorEl)
     const [modalProps, setModalProps] = useState<{ open: boolean, title: string, children: React.ReactNode }>({ open: false, title: '', children: null });
     const handleClose = () => {
@@ -273,6 +274,21 @@ export default function Apps() {
         });
         setModalProps({ open: false, title: '', children: null });
     }
+    const updateSettings = (event: SelectChangeEvent<string>) => {
+        setLoading(true);
+        window.wazigate.setAppConfig(selectedApp?.id as string, {
+            restart: event.target.value as "no" | "always" | "on-failure" | "unless-stopped" | undefined,
+            state:'started'
+        })
+        .then(() => {
+            setLoading(false);
+            getApps();
+        })
+        .catch((err) => {
+            setLoading(false);
+            alert('Error: ' + err);
+        });
+    }
     function startOrStopApp(appId: string, running: boolean) {
         const yesNo = confirm('Are you sure you want to ' + (running ? 'stop' : 'start') + ' ' + appId + '?');
         if (!yesNo) {
@@ -282,13 +298,16 @@ export default function Apps() {
             action: running ? "stop" : "start",
             restart: "no"
         }
+        setLoading(true);
         window.wazigate.startStopApp(appId, config)
         .then(() => {
             alert('App ' + appId + ' ' + (running ? 'stopped' : 'started') + ' successfully');
             getApps();
+            setLoading(false);
         }).catch(() => {
             alert('Could not ' + (running ? 'stop' : 'start') + ' ' + appId);
-            getApps()
+            getApps();
+            setLoading(false);
         })
 
     }
@@ -297,6 +316,13 @@ export default function Apps() {
     }
     return (
         <>
+            {
+                loading?(
+                    <Backdrop>
+                        <CircularProgress color="info" size={70} />
+                    </Backdrop>
+                ):null
+            }
             {
                 modalProps.open && modalProps.title === 'Installing New App' && (
                     <Backdrop>
@@ -358,10 +384,10 @@ export default function Apps() {
                                             onChange={handleCustomAppIdChange}
                                         />
                                         <TextInputField
-                                            placeholder="Enter Author"
-                                            label='Author'
+                                            placeholder="Version of app"
+                                            label='Version'
                                             required
-                                            name='author'
+                                            name='version'
                                             value={customAppId.version}
                                             onChange={handleCustomAppIdChange}
                                         />
@@ -432,6 +458,7 @@ export default function Apps() {
                                         name="name" placeholder='Enter device name'
                                         value={selectedApp?.name}
                                         required
+                                        readOnly
                                         style={{ border: 'none', width: '100%', padding: '6px 0', outline: 'none' }}
                                     />
                                 </FormControl>
@@ -439,14 +466,18 @@ export default function Apps() {
                                     <Typography color={'primary'} mb={.4} fontSize={12}>Author</Typography>
                                     <Typography color={'primary'} mb={.4} fontSize={12}>{selectedApp?.author.name ? (selectedApp?.author.name) : (selectedApp?.author)}</Typography>
                                 </Box>
-                                <SelectElement
-                                    id="restartPolicy"
-                                    name='restartPolicy'
-                                    value={(selectedApp as App)?.state ? (selectedApp as App)?.state.restartPolicy : ''}
-                                    handleChange={() => { }}
-                                    conditions={['no', 'on-failure', 'always']}
-                                    title='Restart Policy'
-                                />
+                                {
+                                    selectedApp?.state ? (
+                                        <SelectElement
+                                            id="restartPolicy"
+                                            name='restartPolicy'
+                                            value={(selectedApp as App)?.state ? (selectedApp as App)?.state.restartPolicy : ''}
+                                            handleChange={updateSettings}
+                                            conditions={['no','unless-stopped', 'on-failure', 'always']}
+                                            title='Restart Policy'
+                                        />
+                                    ):null
+                                }
                                 <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
                                     <Typography color={'primary'} mb={.4} fontSize={12}>Description</Typography>
                                     <Typography color={'primary'} mb={.4} fontSize={12}>{(selectedApp as App1)?.description as string}</Typography>
