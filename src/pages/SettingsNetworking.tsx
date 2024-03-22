@@ -150,9 +150,8 @@ export default function SettingsNetworking() {
             alert(error);
         });
     };
-    useEffect(() => {
+    const fcInit = ()=>{
         window.wazigate.getClouds().then((clouds) => {
-            setClouds(Object.values(clouds));
             setSelectedCloud(Object.values(clouds)? Object.values(clouds)[0]:null);
         });
         getConf().then((conf) => {
@@ -275,58 +274,54 @@ export default function SettingsNetworking() {
                 <Grid container>
                     
                     <GridItem lg={4} spacing={2} md={4.6} xs={12} matches={matches} additionStyles={{}}>
-                        {
-                            clouds.map((cloud)=>(
-                                <GridItemEl text={cloud.name} icon={'cloud'}>
-                                    <Grow in={saving}>
-                                        <LinearProgress />
-                                    </Grow>
-                                    <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc'}}>
-                                        <RowContainerNormal>
-                                            <Box component={'img'} src='/wazilogo.svg' mx={2} />
-                                            <Box>
-                                                <ListItemText
-                                                    primary={cloud.name || cloud.id}
-                                                    secondary={`ID ${cloud.id}`}
-                                                />
-                                            </Box>
-                                        </RowContainerNormal>
-                                        <MenuComponent
-                                            open={false}
-                                            menuItems={[
-                                                {
-                                                    text: 'Rename',
-                                                    icon: 'edit',
-                                                    clickHandler:handleRenameClick
-                                                }
-                                            ]}
+                        <GridItemEl text={selectedCloud?.name as string} icon={'cloud'}>
+                            <Grow in={saving}>
+                                <LinearProgress />
+                            </Grow>
+                            <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc'}}>
+                                <RowContainerNormal>
+                                    <Box component={'img'} src='/wazilogo.svg' mx={2} />
+                                    <Box>
+                                        <ListItemText
+                                            primary={selectedCloud?.name || selectedCloud?.id}
+                                            secondary={`ID ${selectedCloud?.id}`}
                                         />
-                                    </RowContainerBetween>
-                                    <Box px={2}>
-                                        <RowContainerNormal>
-                                            <Android12Switch 
-                                                checked={!cloud.paused}
-                                                onChange={handleEnabledChange}
-                                                color="info" 
-                                            />
-                                            <Typography>Active Sync</Typography>
-                                        </RowContainerNormal>
-                                        <TextInputField placeholder="REST Address" label="REST Address *" name="rest" onChange={handleInputChange} value={cloud.rest} />
-                                        <TextInputField placeholder="MQTT Address" label="MQTT Address *" name="mqtt" onChange={handleInputChange} value={cloud.mqtt} />
-                                        <TextInputField placeholder="Username" label="Username" name="username" onChange={handleInputChange} value={cloud.username} />
-                                        <TextInputField placeholder="****" label="Password" name="password" onChange={handleInputChange} value={cloud.password} />
                                     </Box>
-                                    <Grow in={hasUnsavedChanges}>
-                                        <PrimaryIconButton
-                                            iconname="save"
-                                            onClick={handleSaveClick}
-                                            type="button"
-                                            title="SAVE"
-                                        />
-                                    </Grow>
-                                </GridItemEl>
-                            ))
-                        }
+                                </RowContainerNormal>
+                                <MenuComponent
+                                    open={false}
+                                    menuItems={[
+                                        {
+                                            text: 'Rename',
+                                            icon: 'edit',
+                                            clickHandler:handleRenameClick
+                                        }
+                                    ]}
+                                />
+                            </RowContainerBetween>
+                            <Box px={2}>
+                                <RowContainerNormal>
+                                    <Android12Switch 
+                                        checked={!selectedCloud?.paused}
+                                        onChange={handleEnabledChange}
+                                        color="info" 
+                                    />
+                                    <Typography>Active Sync</Typography>
+                                </RowContainerNormal>
+                                <TextInputField placeholder="REST Address" label="REST Address *" name="rest" onChange={handleInputChange} value={selectedCloud?.rest} />
+                                <TextInputField placeholder="MQTT Address" label="MQTT Address *" name="mqtt" onChange={handleInputChange} value={selectedCloud?.mqtt} />
+                                <TextInputField placeholder="Username" label="Username" name="username" onChange={handleInputChange} value={selectedCloud?.username} />
+                                <TextInputField disabled={selectedCloud?.paused} placeholder="****" label="Password" name="token" onChange={handleInputChange} value={selectedCloud?.token} />
+                            </Box>
+                            <PrimaryIconButton
+                                disabled={!hasUnsavedChanges}
+                                iconname="save"
+                                onClick={handleSaveClick}
+                                type="button"
+                                title="SAVE"
+                            />
+                        </GridItemEl>
+                        
                         <GridItemEl text={'Access Point'} icon={'power_settings_new'}>
                             <Box p={2}>
                                 <form onSubmit={submitSSID}>
@@ -335,6 +330,7 @@ export default function SettingsNetworking() {
                                         label="Access Point SSID" 
                                         value={apConn? atob(apConn["802-11-wireless"]?.ssid as string) : ""}
                                         name="SSID"
+                                        id="SSID"
                                         placeholder="Enter SSID"
                                     />
                                     <TextInputField 
@@ -344,8 +340,9 @@ export default function SettingsNetworking() {
                                         placeholder="Enter password"
                                         onChange={()=>{}} 
                                         name="password"
+                                        id="password"
                                     />
-                                    <PrimaryButton title="Save" onClick={()=>{}} type="submit" />
+                                    <PrimaryButton title="Save" type="submit" />
                                 </form>
                             </Box>
                         </GridItemEl>
@@ -368,7 +365,6 @@ export default function SettingsNetworking() {
                                         label="Fan Trigger Temperature (C)" 
                                         onChange={(e)=>{setConf({
                                             ...conf,
-
                                             fan_trigger_temp:e.target.value
                                         })}} 
                                         name="fan"
@@ -384,7 +380,7 @@ export default function SettingsNetworking() {
                                         name="oled"
                                         value={   conf ? (conf?.oled_halt_timeout as unknown as string) : "Loading..."}
                                     />
-                                    <PrimaryButton title="Save" onClick={()=>{}} type="button" />
+                                    <PrimaryButton title="Save" type="submit" />
                                 </form>
                             </Box>
                         </GridItemEl>
