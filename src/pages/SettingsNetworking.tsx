@@ -3,14 +3,14 @@ import { Link, useOutletContext } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import RowContainerNormal from "../components/shared/RowContainerNormal";
-import { CellTower, DesktopWindowsOutlined, LockOutlined, ModeFanOffOutlined, WifiOutlined } from "@mui/icons-material";
+import { CellTower, Close, DesktopWindowsOutlined, LockOutlined, ModeFanOffOutlined, WifiOutlined } from "@mui/icons-material";
 import { Android12Switch } from "../components/shared/Switch";
 import PrimaryButton from "../components/shared/PrimaryButton";
 import { getWiFiScan,setConf as setConfFc, AccessPoint,getConf, setWiFiConnect, WifiReq, setAPMode, setAPInfo } from "../utils/systemapi";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import GridItemEl from "../components/shared/GridItemElement";
 const GridItem = ({ children,matches,lg, xs,md,additionStyles }: {xs:number,md:number,lg:number,spacing?:number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode,  }) => (
-    <Grid m={matches?2:0} lg={lg} sm={12} xl={4.8} item xs={xs} md={md} spacing={3} sx={additionStyles} borderRadius={2}  >
+    <Grid m={matches?2:0} lg={lg} sm={12} xl={lg} item xs={xs} md={md} spacing={3} sx={additionStyles} borderRadius={2}  >
         {children}
     </Grid>
 );
@@ -22,7 +22,6 @@ const style = {
     width: 400,
     bgcolor: 'background.paper',
     boxShadow: 24,
-    p: 2,
     borderRadius: 2,
 };
 const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
@@ -31,6 +30,7 @@ import { Cloud } from "waziup";
 import MenuComponent from "../components/shared/MenuDropDown";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 import { DevicesContext } from "../context/devices.context";
+import Backdrop from "../components/Backdrop";
 export default function SettingsNetworking() {
     const [matches] = useOutletContext<[matches:boolean]>();
     const [scanLoading,setScanLoading]=useState<boolean>(false);
@@ -48,8 +48,8 @@ export default function SettingsNetworking() {
             setScanLoading(false);
         });
     }
-    const [clouds, setClouds] = useState<Cloud[]>([]);
     const [saving, setSaving] = useState(false);
+    const [loading,setLoading] = useState(false);
     const [selectedCloud, setSelectedCloud] = useState<Cloud | null>(null);
     const [hasUnsavedChanges, sethasUnsavedChanges] = useState(false);
     const [conf, setConf] = useState<{fan_trigger_temp:string,oled_halt_timeout:string }>({
@@ -213,6 +213,13 @@ export default function SettingsNetworking() {
     console.log('ApCONN: ',apConn);
     return (
         <>
+            {
+                loading?(
+                    <Backdrop>
+                        <CircularProgress color="info" size={70} />
+                    </Backdrop>
+                ):null
+            }
             <Modal
                 open={selectedWifi !== undefined}
                 onClose={() => setSelectedWifi(undefined)}
@@ -220,23 +227,39 @@ export default function SettingsNetworking() {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <form id="submitform" onSubmit={submitHandler}>
-                        <TextInputField 
-                            icon={<CellTower sx={{fontSize:20,mx:1}}/>} 
-                            label="Access Point SSID"
-                            value={selectedWifi?.ssid}
-                            name="SSID"
-                            placeholder="Enter SSID"
-                        />
-                        <TextInputField 
-                            icon={<LockOutlined 
-                            sx={{fontSize:20,mx:1}}/>} 
-                            label="Access Point Pasword" 
-                            placeholder="Enter password" 
-                            name="password"
-                        />
-                        <PrimaryButton title="Save" onClick={()=>{}} type="submit" />
-                    </form>
+                    <RowContainerBetween additionStyles={{bgcolor: '#D8D8D8',borderRadius:2,}}>
+                        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', alignItems: 'center' }} p={1} >
+                            <WifiOutlined sx={IconStyle}/>
+                            <Typography color={'#212529'} fontWeight={500}>Connect to Wifi</Typography>
+                        </Box>
+                        <Close sx={{ ...IconStyle, fontSize: 20 }} onClick={()=>setSelectedWifi(undefined)} />
+                    </RowContainerBetween>
+                    <Box sx={{p:2}}>
+                        <form id="submitform" onSubmit={submitHandler}>
+                            <TextInputField 
+                                icon={<CellTower sx={{fontSize:20,mx:1}}/>} 
+                                label="Access Point SSID"
+                                value={selectedWifi?.ssid}
+                                name="SSID"
+                                id="SSID"
+                                placeholder="Enter SSID"
+                            />
+                            <TextInputField 
+                                icon={<LockOutlined 
+                                sx={{fontSize:20,mx:1}}/>} 
+                                onChange={(e)=>{
+                                    setSelectedWifi({
+                                        ...selectedWifi as AccessPoint,
+                                        password:e.target.value
+                                    }) as unknown as AccessPoint;
+                                }}
+                                label="Access Point Pasword" 
+                                placeholder="Enter password" 
+                                name="password"
+                            />
+                            <PrimaryButton title="Save"  type="submit" />
+                        </form>
+                    </Box>
                 </Box>
             </Modal>
             <Box p={2.5} sx={{ position: 'relative', width: '100%',overflowY:'auto', height: '100vh' }}>
