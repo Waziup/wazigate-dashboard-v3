@@ -164,20 +164,26 @@ export default function SettingsNetworking() {
             console.log(err);
         });
         
+    }
+    useEffect(() => {
+        fcInit();
     }, []);
-    const submitHandler = (event: React.FormEvent) => {
+    const submitHandler = async (event: React.FormEvent) => {
         event.preventDefault();
-        const target = event.target as HTMLFormElement;
-    
-        const data: WifiReq = {
-          ssid: target.SSID.value,
-          password: target.password.value,
-          autoConnect: true
-        };
+        const data: WifiReq={
+            ssid: selectedWifi?.ssid as string,
+            password: selectedWifi?.password,
+            autoConnect: true
+        }
         setScanLoading(true)
         setWiFiConnect(data).then(() => {
             setScanLoading(false)
             setSelectedWifi(undefined);
+            alert('Loading....');
+        })
+        .catch((error) => {
+            setScanLoading(false)
+            alert('Error:'+error);
         });
     };
     const submitSSID = (event: React.FormEvent<HTMLFormElement>) => {
@@ -189,15 +195,16 @@ export default function SettingsNetworking() {
         }
         console.log("data from submitSSID form: ",data);
         
-        setAPInfo(data).then(
-          (msg) => {
-            alert('Success'+msg);
-          })
-          .catch((error) => {
-            alert('Error encountered'+error);
-          }
+        setAPInfo(data)
+        .then(
+            (msg) => {
+                alert('Success'+msg);
+            })
+            .catch((error) => {
+                alert('Error encountered'+error);
+            }
         );
-      };
+    };
     useEffect(() => {
         scan();
     },[]);
