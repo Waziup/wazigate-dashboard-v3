@@ -5,10 +5,11 @@ interface SnackbarProps {
         vertical: "top" | "bottom";
         horizontal: "center" | "left" | "right";
     };
+    severity?: "error" | "warning" | "info" | "success";
     message: string;
     autoHideDuration: number;
 }
-export default function SnackbarComponent({anchorOrigin,message,autoHideDuration}: SnackbarProps) {
+export default function SnackbarComponent({anchorOrigin,severity,message,autoHideDuration}: SnackbarProps) {
     const [showErrSnackbar, setShowErrSnackbar] = useState<boolean>(false);
     const handleClose= ()=>{setShowErrSnackbar(!showErrSnackbar)}
     useEffect(() => {
@@ -19,7 +20,7 @@ export default function SnackbarComponent({anchorOrigin,message,autoHideDuration
     }, []);
     return (
         <Snackbar anchorOrigin={anchorOrigin} open={showErrSnackbar} autoHideDuration={autoHideDuration} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+            <Alert onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
                 {message}
             </Alert>
         </Snackbar>

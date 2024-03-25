@@ -283,10 +283,12 @@ export default function Apps() {
         .then(() => {
             setLoading(false);
             getApps();
+            setShowAppSettings(!showAppSettings);
         })
         .catch((err) => {
             setLoading(false);
             alert('Error: ' + err);
+            setShowAppSettings(!showAppSettings);
         });
     }
     function startOrStopApp(appId: string, running: boolean) {
@@ -487,10 +489,6 @@ export default function Apps() {
                                     <Typography color={'primary'} mb={.4} fontSize={12}>{selectedApp?.version}</Typography>
                                 </Box>
                             </form>
-                            <Box display={'flex'} alignItems={'center'} justifyContent={'space-evenly'} px={2} py={1}>
-                                <Button onClick={() => { setShowAppSettings(!showAppSettings) }} variant={'contained'} sx={{ mx: 2, color: '#fff' }} color={'info'}>Uninstall</Button>
-                                <Button onClick={() => { setShowAppSettings(!showAppSettings) }} variant={'contained'} sx={{ mx: 2 }} color={'info'}>START</Button>
-                            </Box>
                         </Box>
                     </Backdrop>
                 ) : null
