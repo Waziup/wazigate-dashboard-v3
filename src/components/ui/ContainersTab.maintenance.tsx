@@ -1,5 +1,5 @@
 
-import { Backdrop, Box,  Button,  Grid, ListItemText, Tooltip, Typography } from '@mui/material';
+import { Box,  Button,  Grid, ListItemText, Tooltip, Typography } from '@mui/material';
 import RowContainerBetween from '../shared/RowContainerBetween';
 import React, { useEffect, useState } from 'react';
 import RowContainerNormal from '../shared/RowContainerNormal';
@@ -7,6 +7,7 @@ import { cInfo, getAllContainers, getContainerLogs, setContainerAction } from '.
 import MenuComponent from '../shared/MenuDropDown';
 import { Android12Switch } from '../shared/Switch';
 import { removeFirstChar } from '../../utils';
+import Backdrop from '../Backdrop';
 interface Props{
     matches?:boolean
 }
@@ -61,30 +62,32 @@ export default function ContainersTabMaintenance({matches}:Props) {
     };
     return (
         <>
-            <Backdrop open={openModal}>
-                <Box sx={{width: matches?'40%':'90%',zIndex:999,bgcolor:'#fff'}}>
-                    <RowContainerBetween additionStyles={{ borderBottom: '1px solid black', px: 2, py: 2 }}>
-                        <Typography>Container Logs</Typography>
-                        <Button onClick={() =>{setOpenModal(false)}} sx={{ textTransform: 'initial', color: '#ff0000' }} variant={'text'} >cancel</Button>
-                        
-                    </RowContainerBetween>
-                    {
-                        logs.success? (
-                            <Box maxWidth={'90%'} overflow={'auto'} width={'90%'} height={200} bgcolor={'#000'}>
-                                <Typography fontSize={10} color={'#fff'}>
-                                    {logs.logs}
-                                </Typography>
-                            </Box>
-                        ):(
-                            <Box maxWidth={'90%'} overflow={'auto'} width={'90%'} height={200} bgcolor={'#fff'}>
-                                <Typography fontSize={18} fontWeight={900} color={'#ff0000'}>
-                                    {logs.logs}
-                                </Typography>
-                            </Box>
-                        )
-                    }
-                </Box>
-            </Backdrop>
+            {openModal?(
+                <Backdrop>
+                    <Box sx={{width: matches?'40%':'90%',bgcolor:'#fff'}}>
+                        <RowContainerBetween additionStyles={{ borderBottom: '1px solid black', px: 2, py: 2 }}>
+                            <Typography>Container Logs</Typography>
+                            <Button onClick={() =>{setOpenModal(false)}} sx={{ textTransform: 'initial', color: '#ff0000' }} variant={'text'} >cancel</Button>
+                            
+                        </RowContainerBetween>
+                        {
+                            logs.success? (
+                                <Box maxWidth={'90%'} overflow={'auto'} width={'90%'} height={200} bgcolor={'#000'}>
+                                    <Typography fontSize={10} color={'#fff'}>
+                                        {logs.logs}
+                                    </Typography>
+                                </Box>
+                            ):(
+                                <Box maxWidth={'90%'} overflow={'auto'} width={'90%'} height={200} bgcolor={'#fff'}>
+                                    <Typography fontSize={18} fontWeight={900} color={'#ff0000'}>
+                                        {logs.logs}
+                                    </Typography>
+                                </Box>
+                            )
+                        }
+                    </Box>
+                </Backdrop>
+            ):null}
             <Box px={2}>
                 <Grid spacing={2} py={2} container>
                     {
