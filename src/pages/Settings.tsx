@@ -172,7 +172,7 @@ function Settings() {
     }
     return (
         <>
-            <SnackbarComponent anchorOrigin={{ vertical: 'top', horizontal: 'center' }} autoHideDuration={6000} message={responseMessage} />
+            <SnackbarComponent anchorOrigin={{ vertical: 'top', horizontal: 'center' }} severity='success' autoHideDuration={6000} message={responseMessage} />
             <Box sx={{ p: 3, overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
                 <Box>
                     <Typography fontWeight={700} color={'black'}>Devices</Typography>
