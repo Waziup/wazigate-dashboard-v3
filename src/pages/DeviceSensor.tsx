@@ -28,7 +28,14 @@ function Device() {
         window.wazigate.getSensorValues(deviceId, sensorId)
             .then((res) => {
                 const values = (res as { time: string, value: number }[]).map((value) => {
-                    return { y: value.value, x: value.time }
+                    const date = new Date(value.time);
+                    const hours = String(date.getUTCHours()).padStart(2, '0');
+
+                    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                    return { 
+                        y: value.value, 
+                        x: `${hours}:${minutes}`
+                    }
                 })
                 const valuesTable = (res as { time: string, value: number }[]).map((value) => {
                     const date = new Date(value.time);
@@ -70,7 +77,7 @@ function Device() {
 
                             const minutes = String(date.getUTCMinutes()).padStart(2, '0');
                             return {
-                                value: value.value ? 'Running' : 'Stopped',
+                                value: actuator.meta.quantity === 'Boolean' ? (value.value ? 'Running' : 'Stopped') : value.value,
                                 modified: `${hours}:${minutes}`
                             }
                         })
@@ -112,8 +119,19 @@ function Device() {
                     <Chart
                         options={{
                             chart: {
+                                id: 'basic-bar',
                                 // height: 350,
-                                type: 'rangeArea',
+                                type: 'area',
+                                zoom: {
+                                    enabled: false
+                                },
+                                animations: {
+                                    enabled: true,
+                                    easing: 'linear',
+                                    dynamicAnimation: {
+                                        speed: 1000
+                                    }
+                                },
                             },
                             xaxis: {
                                 categories: graphValues.map((value) => value.x),
