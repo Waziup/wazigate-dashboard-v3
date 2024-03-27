@@ -64,7 +64,7 @@ export default function ContainersTabMaintenance({matches}:Props) {
         <>
             {openModal?(
                 <Backdrop>
-                    <Box sx={{width: matches?'40%':'90%',bgcolor:'#fff'}}>
+                    <Box sx={{borderRadius:5, width: matches?'50%':'90%',bgcolor:'#fff'}}>
                         <RowContainerBetween additionStyles={{ borderBottom: '1px solid black', px: 2, py: 2 }}>
                             <Typography>Container Logs</Typography>
                             <Button onClick={() =>{setOpenModal(false)}} sx={{ textTransform: 'initial', color: '#ff0000' }} variant={'text'} >cancel</Button>
@@ -72,13 +72,13 @@ export default function ContainersTabMaintenance({matches}:Props) {
                         </RowContainerBetween>
                         {
                             logs.success? (
-                                <Box maxWidth={'90%'} overflow={'auto'} width={'90%'} height={200} bgcolor={'#000'}>
+                                <Box maxWidth={'90%'} p={1} overflow={'auto'} width={'90%'} height={200} bgcolor={'#000'}>
                                     <Typography fontSize={10} color={'#fff'}>
                                         {logs.logs}
                                     </Typography>
                                 </Box>
                             ):(
-                                <Box maxWidth={'90%'} overflow={'auto'} width={'90%'} height={200} bgcolor={'#fff'}>
+                                <Box maxWidth={'90%'} p={1} overflow={'auto'} width={'90%'} height={200} bgcolor={'#fff'}>
                                     <Typography fontSize={18} fontWeight={900} color={'#ff0000'}>
                                         {logs.logs}
                                     </Typography>
