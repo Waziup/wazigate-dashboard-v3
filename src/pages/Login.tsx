@@ -60,9 +60,8 @@ export default function Login() {
             window.wazigate.authToken(data.username,data.password)
             .then((res)=>{
                 setAccessToken(res)
-                handleClose()
-                // console.log(token);
-                // window.wazigate.setToken(token);
+                handleClose();
+                window.wazigate.setToken(res);
                 navigate('/dashboard',{state:{title:'Dashboard'}})
             })
             .catch((err)=>{
