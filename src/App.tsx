@@ -1,5 +1,5 @@
 // import './App.css'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { HashRouter, Route,  Routes, } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import Dashboard from './pages/Dashboard'
 import Devices from './pages/Devices'
@@ -37,94 +37,37 @@ function App() {
             },
         },
     });
-    const router = createBrowserRouter([
-        {
-            path:'/',
-            element:<Login/>
-        },
-        {
-            element: <Layout/>,
-            children: [
-                {
-                    path: '/dashboard',
-                    element: <Dashboard/>
-                },
-                {
-                    path:'/devices',
-                    element: <Devices/>
-                },
-                {
-                    path:'/devices/:id',
-                    element:<Device/>
-                },
-                {
-                    path:'/devices/:id/settings',
-                    element:<DeviceSettings/>
-                },
-                {
-                    path:'/devices/:id/sensors/:sensorId',
-                    element: <DeviceSensor/>
-                },
-                {
-                    path:'/devices/:id/sensors/:sensorId/settings',
-                    element: <DeviceSensorSettings/>
-                },
-                {
-                    path:'/devices/:id/actuators/:sensorId',
-                    element: <DeviceSensor/>
-                },
-                {
-                    path:'/devices/:id/actuators/:sensorId/settings',
-                    element: <DeviceSensorSettings/>
-                },
-                {
-                    path: '*',
-                    element: <div>Not Found</div>
-                },
-                // {
-                //     path: '/automation',
-                //     element: <Automation/>
-                // },
-                {
-                    path:'/apps',
-                    element:<Apps/>
-                },
-                {
-                    path:'/apps/:id/:id2/',
-                    element: <AppUI/>
-                },
-                {
-                    path:'/settings',
-                    element: <Settings/>
-                },
-                {
-                    path:'/settings/networking',
-                    element: <SettingsNetworking/>
-                },
-                {
-                    path:'/settings/maintenance',
-                    element: <SettingsMaintenance/>
-                },
-                {
-                    path:'/user',
-                    element: <User/>
-                },
-                {
-                    path:'/help',
-                    element: <Docspage/>
-                },
-                {
-                    path:'/docs',
-                    element: <Box height={'100vh'}><iframe width="100%" height="100%" className="app" src="/docs/" /></Box>
-                }
-            ]
-        }
-    ])
     return (
         <DevicesProvider>
             <ThemeProvider theme={theme}>
                 <Box bgcolor={'#F0F2F5'}>
-                    <RouterProvider router={router}/>
+                    <HashRouter>
+                        <Routes>
+                            <Route >
+                                <Route path='/' element={<Login/>}/>
+                                <Route element={<Layout/>}>
+                                    <Route path='/dashboard' element={<Dashboard/>}/>
+                                    <Route path='/devices' element={<Devices/>}/>
+                                    <Route path='/devices/:id' element={<Device/>}/>
+                                    <Route path='/devices/:id/settings' element={<DeviceSettings/>}/>
+                                    <Route path='/devices/:id/sensors/:sensorId' element={<DeviceSensor/>}/>
+                                    <Route path='/devices/:id/sensors/:sensorId/settings' element={<DeviceSensorSettings/>}/>
+                                    <Route path='/devices/:id/actuators/:sensorId' element={<DeviceSensor/>}/>
+                                    <Route path='/devices/:id/actuators/:sensorId/settings' element={<DeviceSensorSettings/>}/>
+                                    <Route path='/apps' element={<Apps/>}/>
+                                    <Route path='/apps/:id/:id2/' element={<AppUI/>}/>
+                                    <Route path='/settings' element={<Settings/>}/>
+                                    <Route path='/settings/networking' element={<SettingsNetworking/>}/>
+                                    <Route path='/settings/maintenance' element={<SettingsMaintenance/>}/>
+                                    <Route path='/user' element={<User/>}/>
+                                    <Route path='/help' element={<Docspage/>}/>
+                                    <Route path='/docs' element={<Box height={'100vh'}><iframe width="100%" height="100%" className="app" src="/docs/" /></Box>}/>
+                                    <Route path='*' element={<div>Not Found</div>}/>
+                                </Route>
+                            </Route>
+                        </Routes>
+                        {/* <RouterProvider router={router}/> */}
+                    </HashRouter>
                 </Box>
             </ThemeProvider>
         </DevicesProvider>
