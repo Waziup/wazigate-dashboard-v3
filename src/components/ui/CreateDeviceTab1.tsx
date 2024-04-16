@@ -17,7 +17,6 @@ export const DropDownCreateDeviceTab1 = ({handleChangeSelect,options,value}:{ ha
                             <Box display={'flex'} alignItems={'center'}>
                                 <Box component={'img'} sx={{width:20,mx:1, height:20}} src={op.imageurl} />
                                 <Typography fontSize={14} color={'#325460'} >{op.name}</Typography>
-    
                             </Box>
                             <Radio
                                 checked={value===op.id}
@@ -35,7 +34,6 @@ export const DropDownCreateDeviceTab1 = ({handleChangeSelect,options,value}:{ ha
         
     </FormControl>
 );
-
 export default function CreateDeviceTab1({handleChange,newDevice,handleChangeSelect,}:{newDevice:Device,blockOnClick:(va:string)=>void,handleChange:(event: React.ChangeEvent<HTMLInputElement>)=>void,handleChangeSelect:(event: SelectChangeEvent<string>)=>void}){
     
     return(
@@ -54,7 +52,7 @@ export default function CreateDeviceTab1({handleChange,newDevice,handleChangeSel
                 <DropDownCreateDeviceTab1 
                     value={newDevice.meta.type}
                     handleChangeSelect={handleChangeSelect}
-                    options={[{name:'Wazidev Board',id:'wazidev', imageurl:'wazidev.svg'},{id:'genericboard',name:'Generic board',imageurl:'/WaziAct.svg'}]} 
+                    options={[{name:'Wazidev Board',id:'wazidev', imageurl:'./wazidev.svg'},{id:'genericboard',name:'Generic board',imageurl:'./WaziAct.svg'}]} 
                 />
                 
             </Box>

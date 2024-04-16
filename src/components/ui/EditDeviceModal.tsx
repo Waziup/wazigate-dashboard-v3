@@ -55,7 +55,7 @@ export default function EditDeviceModal({handleChangeDeviceCodec, changeEditMake
                         <DropDownCreateDeviceTab1
                             handleChangeSelect={handleChangeSelectDeviceType}
                             value={device.meta.type}
-                            options={[{ name: 'Wazidev Board', id: 'wazidev', imageurl: 'wazidev.svg' }, { name: 'Generic board', id: 'genericboard', imageurl: '/WaziAct.svg' }]}
+                            options={[{ name: 'Wazidev Board', id: 'wazidev', imageurl: './wazidev.svg' }, { name: 'Generic board', id: 'genericboard', imageurl: './WaziAct.svg' }]}
                         />
                         <SelectElementString 
                             mx={0} my={2} 
