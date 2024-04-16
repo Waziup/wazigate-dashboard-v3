@@ -40,7 +40,7 @@ export const SelectElement = ({ handleChange, title, conditions, isDisabled, wid
         </FormControl>
     </Box>
 );
-
+import BoxDownload from '../assets/box_download.svg';
 export default function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
@@ -108,7 +108,7 @@ export default function DeviceSettings() {
                     <Box bgcolor={'#fff'} mx={2} my={2} px={2} py={2} borderRadius={2}>
                         <RowContainerBetween>
                             <Box display={'flex'} my={1} alignItems={'center'}>
-                                <Box component={'img'} src={'/box_download.svg'} width={20} height={20} />
+                                <Box component={'img'} src={BoxDownload} width={20} height={20} />
                                 <Typography fontWeight={500} mx={2} fontSize={16} color={'#292F3F'}>Device Codec</Typography>
                             </Box>
                         </RowContainerBetween>

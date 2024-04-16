@@ -44,6 +44,7 @@ const reToken = () => {
         }
     );
 }
+import Logo from '../assets/wazilogo.svg'
 setInterval(reToken, 1000 * 60 * 8); // Referesh the token every 10-2 minutes
 export default function Login() {
     const navigate = useNavigate();
@@ -89,7 +90,7 @@ export default function Login() {
             <Box height={'100vh'} position={'relative'} width={'100%'} bgcolor={'#F4F7F6'}>
                 <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:'50%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'40%':'90%'}}>
                     <Box display={'flex'} justifyContent={'center'} py={2} width={'100%'} borderBottom={'1px solid #D5D6D8'} alignItems={'center'}>
-                        <Box component={'img'}  src='/wazilogo.svg' mx={2} />
+                        <Box component={'img'}  src={Logo} mx={2} />
                         <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>Login to Wazigate Dashboard</Typography>
                     </Box>
                     <form onSubmit={handleSubmit(onSubmit)}>

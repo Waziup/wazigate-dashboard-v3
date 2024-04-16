@@ -34,6 +34,7 @@ const TextInput = ({ children, label }: TextInputProps) => (
         {children}
     </Box>
 )
+import Logo from '../assets/wazilogo.svg';
 const textinputStyle = { width: '100%', fontSize: 18, border: 'none', background: 'none', color: DEFAULT_COLORS.third_dark, padding: 2, borderBottom: '1px solid #D5D6D8', outline: 'none' }
 function User() {
     const {handleSubmit,setValue} = useForm<Omit<User,'ID'>>({
@@ -123,7 +124,7 @@ function User() {
             <Box sx={{ width: '100%', p: 3, position: 'relative', bgcolor: '#F4F7F6', height: '100%', overflowY: 'scroll' }}>
                 <Box sx={{ mx:'auto', left: '50%', borderRadius: 2, bgcolor: 'white', width: matches ? '50%' : '95%' }}>
                     <Box sx={{ display: 'flex', py: 2, width: '100%', borderBottom: '1px solid #D5D6D8', alignItems: 'center', }}>
-                        <Box component={'img'} src='/wazilogo.svg' mx={2} />
+                        <Box component={'img'} src={Logo} mx={2} />
                         {/*  */}
                         <ListItemText
                             primary={profile?.name}

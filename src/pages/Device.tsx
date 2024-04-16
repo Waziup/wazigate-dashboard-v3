@@ -62,6 +62,7 @@ const initialState = {
     icon: '',
     unitSymbol:''
 }
+import Logo404 from '../assets/404.svg';
 function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
@@ -193,7 +194,7 @@ function DeviceSettings() {
     if (isError) {
         return (
             <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} height={'100%'} alignItems={'center'}>
-                <Box component={'img'} src="/404.svg" width={200} height={200} />
+                <Box component={'img'} src={Logo404} width={200} height={200} />
                 <Typography>Hi there</Typography>
                 <Typography>Error Encountered while fetching, refresh.</Typography>
             </Box>
@@ -294,7 +295,7 @@ function DeviceSettings() {
                 {
                     (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0 && (
                         <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} height={'100%'} alignItems={'center'}>
-                            <Box component={'img'} src="/404.svg" width={200} height={200} />
+                            <Box component={'img'} src={Logo404} width={200} height={200} />
                             <Typography>Hi there</Typography>
                             <Typography>No Sensors and Actuators for this device, create one.</Typography>
                         </Box>

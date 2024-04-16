@@ -59,6 +59,8 @@ const onCloseHandler = () => {
         }
     }, 0);
 }
+import Logo from '../assets/wazilogo.svg';
+import LogoSig from '../assets/wazi_sig.svg';
 const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHandler, age }: { customAppInstallHandler: () => void, matches: boolean, recommendedApps: RecomendedApp[], handleChange: (e: SelectChangeEvent) => void, age: string }) => (
     <FormControl sx={{ p: 0, border: 'none', width: matches ? '35%' : '45%', }}>
         <InputLabel id="demo-simple-select-helper-label">Install App</InputLabel>
@@ -71,7 +73,7 @@ const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHand
                 recommendedApps.map((app) => (
                     <MenuItem key={app.id} value={app.image + "*" + app.id} sx={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
                         <Box display={'flex'} alignItems={'center'}>
-                            <Box component={'img'} sx={{ width: 20, mx: 1, height: 20 }} src='/wazilogo.svg' />
+                            <Box component={'img'} sx={{ width: 20, mx: 1, height: 20 }} src={Logo} />
                             <Tooltip color='black' followCursor title={app.description} placement="top-start">
                                 <Typography fontSize={14} color={'#325460'} >{app.description.slice(0, 30) + '...'}</Typography>
                             </Tooltip>
@@ -524,7 +526,7 @@ export default function Apps() {
                                         ) : (
                                             <GridItem appUrl={returnAppURL(app)} disabled={app.state ?app.state.running:true} key={app.id}>
                                                 <Box px={.4} display={'flex'} alignItems={'center'} sx={{ position: 'absolute', top: -5, my: -1, }} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
-                                                    <Box component={'img'} src='/wazi_sig.svg' />
+                                                    <Box component={'img'} src={LogoSig} />
                                                     <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
                                                 </Box>
                                                 <Box display={'flex'} py={2} justifyContent={'space-between'}>
