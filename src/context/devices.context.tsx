@@ -1,9 +1,10 @@
 import { createContext, useCallback, useEffect,useState } from "react";
-import { App, Device } from "waziup";
+import { App, Cloud, Device } from "waziup";
 import { Devices,getNetworkDevices } from "../utils/systemapi";
 interface ContextValues{
     devices: Device[]
     apps: App[],
+    selectedCloud: Cloud | null
     getDevicesFc:()=>void,
     setAppsFc:(apps:App[])=>void,
     getApps:()=>void,
@@ -17,6 +18,7 @@ interface ContextValues{
 export const DevicesContext = createContext<ContextValues>({
     devices:[],
     apps:[],
+    selectedCloud:null,
     getDevicesFc() {
         console.log("get devices");
     },
@@ -58,7 +60,11 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         });
     }
     const [networkDevices, setNetWorkDevices] = useState<Devices | null>(null);
+    const [selectedCloud, setSelectedCloud] = useState<Cloud | null>(null);
     const setNetWorkDevicesFc = useCallback(async ()=>{
+        window.wazigate.getClouds().then((clouds) => {
+            setSelectedCloud(Object.values(clouds)? Object.values(clouds)[0]:null);
+        });
         const netWorkDevices = await getNetworkDevices();
         setNetWorkDevices(netWorkDevices);
     },[]);
@@ -111,6 +117,7 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         setNetWorkDevices:setNetWorkDevicesFc,
         addApp,
         token,
+        selectedCloud,
         setAccessToken,
         codecsList
     }
