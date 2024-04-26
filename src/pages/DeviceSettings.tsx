@@ -1,7 +1,7 @@
-import { MoreVert, Router, } from "@mui/icons-material";
+import { Router, } from "@mui/icons-material";
 import { Box, Breadcrumbs, FormControl, Typography, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
-import { Link, useOutletContext, useParams } from "react-router-dom";
+import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import AddTextShow from "../components/shared/AddTextInput";
 import type { Device, } from "waziup";
@@ -41,23 +41,127 @@ export const SelectElement = ({ handleChange, title, conditions, isDisabled, wid
     </Box>
 );
 import BoxDownload from '../assets/box_download.svg';
+import PrimaryButton from "../components/shared/PrimaryButton";
 export default function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
         console.info('You clicked a breadcrumb.');
     }
-    const { codecsList } = useContext(DevicesContext);
+    const { codecsList,devices,getDevicesFc } = useContext(DevicesContext);
+    const navigate = useNavigate();
     const { id } = useParams();
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
-    const [thisDevice, setThisDevice] = useState<Device | null>(null);
-
+    const [thisDevice, setThisDevice] = useState<Device>({
+        id: '',
+        name: '',
+        actuators:[],
+        sensors:[],
+        created: new Date(),
+        modified: new Date(),
+        meta: {
+            type: '',
+            codec: '',
+            lorawan: {
+                devAddr: '',
+                nwkSEncKey: '',
+                appSKey: ''
+            }
+        }
+    });
+    const handleSubmitEditDevice = () => {
+        const device = devices.find((dev) => dev.id === thisDevice?.id);
+        if (thisDevice?.meta) {
+            if (device?.meta !== thisDevice?.meta) {
+                window.wazigate.setDeviceMeta(thisDevice?.id as string, thisDevice?.meta as Device)
+                    .then(() => {
+                        alert("Device meta updated");
+                        getDevicesFc();
+                        navigate('/devices')
+                        return;
+                    }).catch(err => {
+                        alert("Error updating device meta"+err);
+                    });
+            }
+            if (device?.name !== thisDevice?.name) {
+                window.wazigate.setDeviceName(thisDevice.id as string, thisDevice.name.toString())
+                    .then(() => {
+                        alert("Device name updated");
+                        return;
+                    }).catch(err => {
+                        alert("Error updating device name"+err);
+                    });
+            }
+        }
+        getDevicesFc();
+        navigate('/devices')
+    }
     useEffect(() => {
         window.wazigate.getDevice(id as string).then((de) => {
             setThisDevice(de);
         });
-
     }, [id]);
-    const autoGenerateHandlerFc = () => { }
+    const handleChangeDeviceCodec = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setThisDevice({
+            ...thisDevice as Device,
+            meta: {
+                ...thisDevice?.meta,
+                codec: event.target.value
+            }
+        })
+    };
+    const autoGenerateLoraWANOptions = (title: "devAddr" | "nwkSEncKey" | "appSKey") => {
+        switch (title) {
+            case 'devAddr':
+                setThisDevice({
+                    ...thisDevice,
+                    meta: {
+                        ...thisDevice.meta,
+                        lorawan: {
+                            ...thisDevice.meta.lorawan,
+                            devAddr: Math.floor(Math.random() * 90000000) + 10000000,
+                        }
+                    }
+                });
+                break;
+            case 'nwkSEncKey':
+                setThisDevice({
+                    ...thisDevice,
+                    meta: {
+                        ...thisDevice.meta,
+                        lorawan: {
+                            ...thisDevice.meta.lorawan,
+                            nwkSEncKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                        }
+                    }
+                });
+                break;
+            case 'appSKey':
+                setThisDevice({
+                    ...thisDevice,
+                    meta: {
+                        ...thisDevice.meta,
+                        lorawan: {
+                            ...thisDevice.meta.lorawan,
+                            appSKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                        }
+                    }
+                });
+                break;
+            default:
+                break;
+        }
+    }
+    const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setThisDevice({
+            ...thisDevice,
+            meta: {
+                ...thisDevice.meta,
+                lorawan: {
+                    [e.target.name]: e.target.value
+                },
+            }
+        })
+    }
     return (
         <>
             <Box mx={2} sx={{ height: '100%', overflowY: 'auto', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' } }} m={2}>
@@ -94,13 +198,35 @@ export default function DeviceSettings() {
                                         <Router sx={{ fontSize: 20, color: '#292F3F' }} />
                                         <Typography fontWeight={500} mx={2} fontSize={16} color={'#292F3F'}>LoRaWAN Settings</Typography>
                                     </Box>
-                                    <MoreVert sx={{ color: 'black', fontSize: 20 }} />
                                 </RowContainerBetween>
                                 <Box my={2}>
-                                    <SelectElement title={'LoRAWAN Profile'} handleChange={() => { }} conditions={['Wazidev', 'Other']} value={thisDevice?.meta.lorawan.profile} />
-                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} name="devAddr" textInputValue={thisDevice?.meta.lorawan.devAddr} text={'Device Addr (Device Address)'} placeholder={'8 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.devAddr)} />
-                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} name="nwkSEncKey" textInputValue={thisDevice?.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'} placeholder={'32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.nwkSEncKey)} />
-                                    <AddTextShow autoGenerateHandler={autoGenerateHandlerFc} name="appSKey" textInputValue={thisDevice?.meta.lorawan.appSKey} text={'AppKey (App Key)'} placeholder={'32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.appSKey)} />
+                                    <AddTextShow 
+                                        name="devAddr"
+                                        onTextInputChange={handleTextInputChange}
+                                        autoGenerateHandler={autoGenerateLoraWANOptions}
+                                        textInputValue={thisDevice?.meta.lorawan.devAddr} 
+                                        text={'Device Addr (Device Address)'} 
+                                        placeholder={'8 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.devAddr)} 
+                                    />
+                                    <AddTextShow
+                                        onTextInputChange={handleTextInputChange}
+                                        autoGenerateHandler={autoGenerateLoraWANOptions}
+                                        name="nwkSEncKey"
+                                        textInputValue={thisDevice?.meta.lorawan.nwkSEncKey} 
+                                        text={'NwkSKey(Network Session Key)'} 
+                                        placeholder={'32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.nwkSEncKey)}
+                                    />
+                                    <AddTextShow
+                                        onTextInputChange={handleTextInputChange}
+                                        autoGenerateHandler={autoGenerateLoraWANOptions}
+                                        name="appSKey"
+                                        textInputValue={thisDevice?.meta.lorawan.appSKey} 
+                                        text={'AppKey (App Key)'} 
+                                        placeholder={'32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.appSKey)} 
+                                    />
+                                </Box>
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', pt: 2 }} >
+                                    <PrimaryButton onClick={()=>handleSubmitEditDevice()} type="button" title="Save" />
                                 </Box>
                             </Box>
                         ) : null
@@ -113,7 +239,10 @@ export default function DeviceSettings() {
                             </Box>
                         </RowContainerBetween>
                         <Box my={2}>
-                            <SelectElementString title={'Codec type.'} handleChange={() => { }} conditions={codecsList ? codecsList : []} value={thisDevice?.meta.codec} />
+                            <SelectElementString title={'Codec type.'} handleChange={handleChangeDeviceCodec} name="codec" conditions={codecsList ? codecsList : []} value={thisDevice?.meta.codec} />
+                        </Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', pt: 2 }} >
+                            <PrimaryButton onClick={()=>handleSubmitEditDevice()}  type="button" title="Save" />
                         </Box>
                     </Box>
                 </Box>
