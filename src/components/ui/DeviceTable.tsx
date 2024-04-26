@@ -7,10 +7,8 @@ import {Box,Table,TableBody,TableCell,
   TablePagination,TableRow,
   Checkbox,IconButton,Tooltip,FormControlLabel,Switch,
   Icon,
-  
 } 
 from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { visuallyHidden } from '@mui/utils';
 import { Download, Tune } from '@mui/icons-material';
 interface Data {
@@ -202,11 +200,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         </Typography>
       )}
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+        null
       ) : (
         <Tooltip title="Filter list">
           <IconButton>
