@@ -19,6 +19,7 @@ interface User {
 }
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
+    isReadOnly?:boolean
     children: React.ReactNode;
 }
 const schema = yup.object({
@@ -28,8 +29,8 @@ const schema = yup.object({
     newPassword: yup.string().required(),
     newPasswordConfirm: yup.string().required(),
 }).required()
-const TextInput = ({ children, label }: TextInputProps) => (
-    <Box py={1}>
+const TextInput = ({ children,isReadOnly, label }: TextInputProps) => (
+    <Box py={1} sx={{ width: '100%', bgcolor:isReadOnly?'#f5f5f5':'' }}>
         <p style={{ color: DEFAULT_COLORS.third_dark, fontWeight: '300' }}>{label} <span style={{ color: DEFAULT_COLORS.orange }}>*</span></p>
         {children}
     </Box>
@@ -40,7 +41,6 @@ function User() {
     const {handleSubmit,setValue} = useForm<Omit<User,'ID'>>({
         resolver: yupResolver(schema),
     });
-    const handleNavigate = () => { }
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const [loading, setLoading] = useState(false);
@@ -125,7 +125,6 @@ function User() {
                 <Box sx={{ mx:'auto', left: '50%', borderRadius: 2, bgcolor: 'white', width: matches ? '50%' : '95%' }}>
                     <Box sx={{ display: 'flex', py: 2, width: '100%', borderBottom: '1px solid #D5D6D8', alignItems: 'center', }}>
                         <Box component={'img'} src={Logo} mx={2} />
-                        {/*  */}
                         <ListItemText
                             primary={profile?.name}
                             secondary={`ID ${profile?.id}`}
@@ -152,19 +151,21 @@ function User() {
                                     type={'text'}
                                     onChange={onTextInputChange}
                                     name="name"
+                                    required
                                     placeholder={'admin'} 
                                     value={profile?.name}
                                     style={textinputStyle}
                                 />
                             </TextInput>
 
-                            <TextInput label='Username'>
+                            <TextInput isReadOnly label='Username'>
                                 <input
                                     type={'text'} 
                                     onChange={onTextInputChange}
                                     name="username"
                                     placeholder={'name'}
                                     readOnly
+                                    required
                                     value={profile?.username}
                                     style={textinputStyle}
                                 />
@@ -177,22 +178,23 @@ function User() {
                                     placeholder={'****'} 
                                     style={textinputStyle}
                                     value={profile?.password}
-
+                                    required
                                 />
                             </TextInput>
                             <TextInput label='New Password'>
-                                <input 
+                                <input
+                                    required
                                     type={'text'}
                                     onChange={onTextInputChange}
                                     name="newPassword"
                                     placeholder={'****'} 
                                     style={textinputStyle}
                                     value={profile?.newPassword}
-
                                 />
                             </TextInput>
                             <TextInput label='Confirm New Password' type="text" placeholder="admin">
                                 <input 
+                                    required
                                     type={'text'} 
                                     onChange={onTextInputChange}
                                     name="newPasswordConfirm"
@@ -202,7 +204,7 @@ function User() {
                                 />
                             </TextInput>
                             <Box display={'flex'} justifyContent={'center'} py={1}>
-                                <button type="submit" onClick={handleNavigate} style={{ width: '50%', border: 'none', justifyContent: 'center', display: 'flex', alignItems: 'center', borderRadius: 5, outline: 'none', padding: 10, backgroundColor: '#2BBBAD', color: 'white' }}>
+                                <button type="submit" style={{ width: '50%', border: 'none', justifyContent: 'center', display: 'flex', alignItems: 'center', borderRadius: 5, outline: 'none', padding: 10, backgroundColor: '#2BBBAD', color: 'white' }}>
                                     <Save sx={{ fontSize: 20 }} />
                                     SAVE
                                 </button>
