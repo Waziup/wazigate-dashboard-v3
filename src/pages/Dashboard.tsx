@@ -1,4 +1,4 @@
-import { Box, Grid, Stack, Typography } from "@mui/material";
+import { Box, Grid, Stack, Typography,styled } from "@mui/material";
 import { Router, CloudOff, Wifi,  Cloud, } from '@mui/icons-material';
 import BasicTable from "../components/ui/BasicTable";
 import React, { useContext, useMemo, } from "react";
@@ -27,11 +27,22 @@ const DeviceStatus = ({ devices }: { devices: Device[] }) => (
     </Box>
 );
 const TextItem = ({ text }: { text: string }) => <Typography sx={{ fontSize: [10, 10, 12, 13, 10], color: DEFAULT_COLORS.secondary_black, fontWeight: 300 }} >{text}</Typography>
-
+const MyScrollingElement = styled(Stack)(() => ({
+    overflow: "auto",
+    width: '100%',
+    height: '100%',
+    scrollbarWidth: "none", // Hide the scrollbar for firefox
+    '&::-webkit-scrollbar': {
+        display: 'none', // Hide the scrollbar for WebKit browsers (Chrome, Safari, Edge, etc.)
+    },
+    '&-ms-overflow-style:': {
+        display: 'none', // Hide the scrollbar for IE
+    },
+}));
 const AppStatus = ({ apps }: { apps: App[] }) => (
-    <Box sx={{ height: '100%',overflowY:'auto', bgcolor: 'white', borderRadius: 2, p: 2 }}>
+    <Box sx={{ height: '100%', bgcolor: 'white', borderRadius: 2, p: 2 }}>
         <NormalText title="App Status" />
-        <Stack width={'100%'} height={'100%'}>
+        <MyScrollingElement sx={{overflowY:'auto'}} width={'100%'} height={'100%'}>
             {
                 apps.map((app, index) => {
                     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -48,7 +59,7 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
                                             </Box>
                                         ):(app.waziapp && (app.waziapp as App['waziapp'] &{icon:string}).icon) ? (
                                             <Box sx={{ width: 40, height: 40,alignItems:'center',display:'flex',justifyContent:'center', borderRadius: 20, overflow: 'hidden' }}>
-                                                <img onError={handleImageError} src={`/apps/${app.id}/`+(app.waziapp as App['waziapp'] &{icon:string}).icon} alt={app.name} style={{ width: 20, height: 20, borderRadius: 10 }} />
+                                                <img onError={handleImageError} src={`/apps/${app.id}/`+(app.waziapp as App['waziapp'] &{icon:string}).icon} alt={app.name} style={{ width: 20, height: 20 }} />
                                             </Box>
                                         ) : (
                                             <Box sx={{ width: 40, height: 40, borderRadius: 20, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -63,20 +74,16 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
                                         />
                                     </Box>
                                 </RowContainerNormal>
-                                <Typography sx={{ 
-                                    color: app.state ? app.state.running ? 'info.main' : '#CCC400' : 'info.main', 
-                                    fontWeight: 300, 
-                                    fontSize: [10, 12, 12, 12, 10] 
-                                    }}>
-                                        {
-                                            app.state ? capitalizeFirstLetter(app.state.status) : 'Running'
-                                        }
+                                <Typography sx={{  color: app.state ? app.state.running ? 'info.main' : '#CCC400' : 'info.main', fontWeight: 300,  fontSize: [10, 12, 12, 12, 10] }}>
+                                    {
+                                        app.state ? capitalizeFirstLetter(app.state.status) : 'Running'
+                                    }
                                 </Typography>
                             </RowContainerBetween>
                         </Link>
-                    )})
+                )})
             }
-        </Stack>
+        </MyScrollingElement>
     </Box>
 );
 export const NormalText = ({ title }: { title: string }) => (<Typography color={DEFAULT_COLORS.navbar_dark}>{title}</Typography>)
