@@ -49,7 +49,7 @@ function Layout() {
                                 <Sidebar matchesMd={matchesMd} />
                             </Box>
                         </Box>
-                        <Box sx={{overflowY:'auto',height:'100%',mb:4}}>
+                        <Box sx={{height:'100%',mb:4}}>
                             <Outlet context={[matches]} />
                         </Box>
                     </Box>
