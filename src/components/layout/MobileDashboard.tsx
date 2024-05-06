@@ -105,20 +105,20 @@ export default function MobileDashboard() {
                                     <RowContainerNormal >
                                         {
                                             imageError?(
-                                                <Box sx={{ width: 40, height: 40, borderRadius: 20, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Box sx={{ width: 30, height: 30, borderRadius: 15, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                     <Typography sx={{ fontSize: 15, color: 'white'}}>W</Typography>
                                                 </Box>
                                             ):(app.waziapp && (app.waziapp as App['waziapp'] &{icon:string}).icon) ? (
                                                 <Box sx={{ width: 40, height: 40,alignItems:'center',display:'flex',justifyContent:'center', borderRadius: 20, overflow: 'hidden' }}>
-                                                    <img onError={handleImageError} src={`/apps/${app.id}/`+(app.waziapp as App['waziapp'] &{icon:string}).icon} alt={app.name} style={{ width: 30, height: 30, borderRadius: 15 }} />
+                                                    <img onError={handleImageError} src={`/apps/${app.id}/`+(app.waziapp as App['waziapp'] &{icon:string}).icon} alt={app.name} style={{ width: 20, height: 20, }} />
                                                 </Box>
                                             ) : (
-                                                <Box sx={{ width: 40, height: 40, borderRadius: 20, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Box sx={{ width: 30, height: 30, borderRadius: 15, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                     <Typography sx={{ fontSize: 15, color: 'white'}}>W</Typography>
                                                 </Box>
                                             )
                                         }
-                                        <Box>
+                                        <Box mx={1}>
                                             <Typography fontSize={[12, 12, 16, 12, 10]} color={'black'} fontWeight={300}>{app.name}</Typography>
                                             <Typography fontSize={[10, 12, 10, 12, 14]} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
                                             {'Created: '+(app.state !== null || app.state)?app.state?.startedAt?new Date(app.state.startedAt).toDateString():'':''}
@@ -126,7 +126,7 @@ export default function MobileDashboard() {
                                         </Box>
                                     </RowContainerNormal>
                                     <Box>
-                                        <Typography sx={{ color: app.state && app.state.running ?'info.main':'#797979' }} fontSize={[12, 12, 16, 12, 10]} fontWeight={300}>{app.state ? app.state.running ? 'Running' : 'Stopped' : 'Running'}</Typography>
+                                        <Typography sx={{ color: app.state && app.state.running ?'info.main':'#797979' }} fontSize={[12, 12, 16, 12, 10]} fontWeight={300}>{app.state ? app.state.running ? 'active' : 'Stopped' : ''}</Typography>
                                         <Typography fontSize={10} color={'#797979'} my={1} lineHeight={.8} fontWeight={300}>{app.author.name}</Typography>
                                     </Box>
                                 </RowContainerBetween>
