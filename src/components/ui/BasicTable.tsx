@@ -3,7 +3,6 @@ import { DEFAULT_COLORS } from '../../constants';
 import { Sensors,History } from '@mui/icons-material';
 import { Device } from 'waziup';
 import { capitalizeFirstLetter, differenceInMinutes, isActiveDevice } from '../../utils';
-import RowContainerNormal from '../shared/RowContainerNormal';
 function createData(
     devType: string,
   name: string,
@@ -18,7 +17,7 @@ interface Props{
 }
 export default function BasicTable({devices}:Props) {
     const rowsData = devices.map((dev)=>{
-        return createData(dev.meta.type,dev.name+'*'+Math.round(differenceInMinutes(dev.modified)/60),Math.round(differenceInMinutes(dev.modified)/3600)+'hrs ago',isActiveDevice(dev.modified))
+        return createData(dev.meta.type,dev.name+'*'+Math.round(differenceInMinutes(dev.modified)/60),Math.round(differenceInMinutes(dev.modified)/3600)+' hrs ago',isActiveDevice(dev.modified))
     });
     return (
         <TableContainer component={Paper}>
@@ -40,20 +39,22 @@ export default function BasicTable({devices}:Props) {
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell>
-                                <RowContainerNormal additionStyles={{height:'50%',borderRadius:1,mx:.5,px:.3,bgcolor:DEFAULT_COLORS.primary_blue}}>
-                                    <Sensors sx={{fontSize:12,mr:.2, color:'#fff'}}/>
+                                <Box sx={{display:'flex',alignItems:'center',borderRadius:1, mx:.5,px: 1,py: .5,bgcolor:DEFAULT_COLORS.primary_blue}}>
+                                    <Sensors sx={{fontSize:12,mr: .2, color:'#fff'}}/>
                                     <Typography fontSize={12} color={'white'}>{capitalizeFirstLetter(row.devType)}</Typography>
-                                </RowContainerNormal>
+                                </Box>
                             </TableCell>
                             <TableCell>
                                 <Box>
-                                    <Typography fontSize={[10,11,11,12,10]} color={DEFAULT_COLORS.primary_black}>
+                                    <Typography fontSize={[10,11,11,12,13]} color={DEFAULT_COLORS.primary_black}>
                                         {row.name.split('*')[0]}
                                     </Typography> 
-                                    <Typography fontSize={[10,11,11,12,10]}  color='#797979'>Last updated {row.name.split('*')[1]} mins</Typography>
+                                    <Typography fontSize={[10,11,11,11,11]}  color='#797979'>Last updated {row.name.split('*')[1]} mins</Typography>
                                 </Box>
                             </TableCell>
-                            <TableCell color='#797979' align="left">{row.runtime}</TableCell>
+                            <TableCell color='#797979' align="left">
+                                <Typography color={'#797979'} fontWeight={300}>{row.runtime}</Typography>
+                            </TableCell>
                             <TableCell color={row.status?'#499DFF':'#797979'} align="left">
                                 <Typography color={row.status?'#499DFF':'#797979'} fontWeight={300}>{row.status?'active':'inactive'}</Typography>
                             </TableCell>
