@@ -218,6 +218,10 @@ function DeviceSettings() {
         setNewSensOrAct(initialState); 
         handleToggleModal()
     }
+    const selectHandler = (e: SelectChangeEvent) => { 
+        setNewSensOrAct(initialState); 
+        setModalEls(e.target.value === 'actuator' ? 'actuator' : 'sensor', e.target.value)
+    }
     return (
         <>
             {
@@ -238,7 +242,7 @@ function DeviceSettings() {
                                 <Box p={1}>
                                     <SelectElement
                                         conditions={['actuator', 'sensor']}
-                                        handleChange={(e: SelectChangeEvent) => { setNewSensOrAct(initialState); setModalEls(e.target.value === 'actuator' ? 'actuator' : 'sensor', e.target.value) }}
+                                        handleChange={selectHandler}
                                         title="Type"
                                         value={modalProps.title}
                                     />
@@ -246,7 +250,7 @@ function DeviceSettings() {
                                         modalProps.title ? (
                                             <Box borderRadius={2} my={1} >
                                                 <form style={{borderRadius:2}} onSubmit={modalProps.title === 'actuator' ? handleCreateActuatorClick : handleCreateSensorClick}>
-                                                    <TextField onInput={handleNameChange} sx={{ width: '100%', my: 1 }} placeholder={modalProps.placeholder} type="text" id="name" required name="name" label="Name" variant="standard"></TextField>
+                                                    <TextField value={newSensOrAct.name} onInput={handleNameChange} sx={{ width: '100%', my: 1 }} placeholder={modalProps.placeholder} type="text" id="name" required name="name" label="Name" variant="standard"></TextField>
                                                     {
                                                         modalProps.title === 'sensor' ? (
                                                             <CreateSensorModal newSensOrAct={newSensOrAct} handleSelectChange={handleSelectChange} />

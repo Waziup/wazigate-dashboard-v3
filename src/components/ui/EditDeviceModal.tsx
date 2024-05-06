@@ -34,6 +34,8 @@ interface Props {
 }
 import { toStringHelper } from "../../utils";
 import PrimaryButton from "../shared/PrimaryButton";
+import WaziDevIcon from './wazidev.svg';
+import WaziActIcon from './WaziAct.svg';
 export default function EditDeviceModal({handleChangeDeviceCodec, changeEditMakeLoraWAN, autoGenerateLoraWANOptionsHandler, device, openModal, handleTextInputEditCodec, submitEditDevice, handleNameChange, handleChangeSelectDeviceType, handleToggleModal }: Props) {
     console.log(device);
     const { codecsList } = useContext(DevicesContext)
@@ -55,7 +57,7 @@ export default function EditDeviceModal({handleChangeDeviceCodec, changeEditMake
                         <DropDownCreateDeviceTab1
                             handleChangeSelect={handleChangeSelectDeviceType}
                             value={device.meta.type}
-                            options={[{ name: 'Wazidev Board', id: 'wazidev', imageurl: './wazidev.svg' }, { name: 'Generic board', id: 'genericboard', imageurl: './WaziAct.svg' }]}
+                            options={[{ name: 'Wazidev Board', id: 'wazidev', imageurl: WaziDevIcon }, { name: 'Generic board', id: 'genericboard', imageurl: WaziActIcon }]}
                         />
                         <SelectElementString 
                             mx={0} my={2} 
