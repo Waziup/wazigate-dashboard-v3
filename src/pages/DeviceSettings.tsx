@@ -68,6 +68,8 @@ export default function DeviceSettings() {
             }
         }
     });
+    const [isEdited,setIsEdited] = useState(false);
+    const [isEditedCodec,setIsEditedCodec] = useState(false);
     const handleSubmitEditDevice = () => {
         const device = devices.find((dev) => dev.id === thisDevice?.id);
         if (thisDevice?.meta) {
@@ -92,6 +94,8 @@ export default function DeviceSettings() {
                     });
             }
         }
+        setIsEdited(false);
+        setIsEditedCodec(false);
         getDevicesFc();
         navigate('/devices')
     }
@@ -107,7 +111,8 @@ export default function DeviceSettings() {
                 ...thisDevice?.meta,
                 codec: event.target.value
             }
-        })
+        });
+        setIsEditedCodec(true);
     };
     const autoGenerateLoraWANOptions = (title: "devAddr" | "nwkSEncKey" | "appSKey") => {
         switch (title) {
@@ -122,6 +127,7 @@ export default function DeviceSettings() {
                         }
                     }
                 });
+                setIsEdited(true);
                 break;
             case 'nwkSEncKey':
                 setThisDevice({
@@ -134,6 +140,7 @@ export default function DeviceSettings() {
                         }
                     }
                 });
+                setIsEdited(true);
                 break;
             case 'appSKey':
                 setThisDevice({
@@ -146,6 +153,7 @@ export default function DeviceSettings() {
                         }
                     }
                 });
+                setIsEdited(true);
                 break;
             default:
                 break;
@@ -160,7 +168,8 @@ export default function DeviceSettings() {
                     [e.target.name]: e.target.value
                 },
             }
-        })
+        });
+        setIsEdited(true);
     }
     return (
         <>
@@ -225,9 +234,13 @@ export default function DeviceSettings() {
                                         placeholder={'32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.appSKey)} 
                                     />
                                 </Box>
-                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', pt: 2 }} >
-                                    <PrimaryButton onClick={()=>handleSubmitEditDevice()} type="button" title="Save" />
-                                </Box>
+                                {
+                                    isEdited ? (
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', pt: 2 }} >
+                                            <PrimaryButton onClick={()=>handleSubmitEditDevice()} type="button" title="Save" />
+                                        </Box>
+                                    ) : null
+                                }
                             </Box>
                         ) : null
                     }
@@ -241,9 +254,13 @@ export default function DeviceSettings() {
                         <Box my={2}>
                             <SelectElementString title={'Codec type.'} handleChange={handleChangeDeviceCodec} name="codec" conditions={codecsList ? codecsList : []} value={thisDevice?.meta.codec} />
                         </Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', pt: 2 }} >
-                            <PrimaryButton onClick={()=>handleSubmitEditDevice()}  type="button" title="Save" />
-                        </Box>
+                        {
+                            isEditedCodec ? (
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', pt: 2 }} >
+                                    <PrimaryButton onClick={()=>handleSubmitEditDevice()} type="button" title="Save" />
+                                </Box>
+                            ) : null
+                        }
                     </Box>
                 </Box>
             </Box>
