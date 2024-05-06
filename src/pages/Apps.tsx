@@ -173,6 +173,7 @@ export default function Apps() {
             return;
         }
         addApp(customAppId as unknown as App);
+        setModalProps({ open: false, title: '', children: null });
     }
     const [appToInstallId, setAppToInstallId] = useState<string>('');
     const handleCustomAppIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -547,7 +548,7 @@ export default function Apps() {
                                                                 text: 'Uninstall',
                                                                 clickHandler: () => { setAppToUninstallFc(idx) }
                                                             },
-                                                            app.state?{
+                                                            (app.state && !(app.id.includes("system")))?{
                                                                 icon: `pause`,
                                                                 text: app.state ? app.state.running ? 'Stop' : 'Start' : 'Start',
                                                                 clickHandler: () => { startOrStopApp(app.id, app.state ? app.state.running : false) }
@@ -555,8 +556,8 @@ export default function Apps() {
                                                         ]}
                                                     />
                                                 </Box>
-                                                <Typography fontSize={15} fontWeight={200} my={1} color={DEFAULT_COLORS.navbar_dark}>Status: <Typography component={'span'} fontSize={15} color={DEFAULT_COLORS.navbar_dark}>{app.state ? app.state.running ? 'Running' : 'Stopped' : 'Running'}</Typography></Typography>
-                                                <Typography fontSize={14} my={1} color={DEFAULT_COLORS.secondary_black}>{(app as App1).description.length > 40 ? (app as App1).description.slice(0, 39) + '...' : (app as App1).description}</Typography>
+                                                <Typography fontSize={15} fontWeight={100} my={1} color={DEFAULT_COLORS.secondary_black}>Status: <Typography component={'span'} fontSize={15} color={DEFAULT_COLORS.navbar_dark}>{app.state ? app.state.running ? 'Running' : 'Stopped' : 'Running'}</Typography></Typography>
+                                                <Typography fontWeight={100} fontSize={14} my={1} color={DEFAULT_COLORS.secondary_black}>{(app as App1).description.length > 40 ? (app as App1).description.slice(0, 39) + '...' : (app as App1).description}</Typography>
                                             </GridItem>
                                         )
                                     }
