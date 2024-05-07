@@ -89,9 +89,11 @@ function Devices() {
         }
         window.wazigate.addDevice(device)
         .then(() => {
+            setScreen('tab1');
             handleToggleModal();
             getDevicesFc();
         }).catch(err => {
+            setScreen('tab1');
             alert('Error encountered: ' + err);
         });
     }
