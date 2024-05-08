@@ -184,13 +184,18 @@ function Devices() {
         }
     }
     const handleTextInputEditCodec = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNewDevice({
-            ...newDevice,
-            meta: {
-                ...newDevice.meta,
-                [e.target.name]: e.target.value
-            }
-        })
+        if(selectedDevice){
+            setSelectedDevice({
+                ...selectedDevice as Device,
+                meta: {
+                    ...(selectedDevice as Device).meta,
+                    lorawan :{
+                        ...selectedDevice.meta.lorawan,
+                        [e.target.name]: e.target.value
+                    }
+                }
+            });
+        }
     }
     const handleSubmitEditDevice = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
