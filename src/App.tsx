@@ -18,9 +18,23 @@ import { DevicesProvider } from './context/devices.context'
 import SettingsNetworking from './pages/SettingsNetworking'
 import SettingsMaintenance from './pages/SettingsMaintenance';
 import AppUI from './pages/App';
+const reToken = () => {
+    const oldToken = window.localStorage.getItem('token');
+    window.wazigate.set<string>("auth/retoken", {
+        token: oldToken,
+    })
+    .then((res)=>{
+        console.log("Refresh token", res);
+        window.localStorage.setItem('token',res as unknown as string);
+        // setTimeout(reToken, 1000 * 60 * 8); // Referesh the token every 10-2 minutes
+    })
+    .catch((error)=>{
+        console.log(error);
+        // window.location.href='/'
+    });
+}
+setInterval(reToken, 1000 * 60 * 5);
 function App() {
-
-    
     const theme = createTheme({
         palette: {
             primary: {
