@@ -27,25 +27,8 @@ const TextInput = ({children,label}:TextInputProps)=>(
             <Box component={'p'} sx={{color:DEFAULT_COLORS.orange}}>{' '}*</Box></Box>
         {children}
     </Box>
-);
-const reToken = () => {
-    const oldToken = window.localStorage.getItem('token');
-    window.wazigate.set<string>("auth/retoken", {
-        token: oldToken,
-    }).then(
-        (res) => {
-            console.log("Refresh token", res);
-            window.localStorage.setItem('token',res as unknown as string);
-            // setTimeout(reToken, 1000 * 60 * 8); // Referesh the token every 10-2 minutes
-        },
-        (error) => {
-            console.log(error);
-            // window.location.href='/'
-        }
-    );
-}
+); // Referesh the token every 10-2 minutes
 import Logo from '../assets/wazilogo.svg'
-setInterval(reToken, 1000 * 60 * 8); // Referesh the token every 10-2 minutes
 export default function Login() {
     const navigate = useNavigate();
     const [showErrSnackbar, setShowErrSnackbar] = useState<boolean>(false);
