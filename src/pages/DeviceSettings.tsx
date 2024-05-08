@@ -1,6 +1,5 @@
-import { Router, } from "@mui/icons-material";
+import { Router,RouterOutlined } from "@mui/icons-material";
 import { Box, Breadcrumbs, FormControl, Typography, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import AddTextShow from "../components/shared/AddTextInput";
@@ -8,6 +7,10 @@ import type { Device, } from "waziup";
 import { DevicesContext } from "../context/devices.context";
 import { toStringHelper } from "../utils";
 import { SelectElementString } from "./Automation";
+import RowContainerBetween from "../components/shared/RowContainerBetween";
+import { DEFAULT_COLORS } from "../constants";
+import RowContainerNormal from "../components/shared/RowContainerNormal";
+import { Android12Switch } from "../components/shared/Switch";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: SelectChangeEvent<string>) => void,
     title: string,
@@ -69,6 +72,7 @@ export default function DeviceSettings() {
         }
     });
     const [isEdited,setIsEdited] = useState(false);
+    // const [isEditedMakeLoraWAN,setIsEditedMakeLoraWAN] = useState(false);
     const [isEditedCodec,setIsEditedCodec] = useState(false);
     const handleSubmitEditDevice = () => {
         const device = devices.find((dev) => dev.id === thisDevice?.id);
@@ -165,8 +169,19 @@ export default function DeviceSettings() {
             meta: {
                 ...thisDevice.meta,
                 lorawan: {
+                    ...thisDevice.meta.lorawan,
                     [e.target.name]: e.target.value
                 },
+            }
+        });
+        setIsEdited(true);
+    }
+    const changeMakeLoraWAN = () => {
+        setThisDevice({
+            ...thisDevice,
+            meta: {
+                ...thisDevice.meta,
+                lorawan: thisDevice.meta.lorawan ? null : { devEUI: null, },
             }
         });
         setIsEdited(true);
@@ -207,6 +222,7 @@ export default function DeviceSettings() {
                                         <Router sx={{ fontSize: 20, color: '#292F3F' }} />
                                         <Typography fontWeight={500} mx={2} fontSize={16} color={'#292F3F'}>LoRaWAN Settings</Typography>
                                     </Box>
+                                    <Android12Switch checked={thisDevice.meta.lorawan} onChange={changeMakeLoraWAN} color='info' />
                                 </RowContainerBetween>
                                 <Box my={2}>
                                     <AddTextShow 
@@ -242,13 +258,43 @@ export default function DeviceSettings() {
                                     ) : null
                                 }
                             </Box>
-                        ) : null
+                        ) : (
+                            <Box bgcolor={'#fff'} mx={2} my={1} px={2} py={2} borderRadius={2}>
+                                <RowContainerBetween additionStyles={{ my: 1 }}>
+                                    <RowContainerNormal>
+                                        <RouterOutlined sx={{ mr: 1, fontSize: 20, color: DEFAULT_COLORS.navbar_dark }} />
+                                        <Typography fontWeight={500} mx={2} color={DEFAULT_COLORS.navbar_dark} fontSize={16}>Make LoraWAN</Typography>
+                                    </RowContainerNormal>
+                                    <Android12Switch checked={thisDevice.meta.lorawan} onChange={changeMakeLoraWAN} color='info' />
+                                </RowContainerBetween>
+                                {
+                                    thisDevice.meta.lorawan && (
+                                        <Box my={2}>
+                                            <RowContainerNormal>
+                                                <RouterOutlined sx={{ mr: 2, fontSize: 20, color: DEFAULT_COLORS.navbar_dark }} />
+                                                <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={13}>LoRaWAN Settings</Typography>
+                                            </RowContainerNormal>
+                                            <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.devAddr} onTextInputChange={handleTextInputChange} name="devAddr" text={'Device Addr (Device Address)'} placeholder={'8 digits required, got 0'} />
+                                            <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.nwkSEncKey} onTextInputChange={handleTextInputChange} name="nwkSEncKey" text={'NwkSKey(Network Session Key)'} placeholder={'32 digits required, got 0'} />
+                                            <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.appSKey} onTextInputChange={handleTextInputChange} name="appSKey" text={'AppKey (App Key)'} placeholder={'32 digits required, got 0'} />
+                                        </Box>
+                                    )
+                                }
+                                {
+                                    isEdited ? (
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', pt: 2 }} >
+                                            <PrimaryButton onClick={()=>handleSubmitEditDevice()} type="button" title="Save" />
+                                        </Box>
+                                    ) : null
+                                }
+                            </Box>
+                        )
                     }
                     <Box bgcolor={'#fff'} mx={2} my={2} px={2} py={2} borderRadius={2}>
                         <RowContainerBetween>
                             <Box display={'flex'} my={1} alignItems={'center'}>
                                 <Box component={'img'} src={BoxDownload} width={20} height={20} />
-                                <Typography fontWeight={500} mx={2} fontSize={16} color={'#292F3F'}>Device Codec</Typography>
+                                <Typography fontWeight={500} mx={2} fontSize={16} color={DEFAULT_COLORS.navbar_dark}>Device Codec</Typography>
                             </Box>
                         </RowContainerBetween>
                         <Box my={2}>
