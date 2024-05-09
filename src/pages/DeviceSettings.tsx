@@ -181,7 +181,7 @@ export default function DeviceSettings() {
             ...thisDevice,
             meta: {
                 ...thisDevice.meta,
-                lorawan: thisDevice.meta.lorawan ? null : { devEUI: null, },
+                lorawan: thisDevice.meta.lorawan ? null : { },
             }
         });
         setIsEdited(true);

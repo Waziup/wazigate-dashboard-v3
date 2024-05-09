@@ -58,7 +58,7 @@ function Devices() {
             ...newDevice,
             meta: {
                 ...newDevice.meta,
-                lorawan: newDevice.meta.lorawan ? null : { devEUI: null, },
+                lorawan: newDevice.meta.lorawan ? null : {  },
             }
         })
     }
@@ -68,7 +68,7 @@ function Devices() {
                 ...selectedDevice,
                 meta: {
                     ...selectedDevice.meta,
-                    lorawan: selectedDevice.meta.lorawan ? null : { devEUI: null, },
+                    lorawan: selectedDevice.meta.lorawan ? null : { },
                 }
             }) as unknown as Device
         }
