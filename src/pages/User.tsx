@@ -29,8 +29,8 @@ const schema = yup.object({
     newPassword: yup.string().required(),
     newPasswordConfirm: yup.string().required(),
 }).required()
-const TextInput = ({ children,isReadOnly, label }: TextInputProps) => (
-    <Box py={1} sx={{ width: '100%', bgcolor:isReadOnly?'#f5f5f5':'' }}>
+const TextInput = ({ children, label }: TextInputProps) => (
+    <Box py={1} sx={{ width: '100%',  }}>
         <p style={{ color: DEFAULT_COLORS.third_dark, fontWeight: '300' }}>{label} <span style={{ color: DEFAULT_COLORS.orange }}>*</span></p>
         {children}
     </Box>
@@ -121,8 +121,8 @@ function User() {
                     {msg}
                 </Alert>
             </Snackbar>
-            <Box sx={{ width: '100%', p: 3, position: 'relative', bgcolor: '#F4F7F6', height: '100%', overflowY: 'scroll' }}>
-                <Box sx={{ mx:'auto', left: '50%', borderRadius: 2, bgcolor: 'white', width: matches ? '50%' : '95%' }}>
+            <Box sx={{ width: '100%',  p: 2, position: 'relative', bgcolor: '#F4F7F6', height: '100%', overflowY: 'scroll' }}>
+                <Box sx={{ mx:'auto', left: '50%',boxShadow: 3, borderRadius: 2, bgcolor: 'white', width: matches ? '50%' : '95%' }}>
                     <Box sx={{ display: 'flex', py: 2, width: '100%', borderBottom: '1px solid #D5D6D8', alignItems: 'center', }}>
                         <Box component={'img'} src={Logo} mx={2} />
                         <ListItemText
@@ -144,7 +144,7 @@ function User() {
                         </Box>
                     </Box>
                     <form onSubmit={handleSubmit(saveProfile)}>
-                        <Typography sx={{ fontWeight: 200, fontSize: 13, color: DEFAULT_COLORS.third_dark }}>GENERAL</Typography>
+                        <Typography  sx={{ fontWeight: 200, fontSize: 13,mx:1,my:.5, color: '#9CA4AB' }}>GENERAL</Typography>
                         <Box p={2}>
                             <TextInput label='Name'>
                                 <input 

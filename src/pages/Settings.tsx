@@ -18,8 +18,8 @@ import SelectElementString from '../components/shared/SelectElementString';
 import GridItemEl from '../components/shared/GridItemElement';
 import SnackbarComponent from '../components/shared/Snackbar';
 const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
-const GridItem = ({bgcolor, children,}: {xs:number,md:number, matches: boolean,bgcolor?:boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode }) => (
-    <Grid bgcolor={bgcolor?'#fff':''} item md={6} lg={6} xl={6} sm={6} xs={12} my={1} px={1} >
+const GridItem = ({bgcolor,additionStyles,md, children,}: {xs:number,md:number, matches: boolean,bgcolor?:boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode }) => (
+    <Grid sx={{bgcolor: bgcolor?'#fff':'',...additionStyles}} bgcolor={bgcolor?'#fff':''} item md={md} lg={5.5} xl={5.5} sm={6} xs={12} my={1} >
         {children}
     </Grid>
 );
@@ -173,13 +173,13 @@ function Settings() {
     return (
         <>
             <SnackbarComponent anchorOrigin={{ vertical: 'top', horizontal: 'center' }} severity='success' autoHideDuration={6000} message={responseMessage} />
-            <Box sx={{ p: 3, overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
+            <Box sx={{ p: 3, width:'100%', overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
                 <Box>
                     <Typography fontWeight={700} color={'black'}>Devices</Typography>
                     <Typography sx={{ fontSize:13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography>
                 </Box>
-                <Grid container>
-                    <GridItem md={4.6} xs={12} matches={matches} >
+                <Grid  container>
+                    <GridItem additionStyles={{m:matches?1:0}} md={4.6} xs={12} matches={matches} >
                         <GridItemEl icon='cell_tower' text={(eth0 && eth0.IP4Config)?'Ethernet':'Network'}>
                             <Box py={2}>
                                 <RowContainer>
@@ -225,22 +225,22 @@ function Settings() {
                             </RowContainerNormal>
                         </GridItemEl>
                     </GridItem>
-                    <GridItem bgcolor md={4.6} xs={12} matches={matches} >
-                        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', alignItems: 'center' }} p={1} >
+                    <GridItem additionStyles={{boxShadow:2,borderRadius:2,}} bgcolor md={4.6} xs={12} matches={matches} >
+                        <Box sx={{ display: 'flex', borderTopLeftRadius: 5,border:'.5px solid #d8d8d8', borderTopRightRadius: 5, bgcolor: '#F7F7F7', alignItems: 'center' }} p={1} >
                             <AccessTime sx={IconStyle} />
                             <Typography color={'#212529'} fontWeight={500}>Time Settings</Typography>
                         </Box>
                         <Box my={2}>
                             <RowContainer>
-                                <Typography color={'primary.main'} fontWeight={300}>Local Time</Typography>
+                                <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Local Time</Typography>
                                 <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.primary_black} fontWeight={700}>{currentTime}</Typography>
                             </RowContainer>
                             <RowContainer>
-                                <Typography color={'primary.main'} fontWeight={300}>Date</Typography>
+                                <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Date</Typography>
                                 <Typography textTransform={'uppercase'} fontSize={14} color={DEFAULT_COLORS.primary_black} fontWeight={700}>{today.toLocaleDateString().toString().replaceAll('/', '-')}</Typography>
                             </RowContainer>
                             <RowContainer>
-                                <Typography color={'primary.main'} fontWeight={300}>Time Zone</Typography>
+                                <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Time Zone</Typography>
                                 <Typography color={DEFAULT_COLORS.primary_black} fontSize={14} fontWeight={700}>
                                     {
                                         data?(
