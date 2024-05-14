@@ -129,10 +129,10 @@ function Dashboard() {
                             </Stack>
                             <Grid mt={2} container spacing={2}>
                                 <Grid item py={6} sm={11} md={8} >
-                                    <DeviceStatus devices={devices.filter((_device, id) => id < 4)} />
+                                    <DeviceStatus devices={devices?devices.filter((_device, id) => id < 4): []} />
                                 </Grid>
                                 <Grid py={6} item sm={12} md={4} >
-                                    <AppStatus apps={apps.filter((_i,idx)=>idx<4)} />
+                                    <AppStatus apps={apps?apps.filter((_i,idx)=>idx<4):[]} />
                                 </Grid>
                             </Grid>
                         </Box>

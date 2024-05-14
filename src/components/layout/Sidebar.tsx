@@ -163,15 +163,15 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                         </List>
                         <Box position={'absolute'} display={'flex'}  justifyContent={'center'} flexDirection={'column'} alignItems={'center'} bottom={0} width={'100%'} >
                             <NavLink style={{textDecoration:'none',width:'100%'}} to={'/help'}>
-                                <Box display={'flex'} p={2} alignItems={'center'}>
+                                <Box display={'flex'} p={2} alignSelf={'center'} alignItems={'center'}>
                                     <ListItemIcon>  
                                         <HelpCenter sx={{color:'white'}} />
                                     </ListItemIcon>
                                     <ListItemText sx={{color:'white'}} primary={'Help and feedback'} />
                                 </Box>
                             </NavLink>
-                            <Link style={{textDecoration:'none',textDecorationColor:'none',width:'100%', color:'#fff',borderBottom:'1px solid #fff',padding:'4px 0', borderTop:'1px solid white'}} to={'/user'}>
-                                <Box display={'flex'} px={2}>
+                            <Link style={{textDecoration:'none',textDecorationColor:'none',width:'100%', color:'#fff', padding:'4px 0', borderTop:'1px solid rgba(255, 255, 255, 0.4)'}} to={'/user'}>
+                                <Box display={'flex'} alignSelf={'center'} px={2}>
                                     <NoImageProfile/>
                                     <Box>
                                         <Typography>Wazigate User</Typography>
@@ -179,8 +179,8 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     </Box>
                                 </Box>
                             </Link>
-                            <Link style={{textDecoration:'none',textDecorationColor:'none',width:'100%', color:'#fff',borderBottom:'1px solid #fff',padding:'4px 0', borderTop:'1px solid white'}} to={'/'}>
-                                <Box width={'100%'} px={2} display={'flex'} alignItems={'center'}>
+                            <Link style={{textDecoration:'none',textDecorationColor:'none',width:'100%',textAlign:'center', color:'#fff',borderBottom:'1px solid rgba(255, 255, 255, 0.4)',padding:'8px 0', borderTop:'1px solid rgba(255, 255, 255, 0.4)'}} to={'/'}>
+                                <Box sx={{width:'100%',px:2,display:'flex',alignItems:'center'}} >
                                     <Logout sx={{color:'white',mr:1,}} />
                                     <Typography>Logout</Typography>
                                 </Box>
