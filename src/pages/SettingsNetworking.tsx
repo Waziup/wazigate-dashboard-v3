@@ -9,8 +9,8 @@ import PrimaryButton from "../components/shared/PrimaryButton";
 import { getWiFiScan,setConf as setConfFc, AccessPoint,getConf, setWiFiConnect, WifiReq, setAPMode, setAPInfo } from "../utils/systemapi";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import GridItemEl from "../components/shared/GridItemElement";
-const GridItem = ({ children,matches,lg, xs,md,additionStyles }: {xs:number,md:number,lg:number,spacing?:number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode,  }) => (
-    <Grid m={matches?2:0} lg={lg} sm={12} xl={lg} item xs={xs} md={md} spacing={3} sx={additionStyles} borderRadius={2}  >
+const GridItem = ({ children,matches,lg,xl, xs,md,additionStyles }: {xs:number,md:number,xl:number,lg:number,spacing?:number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode,  }) => (
+    <Grid m={matches?1:0} lg={lg} sm={12} xl={xl} item xs={xs} md={md} spacing={3} sx={additionStyles} borderRadius={2}  >
         {children}
     </Grid>
 );
@@ -265,7 +265,7 @@ export default function SettingsNetworking() {
                     </Box>
                 </Box>
             </Modal>
-            <Box p={2.5} sx={{ position: 'relative', width: '100%',overflowY:'auto', height: '100vh' }}>
+            <Box sx={{p:2.5, position: 'relative', width: '100%',overflowY:'auto', height: '100vh' }}>
                 <Box>
                     <Typography fontWeight={600} fontSize={24} color={'black'}>Wifi</Typography>
                     <div role="presentation" >
@@ -280,8 +280,7 @@ export default function SettingsNetworking() {
                     </div>
                 </Box>
                 <Grid container>
-                    
-                    <GridItem lg={4} spacing={2} md={4.6} xs={12} matches={matches} additionStyles={{}}>
+                    <GridItem xl={4} lg={4} spacing={2} md={4.6} xs={12} matches={matches} additionStyles={{}}>
                         <GridItemEl text={selectedCloud?.name as string} icon={'cloud'}>
                             <Grow in={saving}>
                                 <LinearProgress />
@@ -393,8 +392,8 @@ export default function SettingsNetworking() {
                             </Box>
                         </GridItemEl>
                     </GridItem>
-                    <GridItem lg={7} md={6} xs={12} matches={matches}  additionStyles={{bgcolor:'#fff',width:'100%'}}>
-                        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', alignItems: 'center' }} p={1} >
+                    <GridItem xl={7.5} lg={8} md={6} xs={12} matches={matches}  additionStyles={{bgcolor:'#fff',width:'100%'}}>
+                        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5,border:'.5px solid #d8d8d8', bgcolor: '#f7f7f7', alignItems: 'center' }} p={1} >
                             <WifiOutlined sx={IconStyle}/>
                             <Typography color={'#212529'} fontWeight={500}>Available Wifi</Typography>
                         </Box>
