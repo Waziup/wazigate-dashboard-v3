@@ -31,6 +31,7 @@ import MenuComponent from "../components/shared/MenuDropDown";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 import { DevicesContext } from "../context/devices.context";
 import Backdrop from "../components/Backdrop";
+import WaziLogo from '../assets/wazilogo.svg'
 export default function SettingsNetworking() {
     const [matches] = useOutletContext<[matches:boolean]>();
     const [scanLoading,setScanLoading]=useState<boolean>(false);
@@ -287,7 +288,7 @@ export default function SettingsNetworking() {
                             </Grow>
                             <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc'}}>
                                 <RowContainerNormal>
-                                    <Box component={'img'} src='/wazilogo.svg' mx={2} />
+                                    <Box component={'img'} src={WaziLogo} mx={2} />
                                     <Box>
                                         <ListItemText
                                             primary={selectedCloud?.name || selectedCloud?.id}

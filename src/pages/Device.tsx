@@ -62,6 +62,7 @@ const initialState = {
     icon: '',
     unitSymbol:''
 }
+import Logo404 from '../assets/404.svg';
 function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
@@ -193,7 +194,7 @@ function DeviceSettings() {
     if (isError) {
         return (
             <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} height={'100%'} alignItems={'center'}>
-                <Box component={'img'} src="/404.svg" width={200} height={200} />
+                <Box component={'img'} src={Logo404} width={200} height={200} />
                 <Typography>Hi there</Typography>
                 <Typography>Error Encountered while fetching, refresh.</Typography>
             </Box>
@@ -217,6 +218,10 @@ function DeviceSettings() {
         setNewSensOrAct(initialState); 
         handleToggleModal()
     }
+    const selectHandler = (e: SelectChangeEvent) => { 
+        setNewSensOrAct(initialState); 
+        setModalEls(e.target.value === 'actuator' ? 'actuator' : 'sensor', e.target.value)
+    }
     return (
         <>
             {
@@ -237,7 +242,7 @@ function DeviceSettings() {
                                 <Box p={1}>
                                     <SelectElement
                                         conditions={['actuator', 'sensor']}
-                                        handleChange={(e: SelectChangeEvent) => { setNewSensOrAct(initialState); setModalEls(e.target.value === 'actuator' ? 'actuator' : 'sensor', e.target.value) }}
+                                        handleChange={selectHandler}
                                         title="Type"
                                         value={modalProps.title}
                                     />
@@ -245,7 +250,7 @@ function DeviceSettings() {
                                         modalProps.title ? (
                                             <Box borderRadius={2} my={1} >
                                                 <form style={{borderRadius:2}} onSubmit={modalProps.title === 'actuator' ? handleCreateActuatorClick : handleCreateSensorClick}>
-                                                    <TextField onInput={handleNameChange} sx={{ width: '100%', my: 1 }} placeholder={modalProps.placeholder} type="text" id="name" required name="name" label="Name" variant="standard"></TextField>
+                                                    <TextField value={newSensOrAct.name} onInput={handleNameChange} sx={{ width: '100%', my: 1 }} placeholder={modalProps.placeholder} type="text" id="name" required name="name" label="Name" variant="standard"></TextField>
                                                     {
                                                         modalProps.title === 'sensor' ? (
                                                             <CreateSensorModal newSensOrAct={newSensOrAct} handleSelectChange={handleSelectChange} />
@@ -294,67 +299,86 @@ function DeviceSettings() {
                 {
                     (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0 && (
                         <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} height={'100%'} alignItems={'center'}>
-                            <Box component={'img'} src="/404.svg" width={200} height={200} />
+                            <Box component={'img'} src={Logo404} width={200} height={200} />
                             <Typography>Hi there</Typography>
                             <Typography>No Sensors and Actuators for this device, create one.</Typography>
                         </Box>
                     )
                 }
                 <Box mt={2}>
-                    <Typography fontWeight={700} color={'black'}>Sensors</Typography>
-                    <Grid container my={2} spacing={1}>
-                        {
-                            device?.sensors.length === 0 ? (
-                                <Box>
-                                    <Typography>No Sensors found</Typography>
-                                </Box>
-                            ) : (device?.sensors.map((sens) => (
-                                <SensorActuatorItem callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={sens} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
-                                    <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28} >
-                                        {sens.value} {sens.meta.unitSymbol}
-                                    </Typography>
-                                </SensorActuatorItem>
-                                
-                            )))
-                        }
-                    </Grid>
-                    <Typography fontWeight={700} color={'black'}>Actuators</Typography>
-                    <Grid container my={2} spacing={1}>
-                        {
-                            device?.actuators?.map((act) => (
-                                <SensorActuatorItem callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={act} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
-                                    <Typography fontWeight={100} fontSize={15} color={'#2BBBAD'}>
-                                        Status: 
-                                        <Typography component={'span'} fontSize={15} fontWeight={300} color={act.value?'#2BBBAD':'#ff0000'}>{act.value ? '  Running' : '   Stopped'}</Typography>
-                                    </Typography>
-                                    <RowContainerBetween>
-                                        <Typography fontWeight={100} color={'rgba(0,0,0,.7)'} fontSize={15}>{act.value?'Stop':'Start'}</Typography>
-                                        {
-                                            act.meta.quantity==='Boolean' ? (
-                                                <Android12Switch checked={act.value} onChange={() => {handleSwitchChange(act.id,act.value) }} color='info' />
-                                            ):(
-                                                <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28}>
-                                                    {act.value} {act.meta.unitSymbol}
+                    {
+                        device && device?.sensors.length >0?(
+                            <>
+                                <Typography fontWeight={700} color={'black'}>Sensors</Typography>
+                                <Grid container my={2} spacing={1}>
+                                    {
+                                        device?.sensors.length === 0 ? (
+                                            <Box>
+                                                <Typography>No Sensors found</Typography>
+                                            </Box>
+                                        ) : (device?.sensors.map((sens) => (
+                                            <SensorActuatorItem callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={sens} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
+                                                <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28} >
+                                                    {sens.value} {sens.meta.unitSymbol}
                                                 </Typography>
-                                            )
-                                        }
-                                    </RowContainerBetween>
-                                </SensorActuatorItem>
-                                
-                            ))
-                        }
-
-                    </Grid>
+                                            </SensorActuatorItem>
+                                            
+                                        )))
+                                    }
+                                </Grid>
+                            </>
+                        ):null
+                    }
+                    {
+                        device && device?.actuators.length >0?(
+                            <>
+                                <Typography fontWeight={700} color={'black'}>Actuators</Typography>
+                                <Grid container my={2} spacing={1}>
+                                    {
+                                        device?.actuators?.map((act) => (
+                                            <SensorActuatorItem callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={act} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
+                                                {
+                                                    act.meta.quantity==='Boolean' ?(
+                                                        <Typography fontWeight={100} fontSize={15} color={'#2BBBAD'}>
+                                                            Status: 
+                                                            <Typography component={'span'} fontSize={15} fontWeight={300} color={act.value?'#2BBBAD':'#ff0000'}>{act.value ? '  Running' : '   Stopped'}</Typography>
+                                                        </Typography>
+                                                    ):null
+                                                }
+                                                <RowContainerBetween>
+                                                    {
+                                                        act.meta.quantity==='Boolean' ? (
+                                                            <Typography fontWeight={100} color={'rgba(0,0,0,.7)'} fontSize={15}>{ act.value?'Stop':'Start'}</Typography>
+                                                        ):null
+                                                    }
+                                                    {
+                                                        act.meta.quantity==='Boolean' ? (
+                                                            <Android12Switch checked={act.value} onChange={() => {handleSwitchChange(act.id,act.value) }} color='info' />
+                                                        ):(act.meta.quantity==='Number' ? (
+                                                            <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28}>
+                                                                {act.value} {act.meta.unitSymbol}
+                                                            </Typography>
+                                                        ):null)
+                                                    }
+                                                </RowContainerBetween>
+                                            </SensorActuatorItem>
+                                            
+                                        ))
+                                    }
+                                </Grid>
+                            </>
+                        ):null
+                    }
                 </Box>
-                {
-                    !matches ? (
-                        <SpeedDial ariaLabel='New Device' sx={{ position: 'absolute', bottom: 16, right: 16 }} icon={<SpeedDialIcon />}>
-                            <SpeedDialAction key={'New Sensor'} icon={<PlusOne />} tooltipTitle={'New Sensor'} onClick={() => { setModalEls('sensor', 'Sensor Name'); handleToggleModal() }} />
-                            <SpeedDialAction key={'New Actuator'} icon={<PlusOne />} tooltipTitle={'New Actuator'} onClick={() => { setModalEls('actuator', 'Actuator Name'); handleToggleModal() }} />
-                        </SpeedDial>
-                    ): null
-                }
             </Box>
+            {
+                !matches ? (
+                    <SpeedDial ariaLabel='New Device' sx={{ position: 'absolute', bottom: 16, right: 16 }} icon={<SpeedDialIcon />}>
+                        <SpeedDialAction key={'New Sensor'} icon={<PlusOne />} tooltipTitle={'New Sensor'} onClick={() => { setModalEls('sensor', 'Sensor Name'); handleToggleModal() }} />
+                        <SpeedDialAction key={'New Actuator'} icon={<PlusOne />} tooltipTitle={'New Actuator'} onClick={() => { setModalEls('actuator', 'Actuator Name'); handleToggleModal() }} />
+                    </SpeedDial>
+                ): null
+            }
         </>
     );
 }

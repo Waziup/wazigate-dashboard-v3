@@ -87,6 +87,7 @@ const NavigationSmall = ({path,otherItem,icon,onClick, }:NavigationItemProps) =>
         </NavLink>
     )
 }
+import WaziGateSVG from '../../assets/wazigate.svg';
 function Sidebar({matchesMd}:{matchesMd:boolean}) {
     const [open, setOpen] = React.useState(false);
     const handleClick = () => {
@@ -95,7 +96,7 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
     const location = useLocation().pathname;
     return (
         <Box position={'relative'} height={'100%'} width={'100%'} display={'flex'}  flexDirection={'column'} alignItems={'center'}>
-            <Box component={'img'} src={'/wazigate.svg'} width={'70%'} mb={1} height={50} />
+            <Box component={'img'} src={WaziGateSVG} width={'70%'} mb={1} height={50} />
             {
                 !matchesMd?(
 

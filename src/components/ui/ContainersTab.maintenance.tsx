@@ -11,6 +11,7 @@ import Backdrop from '../Backdrop';
 interface Props{
     matches?:boolean
 }
+import DockerSVG from '../../assets/docker.svg';
 export default function ContainersTabMaintenance({matches}:Props) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [containers, setContainers] = React.useState<cInfo[]>([]);
@@ -95,7 +96,7 @@ export default function ContainersTabMaintenance({matches}:Props) {
                             <Grid key={id} lg={3.6} m={1} xl={3.6} md={6} xs={12} sm={6} item sx={{ bgcolor: '#fff', cursor: 'pointer', borderRadius: 2 }}>
                                 <RowContainerBetween additionStyles={{ p: .3 }}>
                                     <RowContainerNormal>
-                                        <Box component={'img'} src={'/docker.svg'} width={30} height={30} />
+                                        <Box component={'img'} src={DockerSVG} width={30} height={30} />
                                         <Box mx={.5}>
                                             <ListItemText
                                                 primary={container.Names[0]? 

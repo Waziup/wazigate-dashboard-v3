@@ -119,7 +119,7 @@ function Device() {
                     <Chart
                         options={{
                             chart: {
-                                id: 'basic-bar',
+                                id: 'sensor_actuator_plot',
                                 // height: 350,
                                 type: 'area',
                                 zoom: {
@@ -136,7 +136,12 @@ function Device() {
                             xaxis: {
                                 categories: graphValues.map((value) => value.x),
                                 // type: 'numeric',
-
+                            },
+                            markers:{
+                                size: 0,
+                            },
+                            dataLabels:{
+                                enabled:false
                             },
                             stroke: {
                                 curve: 'smooth',

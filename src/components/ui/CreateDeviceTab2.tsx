@@ -28,7 +28,7 @@ interface TabTwoProps {
 const AddTextShow = ({ text, name, autoGenerateHandler, placeholder, onTextInputChange, textInputValue }: AddTextProps) => (
     <Box sx={{ my: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ccc' }}>
-            <input name={name} value={textInputValue} onChange={onTextInputChange} placeholder={text} style={{ border: 'none', color: '#757474', fontWeight: 200, outline: 'none', width: '100%', padding: '6px 0' }} />
+            <input name={name} value={textInputValue} onInput={onTextInputChange} onChange={onTextInputChange} placeholder={text} style={{ border: 'none', color: '#757474', fontWeight: 200, outline: 'none', width: '100%', padding: '6px 0' }} />
             <Tooltip onClick={() => autoGenerateHandler(name as "devAddr" | "nwkSEncKey" | "appSKey")} title="AutoGenerate">
                 <AddCircleOutline sx={{ color: '#292F3F', fontSize: 20 }} />
             </Tooltip>

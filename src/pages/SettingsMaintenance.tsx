@@ -55,6 +55,8 @@ const tabs:Tabs = {
         component:ExportTabMaintenance
     }
 }
+import DockerSVG from '../assets/docker.svg';
+import ExportSVG from '../assets/export_notes.svg';
 export default function SettingsMaintenance() {
     const [activeTab, setActiveTab] = React.useState<string>('0');
     const [isPending, startTransition] = useTransition();
@@ -68,11 +70,16 @@ export default function SettingsMaintenance() {
     return (
         <Box sx={{ overflowY: 'auto', height: '100%',position:'relative' }}>
             <Stack bgcolor={'primary.main'} overflow={'auto'} justifyContent={'space-between'}  direction={'row'} spacing={0}>
-                <Stack>
-                    <BTN activeTab={activeTab} idx='0' onClick={handleTabChange} title={'Resources'} icon={'folder_copy'}/>
-                    <BTN activeTab={activeTab} idx='1' onClick={handleTabChange} title={'SSH'} icon={'terminal_outlined'}/>
-                    <BTN activeTab={activeTab} idx='2'onClick={handleTabChange} title={'Containers'}>
-                        <Box component={'img'} mr={.5} src="/docker.svg" color={activeTab?'#fff':'#000'} height={20} width={20} />
+                <Stack bgcolor={'primary.main'} overflow={'auto'}  direction={'row'} spacing={0}>
+                <BTN activeTab={activeTab} idx='0' onClick={handleTabChange} title={'Resources'} icon={'folder_copy'}/>
+                <BTN activeTab={activeTab} idx='1' onClick={handleTabChange} title={'SSH'} icon={'terminal_outlined'}/>
+                <BTN activeTab={activeTab} idx='2'onClick={handleTabChange} title={'Containers'}>
+                    <Box component={'img'} mr={.5} src={DockerSVG} color={activeTab?'#fff':'#000'} height={20} width={20} />
+                </BTN>
+                <BTN activeTab={activeTab} idx='3' onClick={handleTabChange} title={'Logs'} icon={'description'}/>
+                <Box minWidth={240}>
+                    <BTN activeTab={activeTab} idx='4' onClick={handleTabChange} title={'Export gateway data'}>
+                        <Box component={'img'} mr={.5} src={ExportSVG} color={activeTab?'#fff':'#000'} height={15} width={15} />
                     </BTN>
                     <BTN activeTab={activeTab} idx='3' onClick={handleTabChange} title={'Logs'} icon={'description'}/>
                     <Box minWidth={240}>
@@ -80,6 +87,7 @@ export default function SettingsMaintenance() {
                             <Box component={'img'} mr={.5} src="/export_notes.svg" color={activeTab?'#fff':'#000'} height={15} width={15} />
                         </BTN>
                     </Box>
+                </Box>
                 </Stack>
                 <InternetIndicator/>
             </Stack>

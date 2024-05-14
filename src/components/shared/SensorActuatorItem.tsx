@@ -30,7 +30,6 @@ export default function SensorActuatorItem({ callbackFc, sensActuator: sens,hand
         window.wazigate.deleteSensor(deviceId, sens.id).then(() => {
             handleClose();
             callbackFc &&callbackFc();
-            navigate(`/devices/${deviceId}`);
         }).catch((err) => {
             console.log(err);
         })
