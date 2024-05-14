@@ -62,7 +62,7 @@ export default function MobileDashboard() {
                 </RowContainerBetween>
                 <Box display={'flex'} flexDirection={'column'} mt={1} py={1} alignItems={'center'}>
                     {
-                        devices.filter((_dev,idx)=>idx<5).map((dev, id) => (
+                        devices?devices.filter((_dev,idx)=>idx<5).map((dev, id) => (
 
                             <Box onClick={() => { handleNav(dev.id,dev.name) }} key={id} sx={{ cursor: 'pointer', my: 1, ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, width: '100%', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
                                 <Box sx={{ position: 'absolute', top: -5, my: -1, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
@@ -81,7 +81,7 @@ export default function MobileDashboard() {
                                     </RowContainerBetween>
                                 </Box>
                             </Box>
-                        ))
+                        )):null
                     }
                     
                 </Box>
@@ -95,7 +95,7 @@ export default function MobileDashboard() {
                 </RowContainerBetween>
                 <Box display={'flex'} flexDirection={'column'} mt={1} borderRadius={2} bgcolor={'#fff'} alignItems={'center'}>
                     {
-                        apps.filter((_x,i)=>i<5).map((app, id) => {
+                        apps?apps.filter((_x,i)=>i<5).map((app, id) => {
                             // eslint-disable-next-line react-hooks/rules-of-hooks
                             const [imageError, setImageError] = useState(false);
                             const handleImageError = () => {setImageError(true)}
@@ -131,7 +131,7 @@ export default function MobileDashboard() {
                                     </Box>
                                 </RowContainerBetween>
                             </Box>
-                        )})
+                        )}):null
                     }
                 </Box>
             </Box>

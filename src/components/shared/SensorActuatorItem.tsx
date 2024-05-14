@@ -55,7 +55,7 @@ export default function SensorActuatorItem({ callbackFc, sensActuator: sens,hand
                         {
                             icon: 'settings',
                             text: 'Settings',
-                            clickHandler: ()=>{navigate(`/devices/${deviceId}/${isActuator(sens)?'actuators':'sensors'}/${sens.id}`);}
+                            clickHandler: ()=>{navigate(`/devices/${deviceId}/${isActuator(sens)?'actuators':'sensors'}/${sens.id}/settings`);}
                         }
                     ]}
                 />

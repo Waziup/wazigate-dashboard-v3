@@ -302,8 +302,8 @@ function DeviceSensorSettings() {
                                     matches={matches} 
                                 />
                                 <Box sx={{ width: '100%', mt: 1 }}>
-                                    <RowContainerBetween additionStyles={{ width: matches ? '20%' : '90%',  }} >
-                                        <PrimaryIconButton type="submit" iconname="save" onClick={() => { }} title="SAVE" />
+                                    <RowContainerBetween additionStyles={{ width: matches ? '35%' : '90%',  }} >
+                                        <PrimaryIconButton type="submit" iconname="save" title="SAVE" />
                                         <Button sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
                                     </RowContainerBetween>
                                 </Box>
