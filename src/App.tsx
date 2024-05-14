@@ -18,6 +18,7 @@ import { DevicesProvider } from './context/devices.context'
 import SettingsNetworking from './pages/SettingsNetworking'
 import SettingsMaintenance from './pages/SettingsMaintenance';
 import AppUI from './pages/App';
+import { useEffect } from 'react'
 const reToken = () => {
     const oldToken = window.localStorage.getItem('token');
     window.wazigate.set<string>("auth/retoken", {
@@ -33,8 +34,11 @@ const reToken = () => {
         // window.location.href='/'
     });
 }
-setInterval(reToken, 1000 * 60 * 5);
 function App() {
+    useEffect(()=>{
+        const intervalRef = setInterval(reToken, 1000 * 60 * 5);
+        return () => clearInterval(intervalRef);
+    },[]);
     const theme = createTheme({
         palette: {
             primary: {
