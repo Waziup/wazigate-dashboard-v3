@@ -1,12 +1,12 @@
 import { Box, Typography, Breadcrumbs } from "@mui/material";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
-import EnhancedTable from "../components/ui/DeviceTable";
 import { useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Chart from 'react-apexcharts';
 import { useCallback, useEffect, useState } from "react";
 import type { Actuator, Device, Sensor } from "waziup";
 import { Link } from "react-router-dom";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
+import SensorTable from "../components/ui/DeviceTable";
 function Device() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
@@ -161,9 +161,10 @@ function Device() {
                     />
                 </Box>
                 <Box bgcolor={'#fff'} width={matches ? '80%' : '90%'}>
-                    <EnhancedTable
+                    <SensorTable
                         values={values}
                     />
+                    
                 </Box>
             </Box>
         </Box>
