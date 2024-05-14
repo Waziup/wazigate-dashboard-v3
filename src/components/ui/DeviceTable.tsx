@@ -1,58 +1,66 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { alpha } from '@mui/material/styles';
-import {Box,Table,TableBody,TableCell,
-  TableContainer,TableHead,
-  TableSortLabel,Toolbar,Typography,Paper,
-  TablePagination,TableRow,
-  Checkbox,IconButton,Tooltip,FormControlLabel,Switch,
-  Icon,
-} 
-from '@mui/material';
+import Box from '@mui/material/Box';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import TableSortLabel from '@mui/material/TableSortLabel';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Checkbox from '@mui/material/Checkbox';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
+import { Icon } from '@mui/material';
 import { Download, Tune } from '@mui/icons-material';
+
 interface Data {
-    name: string;
-    values: number | string;
-    sos: string; 
+  id: number;
+
+  values: number | string;
+  sos: string;
+//   fat: number;
+  name: string;
+//   protein: number;
 }
 
 function createData(
-	name: string,
-	values: number | string,
-	sos: string,
-
+  id: number,
+  name: string,
+  values: number | string,
+  sos: string,
 ): Data {
-	return {
-		name,
-		values,
-		sos,
-	};
+  return {
+    id,
+    name,
+    values,
+    sos,
+  };
 }
-// const rows = [
-//   createData('just now 2023-04-02 13:56', 305, <TrendingUp sx={{color:'#7E9B08'}}/>),
-//   createData('just now 2023-04-03 13:56', 422, <TrendingDown sx={{color:'#ff0000'}}/>),
-//   createData('just now 2023-04-04 13:56', 452, <HorizontalRule sx={{color:'#000000'}}/>),
-// ];
-
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-	if (b[orderBy] < a[orderBy]) {
-		return -1;
-	}
-	if (b[orderBy] > a[orderBy]) {
-		return 1;
-	}
-	return 0;
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
 }
 
 type Order = 'asc' | 'desc';
 
 function getComparator<Key extends keyof any>(
-	order: Order,
-	orderBy: Key,
-	): (
-	a: { [key in Key]: number | string },
-	b: { [key in Key]: number | string },
+  order: Order,
+  orderBy: Key,
+): (
+  a: { [key in Key]: number | string },
+  b: { [key in Key]: number | string },
 ) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
@@ -76,32 +84,32 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
 }
 
 interface HeadCell {
-  disablePadding: boolean;
-  id: keyof Data;
-  label: string;
-  numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: 'name',
-    numeric: false,
-    disablePadding: true,
-    label: 'Time',
-  },
-  {
-    id: 'values',
-    numeric: true,
-    disablePadding: false,
-    label: 'Values',
-  },
-  {
-    id: 'sos',
-    numeric: true,
-    disablePadding: false,
-    label: 'SoS',
-  },
-];
+    disablePadding: boolean;
+    id: keyof Data;
+    label: string;
+    numeric: boolean;
+  }
+  
+  const headCells: readonly HeadCell[] = [
+    {
+      id: 'name',
+      numeric: false,
+      disablePadding: true,
+      label: 'Time',
+    },
+    {
+      id: 'values',
+      numeric: true,
+      disablePadding: false,
+      label: 'Values',
+    },
+    {
+      id: 'sos',
+      numeric: true,
+      disablePadding: false,
+      label: 'SoS',
+    },
+  ];
 
 interface EnhancedTableProps {
   numSelected: number;
@@ -121,7 +129,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     };
 
   return (
-    <TableHead>
+    <TableHead sx={{bgcolor:'#F6F6F6',border: '.5px solid #d8d8d8'}}>
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
@@ -141,18 +149,26 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
+            {
+                headCell.id==='values'?(
+                    <TableSortLabel
+                    active={orderBy === headCell.id}
+                    direction={orderBy === headCell.id ? order : 'asc'}
+                    onClick={createSortHandler(headCell.id)}
+                    >
+                    {headCell.label}
+                    {orderBy === headCell.id ? (
+                        <Box component="span" sx={visuallyHidden}>
+                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                        </Box>
+                    ) : null}
+                    </TableSortLabel>
+                ):(
+                    <>
+                        {headCell.label}
+                    </>
+                )
+            }
           </TableCell>
         ))}
       </TableRow>
@@ -162,10 +178,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
+  handleRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props;
+  const { numSelected,handleRequestSort, } = props;
 
   return (
     <Toolbar
@@ -180,7 +197,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     >
       {numSelected > 0 ? (
         <Typography
-          sx={{ flex: '1 1 100%',color:'#292F3F' }}
+          sx={{ flex: '1 1 100%' }}
           color="inherit"
           variant="subtitle1"
           component="div"
@@ -191,10 +208,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         <Typography
           sx={{ flex: '1 1 100%' }}
           variant="h6"
-          fontSize={16}
           id="tableTitle"
           component="div"
-          color={'#00000099'}
         >
           Sensor Data
         </Typography>
@@ -202,58 +217,72 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       {numSelected > 0 ? (
         null
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <Tune sx={{mx:1}}/>
-            <Download/>
-          </IconButton>
-        </Tooltip>
+        <Box sx={{display:'flex',alignItems:'center'}}>
+            <Tooltip title="Filter list">
+                <IconButton>
+                    <Tune
+                        onClick={(event)=>handleRequestSort(event,'values')}
+                    />
+                </IconButton>
+            </Tooltip>
+            <Tooltip title="Download">
+                <IconButton>
+                    <Download sx={{mx:1}}/>
+                </IconButton>
+            </Tooltip>
+        </Box>
       )}
     </Toolbar>
   );
 }
 interface Props{
-  values:{
-    value:number | string,
-    modified:string
-  }[]
+    values:{
+      value:number | string,
+      modified:string
+    }[]
 }
-export default function DeviceTable({values}:Props) {
-  const rowsDate = values.map((v,idx,arr)=>{
-    return createData(v.modified,v.value,arr[idx]>arr[idx+1]?'trending_up':arr[idx]===arr[idx+1]?'trending_flat':'trending_down')
-  })
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof Data>('values');
-  const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+export default function SensorTable({values}:Props) {
+    const [rows,setRows] = React.useState<Data[]>([]);
+    React.useLayoutEffect(()=>{
+        if(values && values.length>0){
+            const tbData = values.map((v,idx,arr)=>{
+                const nextItem = arr[idx+1]?arr[idx+1]:arr[idx];
+                return createData(idx+1,v.modified,v.value,v.value>nextItem.value?'trending_up':v.value=== nextItem.value?'trending_flat':'trending_down')
+            })
+            setRows(tbData)
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[])
+    const [order, setOrder] = React.useState<Order>('asc');
+    const [orderBy, setOrderBy] = React.useState<keyof Data>('values');
+    const [selected, setSelected] = React.useState<readonly number[]>([]);
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const handleRequestSort = (
-    _event: React.MouseEvent<unknown>,
-    property: keyof Data,
-  ) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
+    const handleRequestSort = (
+        _event: React.MouseEvent<unknown>,
+        property: keyof Data,
+    ) => {
+        const isAsc = orderBy === property && order === 'asc';
+        setOrder(isAsc ? 'desc' : 'asc');
+        setOrderBy(property);
+    };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = rowsDate.map((n) => n.name);
+      const newSelected = rows.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLTableRowElement>, name: string) => {
-    event.preventDefault()
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: readonly string[] = [];
+  const handleClick = (_event: React.MouseEvent<unknown>, id: number) => {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected: readonly number[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -264,12 +293,10 @@ export default function DeviceTable({values}:Props) {
         selected.slice(selectedIndex + 1),
       );
     }
-
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
-    (event as React.MouseEvent<HTMLButtonElement, MouseEvent>).preventDefault();
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -278,35 +305,36 @@ export default function DeviceTable({values}:Props) {
     setPage(0);
   };
 
-  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
-  };
+  
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rowsDate.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
-      stableSort(rowsDate , getComparator(order, orderBy)).slice(
+      stableSort(rows, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [order, values, orderBy, page, rowsPerPage],
+    [order, orderBy, page, rowsPerPage],
   );
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar
+          handleRequestSort={handleRequestSort}
+          numSelected={selected.length} 
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
+            size={'medium'}
           >
             <EnhancedTableHead
               numSelected={selected.length}
@@ -314,21 +342,21 @@ export default function DeviceTable({values}:Props) {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rowsDate.length}
+              rowCount={rows.length}
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.name as string);
+                const isItemSelected = isSelected(row.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.name as string)}
+                    onClick={(event) => handleClick(event, row.id)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.name}
+                    key={row.id}
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
@@ -349,10 +377,9 @@ export default function DeviceTable({values}:Props) {
                     >
                       {row.name}
                     </TableCell>
-                    <TableCell  align="right">{row.values}</TableCell>
+                    <TableCell align="right">{row.values}</TableCell>
                     <TableCell align="right">
                       <Icon sx={{color:row.sos==='trending_up'?'#7E9B08':row.sos==='trending_down'?'#ff0000':'#000000'}}>{row.sos}</Icon>
-                      {/* {row.sos} */}
                     </TableCell>
                   </TableRow>
                 );
@@ -360,7 +387,7 @@ export default function DeviceTable({values}:Props) {
               {emptyRows > 0 && (
                 <TableRow
                   style={{
-                    height: (dense ? 33 : 53) * emptyRows,
+                    height: (53) * emptyRows,
                   }}
                 >
                   <TableCell colSpan={6} />
@@ -372,17 +399,13 @@ export default function DeviceTable({values}:Props) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rowsDate.length}
+          count={rows.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      />
     </Box>
   );
 }
