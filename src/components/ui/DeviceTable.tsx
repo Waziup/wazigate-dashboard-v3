@@ -19,6 +19,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
 import { Icon } from '@mui/material';
 import { Download, Tune } from '@mui/icons-material';
+import { useMemo } from 'react';
 
 interface Data {
   id: number;
@@ -242,17 +243,10 @@ interface Props{
     }[]
 }
 export default function SensorTable({values}:Props) {
-    const [rows,setRows] = React.useState<Data[]>([]);
-    React.useLayoutEffect(()=>{
-        if(values && values.length>0){
-            const tbData = values.map((v,idx,arr)=>{
-                const nextItem = arr[idx+1]?arr[idx+1]:arr[idx];
-                return createData(idx+1,v.modified,v.value,v.value>nextItem.value?'trending_up':v.value=== nextItem.value?'trending_flat':'trending_down')
-            })
-            setRows(tbData)
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[])
+    const rows = useMemo(() => values.map((v,idx,arr)=>{
+        const nextItem = arr[idx+1]?arr[idx+1]:arr[idx];
+        return createData(idx+1,v.modified,v.value,v.value>nextItem.value?'trending_up':v.value=== nextItem.value?'trending_flat':'trending_down')
+    }),[values]);
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('values');
     const [selected, setSelected] = React.useState<readonly number[]>([]);
