@@ -1,7 +1,7 @@
 import * as React from "react";
 import {CheckCircle, ErrorOutline} from '@mui/icons-material';
 import {internet} from '../../utils/systemapi';
-import { Box } from "@mui/material";
+import { Box,CircularProgress, Typography } from "@mui/material";
 export default function InternetIndicator(){
     const [state,setState] = React.useState({
         status: null,
@@ -9,13 +9,9 @@ export default function InternetIndicator(){
     });
     React.useEffect(()=>{
         checkTheStatus();
-    },[])
-
-	/**------------- */
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[]);
 	const checkTheStatus = (oneCallOnly: boolean = false)=> {
-		// console.log(oneCallOnly, "Checking net...");
-
 		setState({
 			status: null,
 			error: null
@@ -45,31 +41,26 @@ export default function InternetIndicator(){
 			}
 		);
 	}
-
-	/**------------- */
-
     return (
         <>
             {
                 (state.error)?(
-
-                    <div className="alert alert-error" style={{ margin: 0 }}>
-                        Error <ErrorOutline/>
-                    </div>
+                    <Box style={{color:'#fff', margin: 0 }}>
+                        Error <ErrorOutline sx={{color:'#FA9E0E'}}/>
+                    </Box>
                 ): state.status===null?(
-                    <div className="alert alert-primary" style={{ margin: 0 }}>
-                        Internet <CheckCircle/>
-                        {/* <LoadingSpinner type="grow-sm" class="text-info ml-2 pl-1" /> */}
-                    </div>
+                    <Typography sx={{ margin: 0,color:'#fff' }}>
+                        Internet <CircularProgress size={14} sx={{color:'#2BBBAD',mx:1.5,fontSize:14}} />
+                    </Typography>
                 ):(
-                    <Box sx={{display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'row'}}
+                    <Box sx={{display:'flex',color:'#fff', alignItems:'center', justifyContent:'center', flexDirection:'row'}}
                         onClick={() => checkTheStatus(true)}
                     >
                         Internet{" "}
                         {state.status ? (
-                            <CheckCircle/>
+                            <CheckCircle sx={{mx:1.5,fontSize:14,color:'#2BBBAD'}}/>
                         ) : (
-                            <ErrorOutline/>
+                            <ErrorOutline sx={{mx:1.5,fontSize: 14,color: '#FA9E0E'}}/>
                         )}
                     </Box>
                 )
