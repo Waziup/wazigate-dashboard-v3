@@ -44,7 +44,7 @@ function Device() {
                     const minutes = String(date.getUTCMinutes()).padStart(2, '0');
                     return {
                         value: value.value,
-                        modified: `${hours}:${minutes}`
+                        modified: `${date.getFullYear()}-${(date.getMonth()+1)}-${date.getDate()} ${hours}:${minutes}`
                     }
                 })
                 setValues(valuesTable);
@@ -65,27 +65,23 @@ function Device() {
             if (actuator) {
                 setSensOrActuator(actuator);
                 window.wazigate.getActuatorValues(id as string, sensorId as string)
-                    .then((res) => {
-                        console.log('Res as actuator values', res);
+                .then((res) => {
+                    const values = (res as { time: string, value: number }[]).map((value) => {
+                        return { y: value.value, x: value.time }
+                    });
+                    const valuesTable = (res as { time: string, value: number }[]).map((value) => {
+                        const date = new Date(value.time);
+                        const hours = String(date.getUTCHours()).padStart(2, '0');
 
-                        const values = (res as { time: string, value: number }[]).map((value) => {
-                            return { y: value.value, x: value.time }
-                        });
-                        const valuesTable = (res as { time: string, value: number }[]).map((value) => {
-                            const date = new Date(value.time);
-                            const hours = String(date.getUTCHours()).padStart(2, '0');
-
-                            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-                            return {
-                                value: actuator.meta.quantity === 'Boolean' ? (value.value ? 'Running' : 'Stopped') : value.value,
-                                modified: `${hours}:${minutes}`
-                            }
-                        })
-                        console.log('values', valuesTable);
-
-                        setValues(valuesTable);
-                        setGraphValues(values);
-                    })
+                        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                        return {
+                            value: actuator.meta.quantity === 'Boolean' ? (value.value ? 'Running' : 'Stopped') : value.value,
+                            modified: `${date.getFullYear()}-${(date.getMonth()+1)}-${date.getDate()} ${hours}:${minutes}`
+                        }
+                    });
+                    setValues(valuesTable);
+                    setGraphValues(values);
+                })
             }
             setDevice(de)
         });
@@ -123,7 +119,7 @@ function Device() {
                                 // height: 350,
                                 type: 'area',
                                 zoom: {
-                                    enabled: false
+                                    enabled: true,
                                 },
                                 animations: {
                                     enabled: true,
@@ -164,7 +160,6 @@ function Device() {
                     <SensorTable
                         values={values}
                     />
-                    
                 </Box>
             </Box>
         </Box>
