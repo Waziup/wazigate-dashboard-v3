@@ -117,6 +117,7 @@ function Devices() {
             meta: {
                 ...newDevice.meta,
                 lorawan: {
+                    ...newDevice.meta.lorawan,
                     [e.target.name]: e.target.value
                 },
             }
