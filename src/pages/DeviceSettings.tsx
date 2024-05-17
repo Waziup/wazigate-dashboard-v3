@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import AddTextShow from "../components/shared/AddTextInput";
 import type { Device, } from "waziup";
 import { DevicesContext } from "../context/devices.context";
-import { toStringHelper } from "../utils";
+import { devEUIGenerateFc, toStringHelper } from "../utils";
 import { SelectElementString } from "./Automation";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { DEFAULT_COLORS } from "../constants";
@@ -164,12 +164,17 @@ export default function DeviceSettings() {
         }
     }
     const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let devEUI = thisDevice?.meta.lorawan?.devEUI;
+        if(e.target.name === 'devAddr'){
+            devEUI = devEUIGenerateFc(e.target.value);
+        }
         setThisDevice({
             ...thisDevice,
             meta: {
                 ...thisDevice.meta,
                 lorawan: {
                     ...thisDevice.meta.lorawan,
+                    devEUI,
                     [e.target.name]: e.target.value
                 },
             }
@@ -233,6 +238,14 @@ export default function DeviceSettings() {
                                         text={'Device Addr (Device Address)'} 
                                         placeholder={'8 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.devAddr)} 
                                     />
+                                    <AddTextShow 
+                                        name="devEUI"
+                                        onTextInputChange={handleTextInputChange}
+                                        isPlusHidden={true}
+                                        textInputValue={thisDevice?.meta.lorawan.devEUI} 
+                                        text={'Device EUI (Generated from Device address)'} 
+                                        placeholder={'16 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.devEUI)} 
+                                    />
                                     <AddTextShow
                                         onTextInputChange={handleTextInputChange}
                                         autoGenerateHandler={autoGenerateLoraWANOptions}
@@ -275,6 +288,7 @@ export default function DeviceSettings() {
                                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={13}>LoRaWAN Settings</Typography>
                                             </RowContainerNormal>
                                             <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.devAddr} onTextInputChange={handleTextInputChange} name="devAddr" text={'Device Addr (Device Address)'} placeholder={'8 digits required, got 0'} />
+                                            <AddTextShow isPlusHidden autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.devEUI} onTextInputChange={handleTextInputChange} name="devEUI" text={'Device EUI (Generated from Device address)'} placeholder={'Generated from Device address, got 0'} />
                                             <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.nwkSEncKey} onTextInputChange={handleTextInputChange} name="nwkSEncKey" text={'NwkSKey(Network Session Key)'} placeholder={'32 digits required, got 0'} />
                                             <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.appSKey} onTextInputChange={handleTextInputChange} name="appSKey" text={'AppKey (App Key)'} placeholder={'32 digits required, got 0'} />
                                         </Box>
