@@ -8,7 +8,7 @@ import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
 import EditDeviceModal from '../components/ui/EditDeviceModal';
 import { DevicesContext } from '../context/devices.context';
-import { capitalizeFirstLetter, differenceInMinutes } from '../utils';
+import { capitalizeFirstLetter, devEUIGenerateFc, differenceInMinutes } from '../utils';
 import PrimaryIconButton from '../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
 import MenuComponent from '../components/shared/MenuDropDown';
@@ -112,12 +112,17 @@ function Devices() {
         })
     };
     const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let devEUI = newDevice?.meta.lorawan?.devEUI;
+        if(e.target.name === 'devAddr'){
+            devEUI = devEUIGenerateFc(e.target.value);
+        }
         setNewDevice({
             ...newDevice,
             meta: {
                 ...newDevice.meta,
                 lorawan: {
                     ...newDevice.meta.lorawan,
+                    devEUI,
                     [e.target.name]: e.target.value
                 },
             }
@@ -185,6 +190,10 @@ function Devices() {
         }
     }
     const handleTextInputEditCodec = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let devEUI = selectedDevice?.meta.lorawan?.devEUI;
+        if(e.target.name === 'devAddr'){
+            devEUI = devEUIGenerateFc(e.target.value);
+        }
         if(selectedDevice){
             setSelectedDevice({
                 ...selectedDevice as Device,
@@ -192,6 +201,7 @@ function Devices() {
                     ...(selectedDevice as Device).meta,
                     lorawan :{
                         ...selectedDevice.meta.lorawan,
+                        devEUI,
                         [e.target.name]: e.target.value
                     }
                 }
