@@ -11,6 +11,7 @@ export function toStringHelper(value:string){
     }
     return 0;
 }
+export const devEUIGenerateFc = (devAddr: string) => "AA555A00" + devAddr;
 export function capitalizeFirstLetter(value:string){
     if(!value){
         return '';
