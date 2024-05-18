@@ -58,7 +58,9 @@ function Devices() {
             ...newDevice,
             meta: {
                 ...newDevice.meta,
-                lorawan: newDevice.meta.lorawan ? null : {  },
+                lorawan: newDevice.meta.lorawan ? null : { 
+                    profile: 'WaziDev',
+                },
             }
         })
     }
@@ -68,7 +70,9 @@ function Devices() {
                 ...selectedDevice,
                 meta: {
                     ...selectedDevice.meta,
-                    lorawan: selectedDevice.meta.lorawan ? null : { },
+                    lorawan: selectedDevice.meta.lorawan ? null : {
+                        profile: 'WaziDev',
+                    },
                 }
             }) as unknown as Device
         }
@@ -201,8 +205,8 @@ function Devices() {
                     ...(selectedDevice as Device).meta,
                     lorawan :{
                         ...selectedDevice.meta.lorawan,
+                        [e.target.name]: e.target.value,
                         devEUI,
-                        [e.target.name]: e.target.value
                     }
                 }
             });
@@ -242,24 +246,38 @@ function Devices() {
         switch (title) {
             case 'devAddr':
                 if (selectedDevice) {
+                    let devEUI= selectedDevice?.meta.lorawan.devEUI;
+                    let devAddr= selectedDevice?.meta.lorawan.devAddr;
+                    if(title==='devAddr'){
+                        devAddr = [...Array(8)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
+                        devEUI = devEUIGenerateFc(devAddr.toString())
+                    }
                     setSelectedDevice({
                         ...selectedDevice,
                         meta: {
                             ...selectedDevice.meta,
                             lorawan: {
                                 ...selectedDevice.meta.lorawan,
-                                devAddr: Math.floor(Math.random() * 90000000) + 10000000,
+                                devEUI,
+                                devAddr,
                             }
                         }
                     }) as unknown as Device
                 } else {
+                    let devEUI= newDevice?.meta.lorawan.devEUI;
+                    let devAddr= newDevice?.meta.lorawan.devAddr;
+                    if(title==='devAddr'){
+                        devAddr = [...Array(8)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
+                        devEUI = devEUIGenerateFc(devAddr.toString())
+                    }
                     setNewDevice({
                         ...newDevice,
                         meta: {
                             ...newDevice.meta,
                             lorawan: {
                                 ...newDevice.meta.lorawan,
-                                devAddr: Math.floor(Math.random() * 90000000) + 10000000,
+                                devEUI,
+                                devAddr,
                             }
                         }
                     });
