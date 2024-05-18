@@ -57,7 +57,7 @@ export default function EditDeviceModal({handleChangeDeviceCodec, changeEditMake
                         <DropDownCreateDeviceTab1
                             handleChangeSelect={handleChangeSelectDeviceType}
                             value={device.meta.type}
-                            options={[{ name: 'Wazidev Board', id: 'wazidev', imageurl: WaziDevIcon }, { name: 'Generic board', id: 'genericboard', imageurl: WaziActIcon }]}
+                            options={[{ name: 'Wazidev Board', id: 'WaziDev', imageurl: WaziDevIcon }, { name: 'Generic board', id: 'GenericBoard', imageurl: WaziActIcon }]}
                         />
                         <SelectElementString 
                             mx={0} my={2} 
@@ -78,10 +78,10 @@ export default function EditDeviceModal({handleChangeDeviceCodec, changeEditMake
                             device.meta.lorawan ? (
                                 <>
                                     <Box my={2}>
-                                        <AddTextShow isPlusHidden={true} name="devEUI" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devEUI} text={'Device EUI (Generated from Device address)'} placeholder={'Generated from Device address, got ' + toStringHelper(device.meta.lorawan.devEUI)} />
-                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="devAddr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devAddr} text={'Device Addr (Device Address)'} placeholder={'8 digits required, got ' + toStringHelper(device.meta.lorawan.devAddr)} />
-                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="nwkSEncKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'} placeholder={'32 digits required, got ' + toStringHelper(device.meta.lorawan.nwkSEncKey)} />
-                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="appSKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.appSKey} text={'AppKey (App Key)'} placeholder={'32 digits required, got ' + toStringHelper(device.meta.lorawan.appSKey)} />
+                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="devAddr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devAddr} text={'Device Addr (Device Address)'} placeholder={'Device Address, 8 digits required, got ' + toStringHelper(device.meta.lorawan.devAddr)} />
+                                        <AddTextShow isPlusHidden={true} name="devEUI" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devEUI} text={'Device EUI (Generated from Device address)'} placeholder={'Device EUI Generated from Device address, got ' + toStringHelper(device.meta.lorawan.devEUI)} />
+                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="nwkSEncKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'} placeholder={'Network Session key 32 digits required, got ' + toStringHelper(device.meta.lorawan.nwkSEncKey)} />
+                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="appSKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.appSKey} text={'AppKey (App Key)'} placeholder={'App Key 32 digits required, got ' + toStringHelper(device.meta.lorawan.appSKey)} />
                                     </Box>
                                 </>
                             ) : null
