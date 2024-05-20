@@ -65,6 +65,7 @@ export default function DeviceSettings() {
             type: '',
             codec: '',
             lorawan: {
+                devEUI: '',
                 devAddr: '',
                 nwkSEncKey: '',
                 appSKey: ''
@@ -119,6 +120,12 @@ export default function DeviceSettings() {
         setIsEditedCodec(true);
     };
     const autoGenerateLoraWANOptions = (title: "devAddr" | "nwkSEncKey" | "appSKey") => {
+        let devEUI= thisDevice.meta.lorawan.devEUI;
+        let devAddr= thisDevice.meta.lorawan.devAddr;
+        if(title==='devAddr'){
+            devAddr = [...Array(8)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
+            devEUI = devEUIGenerateFc(devAddr.toString())
+        }
         switch (title) {
             case 'devAddr':
                 setThisDevice({
@@ -127,7 +134,8 @@ export default function DeviceSettings() {
                         ...thisDevice.meta,
                         lorawan: {
                             ...thisDevice.meta.lorawan,
-                            devAddr: Math.floor(Math.random() * 90000000) + 10000000,
+                            devAddr,
+                            devEUI,
                         }
                     }
                 });
@@ -186,7 +194,9 @@ export default function DeviceSettings() {
             ...thisDevice,
             meta: {
                 ...thisDevice.meta,
-                lorawan: thisDevice.meta.lorawan ? null : { },
+                lorawan: thisDevice.meta.lorawan ? null : {
+                    profile: "WaziDev",
+                },
             }
         });
         setIsEdited(true);
@@ -236,7 +246,7 @@ export default function DeviceSettings() {
                                         autoGenerateHandler={autoGenerateLoraWANOptions}
                                         textInputValue={thisDevice?.meta.lorawan.devAddr} 
                                         text={'Device Addr (Device Address)'} 
-                                        placeholder={'8 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.devAddr)} 
+                                        placeholder={'Device Address. 8 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.devAddr)} 
                                     />
                                     <AddTextShow 
                                         name="devEUI"
@@ -244,7 +254,7 @@ export default function DeviceSettings() {
                                         isPlusHidden={true}
                                         textInputValue={thisDevice?.meta.lorawan.devEUI} 
                                         text={'Device EUI (Generated from Device address)'} 
-                                        placeholder={'16 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.devEUI)} 
+                                        placeholder={'Device EUI 16 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.devEUI)} 
                                     />
                                     <AddTextShow
                                         onTextInputChange={handleTextInputChange}
@@ -252,7 +262,7 @@ export default function DeviceSettings() {
                                         name="nwkSEncKey"
                                         textInputValue={thisDevice?.meta.lorawan.nwkSEncKey} 
                                         text={'NwkSKey(Network Session Key)'} 
-                                        placeholder={'32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.nwkSEncKey)}
+                                        placeholder={'Network Session Key. 32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.nwkSEncKey)}
                                     />
                                     <AddTextShow
                                         onTextInputChange={handleTextInputChange}
@@ -260,7 +270,7 @@ export default function DeviceSettings() {
                                         name="appSKey"
                                         textInputValue={thisDevice?.meta.lorawan.appSKey} 
                                         text={'AppKey (App Key)'} 
-                                        placeholder={'32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.appSKey)} 
+                                        placeholder={'App Key. 32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.appSKey)} 
                                     />
                                 </Box>
                                 {
@@ -287,10 +297,10 @@ export default function DeviceSettings() {
                                                 <RouterOutlined sx={{ mr: 2, fontSize: 20, color: DEFAULT_COLORS.navbar_dark }} />
                                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={13}>LoRaWAN Settings</Typography>
                                             </RowContainerNormal>
-                                            <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.devAddr} onTextInputChange={handleTextInputChange} name="devAddr" text={'Device Addr (Device Address)'} placeholder={'8 digits required, got 0'} />
-                                            <AddTextShow isPlusHidden autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.devEUI} onTextInputChange={handleTextInputChange} name="devEUI" text={'Device EUI (Generated from Device address)'} placeholder={'Generated from Device address, got 0'} />
-                                            <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.nwkSEncKey} onTextInputChange={handleTextInputChange} name="nwkSEncKey" text={'NwkSKey(Network Session Key)'} placeholder={'32 digits required, got 0'} />
-                                            <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.appSKey} onTextInputChange={handleTextInputChange} name="appSKey" text={'AppKey (App Key)'} placeholder={'32 digits required, got 0'} />
+                                            <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.devAddr} onTextInputChange={handleTextInputChange} name="devAddr" text={'Device Addr (Device Address)'} placeholder={'Device Address. 8 digits required, got 0'} />
+                                            <AddTextShow isPlusHidden autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.devEUI} onTextInputChange={handleTextInputChange} name="devEUI" text={'Device EUI (Generated from Device address)'} placeholder={'Device EUI Generated from Device address, got 0'} />
+                                            <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.nwkSEncKey} onTextInputChange={handleTextInputChange} name="nwkSEncKey" text={'NwkSKey(Network Session Key)'} placeholder={'Network Session Key. 32 digits required, got 0'} />
+                                            <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptions} textInputValue={thisDevice.meta.lorawan.appSKey} onTextInputChange={handleTextInputChange} name="appSKey" text={'AppKey (App Key)'} placeholder={'App Key. 32 digits required, got 0'} />
                                         </Box>
                                     )
                                 }
