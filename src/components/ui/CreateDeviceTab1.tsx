@@ -53,7 +53,7 @@ export default function CreateDeviceTab1({handleChange,newDevice,handleChangeSel
                 <DropDownCreateDeviceTab1 
                     value={newDevice.meta.type}
                     handleChangeSelect={handleChangeSelect}
-                    options={[{name:'Wazidev Board',id:'wazidev', imageurl:WaziDevIcon},{id:'genericboard',name:'Generic board',imageurl:WaziActIcon}]} 
+                    options={[{name:'Wazidev Board',id:'WaziDev', imageurl:WaziDevIcon},{id:'GenericBoard',name:'Generic board',imageurl:WaziActIcon}]} 
                 />
                 
             </Box>

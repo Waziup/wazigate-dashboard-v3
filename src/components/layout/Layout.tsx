@@ -4,11 +4,8 @@ import Sidebar from './Sidebar';
 import { Menu, SettingsOutlined } from '@mui/icons-material';
 import RowContainerBetween from '../shared/RowContainerBetween';
 import { useState, useEffect } from 'react';
-const reToken = () => {
-    const oldToken = window.localStorage.getItem('token');
-    window.wazigate.set<string>("auth/retoken", {
-        token: oldToken,
-    })
+const reToken =async () => {
+    await window.wazigate.set<string>("auth/retoken",{})
     .then((res)=>{
         console.log("Refresh token", res);
         window.localStorage.setItem('token',res as unknown as string);
