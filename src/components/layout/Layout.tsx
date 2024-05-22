@@ -3,19 +3,19 @@ import { Link, Outlet, useLocation, } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { Menu, SettingsOutlined } from '@mui/icons-material';
 import RowContainerBetween from '../shared/RowContainerBetween';
-import { useState, useEffect } from 'react';
-const reToken =async () => {
-    await window.wazigate.set<string>("auth/retoken",{})
-    .then((res)=>{
-        console.log("Refresh token", res);
-        window.localStorage.setItem('token',res as unknown as string);
-        // setTimeout(reToken, 1000 * 60 * 8); // Referesh the token every 10-2 minutes
-    })
-    .catch((error)=>{
-        console.log(error);
-        // window.location.href='/'
-    });
+import { useState } from 'react';
+const reToken = () => {
+    window.wazigate.set<string>("auth/retoken", {}).then(
+        (res) => {
+            window.wazigate.setToken(res);
+            setTimeout(reToken, 1000 * 60 * 8); // Referesh the token every 10-2 minutes
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
 }
+setTimeout(reToken, 1000 * 30); // Just call it after a while
 function Layout() {
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
@@ -23,10 +23,6 @@ function Layout() {
     const [open, setOpen] = useState(false);
     const handleToggle = () => {setOpen(!open)}
     const { state, pathname } = useLocation();
-    useEffect(()=>{
-        const intervalRef = setInterval(reToken, 1000 * 60 * 5);
-        return () => clearInterval(intervalRef);
-    },[]);
     return (
         <>
             {

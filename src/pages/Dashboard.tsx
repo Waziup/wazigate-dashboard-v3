@@ -139,7 +139,13 @@ function Dashboard() {
                     </Box>
                 ):(
                     <Box sx={{ height: '100%', overflowY: 'auto' }}>
-                        <MobileDashboard />
+                        <MobileDashboard
+                            apConn={apConn}
+                            eth0={eth0}
+                            selectedCloud={selectedCloud}
+                            apps={apps}
+                            devices={devices?devices.filter((_device, id) => id < 5):[]}
+                        />
                     </Box>
                 )
             }
