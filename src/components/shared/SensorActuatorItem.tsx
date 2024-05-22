@@ -16,17 +16,27 @@ interface SensorActuatorItemProps {
     handleClickMenu?:(event: React.MouseEvent<HTMLButtonElement>)=>void,
     children?:React.ReactNode
     deviceId:string
+    type: "actuator" | "sensor",
     callbackFc?:()=>void,
 }
 const isActuator = (sensActuator: Sensor | Actuator): sensActuator is Actuator => {
     return Object.keys(ontologies.actingDevices).includes(sensActuator.meta.type);
 }
-export default function SensorActuatorItem({ callbackFc, sensActuator: sens,handleClose,open,children,deviceId}: SensorActuatorItemProps) {
+export default function SensorActuatorItem({ callbackFc,type, sensActuator: sens,handleClose,open,children,deviceId}: SensorActuatorItemProps) {
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const navigate = useNavigate();
     const handleDelete = () => {
         const cf = confirm(`Are you sure you want to delete ${sens.name}?`);
         if (!cf) return;
+        if(type === 'actuator'){
+            window.wazigate.deleteActuator(deviceId, sens.id).then(() => {
+                handleClose();
+                callbackFc &&callbackFc();
+            }).catch((err) => {
+                console.log(err);
+            })
+            return;
+        }
         window.wazigate.deleteSensor(deviceId, sens.id).then(() => {
             handleClose();
             callbackFc &&callbackFc();
