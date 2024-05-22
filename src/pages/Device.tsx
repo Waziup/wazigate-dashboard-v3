@@ -317,7 +317,7 @@ function DeviceSettings() {
                                                 <Typography>No Sensors found</Typography>
                                             </Box>
                                         ) : (device?.sensors.map((sens) => (
-                                            <SensorActuatorItem callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={sens} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
+                                            <SensorActuatorItem type="sensor" callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={sens} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
                                                 <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28} >
                                                     {sens.value} {sens.meta.unitSymbol}
                                                 </Typography>
@@ -336,7 +336,7 @@ function DeviceSettings() {
                                 <Grid container my={2} spacing={1}>
                                     {
                                         device?.actuators?.map((act) => (
-                                            <SensorActuatorItem callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={act} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
+                                            <SensorActuatorItem type={"actuator"} callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={act} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
                                                 {
                                                     act.meta.quantity==='Boolean' ?(
                                                         <Typography fontWeight={100} fontSize={15} color={'#2BBBAD'}>
@@ -344,8 +344,8 @@ function DeviceSettings() {
                                                             <Typography component={'span'} fontSize={15} fontWeight={300} color={act.value?'#2BBBAD':'#ff0000'}>{act.value ? '  Running' : '   Stopped'}</Typography>
                                                         </Typography>
                                                     ):null
-                                                }
-                                                <RowContainerBetween>
+                                                }                                                
+                                                <RowContainerBetween additionStyles={{m:1}}>
                                                     {
                                                         act.meta.quantity==='Boolean' ? (
                                                             <Typography fontWeight={100} color={'rgba(0,0,0,.7)'} fontSize={15}>{ act.value?'Stop':'Start'}</Typography>
@@ -354,11 +354,11 @@ function DeviceSettings() {
                                                     {
                                                         act.meta.quantity==='Boolean' ? (
                                                             <Android12Switch checked={act.value} onChange={() => {handleSwitchChange(act.id,act.value) }} color='info' />
-                                                        ):(act.meta.quantity==='Number' ? (
+                                                        ): (
                                                             <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28}>
                                                                 {act.value} {act.meta.unitSymbol}
                                                             </Typography>
-                                                        ):null)
+                                                        )
                                                     }
                                                 </RowContainerBetween>
                                             </SensorActuatorItem>
