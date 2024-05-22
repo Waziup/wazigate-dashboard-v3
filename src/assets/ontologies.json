@@ -900,6 +900,18 @@
         "Watt"
       ]
     },
+    "Color": {
+      "label": "Color",
+      "units": []
+    },
+    "Object": {
+      "label": "Object",
+      "units": []
+    },
+    "DigitalValue": {
+      "label": "Digital value",
+      "units": []
+    },
     "AirPollution": {
       "label": "Air pollution",
       "units": [
@@ -937,6 +949,10 @@
         "RadianPerSecond",
         "RevolutionsPerMinute"
       ]
+    },
+    "Array": {
+      "label": "Array",
+      "units": []
     },
     "AtmosphericPressure": {
       "label": "Atmospheric pressure",
@@ -978,6 +994,10 @@
       ]
     },
     "Boolean": {
+      "label": "Boolean",
+      "units": []
+    },
+    "Binary": {
       "label": "Boolean",
       "units": []
     },
@@ -1695,6 +1715,10 @@
         "MinuteTime",
         "Hour"
       ]
+    },
+    "String":{
+      "label": "String",
+      "units": []
     },
     "Timestamp": {
       "label": "Timestamp",
