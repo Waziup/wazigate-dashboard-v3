@@ -1,8 +1,8 @@
-import { Box, Typography, Breadcrumbs } from "@mui/material";
+import { Box, Typography, Breadcrumbs, CircularProgress } from "@mui/material";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Chart from 'react-apexcharts';
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useLayoutEffect, useState } from "react";
 import type { Actuator, Device, Sensor } from "waziup";
 import { Link } from "react-router-dom";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
@@ -22,9 +22,6 @@ function Device() {
     const { id, sensorId } = useParams();
     console.log(id);
     const getGraphValues = useCallback(function (deviceId: string, sensorId: string) {
-        window.wazigate.getSensor(sensorId).then((value) => {
-            setSensOrActuator(value)
-        });
         window.wazigate.getSensorValues(deviceId, sensorId)
             .then((res) => {
                 const values = (res as { time: string, value: number }[]).map((value) => {
@@ -36,7 +33,8 @@ function Device() {
                         y: value.value, 
                         x: `${hours}:${minutes}`
                     }
-                })
+                });
+                setGraphValues(values);
                 const valuesTable = (res as { time: string, value: number }[]).map((value) => {
                     const date = new Date(value.time);
                     const hours = String(date.getUTCHours()).padStart(2, '0');
@@ -48,17 +46,15 @@ function Device() {
                     }
                 })
                 setValues(valuesTable);
-                setGraphValues(values);
             })
     }, []);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         console.log(pathname.includes('actuators'));
         window.wazigate.getDevice(id).then((de) => {
             const sensor = de.sensors.find((sensor) => sensor.id === sensorId);
             if (sensor) {
                 setSensOrActuator(sensor);
-                window.wazigate.getSensor(sensorId as string).then(setSensOrActuator);
                 getGraphValues(id as string, sensorId as string);
             }
             const actuator = de.actuators.find((actuator) => actuator.id === sensorId);
@@ -67,8 +63,16 @@ function Device() {
                 window.wazigate.getActuatorValues(id as string, sensorId as string)
                 .then((res) => {
                     const values = (res as { time: string, value: number }[]).map((value) => {
-                        return { y: value.value, x: value.time }
+                        const date = new Date(value.time);
+                        const hours = String(date.getUTCHours()).padStart(2, '0');
+
+                        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                        return { 
+                            y: (typeof value.value==='boolean') ? (value.value ? 1 : 0) :  value.value, 
+                            x: `${hours}:${minutes}`
+                        }
                     });
+                    setGraphValues(values);
                     const valuesTable = (res as { time: string, value: number }[]).map((value) => {
                         const date = new Date(value.time);
                         const hours = String(date.getUTCHours()).padStart(2, '0');
@@ -80,14 +84,13 @@ function Device() {
                         }
                     });
                     setValues(valuesTable);
-                    setGraphValues(values);
                 })
             }
             setDevice(de)
         });
     }, [getGraphValues, id, pathname, sensorId]);
     return (
-        <Box sx={{ height: '100%', overflowY: 'scroll' }}>
+        <Box sx={{ height: '100%', overflowY: 'auto' }}>
             <RowContainerBetween additionStyles={{ p: 2 }}>
                 <Box>
                     <Typography fontWeight={500} fontSize={18} color={'black'}>{device?.name}</Typography>
@@ -157,9 +160,17 @@ function Device() {
                     />
                 </Box>
                 <Box bgcolor={'#fff'} width={matches ? '80%' : '90%'}>
-                    <SensorTable
-                        values={values}
-                    />
+                    {
+                        values.length>0?(
+                            <SensorTable
+                                values={values}
+                            />
+                        ):(
+                            <Box sx={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center',height:300}}>
+                                <CircularProgress />
+                            </Box>
+                        )
+                    }
                 </Box>
             </Box>
         </Box>
