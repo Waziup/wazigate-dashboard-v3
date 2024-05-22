@@ -1,3 +1,4 @@
+import React from "react";
 import { Cloud, CloudOff, Router,  Wifi } from "@mui/icons-material";
 import { Box, Stack, Typography } from "@mui/material";
 import { DEFAULT_COLORS } from "../../constants";
@@ -10,22 +11,22 @@ const Item = ({ more, color, children, title }: { more: string, children: React.
         <Typography color={color} fontSize={13} fontWeight={300}>{more}</Typography>
     </Box>
 );
-import { useContext,useMemo, useState } from "react";
-import { DevicesContext } from "../../context/devices.context";
 import { capitalizeFirstLetter, differenceInMinutes, isActiveDevice, returnAppURL } from "../../utils";
 import { useNavigate, Link } from "react-router-dom";
-import { App } from "waziup";
-export default function MobileDashboard() {
-    const { devices,networkDevices,selectedCloud, apps } = useContext(DevicesContext);
+import { App, Cloud as Cl, Device as Dev } from "waziup";
+import type { Device, Connection } from "../../utils/systemapi";
+interface Props{
+    apConn: Connection | null | undefined
+    eth0: Device | undefined
+    apps: App[]
+    devices: Dev[]
+    selectedCloud: Cl | null
+}
+export default function MobileDashboard({ apConn,apps,devices,selectedCloud, eth0 }: Props) {
     const navigate = useNavigate();
     const handleNav = (devId: string,devName:string) => {
         navigate(`/devices/${devId}`,{state:{title:devName,backUrl:'/devices',backTitle:'Devices',showBack:true}});
     }
-    const [apConn,eth0] = useMemo(() => {
-        const apCn = networkDevices?.wlan0? networkDevices.wlan0.AvailableConnections.find(conn => conn.connection.id === networkDevices.wlan0.ActiveConnectionId): null
-        const eth0 = networkDevices?.eth0;
-        return [apCn, eth0]; 
-    },[networkDevices]);
     return (
         <Box sx={{ overflowY: 'auto', height: '100%' }} >
             <Stack direction={'row'} overflow={'auto'} m={2} spacing={1}>
@@ -62,7 +63,7 @@ export default function MobileDashboard() {
                 </RowContainerBetween>
                 <Box display={'flex'} flexDirection={'column'} mt={1} py={1} alignItems={'center'}>
                     {
-                        devices?devices.filter((_dev,idx)=>idx<5).map((dev, id) => (
+                        devices.length>0?devices.filter((_dev,idx)=>idx<5).map((dev, id) => (
 
                             <Box onClick={() => { handleNav(dev.id,dev.name) }} key={id} sx={{ cursor: 'pointer', my: 1, ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, width: '100%', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
                                 <Box sx={{ position: 'absolute', top: -5, my: -1, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
@@ -81,9 +82,8 @@ export default function MobileDashboard() {
                                     </RowContainerBetween>
                                 </Box>
                             </Box>
-                        )):null
+                        )): <Box p={2} textAlign={'center'}><Typography>No devices found</Typography></Box>
                     }
-                    
                 </Box>
             </Box>
             <Box mt={1} px={1}>
@@ -95,29 +95,14 @@ export default function MobileDashboard() {
                 </RowContainerBetween>
                 <Box display={'flex'} flexDirection={'column'} mt={1} borderRadius={2} bgcolor={'#fff'} alignItems={'center'}>
                     {
-                        apps?apps.filter((_x,i)=>i<5).map((app, id) => {
-                            // eslint-disable-next-line react-hooks/rules-of-hooks
-                            const [imageError, setImageError] = useState(false);
-                            const handleImageError = () => {setImageError(true)}
+                        apps.length>0?apps.map((app, id) => {
                             return(
-                            <Box onClick={() => {navigate(returnAppURL(app)) }} key={id} sx={{ cursor: 'pointer', ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, borderBottom: '1px solid #E2E2E2', width: '95%', height: '100%', position: 'relative', px: 1, bgcolor: 'white', }}>
+                            <Box onClick={() => {!(app.id.includes("wazigate-system"))? navigate(returnAppURL(app)):'/' }} key={id} sx={{ cursor: 'pointer', ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, borderBottom: '1px solid #E2E2E2', width: '95%', height: '100%', position: 'relative', px: 1, bgcolor: 'white', }}>
                                 <RowContainerBetween>
                                     <RowContainerNormal >
-                                        {
-                                            imageError?(
-                                                <Box sx={{ width: 30, height: 30, borderRadius: 15, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    <Typography sx={{ fontSize: 15, color: 'white'}}>W</Typography>
-                                                </Box>
-                                            ):(app.waziapp && (app.waziapp as App['waziapp'] &{icon:string}).icon) ? (
-                                                <Box sx={{ width: 40, height: 40,alignItems:'center',display:'flex',justifyContent:'center', borderRadius: 20, overflow: 'hidden' }}>
-                                                    <img onError={handleImageError} src={`/apps/${app.id}/`+(app.waziapp as App['waziapp'] &{icon:string}).icon} alt={app.name} style={{ width: 20, height: 20, }} />
-                                                </Box>
-                                            ) : (
-                                                <Box sx={{ width: 30, height: 30, borderRadius: 15, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    <Typography sx={{ fontSize: 15, color: 'white'}}>W</Typography>
-                                                </Box>
-                                            )
-                                        }
+                                        <Box sx={{ width: 30, height: 30, borderRadius: 15, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <Typography sx={{ fontSize: 15, color: 'white'}}>W</Typography>
+                                        </Box>
                                         <Box mx={1}>
                                             <Typography fontSize={[12, 12, 16, 12, 10]} color={'black'} fontWeight={300}>{app.name}</Typography>
                                             <Typography fontSize={[10, 12, 10, 12, 14]} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
@@ -131,7 +116,7 @@ export default function MobileDashboard() {
                                     </Box>
                                 </RowContainerBetween>
                             </Box>
-                        )}):null
+                        )}): <Box p={2} textAlign={'center'}><Typography>No apps installed</Typography></Box>
                     }
                 </Box>
             </Box>
