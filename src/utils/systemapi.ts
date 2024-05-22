@@ -202,7 +202,7 @@ type IP4NameserverData = {
   Address: string
 }
 
-type Connection = {
+export type Connection = {
     "802-11-wireless"?: {
         ssid: string,
     },

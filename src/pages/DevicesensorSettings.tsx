@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs,Button,SelectChangeEvent,TextField,Typography,Icon } from "@mui/material";
+import { Box, Breadcrumbs,Button,TextField, FormControl,NativeSelect,Typography,Icon } from "@mui/material";
 import { useLocation, Link, useOutletContext, useParams, useNavigate } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
@@ -9,9 +9,40 @@ import { useContext, useEffect, useState } from "react";
 import { Actuator, Device, Sensor } from "waziup";
 import ontologies from "../assets/ontologies.json";
 import { DevicesContext } from "../context/devices.context";
-import SelectElementString from "../components/shared/SelectElementString";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
-import React from "react";
+import React,{ChangeEvent} from "react";
+export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSelectElement> {
+    handleChange: (event: ChangeEvent<HTMLSelectElement>) => void,
+    title: string,
+    conditions: string[],
+    value: string
+    my?: number
+    isDisabled?: boolean
+    matches?: boolean
+}
+export const SelEl = ({ handleChange, title, my,name, conditions, isDisabled, value }: HTMLSelectPropsString) => (
+    <Box minWidth={120}  my={my !== undefined ? my : 2} >
+        <Typography fontSize={12} color={DEFAULT_COLORS.navbar_dark}>{title}</Typography>
+        <FormControl color="primary" disabled={isDisabled} fullWidth>
+            <NativeSelect
+                defaultValue={30}
+                inputProps={{
+                    name: name,
+                    id: 'uncontrolled-native',
+                }}
+                name={name}
+                required
+                value={value}
+                onChange={handleChange}
+            >
+                <option selected style={{ color: '#ccc' }} defaultValue={''}>select option</option>
+                {conditions.map((condition, index) => (
+                    <option color={DEFAULT_COLORS.navbar_dark} key={index} value={condition}>{condition}</option>
+                ))}
+            </NativeSelect>
+        </FormControl>
+    </Box>
+);
 function DeviceSensorSettings() {
     const [matches] = useOutletContext<[matches: boolean]>();
     const { pathname } = useLocation();
@@ -90,9 +121,8 @@ function DeviceSensorSettings() {
             }
         })
     }
-    const handleChange = (event: SelectChangeEvent) => {
-        console.log(event.target.value, event.target.name);
-        const unitSymbol = event.target.name === 'unit' ? ontologies.units[event.target.value as keyof typeof ontologies.units].label : sensOrActuator?.meta.unit;
+    const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
+        const unitSymbol = event.target.name === 'unit' ? ontologies.units[event.target.value as keyof typeof ontologies.units].label : sensOrActuator?.meta.unitSymbol;
         let icon = '';
         if(event.target.name === 'type' && pathname.includes('sensors')){
             icon = ontologies.sensingDevices[event.target.value as keyof typeof ontologies.sensingDevices].icon;
@@ -102,14 +132,11 @@ function DeviceSensorSettings() {
         }else{
             icon = sensOrActuator?.meta.icon;
         }
-        console.log(icon,unitSymbol);
-        const unit = event.target.name === 'unit' ? ontologies.units[event.target.value as keyof typeof ontologies.units].label : sensOrActuator?.meta.unit;
         setSensOrActuator({
             ...sensOrActuator!,
             meta: {
                 ...sensOrActuator?.meta,
                 [event.target.name]: event.target.value as string,
-                unit: unit,
                 unitSymbol,
                 icon,
             }
@@ -181,7 +208,7 @@ function DeviceSensorSettings() {
         })
     }
     return (
-        <Box height={'100%'}>
+        <Box sx={{ height: '100%', overflowY: 'auto' }}>
             <Box p={2} px={3}>
                 <Typography fontWeight={600} fontSize={18} color={'black'}>{device?.name}</Typography>
                 <div role="presentation" onClick={() => { }}>
@@ -219,28 +246,26 @@ function DeviceSensorSettings() {
                         <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
                             <TextField sx={{width:'100%'}} onChange={handleTextInputChange} id="name" value={(sensOrActuator)?.name} variant="standard" />
                             <Box width={'90%'}>
-                                
-                                <SelectElementString matches={matches}
-                                    title={`${sensOrActuator?.name} Type`}
-                                    handleChange={handleChange}
+                                <SelEl
                                     conditions={conditions}
+                                    handleChange={handleChange}
+                                    title={`${sensOrActuator?.name} Type`}
                                     value={sensOrActuator?.meta.type}
                                     name="type"
                                     id="type"
                                 />
-                                <SelectElementString matches={matches}
-                                    title={`${sensOrActuator?.name} Quantity`}
+                                <SelEl
                                     handleChange={handleChange}
+                                    title={`${sensOrActuator?.name} Quantity`}
                                     conditions={quantitiesCondition}
                                     value={sensOrActuator?.meta.quantity}
                                     name="quantity"
                                     id="quantity"
                                 />
-                                <SelectElementString matches={matches}
-                                    isDisabled={false}
-                                    title={`${sensOrActuator?.name} Unit`}
-                                    handleChange={handleChange}
+                                <SelEl
                                     conditions={unitsCondition}
+                                    handleChange={handleChange}
+                                    title={`${sensOrActuator?.name} Unit`}
                                     value={sensOrActuator?.meta.unit}
                                     name="unit"
                                     id="unit"
