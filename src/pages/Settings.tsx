@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
 import { useState, useEffect, useMemo } from 'react';
 import {setTime, shutdown,reboot,getBuildNr,getTimezoneAuto, getTime, getTimezones,getNetworkDevices,Devices, setTimezone, } from '../utils/systemapi';
 
@@ -34,7 +34,6 @@ function padZero(t: number): string {
 }
 function Settings() {
     const [matches] = useOutletContext<[matches: boolean]>();
-    const today = new Date();
     const [currentTime, setCurrentTime] = useState<string>('');
     const [buildNr, setBuildNr] = useState<string>('');
     const [responseMessage , setReponseMessage] = useState<string>('');
@@ -63,6 +62,13 @@ function Settings() {
                 alert("Error setting time: " + error);
             }
         );
+    }
+    const onTimeChange = (date: dayjs.Dayjs) => {
+        setData({
+            time: date.toDate(),
+            utc: data? data.utc: null,
+            zone: data? data.zone: ''
+        });
     }
     const handleSaveTimezone = (e: SelectChangeEvent<string>) => {
         setTimezone(e.target.value)
@@ -114,7 +120,7 @@ function Settings() {
                     });
                 }
             );
-        }, 3000);
+        }, 6000);
         const timer = setInterval(() => {
             setCurrentTime(dayjs().format('HH:mm:ss'));
         }, 5000);
@@ -173,13 +179,13 @@ function Settings() {
     return (
         <>
             <SnackbarComponent anchorOrigin={{ vertical: 'top', horizontal: 'center' }} severity='success' autoHideDuration={6000} message={responseMessage} />
-            <Box sx={{ p: 3, width:'100%', overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
+            <Box sx={{ p: matches?3:1.5, width:'100%', overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
                 <Box>
                     <Typography fontWeight={700} color={'black'}>Devices</Typography>
                     <Typography sx={{ fontSize:13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography>
                 </Box>
                 <Grid  container>
-                    <GridItem additionStyles={{m:matches?1:0}} md={4.6} xs={12} matches={matches} >
+                    <GridItem additionStyles={{m:matches?1:0}} md={12} xs={12} matches={matches} >
                         <GridItemEl icon='cell_tower' text={(eth0 && eth0.IP4Config)?'Ethernet':'Network'}>
                             <Box py={2}>
                                 <RowContainer>
@@ -225,7 +231,7 @@ function Settings() {
                             </RowContainerNormal>
                         </GridItemEl>
                     </GridItem>
-                    <GridItem additionStyles={{boxShadow:2,borderRadius:2,}} bgcolor md={4.6} xs={12} matches={matches} >
+                    <GridItem additionStyles={{boxShadow:2,borderRadius:2,}} bgcolor md={12} xs={12} matches={matches} >
                         <Box sx={{ display: 'flex', borderTopLeftRadius: 5,border:'.5px solid #d8d8d8', borderTopRightRadius: 5, bgcolor: '#F7F7F7', alignItems: 'center' }} p={1} >
                             <AccessTime sx={IconStyle} />
                             <Typography color={'#212529'} fontWeight={500}>Time Settings</Typography>
@@ -237,7 +243,15 @@ function Settings() {
                             </RowContainer>
                             <RowContainer>
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Date</Typography>
-                                <Typography textTransform={'uppercase'} fontSize={14} color={DEFAULT_COLORS.primary_black} fontWeight={700}>{today.toLocaleDateString().toString().replaceAll('/', '-')}</Typography>
+                                <Typography textTransform={'uppercase'} fontSize={14} color={DEFAULT_COLORS.primary_black} fontWeight={700}>
+                                    {
+                                        data?(
+                                            dayjs(data.time).format('DD/MM/YYYY')
+                                        ):(
+                                            <CircularProgress size={10} sx={{fontSize:10 }} />
+                                        )
+                                    }
+                                </Typography>
                             </RowContainer>
                             <RowContainer>
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Time Zone</Typography>
@@ -279,7 +293,13 @@ function Settings() {
                                         ]}
                                     >
                                         <DemoItem label="">
-                                            <DesktopDatePicker disabled={!isSetDateManual} sx={{ p: 0 }} defaultValue={dayjs(today.toLocaleDateString().toString().replaceAll('/', '-' + " "))} />
+                                            <DesktopDateTimePicker 
+                                                onChange={(v)=>onTimeChange(v as dayjs.Dayjs)} 
+                                                disabled={!isSetDateManual} 
+                                                sx={{ p: 0 }} 
+                                                value={dayjs(data?.time)} 
+                                                defaultValue={dayjs(data?.time)} 
+                                            />
                                         </DemoItem>
                                     </DemoContainer>
                                 </LocalizationProvider>
