@@ -253,9 +253,11 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     <NoImageProfile/>
                                 </Box>
                             </Link>
-                            <Box my={.5} display={'flex'} py={1} alignItems={'center'}>
-                                <Logout sx={{color:'white',fontSize:18}} />
-                            </Box>
+                            <Link style={{textDecoration:'none',margin:'5px 0'}} to={'/'}>
+                                <Box my={.5} display={'flex'} py={1} alignItems={'center'}>
+                                    <Logout sx={{color:'white',fontSize:18}} />
+                                </Box>
+                            </Link>
                         </Box>
                     </Box>
                 )
