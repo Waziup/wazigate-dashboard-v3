@@ -48,7 +48,8 @@ function DeviceSensorSettings() {
     const { pathname } = useLocation();
     const { id, sensorId } = useParams();
     const [device, setDevice] = useState<Device | null>(null);
-    const [sensOrActuator, setSensOrActuator] = useState<Sensor | Actuator | null>(null)
+    const [sensOrActuator, setSensOrActuator] = useState<Sensor | Actuator | null>(null);
+    const [rActuator, setRemoteActuator] = useState<Actuator | Sensor | null>(null);
     const [conditions, setConditions] = useState<string[]>([]);
     const navigate = useNavigate();
     const { getDevicesFc } = useContext(DevicesContext);
@@ -62,17 +63,22 @@ function DeviceSensorSettings() {
         })
     
     }
+    const resetHandler = () => {
+        setSensOrActuator(rActuator);
+    }
     useEffect(() => {
         window.wazigate.getDevice(id).then((de) => {
             const sensor = de.sensors.find((sensor) => sensor.id === sensorId);
             if (sensor) {
                 setSensOrActuator(sensor);
+                setRemoteActuator(sensor);
                 const rs = Object.keys(ontologies.sensingDevices)
                 setConditions(rs);
             }
             const actuator = de.actuators.find((actuator) => actuator.id === sensorId);
             if (actuator) {
                 setSensOrActuator(actuator);
+                setRemoteActuator(actuator);
                 const rs = Object.keys(ontologies.actingDevices)
                 setConditions(rs);
             }
@@ -274,7 +280,7 @@ function DeviceSensorSettings() {
                             <Box width={matches ? '100%' : '90%'}>
                                 <RowContainerNormal additionStyles={{ width: '100%' }}>
                                     <PrimaryIconButton type="submit" iconname="save" onClick={() => { }} title="SAVE" />
-                                    <Button sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
+                                    <Button onClick={resetHandler} sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
                                 </RowContainerNormal>
                             </Box>
                         </form>
@@ -329,7 +335,7 @@ function DeviceSensorSettings() {
                                 <Box sx={{ width: '100%', mt: 1 }}>
                                     <RowContainerBetween additionStyles={{ width: matches ? '35%' : '90%',  }} >
                                         <PrimaryIconButton type="submit" iconname="save" title="SAVE" />
-                                        <Button sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
+                                        <Button onClick={resetHandler} sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
                                     </RowContainerBetween>
                                 </Box>
                             </form>
