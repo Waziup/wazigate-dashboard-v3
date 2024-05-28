@@ -104,9 +104,12 @@ function DeviceSettings() {
     const handleCreateSensorClick = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log('Creating a sensor', newSensOrAct);
-        const sensor: Sensor = {
+        const sensor: Sensor & {unit: string,kind:string,quantity:string} = {
             name: newSensOrAct.name,
             id: "",
+            kind: newSensOrAct.type,
+            unit: newSensOrAct.unit as string,
+            quantity: newSensOrAct.quantity,
             meta: {
                 type: newSensOrAct.type,
                 quantity: newSensOrAct.quantity,
