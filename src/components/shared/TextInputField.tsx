@@ -13,7 +13,7 @@ interface InputFieldProps extends React.ComponentProps<typeof TextField> {
     rows?: number
     icon?: React.ReactNode
 }
-export default function TextInputField({onChange,value,label,icon,placeholder, name}:InputFieldProps) {
+export default function TextInputField({onChange,value,label,icon,placeholder,type, name}:InputFieldProps) {
     return (
         <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #ccc'}}>
             <Typography textAlign={'left'} color={'primary'} mb={.4} fontSize={12}>{label}</Typography>
@@ -25,7 +25,7 @@ export default function TextInputField({onChange,value,label,icon,placeholder, n
                     placeholder={placeholder?placeholder:'Enter device name'} 
                     value={value}
                     required
-                    
+                    type={type?type:'text'}
                     style={{border:'none',width:'100%',fontSize:14,color:'#888', margin:'0 3px', outline:'none'}}
                 />
             </Box>
