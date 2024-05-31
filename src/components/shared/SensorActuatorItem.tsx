@@ -20,7 +20,7 @@ interface SensorActuatorItemProps {
     callbackFc?:()=>void,
 }
 const isActuator = (sensActuator: Sensor | Actuator): sensActuator is Actuator => {
-    return Object.keys(ontologies.actingDevices).includes(sensActuator.meta.type);
+    return Object.keys(ontologies.actingDevices).includes(sensActuator.meta.kind);
 }
 export default function SensorActuatorItem({ callbackFc,type, sensActuator: sens,handleClose,open,children,deviceId}: SensorActuatorItemProps) {
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
@@ -49,7 +49,7 @@ export default function SensorActuatorItem({ callbackFc,type, sensActuator: sens
             <RowContainerBetween additionStyles={{px:matches?1:.3}}>
                 <RowContainerNormal onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(sens)?'actuators':'sensors'}/${sens.id}`)}} >
                     <SVGIcon
-                        src={`${ontologiesicons}#${sens.meta.icon}`}
+                        src={`${ontologiesicons}#${sens.meta.icon?sens.meta.icon:type==='actuator'?ontologies.actingDevices[sens.meta.kind as  keyof typeof ontologies.actingDevices].icon:ontologies.sensingDevices[sens.meta.kind as  keyof typeof ontologies.sensingDevices].icon}`}
                         style={{ width: 20, height: 20, marginRight: 5 }}
                     />
                     <Typography fontSize={12}>{removeSpecialChars(sens? sens.name:'')}</Typography>
