@@ -4,10 +4,13 @@ import { Devices,getNetworkDevices } from "../utils/systemapi";
 interface ContextValues{
     devices: Device[]
     apps: App[],
+    profile: User | null
+    setProfile: (profile:User | null)=>void
     selectedCloud: Cloud | null
     getDevicesFc:()=>void,
     setAppsFc:(apps:App[])=>void,
     getApps:()=>void,
+    loadProfile: ()=>void,
     codecsList?:{id:string,name:string}[] | null,
     addApp:(app:App)=>void
     token:string
@@ -15,10 +18,21 @@ interface ContextValues{
     setNetWorkDevices:()=>void
     setAccessToken:(token:string) =>void
 }
+interface User {
+    id?: string
+    name: string;
+    username:string;
+    password: string;
+    newPassword: string;
+    newPasswordConfirm: string;
+}
 export const DevicesContext = createContext<ContextValues>({
     devices:[],
     apps:[],
     selectedCloud:null,
+    profile: null,
+    loadProfile: ()=>{},
+    setProfile: ()=>{},
     getDevicesFc() {
         console.log("get devices");
     },
@@ -42,7 +56,14 @@ export const DevicesContext = createContext<ContextValues>({
 
 export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     const [devices, setDevices] = useState<Device[]>([]);
-    const [token,setToken] = useState<string>('');
+    const [token,setToken] = useState<string>(()=>{
+        const token = window.localStorage.getItem('token');
+        if(token){
+            return token;
+        }
+        return '';
+    });
+    const [profile,setProfile] = useState<User | null>(null);
     const setAppsFc = ((apps:App[])=>setApps(apps));
     const [apps, setApps] = useState<App[]>([]);
     const addApp = (app:App)=>{
@@ -59,6 +80,19 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             setDevices(devFilter);
         });
     }
+    const setProfileFc = (profile:User | null)=>{
+        setProfile(profile);
+    }
+    const loadProfile = () => {
+        window.wazigate.getProfile().then((res) => {
+            setProfile({
+                ...res,
+                newPasswordConfirm: '',
+            });
+        }).catch((err) => {
+            console.error(err);
+        });
+    }
     const [networkDevices, setNetWorkDevices] = useState<Devices | null>(null);
     const [selectedCloud, setSelectedCloud] = useState<Cloud | null>(null);
     const setNetWorkDevicesFc = useCallback(async ()=>{
@@ -69,27 +103,29 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         setNetWorkDevices(netWorkDevices);
     },[]);
     const setAccessToken = useCallback(async (accessToken:string)=>{
-        setToken(accessToken);
-        window.localStorage.removeItem('token');
         window.localStorage.setItem('token',accessToken as unknown as string);
+        setToken(accessToken);
+        // window.localStorage.removeItem('token');
     },[]);
     useEffect(()=>{
         const fc = async () => {
             if(token){
+                setAccessToken(token);
                 await window.wazigate.setToken(token);
                 getApps();
                 getDevices();
                 setNetWorkDevicesFc();
+                loadProfile();
                 window.wazigate.subscribe<Device[]>("devices", getDevices);
                 return async () => window.wazigate.unsubscribe("devices", getDevices);
             }
-            else{
-                const token = window.localStorage.getItem('token');
-                if(token){
-                    window.wazigate.setToken(token as unknown as string);
-                    setAccessToken(token);
-                }
-            }
+            // else{
+            //     const token = window.localStorage.getItem('token');
+            //     if(token){
+            //         window.wazigate.setToken(token as unknown as string);
+            //         setAccessToken(token);
+            //     }
+            // }
         }
         fc();
     },[setAccessToken, setNetWorkDevicesFc, token]);
@@ -113,9 +149,12 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         getDevicesFc:getDevices,
         setAppsFc,
         getApps,
+        profile,
         networkDevices,
         setNetWorkDevices:setNetWorkDevicesFc,
         addApp,
+        loadProfile,
+        setProfile:setProfileFc,
         token,
         selectedCloud,
         setAccessToken,
