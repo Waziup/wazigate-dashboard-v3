@@ -19,7 +19,7 @@ import GridItemEl from '../components/shared/GridItemElement';
 import SnackbarComponent from '../components/shared/Snackbar';
 const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
 const GridItem = ({bgcolor,additionStyles,md, children,}: {xs:number,md:number, matches: boolean,bgcolor?:boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode }) => (
-    <Grid sx={{bgcolor: bgcolor?'#fff':'',...additionStyles}} bgcolor={bgcolor?'#fff':''} item md={md} lg={5.5} xl={5.5} sm={6} xs={12} my={1} >
+    <Grid sx={{bgcolor: bgcolor?'#fff':'',...additionStyles}} bgcolor={bgcolor?'#fff':''} item md={md} lg={5.8} xl={5.8} sm={6} xs={12} my={1} >
         {children}
     </Grid>
 );
@@ -179,12 +179,12 @@ function Settings() {
     return (
         <>
             <SnackbarComponent anchorOrigin={{ vertical: 'top', horizontal: 'center' }} severity='success' autoHideDuration={6000} message={responseMessage} />
-            <Box sx={{ p: matches?3:1.5, width:'100%', overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
+            <Box sx={{ pt: matches?3:1.5,pl: matches?3:1.5, width:'100%', overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
                 <Box>
-                    <Typography fontWeight={700} color={'black'}>Devices</Typography>
+                    <Typography fontWeight={700} color={'black'}>Settings</Typography>
                     <Typography sx={{ fontSize:13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography>
                 </Box>
-                <Grid  container>
+                <Grid width={'100%'} container>
                     <GridItem additionStyles={{m:matches?1:0}} md={12} xs={12} matches={matches} >
                         <GridItemEl icon='cell_tower' text={(eth0 && eth0.IP4Config)?'Ethernet':'Network'}>
                             <Box py={2}>
@@ -221,7 +221,7 @@ function Settings() {
                             </Typography>
                         </GridItemEl>
                         <GridItemEl text='Gateway Power' icon='power_settings_new'>
-                            <RowContainerNormal additionStyles={{ m: 1, borderRadius: 1, p: 1 }}>
+                            <RowContainerNormal additionStyles={{ m: 1,py: 4, borderRadius: 1, p: 1 }}>
                                 <Button onClick={shutdownHandler} variant="contained" sx={{ mx: 1, fontWeight: 'bold', bgcolor: 'info.main' }} startIcon={<PowerSettingsNew />}>
                                     Shutdown
                                 </Button>
