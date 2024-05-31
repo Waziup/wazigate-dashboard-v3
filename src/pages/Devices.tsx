@@ -117,6 +117,7 @@ function Devices() {
     };
     const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let devEUI = newDevice?.meta.lorawan?.devEUI;
+        const sharedKey= e.target.name==='nwkSEncKey' ? newDevice?.meta.lorawan?.nwkSEncKey: e.target.name==='appSKey'? newDevice?.meta.lorawan?.appSKey:'';
         if(e.target.name === 'devAddr'){
             devEUI = devEUIGenerateFc(e.target.value);
         }
@@ -126,8 +127,9 @@ function Devices() {
                 ...newDevice.meta,
                 lorawan: {
                     ...newDevice.meta.lorawan,
+                    nwksEncKey: sharedKey,
+                    appSKey: sharedKey,
                     devEUI,
-                    [e.target.name]: e.target.value
                 },
             }
         })
@@ -195,6 +197,7 @@ function Devices() {
     }
     const handleTextInputEditCodec = (e: React.ChangeEvent<HTMLInputElement>) => {
         let devEUI = selectedDevice?.meta.lorawan?.devEUI;
+        const sharedKey= e.target.name==='nwkSEncKey' ? selectedDevice?.meta.lorawan?.nwkSEncKey: e.target.name==='appSKey'? selectedDevice?.meta.lorawan?.appSKey:'';
         if(e.target.name === 'devAddr'){
             devEUI = devEUIGenerateFc(e.target.value);
         }
@@ -205,7 +208,8 @@ function Devices() {
                     ...(selectedDevice as Device).meta,
                     lorawan :{
                         ...selectedDevice.meta.lorawan,
-                        [e.target.name]: e.target.value,
+                        nwkSEncKey:  (e.target.name === 'nwkSEncKey' || e.target.name === 'appSKey') ? e.target.value : sharedKey,
+                        appSKey: (e.target.name==='appSKey' || e.target.name==='nwkSEncKey') ? e.target.value : sharedKey,
                         devEUI,
                     }
                 }
@@ -285,25 +289,29 @@ function Devices() {
                 break;
             case 'nwkSEncKey':
                 if (selectedDevice) {
+                    const sharedKey = [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase();
                     setSelectedDevice({
                         ...selectedDevice,
                         meta: {
                             ...selectedDevice.meta,
                             lorawan: {
                                 ...selectedDevice.meta.lorawan,
-                                nwkSEncKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                                nwkSEncKey: sharedKey,
+                                appSKey: sharedKey,
                             }
                         }
                     }) as unknown as Device
                 }
                 else {
+                    const sharedKey = [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
                     setNewDevice({
                         ...newDevice,
                         meta: {
                             ...newDevice.meta,
                             lorawan: {
                                 ...newDevice.meta.lorawan,
-                                nwkSEncKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                                nwkSEncKey: sharedKey,
+                                appSKey: sharedKey,
                             }
                         }
                     });
@@ -311,25 +319,29 @@ function Devices() {
                 break;
             case 'appSKey':
                 if (selectedDevice) {
+                    const sharedKey = [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase();
                     setSelectedDevice({
                         ...selectedDevice,
                         meta: {
                             ...selectedDevice.meta,
                             lorawan: {
                                 ...selectedDevice.meta.lorawan,
-                                appSKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                                nwkSEncKey: sharedKey,
+                                appSKey: sharedKey,
                             }
                         }
                     }) as unknown as Device
                 }
                 else {
+                    const sharedKey = [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
                     setNewDevice({
                         ...newDevice,
                         meta: {
                             ...newDevice.meta,
                             lorawan: {
                                 ...newDevice.meta.lorawan,
-                                appSKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                                nwkSEncKey: sharedKey,
+                                appSKey: sharedKey,
                             }
                         }
                     });
@@ -423,12 +435,15 @@ function Devices() {
                                                     device.sensors.length > 0 ? device.sensors.map((sensor) => (
                                                         <Box key={sensor.id}>
                                                             <SensorActuatorInfo
+                                                                type='sensor'
+                                                                key={sensor.id}
                                                                 onClick={() => {
                                                                     navigate(`/devices/${device.id}/sensors/${sensor.id}`, { state: { devicename: device.name, sensorId: sensor.id, deviceId: device.id, sensorname: sensor.name } })
                                                                 }}
+                                                                kind={sensor.meta.kind}
                                                                 iconname={sensor.meta.icon}
                                                                 name={sensor.name}
-                                                                text={sensor.value}
+                                                                text={sensor.value? Math.round(sensor.value * 100) / 100 :''}
                                                             />
                                                         </Box>
                                                     )) : (
@@ -438,12 +453,16 @@ function Devices() {
                                                 {
                                                     device.actuators.length > 0 ? device.actuators.map((act) => (
                                                         <Box key={act.id}>
-                                                            <SensorActuatorInfo onClick={() => {
-                                                                navigate(`/devices/${device.id}/actuators/${act.id}`, { state: { deviceId: device.id, actuatordId: act.id, actuatorname: act.name } })
-                                                            }}
+                                                            <SensorActuatorInfo 
+                                                                onClick={() => {
+                                                                    navigate(`/devices/${device.id}/actuators/${act.id}`, { state: { deviceId: device.id, actuatordId: act.id, actuatorname: act.name } })
+                                                                }}
+                                                                key={act.id}
+                                                                type='actuator'
                                                                 iconname={act.meta.icon}
                                                                 name={act.name}
-                                                                text={act.meta.quantity==='Boolean' ? act.value ? 'Running' : 'Closed': act.value}
+                                                                kind={act.meta.kind}
+                                                                text={act.meta.quantity==='Boolean' ? act.value ? 'Running' : 'Closed': Math.round(act.value * 100) / 100}
                                                             />
                                                         </Box>
                                                     )) : (
