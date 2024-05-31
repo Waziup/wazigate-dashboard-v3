@@ -1,10 +1,11 @@
 import { ExpandLess,SettingsRemoteSharp,Apps, ExpandMore,Dashboard, SettingsTwoTone, Wifi, WifiLock, Logout, HelpCenter, DashboardOutlined} from '@mui/icons-material';
 import { Box, Collapse, List,  ListItemIcon, ListItemText, SxProps, Theme, Typography} from '@mui/material';
-import React, { CSSProperties } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import React, { CSSProperties, useContext } from 'react';
+import { Link, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { DEFAULT_COLORS } from '../../constants';
 import NoImageProfile from '../shared/NoImageProfile';
-
+import WaziGateSVG from '../../assets/wazigate.svg';
+import { DevicesContext } from '../../context/devices.context';
 export const IconStyle: SxProps<Theme> = {
     color:'inherit',
     mr:2,
@@ -87,13 +88,19 @@ const NavigationSmall = ({path,otherItem,icon,onClick, }:NavigationItemProps) =>
         </NavLink>
     )
 }
-import WaziGateSVG from '../../assets/wazigate.svg';
 function Sidebar({matchesMd}:{matchesMd:boolean}) {
     const [open, setOpen] = React.useState(false);
     const handleClick = () => {
         setOpen(!open);
     };
+    const navigate = useNavigate();
     const location = useLocation().pathname;
+    const {profile,setProfile,setAccessToken} = useContext(DevicesContext);
+    const handleLogout = ()=>{
+        setProfile(null);
+        setAccessToken('');
+        navigate('/')
+    }
     return (
         <Box position={'relative'} height={'100%'} width={'100%'} display={'flex'}  flexDirection={'column'} alignItems={'center'}>
             <Box component={'img'} src={WaziGateSVG} width={'70%'} mb={1} height={50} />
@@ -174,17 +181,17 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                 <Box display={'flex'} alignSelf={'center'} px={2}>
                                     <NoImageProfile/>
                                     <Box>
-                                        <Typography>Wazigate User</Typography>
-                                        <Typography fontSize={13}>admin</Typography>
+                                        <Typography>{profile?.name}</Typography>
+                                        <Typography fontSize={13}>{profile?.username}</Typography>
                                     </Box>
                                 </Box>
                             </Link>
-                            <Link style={{textDecoration:'none',textDecorationColor:'none',width:'100%',textAlign:'center', color:'#fff',borderBottom:'1px solid rgba(255, 255, 255, 0.4)',padding:'8px 0', borderTop:'1px solid rgba(255, 255, 255, 0.4)'}} to={'/'}>
+                            <button onClick={handleLogout} style={{cursor:'pointer', width:'100%',textAlign:'center',backgroundColor: DEFAULT_COLORS.navbar_dark, color:'#fff',borderBottom:'1px solid rgba(255, 255, 255, 0.4)',padding:'8px 0', borderTop:'1px solid rgba(255, 255, 255, 0.4)'}}>
                                 <Box sx={{width:'100%',px:2,display:'flex',alignItems:'center'}} >
                                     <Logout sx={{color:'white',mr:1,}} />
                                     <Typography>Logout</Typography>
                                 </Box>
-                            </Link>
+                            </button>
                         </Box>
                     </>
                 ):(
@@ -253,11 +260,11 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     <NoImageProfile/>
                                 </Box>
                             </Link>
-                            <Link style={{textDecoration:'none',margin:'5px 0'}} to={'/'}>
+                            <button onClick={handleLogout} style={{cursor:'pointer', textDecoration:'none', backgroundColor: DEFAULT_COLORS.navbar_dark,margin:'5px 0'}}>
                                 <Box my={.5} display={'flex'} py={1} alignItems={'center'}>
                                     <Logout sx={{color:'white',fontSize:18}} />
                                 </Box>
-                            </Link>
+                            </button>
                         </Box>
                     </Box>
                 )
