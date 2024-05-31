@@ -57,7 +57,7 @@ const style = {
 };
 const initialState = {
     name: '',
-    type: '',
+    kind: '',
     quantity: '',
     icon: '',
     unitSymbol:''
@@ -69,7 +69,7 @@ function DeviceSettings() {
     }
     const navigate = useNavigate();
     const [openModal, setOpenModal] = useState<boolean>(false);
-    const [newSensOrAct, setNewSensOrAct] = useState<{ name: string, unitSymbol?:string, type: string,icon:string, quantity: string, unit?: string }>(initialState);
+    const [newSensOrAct, setNewSensOrAct] = useState<{ name: string, unitSymbol?:string, kind: string,icon:string, quantity: string, unit?: string }>(initialState);
     const [device, setDevice] = useState<Device | null>(null);
     const [isError, setIsError] = useState<boolean>(false);
     const [modalProps, setModalProps] = useState<{ title: string, placeholder: string }>({ title: '', placeholder: '' });
@@ -107,11 +107,11 @@ function DeviceSettings() {
         const sensor: Sensor & {unit: string,kind:string,quantity:string} = {
             name: newSensOrAct.name,
             id: "",
-            kind: newSensOrAct.type,
+            kind: newSensOrAct.kind,
             unit: newSensOrAct.unit as string,
             quantity: newSensOrAct.quantity,
             meta: {
-                type: newSensOrAct.type,
+                type: newSensOrAct.kind,
                 quantity: newSensOrAct.quantity,
                 unit: newSensOrAct.unit,
                 icon: newSensOrAct.icon,
@@ -142,7 +142,7 @@ function DeviceSettings() {
             name: newSensOrAct.name,
             id: "",
             meta: {
-                type: newSensOrAct.type,
+                kind: newSensOrAct.kind,
                 quantity: newSensOrAct.quantity,
                 unit: newSensOrAct.unit,
                 icon: newSensOrAct.icon,
@@ -177,9 +177,9 @@ function DeviceSettings() {
         console.log(e.target.value, e.target.name);
         const unitSymbol = e.target.name === 'unit' ? ontologies.units[e.target.value as keyof typeof ontologies.units].label : newSensOrAct.unit;
         let icon = '';
-        if(e.target.name === 'type' && modalProps.title==='sensor'){
+        if(e.target.name === 'kind' && modalProps.title==='sensor'){
             icon = ontologies.sensingDevices[e.target.value as keyof typeof ontologies.sensingDevices].icon;
-        }else if(e.target.name === 'type' && modalProps.title==='actuator'){
+        }else if(e.target.name === 'kind' && modalProps.title==='actuator'){
             console.log(ontologies.actingDevices[e.target.value as keyof typeof ontologies.actingDevices]);
             icon = ontologies.actingDevices[e.target.value as keyof typeof ontologies.actingDevices].icon;
         }else{
@@ -322,7 +322,7 @@ function DeviceSettings() {
                                         ) : (device?.sensors.map((sens) => (
                                             <SensorActuatorItem type="sensor" callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={sens} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
                                                 <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28} >
-                                                    {sens.value} {sens.meta.unitSymbol}
+                                                    {Math.round(sens.value * 100) / 100} {sens.meta.unitSymbol}
                                                 </Typography>
                                             </SensorActuatorItem>
                                             
@@ -359,7 +359,7 @@ function DeviceSettings() {
                                                             <Android12Switch checked={act.value} onChange={() => {handleSwitchChange(act.id,act.value) }} color='info' />
                                                         ): (
                                                             <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28}>
-                                                                {act.value} {act.meta.unitSymbol}
+                                                                {Math.round(act.value * 100) / 100} {act.meta.unitSymbol}
                                                             </Typography>
                                                         )
                                                     }

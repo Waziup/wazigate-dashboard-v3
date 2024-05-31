@@ -3,19 +3,19 @@ import ontologies from '../../assets/ontologies.json';
 import SelectElementString from '../shared/SelectElementString';
 import React from 'react';
 interface Props{
-    newSensOrAct: {name:string,type:string,quantity:string,unit?:string},
+    newSensOrAct: {name:string,kind:string,quantity:string,unit?:string},
     handleSelectChange:(event: SelectChangeEvent<string>)=>void
 }
 export default function CreateSensorModal({newSensOrAct,handleSelectChange}:Props) {
     const [quantitiesCondition,setQuantitiesCondition]=React.useState<string[]>([]);
     const [unitsCondition,setUnitsCondition]=React.useState<string[]>([]);
     React.useEffect(()=>{
-        if(newSensOrAct.type){
-            setQuantitiesCondition((ontologies.sensingDevices)[newSensOrAct?.type as keyof typeof ontologies.sensingDevices].quantities);
+        if(newSensOrAct.kind){
+            setQuantitiesCondition((ontologies.sensingDevices)[newSensOrAct?.kind as keyof typeof ontologies.sensingDevices].quantities);
         }else{
             setQuantitiesCondition([]);
         }
-    },[newSensOrAct.type])
+    },[newSensOrAct.kind])
     React.useEffect(()=>{
         if(newSensOrAct.quantity){
             setUnitsCondition((ontologies.quantities)[newSensOrAct?.quantity as keyof typeof ontologies.quantities].units);
@@ -31,9 +31,9 @@ export default function CreateSensorModal({newSensOrAct,handleSelectChange}:Prop
                     conditions={Object.keys(ontologies.sensingDevices)}
                     handleChange={handleSelectChange}
                     title="Sensor Type"
-                    value={newSensOrAct.type}
-                    name="type" 
-                    id="type"
+                    value={newSensOrAct.kind}
+                    name="kind" 
+                    id="kind"
                 />
             </Box>
             <Box sx={{display:'flex',alignItems:'center',my:1, justifyContent:'space-between'}}>

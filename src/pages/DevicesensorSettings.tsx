@@ -102,16 +102,16 @@ function DeviceSensorSettings() {
     const [quantitiesCondition, setQuantitiesCondition] = React.useState<string[]>([]);
     const [unitsCondition, setUnitsCondition] = React.useState<string[]>([]);
     React.useEffect(() => {
-        if (sensOrActuator?.meta.type && pathname.includes('actuators')) {
+        if (sensOrActuator?.meta.kind && pathname.includes('actuators')) {
             setQuantitiesCondition(
-                (ontologies.actingDevices)[sensOrActuator?.meta?.type as keyof typeof ontologies.actingDevices] ?
-                    (ontologies.actingDevices)[sensOrActuator?.meta?.type as keyof typeof ontologies.actingDevices].quantities : []);
-        }else if(sensOrActuator?.meta.type && pathname.includes('sensors')){
+                (ontologies.actingDevices)[sensOrActuator?.meta?.kind as keyof typeof ontologies.actingDevices] ?
+                    (ontologies.actingDevices)[sensOrActuator?.meta?.kind as keyof typeof ontologies.actingDevices].quantities : []);
+        }else if(sensOrActuator?.meta.kind && pathname.includes('sensors')){
             setQuantitiesCondition(
-                (ontologies.sensingDevices)[sensOrActuator?.meta?.type as keyof typeof ontologies.sensingDevices] ?
-                    (ontologies.sensingDevices)[sensOrActuator?.meta?.type as keyof typeof ontologies.sensingDevices].quantities : []);
+                (ontologies.sensingDevices)[sensOrActuator?.meta?.kind as keyof typeof ontologies.sensingDevices] ?
+                    (ontologies.sensingDevices)[sensOrActuator?.meta?.kind as keyof typeof ontologies.sensingDevices].quantities : []);
         }
-    }, [pathname, sensOrActuator?.meta.type]);
+    }, [pathname, sensOrActuator?.meta.kind]);
     React.useEffect(() => {
         if (sensOrActuator?.meta.quantity ) {
             setUnitsCondition((ontologies.quantities)[sensOrActuator?.meta?.quantity as keyof typeof ontologies.quantities].units);
@@ -130,9 +130,9 @@ function DeviceSensorSettings() {
     const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const unitSymbol = event.target.name === 'unit' ? ontologies.units[event.target.value as keyof typeof ontologies.units].label : sensOrActuator?.meta.unitSymbol;
         let icon = '';
-        if(event.target.name === 'type' && pathname.includes('sensors')){
+        if(event.target.name === 'kind' && pathname.includes('sensors')){
             icon = ontologies.sensingDevices[event.target.value as keyof typeof ontologies.sensingDevices].icon;
-        }else if(event.target.name === 'type' && pathname.includes('actuators')){
+        }else if(event.target.name === 'kind' && pathname.includes('actuators')){
             console.log(ontologies.actingDevices[event.target.value as keyof typeof ontologies.actingDevices]);
             icon = ontologies.actingDevices[event.target.value as keyof typeof ontologies.actingDevices].icon;
         }else{
@@ -247,7 +247,7 @@ function DeviceSensorSettings() {
             </Box>
             <Box display={'flex'} flexDirection={matches?'row':'column'} bgcolor={matches ? '#fff' : 'inherit'} height={'100%'} width={'100%'} px={2} pt={matches ? 2 : .5}  >
                 <Box m={2} width={matches?'45%':'95%'}>
-                    <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Setup the sensor type, quantity and unit</Typography>
+                    <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Setup the sensor kind, quantity and unit</Typography>
                     <>
                         <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
                             <TextField sx={{width:'100%'}} onChange={handleTextInputChange} id="name" value={(sensOrActuator)?.name} variant="standard" />
@@ -255,10 +255,10 @@ function DeviceSensorSettings() {
                                 <SelEl
                                     conditions={conditions}
                                     handleChange={handleChange}
-                                    title={`${sensOrActuator?.name} Type`}
-                                    value={sensOrActuator?.meta.type}
-                                    name="type"
-                                    id="type"
+                                    title={`${sensOrActuator?.name} Kind`}
+                                    value={sensOrActuator?.meta.kind}
+                                    name="kind"
+                                    id="kind"
                                 />
                                 <SelEl
                                     handleChange={handleChange}

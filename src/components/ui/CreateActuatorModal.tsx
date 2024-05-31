@@ -3,17 +3,17 @@ import SelectElementString from "../shared/SelectElementString";
 import ontologies from '../../assets/ontologies.json';
 import React from "react";
 interface Props{
-    newSensOrAct: {name:string,type:string,quantity:string,unit?:string},
+    newSensOrAct: {name:string, kind:string,quantity:string,unit?:string},
     handleSelectChange:(event: SelectChangeEvent<string>)=>void
 }
 export default function CreateActuatorModal({newSensOrAct,handleSelectChange}:Props) {
     const [quantitiesCondition,setQuantitiesCondition]=React.useState<string[]>([]);
     const [unitsCondition,setUnitsCondition]=React.useState<string[]>([]);
     React.useEffect(()=>{
-        if(newSensOrAct.type){
-            setQuantitiesCondition((ontologies.actingDevices)[newSensOrAct?.type as keyof typeof ontologies.actingDevices].quantities);
+        if(newSensOrAct.kind){
+            setQuantitiesCondition((ontologies.actingDevices)[newSensOrAct?.kind as keyof typeof ontologies.actingDevices].quantities);
         }
-    },[newSensOrAct.type])
+    },[newSensOrAct.kind])
     React.useEffect(()=>{
         if(newSensOrAct.quantity){
             setUnitsCondition((ontologies.quantities)[newSensOrAct?.quantity as keyof typeof ontologies.quantities].units);
@@ -25,9 +25,9 @@ export default function CreateActuatorModal({newSensOrAct,handleSelectChange}:Pr
                 conditions={Object.keys(ontologies.actingDevices)}
                 handleChange={handleSelectChange}
                 title="Actuator Type"
-                value={newSensOrAct.type}
-                id="type"
-                name="type"
+                value={newSensOrAct.kind}
+                id="kind"
+                name="kind"
             />
             <Box sx={{display:'flex',alignItems:'center',my:1, justifyContent:'space-between'}}>
                 <SelectElementString
