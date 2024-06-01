@@ -3,20 +3,24 @@ import { Link, Outlet, useLocation, } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { Menu, SettingsOutlined } from '@mui/icons-material';
 import RowContainerBetween from '../shared/RowContainerBetween';
-import { useState } from 'react';
-const reToken = () => {
-    window.wazigate.set<string>("auth/retoken", {}).then(
-        (res) => {
-            window.wazigate.setToken(res);
-            setTimeout(reToken, 1000 * 60 * 8); // Referesh the token every 10-2 minutes
-        },
-        (error) => {
-            console.log(error);
-        }
-    );
-}
-setTimeout(reToken, 1000 * 30); // Just call it after a while
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { DevicesContext } from '../../context/devices.context';
 function Layout() {
+    const {setAccessToken} = useContext(DevicesContext);
+    const reToken =useCallback(() => {
+        window.wazigate.set<string>("auth/retoken", {})
+        .then(async(res)=>{
+            setAccessToken(res);
+            await window.wazigate.setToken(res);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+    },[setAccessToken]);
+    useEffect(()=>{
+        const int = setInterval(reToken, 1000 * 60 * 8);
+        return ()=>clearInterval(int);
+    },[reToken])
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const matchesMd = useMediaQuery(theme.breakpoints.between('sm', 'md'));
