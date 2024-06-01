@@ -30,7 +30,7 @@ function Device() {
 
                     const minutes = String(date.getUTCMinutes()).padStart(2, '0');
                     return { 
-                        y: value.value, 
+                        y: Math.round(value.value * 100) / 100,
                         x: `${hours}:${minutes}`
                     }
                 });
@@ -41,7 +41,7 @@ function Device() {
 
                     const minutes = String(date.getUTCMinutes()).padStart(2, '0');
                     return {
-                        value: value.value,
+                        value: Math.round(value.value * 100) / 100,
                         modified: `${date.getFullYear()}-${(date.getMonth()+1)}-${date.getDate()} ${hours}:${minutes}`
                     }
                 })
@@ -68,7 +68,7 @@ function Device() {
 
                         const minutes = String(date.getUTCMinutes()).padStart(2, '0');
                         return { 
-                            y: (typeof value.value==='boolean') ? (value.value ? 1 : 0) :  value.value, 
+                            y: (typeof value.value==='boolean') ? (value.value ? 1 : 0) :  Math.round(value.value * 100) / 100, 
                             x: `${hours}:${minutes}`
                         }
                     });
@@ -79,7 +79,7 @@ function Device() {
 
                         const minutes = String(date.getUTCMinutes()).padStart(2, '0');
                         return {
-                            value: actuator.meta.quantity === 'Boolean' ? (value.value ? 'Running' : 'Stopped') : value.value,
+                            value: actuator.meta.quantity === 'Boolean' ? (value.value ? 'Running' : 'Stopped') : Math.round(value.value * 100) / 100,
                             modified: `${date.getFullYear()}-${(date.getMonth()+1)}-${date.getDate()} ${hours}:${minutes}`
                         }
                     });
