@@ -122,9 +122,12 @@ export default function DeviceSettings() {
     const autoGenerateLoraWANOptions = (title: "devAddr" | "nwkSEncKey" | "appSKey") => {
         let devEUI= thisDevice.meta.lorawan.devEUI;
         let devAddr= thisDevice.meta.lorawan.devAddr;
+        let sharedKey= thisDevice.meta.lorawan.nwkSEncKey || thisDevice.meta.lorawan.appSKey;
         if(title==='devAddr'){
             devAddr = [...Array(8)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
             devEUI = devEUIGenerateFc(devAddr.toString())
+        }else if(title==='nwkSEncKey' || title==='appSKey'){
+            sharedKey = [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
         }
         switch (title) {
             case 'devAddr':
@@ -148,7 +151,8 @@ export default function DeviceSettings() {
                         ...thisDevice.meta,
                         lorawan: {
                             ...thisDevice.meta.lorawan,
-                            nwkSEncKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                            nwkSEncKey: sharedKey,
+                            appSKey: sharedKey
                         }
                     }
                 });
@@ -161,7 +165,8 @@ export default function DeviceSettings() {
                         ...thisDevice.meta,
                         lorawan: {
                             ...thisDevice.meta.lorawan,
-                            appSKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
+                            nwkSEncKey: sharedKey,
+                            appSKey: sharedKey
                         }
                     }
                 });
@@ -173,6 +178,7 @@ export default function DeviceSettings() {
     }
     const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let devEUI = thisDevice?.meta.lorawan?.devEUI;
+        const sharedKey= e.target.name==='nwkSEncKey' ? thisDevice?.meta.lorawan?.nwkSEncKey: e.target.name==='appSKey'? thisDevice?.meta.lorawan?.appSKey:'';
         if(e.target.name === 'devAddr'){
             devEUI = devEUIGenerateFc(e.target.value);
         }
@@ -183,7 +189,8 @@ export default function DeviceSettings() {
                 lorawan: {
                     ...thisDevice.meta.lorawan,
                     devEUI,
-                    [e.target.name]: e.target.value
+                    nwkSEncKey:  (e.target.name === 'nwkSEncKey' || e.target.name === 'appSKey') ? e.target.value : sharedKey,
+                    appSKey: (e.target.name==='appSKey' || e.target.name==='nwkSEncKey') ? e.target.value : sharedKey,
                 },
             }
         });
