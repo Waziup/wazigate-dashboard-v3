@@ -3,7 +3,7 @@ import { Alert, Box, CircularProgress, ListItemText, Snackbar, Typography, useMe
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import RowContainerNormal from "../components/shared/RowContainerNormal";
-import { useEffect, useState } from "react";
+import { useContext, useCallback, useEffect, useState } from "react";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {useForm, SubmitHandler } from 'react-hook-form';
@@ -11,11 +11,11 @@ import Backdrop from "../components/Backdrop";
 
 interface User {
     id?: string
-    name: string;
-    username:string;
-    password: string;
-    newPassword: string;
-    newPasswordConfirm: string;
+    name?: string;
+    username?:string;
+    password?: string;
+    newPassword?: string;
+    newPasswordConfirm?: string;
 }
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
@@ -23,12 +23,12 @@ interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     children: React.ReactNode;
 }
 const schema = yup.object({
-    name: yup.string().required(),
-    username: yup.string().required(),
-    password: yup.string().required(),
-    newPassword: yup.string().required(),
-    newPasswordConfirm: yup.string().required(),
-}).required()
+    name: yup.string().optional(),
+    username: yup.string().optional(),
+    password: yup.string().optional(),
+    newPassword: yup.string().optional(),
+    newPasswordConfirm: yup.string().optional(),
+});
 const TextInput = ({ children, label }: TextInputProps) => (
     <Box py={1} sx={{ width: '100%',  }}>
         <p style={{ color: DEFAULT_COLORS.third_dark, fontWeight: '300' }}>{label} <span style={{ color: DEFAULT_COLORS.orange }}>*</span></p>
@@ -36,6 +36,7 @@ const TextInput = ({ children, label }: TextInputProps) => (
     </Box>
 )
 import Logo from '../assets/wazilogo.svg';
+import { DevicesContext } from "../context/devices.context";
 const textinputStyle = { width: '100%', fontSize: 18, border: 'none', background: 'none', color: DEFAULT_COLORS.third_dark, padding: 2, borderBottom: '1px solid #D5D6D8', outline: 'none' }
 function User() {
     const {handleSubmit,setValue} = useForm<Omit<User,'ID'>>({
@@ -44,28 +45,21 @@ function User() {
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const [loading, setLoading] = useState(false);
-    const [profile, setProfile] = useState<User  | null>(null);
+    // const [profile, setProfile] = useState<User  | null>(null);
+    const {profile,setProfile,loadProfile} = useContext(DevicesContext);
     const [err, setErr] = useState(false);
     const [msg, setMsg] = useState("");
-    const loadProfile = () => {
+    const loadProfileFc = useCallback(() => {
         setLoading(true);
-        window.wazigate.getProfile().then((res) => {
-            setLoading(false);
-            setProfile({
-                ...res,
-                newPasswordConfirm: '',
-            });
-            setValue('username',res.username);
-            setValue('name',res.name)
-        },
-        (error) => {
-            setLoading(false);
-            console.log(error);
-        });
-    };
+
+        setValue('username',profile?profile.username:'');
+        setValue('name',profile?profile?.name:'')
+        setLoading(false);
+    }, [profile, setValue]);
     const onTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.name as keyof Omit<User,'ID'>, e.target.value);
         setProfile({
+            ...profile,
             name: profile?.name ?? '',
             username: profile?.username ?? '',
             password: profile?.password ?? '',
@@ -75,11 +69,15 @@ function User() {
         }) as unknown as User;
     }
     useEffect(()=>{
-        loadProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[])
+        if(!profile){
+            loadProfile();
+        }
+        if(profile?.id){
+            loadProfileFc();
+        }
+    },[loadProfileFc, loadProfile, profile])
     const saveProfile: SubmitHandler<User> = (data:User) => {
-        if (data.password.length > 0 && data.newPassword != data.newPasswordConfirm) {
+        if (data.password&& data.password?.length > 0 && data.newPassword != data.newPasswordConfirm) {
             setErr(true);
             setMsg("The new password doesn't match with the confirm new password!");
             return;
@@ -151,7 +149,6 @@ function User() {
                                     type={'text'}
                                     onChange={onTextInputChange}
                                     name="name"
-                                    required
                                     placeholder={'admin'} 
                                     value={profile?.name}
                                     style={textinputStyle}
@@ -165,7 +162,6 @@ function User() {
                                     name="username"
                                     placeholder={'name'}
                                     readOnly
-                                    required
                                     value={profile?.username}
                                     style={textinputStyle}
                                 />
@@ -178,12 +174,10 @@ function User() {
                                     placeholder={'****'} 
                                     style={textinputStyle}
                                     value={profile?.password}
-                                    required
                                 />
                             </TextInput>
                             <TextInput label='New Password'>
                                 <input
-                                    required
                                     type={'text'}
                                     onChange={onTextInputChange}
                                     name="newPassword"
@@ -193,8 +187,7 @@ function User() {
                                 />
                             </TextInput>
                             <TextInput label='Confirm New Password' type="text" placeholder="admin">
-                                <input 
-                                    required
+                                <input
                                     type={'text'} 
                                     onChange={onTextInputChange}
                                     name="newPasswordConfirm"
