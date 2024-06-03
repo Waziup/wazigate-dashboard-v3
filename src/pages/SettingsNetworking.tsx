@@ -10,7 +10,7 @@ import { getWiFiScan,setConf as setConfFc, AccessPoint,getConf, setWiFiConnect, 
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import GridItemEl from "../components/shared/GridItemElement";
 const GridItem = ({ children,matches,lg,xl, xs,md,additionStyles }: {xs:number,md:number,xl:number,lg:number,spacing?:number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode,  }) => (
-    <Grid m={matches?1:0} lg={lg} sm={12} xl={xl} item xs={xs} md={md} spacing={3} sx={additionStyles} borderRadius={2}  >
+    <Grid m={matches?1:0} lg={lg} sm={12} xl={xl} item xs={xs} md={md}  sx={additionStyles} borderRadius={2}  >
         {children}
     </Grid>
 );
@@ -265,7 +265,7 @@ export default function SettingsNetworking() {
                     </Box>
                 </Box>
             </Modal>
-            <Box sx={{p:2.5, position: 'relative', width: '100%',overflowY:'auto', height: '100vh' }}>
+            <Box sx={{pl:2.5,pt:2.5, position: 'relative', width: '100%',overflowY:'auto', height: '100vh' }}>
                 <Box>
                     <Typography fontWeight={600} fontSize={24} color={'black'}>Wifi</Typography>
                     <div role="presentation" >
@@ -291,7 +291,7 @@ export default function SettingsNetworking() {
                                     <Box>
                                         <ListItemText
                                             primary={selectedCloud?.name || selectedCloud?.id}
-                                            secondary={`ID ${selectedCloud?.id}`}
+                                            secondary={``}
                                         />
                                     </Box>
                                 </RowContainerNormal>
@@ -307,26 +307,38 @@ export default function SettingsNetworking() {
                                 />
                             </RowContainerBetween>
                             <Box px={2}>
-                                <RowContainerNormal>
+                                <RowContainerNormal additionStyles={{alignItems:'center'}}>
                                     <Android12Switch 
                                         checked={!selectedCloud?.paused}
                                         onChange={handleEnabledChange}
                                         color="info" 
                                     />
-                                    <Typography>Active Sync</Typography>
+                                    <Typography color={'#000'}>Active Sync</Typography>
                                 </RowContainerNormal>
                                 <TextInputField placeholder="REST Address" label="REST Address *" name="rest" onChange={handleInputChange} value={selectedCloud?.rest} />
                                 <TextInputField placeholder="MQTT Address" label="MQTT Address *" name="mqtt" onChange={handleInputChange} value={selectedCloud?.mqtt} />
                                 <TextInputField placeholder="Username" label="Username" name="username" onChange={handleInputChange} value={selectedCloud?.username} />
-                                <TextInputField disabled={selectedCloud?.paused} placeholder="****" label="Password" name="token" onChange={handleInputChange} value={selectedCloud?.token} />
+                                <TextInputField 
+                                    disabled={selectedCloud?.paused} 
+                                    placeholder="****" 
+                                    label="Password" 
+                                    name="token" 
+                                    type="password"
+                                    onChange={handleInputChange} 
+                                    value={selectedCloud?.token} 
+                                />
                             </Box>
-                            <PrimaryIconButton
-                                disabled={!hasUnsavedChanges}
-                                iconname="save"
-                                onClick={handleSaveClick}
-                                type="button"
-                                title="SAVE"
-                            />
+                            {
+                                hasUnsavedChanges?(
+                                    <PrimaryIconButton
+                                        disabled={!hasUnsavedChanges}
+                                        iconname="save"
+                                        onClick={handleSaveClick}
+                                        type="button"
+                                        title="SAVE"
+                                    />
+                                ):null
+                            }
                         </GridItemEl>
                         
                         <GridItemEl text={'Access Point'} icon={'power_settings_new'}>
@@ -392,7 +404,7 @@ export default function SettingsNetworking() {
                             </Box>
                         </GridItemEl>
                     </GridItem>
-                    <GridItem xl={7.5} lg={8} md={6} xs={12} matches={matches}  additionStyles={{bgcolor:'#fff',width:'100%'}}>
+                    <GridItem xl={7.5} lg={7.4} md={7} xs={12} matches={matches}  additionStyles={{bgcolor:'#fff',overflowY:'auto',minHeight:'500px',height:'100%',width:'100%'}}>
                         <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5,border:'.5px solid #d8d8d8', bgcolor: '#f7f7f7', alignItems: 'center' }} p={1} >
                             <WifiOutlined sx={IconStyle}/>
                             <Typography color={'#212529'} fontWeight={500}>Available Wifi</Typography>
