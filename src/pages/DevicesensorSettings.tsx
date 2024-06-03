@@ -247,7 +247,7 @@ function DeviceSensorSettings() {
             </Box>
             <Box display={'flex'} flexDirection={matches?'row':'column'} bgcolor={matches ? '#fff' : 'inherit'} height={'100%'} width={'100%'} px={2} pt={matches ? 2 : .5}  >
                 <Box m={2} width={matches?'45%':'95%'}>
-                    <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Setup the sensor kind, quantity and unit</Typography>
+                    <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Setup {sensOrActuator?.name} kind, quantity and unit</Typography>
                     <>
                         <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
                             <TextField sx={{width:'100%'}} onChange={handleTextInputChange} id="name" value={(sensOrActuator)?.name} variant="standard" />
