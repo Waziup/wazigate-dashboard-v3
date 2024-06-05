@@ -4,6 +4,7 @@ import { Devices,getNetworkDevices } from "../utils/systemapi";
 interface ContextValues{
     devices: Device[]
     apps: App[],
+    wazigateId: string
     profile: User | null
     setProfile: (profile:User | null)=>void
     selectedCloud: Cloud | null
@@ -14,7 +15,7 @@ interface ContextValues{
     codecsList?:{id:string,name:string}[] | null,
     addApp:(app:App)=>void
     token:string
-    networkDevices:Devices | null 
+    networkDevices: Devices
     setNetWorkDevices:()=>void
     setAccessToken:(token:string) =>void
 }
@@ -29,6 +30,7 @@ interface User {
 export const DevicesContext = createContext<ContextValues>({
     devices:[],
     apps:[],
+    wazigateId:'',
     selectedCloud:null,
     profile: null,
     loadProfile: ()=>{},
@@ -50,7 +52,7 @@ export const DevicesContext = createContext<ContextValues>({
     setAccessToken(userData) {
         console.log(userData);
     },
-    networkDevices:null,
+    networkDevices: {},
     setNetWorkDevices:()=>{},
 });
 
@@ -74,12 +76,25 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             setApps(res);
         });
     }
-    const getDevices = ()=>{
+    const getDevices = useCallback(()=>{
         window.wazigate.getDevices().then((res)=>{
-            const devFilter = res.filter((_dev,id)=>id);
+            // remove duplicate device with the same id
+            const devFilter = res.filter((dev,id)=>res.findIndex((d)=>d.id===dev.id)===id).map((dev)=>{
+                // subscribe to device changes
+                window.wazigate.subscribe<Device>(`devices/${dev.id}/meta/#`, ()=>{
+                    getDevices();
+                })
+                window.wazigate.subscribe<Device>(`devices/${dev.id}/sensors/#`, ()=>{
+                    getDevices();
+                })
+                window.wazigate.subscribe<Device>(`devices/${dev.id}/actuators/#`, ()=>{
+                    getDevices();
+                });
+                return dev;
+            });
             setDevices(devFilter);
         });
-    }
+    },[]);
     const setProfileFc = (profile:User | null)=>{
         setProfile(profile);
     }
@@ -93,8 +108,9 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             console.error(err);
         });
     }
-    const [networkDevices, setNetWorkDevices] = useState<Devices | null>(null);
+    const [networkDevices, setNetWorkDevices] = useState<Devices>({});
     const [selectedCloud, setSelectedCloud] = useState<Cloud | null>(null);
+    const [wazigateId, setWazigateId] = useState<string>(''); 
     const setNetWorkDevicesFc = useCallback(async ()=>{
         window.wazigate.getClouds().then((clouds) => {
             setSelectedCloud(Object.values(clouds)? Object.values(clouds)[0]:null);
@@ -112,6 +128,7 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             if(token){
                 setAccessToken(token);
                 await window.wazigate.setToken(token);
+                await window.wazigate.getID().then(setWazigateId);
                 getApps();
                 getDevices();
                 setNetWorkDevicesFc();
@@ -128,7 +145,7 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             // }
         }
         fc();
-    },[setAccessToken, setNetWorkDevicesFc, token]);
+    },[getDevices, setAccessToken, setNetWorkDevicesFc, token]);
 
     useEffect(() => {
         if(token){
@@ -150,6 +167,7 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         setAppsFc,
         getApps,
         profile,
+        wazigateId,
         networkDevices,
         setNetWorkDevices:setNetWorkDevicesFc,
         addApp,
