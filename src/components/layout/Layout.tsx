@@ -1,5 +1,5 @@
 import { Box, Grid, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { Link, Outlet, useLocation, } from 'react-router-dom';
+import { Link, Outlet, useLocation,useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { Menu, SettingsOutlined } from '@mui/icons-material';
 import RowContainerBetween from '../shared/RowContainerBetween';
@@ -7,6 +7,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { DevicesContext } from '../../context/devices.context';
 function Layout() {
     const {setAccessToken} = useContext(DevicesContext);
+    const navigate = useNavigate();
     const reToken =useCallback(() => {
         window.wazigate.set<string>("auth/retoken", {})
         .then(async(res)=>{
@@ -17,10 +18,25 @@ function Layout() {
             console.log(error);
         });
     },[setAccessToken]);
+    const isAuthorized =useCallback(() => {
+        fetch("sys/uptime")
+        .then((resp)=>{
+            if(resp.status == 401){
+                navigate('/');
+            }  
+        })
+        .catch(()=>{
+            (document.getElementById("dashboard") as HTMLElement).innerHTML = "<div style='margin-top: 10%;color:black; text-align: center;border: 1px solid #BBB;border-radius: 5px;padding: 5%;margin-left: 10%;margin-right: 10%;background-color: #EEE;'><h1>Wazigate is not accessible...</h1></div>";
+        });
+    },[navigate]);
     useEffect(()=>{
         const int = setInterval(reToken, 1000 * 60 * 8);
-        return ()=>clearInterval(int);
-    },[reToken])
+        const timer = setInterval(isAuthorized, 1000 * 15);
+        return ()=>{
+            clearInterval(int);
+            clearInterval(timer);
+        }
+    },[reToken,isAuthorized])
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const matchesMd = useMediaQuery(theme.breakpoints.between('sm', 'md'));
