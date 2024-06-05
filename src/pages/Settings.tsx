@@ -10,13 +10,14 @@ import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
-import { useState, useEffect, useMemo } from 'react';
-import {setTime, shutdown,reboot,getBuildNr,getTimezoneAuto, getTime, getTimezones,getNetworkDevices,Devices, setTimezone, } from '../utils/systemapi';
+import { useState, useEffect, useMemo, useContext } from 'react';
+import {setTime, shutdown,reboot,getBuildNr,getTimezoneAuto, getTime, getTimezones, setTimezone, } from '../utils/systemapi';
 
 import { Android12Switch } from '../components/shared/Switch';
 import SelectElementString from '../components/shared/SelectElementString';
 import GridItemEl from '../components/shared/GridItemElement';
 import SnackbarComponent from '../components/shared/Snackbar';
+import { DevicesContext } from '../context/devices.context';
 const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
 const GridItem = ({bgcolor,additionStyles,md, children,}: {xs:number,md:number, matches: boolean,bgcolor?:boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode }) => (
     <Grid sx={{bgcolor: bgcolor?'#fff':'',...additionStyles}} bgcolor={bgcolor?'#fff':''} item md={md} lg={5.8} xl={5.8} sm={6} xs={12} my={1} >
@@ -32,12 +33,14 @@ function padZero(t: number): string {
     if (t < 10) return "0"+t;
     return ""+t;
 }
+const convTime = (date: Date) => (
+    `${date.getFullYear()}-${padZero(date.getMonth()+1)}-${padZero(date.getDate())}T${padZero(date.getHours())}:${padZero(date.getMinutes())}`
+);
 function Settings() {
     const [matches] = useOutletContext<[matches: boolean]>();
     const [currentTime, setCurrentTime] = useState<string>('');
     const [buildNr, setBuildNr] = useState<string>('');
     const [responseMessage , setReponseMessage] = useState<string>('');
-    const [networkDevices, setNetworkDevices] = useState<Devices>({});
     const [isSetDateManual, setIsSetDateManual] = useState<boolean>(false);
     const [isSetTimezoneAuto, setIsSetTimezoneAuto] = useState<boolean>(false);
     const [data, setData] = useState<{
@@ -45,12 +48,9 @@ function Settings() {
         utc: Date | null,
         zone: string
     } | null>(null);
-    const [wazigateID, setWazigateID] = useState<string>(''); 
+
     const [timezones, setTimezones] = useState<string[]>([]);
-    const convTime = (date: Date) => {
-        //console.log("convTime_Date: " + date)
-        return `${date.getFullYear()}-${padZero(date.getMonth()+1)}-${padZero(date.getDate())}T${padZero(date.getHours())}:${padZero(date.getMinutes())}`
-    }
+    const {wazigateId,networkDevices} = useContext(DevicesContext);
     
     const submitTime = () => {
         const date_and_time = convTime(data?.time as Date);
@@ -94,12 +94,6 @@ function Settings() {
                 setIsSetTimezoneAuto(false);
             });
         }
-        window.wazigate.getID().then(setWazigateID);
-        getNetworkDevices().then((res) => {
-            setNetworkDevices(res);
-        }, () => {
-            setNetworkDevices({});
-        });
         getTimezones()
         .then((res) => {
             setTimezones(res);
@@ -212,7 +206,7 @@ function Settings() {
                         </GridItemEl>
                         <GridItemEl text='Wazigate ID' icon='fingerprint'>
                             <Typography sx={{textAlign:'left',textTransform:'uppercase',p:2,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
-                                {wazigateID}
+                                {wazigateId}
                             </Typography>
                         </GridItemEl>
                         <GridItemEl  text='Wazigate Version' icon='account_tree'>

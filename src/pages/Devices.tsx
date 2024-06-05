@@ -29,7 +29,7 @@ function Devices() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
-    const { devices, getDevicesFc } = useContext(DevicesContext);
+    const { devices, wazigateId, getDevicesFc } = useContext(DevicesContext);
     const [selectedDevice, setSelectedDevice] = useState<null | Device>(null);
     const [newDevice, setNewDevice] = useState<Device>(initialNewDevice);
     const [matches] = useOutletContext<[matches: boolean]>();
@@ -373,6 +373,7 @@ function Devices() {
                 <EditDeviceModal
                     device={selectedDevice as Device}
                     openModal={openEditModal}
+                    isFirst={wazigateId === selectedDevice?.id}
                     handleChangeSelectDeviceType={handleChangeSelectDeviceType}
                     handleToggleModal={handleToggleEditModalClose}
                     handleChangeDeviceCodec={handleChangeDeviceCodec}
