@@ -61,6 +61,7 @@ const onCloseHandler = () => {
 }
 import Logo from '../assets/wazilogo.svg';
 import LogoSig from '../assets/wazi_sig.svg';
+import SnackbarComponent from '../components/shared/Snackbar';
 const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHandler, age }: { customAppInstallHandler: () => void, matches: boolean, recommendedApps: RecomendedApp[], handleChange: (e: SelectChangeEvent) => void, age: string }) => (
     <FormControl sx={{ p: 0, border: 'none', width: matches ? '35%' : '45%', }}>
         <InputLabel id="demo-simple-select-helper-label">Install App</InputLabel>
@@ -316,11 +317,18 @@ export default function Apps() {
         })
 
     }
-    if (error) {
-        return <div>Error: {(error as Error).message ? (error as Error).message : (error as string)}</div>;
-    }
     return (
         <>
+            {
+                error ? (
+                    <SnackbarComponent
+                        autoHideDuration={5000}
+                        severity='error'
+                        message={(error as Error).message ? (error as Error).message : (error as string)}
+                        anchorOrigin={{vertical:'top',horizontal:'center'}}
+                    />
+                ):null
+            }
             {
                 loading?(
                     <Backdrop>

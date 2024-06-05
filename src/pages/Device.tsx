@@ -104,14 +104,14 @@ function DeviceSettings() {
     const handleCreateSensorClick = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log('Creating a sensor', newSensOrAct);
-        const sensor: Sensor & {unit: string,kind:string,quantity:string} = {
+        const sensor: Sensor & { unit: string,kind:string,quantity:string} = {
             name: newSensOrAct.name,
             id: "",
             kind: newSensOrAct.kind,
             unit: newSensOrAct.unit as string,
             quantity: newSensOrAct.quantity,
             meta: {
-                type: newSensOrAct.kind,
+                kind: newSensOrAct.kind,
                 quantity: newSensOrAct.quantity,
                 unit: newSensOrAct.unit,
                 icon: newSensOrAct.icon,
@@ -138,9 +138,12 @@ function DeviceSettings() {
     const handleCreateActuatorClick = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log('Creating an actuator', newSensOrAct);
-        const actuator: Actuator = {
+        const actuator: Actuator & {unit?: string,kind:string,quantity:string} = {
             name: newSensOrAct.name,
             id: "",
+            kind: newSensOrAct.kind,
+            quantity: newSensOrAct.quantity,
+            unit: newSensOrAct.unit,
             meta: {
                 kind: newSensOrAct.kind,
                 quantity: newSensOrAct.quantity,
