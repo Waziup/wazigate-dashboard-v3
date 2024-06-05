@@ -25,6 +25,7 @@ interface Props {
     handleToggleModal: () => void,
     device: Device,
     openModal: boolean
+    isFirst?: boolean
     handleChangeSelectDeviceType: (e: SelectChangeEvent<string>) => void
     handleTextInputEditCodec: (e: React.ChangeEvent<HTMLInputElement>) => void
     submitEditDevice: (e: React.FormEvent<HTMLFormElement>) => void
@@ -36,7 +37,7 @@ import { toStringHelper } from "../../utils";
 import PrimaryButton from "../shared/PrimaryButton";
 import WaziDevIcon from './wazidev.svg';
 import WaziActIcon from './WaziAct.svg';
-export default function EditDeviceModal({handleChangeDeviceCodec, changeEditMakeLoraWAN, autoGenerateLoraWANOptionsHandler, device, openModal, handleTextInputEditCodec, submitEditDevice, handleNameChange, handleChangeSelectDeviceType, handleToggleModal }: Props) {
+export default function EditDeviceModal({handleChangeDeviceCodec, isFirst,changeEditMakeLoraWAN, autoGenerateLoraWANOptionsHandler, device, openModal, handleTextInputEditCodec, submitEditDevice, handleNameChange, handleChangeSelectDeviceType, handleToggleModal }: Props) {
     console.log(device);
     const { codecsList } = useContext(DevicesContext)
     if (!device)
@@ -54,37 +55,43 @@ export default function EditDeviceModal({handleChangeDeviceCodec, changeEditMake
                             <Typography color={'primary'} mb={.4} fontSize={12}>Device name</Typography>
                             <input required autoFocus onInput={handleNameChange} name="name" placeholder='Enter device name' value={device.name} style={{ border: 'none', width: '100%', padding: '6px 0', outline: 'none' }} />
                         </FormControl>
-                        <DropDownCreateDeviceTab1
-                            handleChangeSelect={handleChangeSelectDeviceType}
-                            value={device.meta.type}
-                            options={[{ name: 'Wazidev Board', id: 'WaziDev', imageurl: WaziDevIcon }, { name: 'Generic board', id: 'GenericBoard', imageurl: WaziActIcon }]}
-                        />
-                        <SelectElementString 
-                            mx={0} my={2} 
-                            title='Device Codec'
-                            name="codec"
-                            value={device.meta.codec} 
-                            handleChange={handleChangeDeviceCodec} 
-                            conditions={codecsList as { id: string, name: string }[]} 
-                        />
-                        <RowContainerBetween additionStyles={{ my: 1 }}>
-                            <RowContainerNormal>
-                                <Router sx={{ mx: 1, fontSize: 20, color: 'primary.main' }} />
-                                <Typography color={'primary.main'} fontSize={13}>{device.meta.lorawan ? 'LoraWAN Settings' : 'Make LoraWAN'} </Typography>
-                            </RowContainerNormal>
-                            <Android12Switch checked={device.meta.lorawan} onChange={changeEditMakeLoraWAN} color='info' />
-                        </RowContainerBetween>
                         {
-                            device.meta.lorawan ? (
+                            isFirst?null:(
                                 <>
-                                    <Box my={2}>
-                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="devAddr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devAddr} text={'Device Addr (Device Address)'} placeholder={'Device Address, 8 digits required, got ' + toStringHelper(device.meta.lorawan.devAddr)} />
-                                        <AddTextShow isPlusHidden={true} name="devEUI" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devEUI} text={'Device EUI (Generated from Device address)'} placeholder={'Device EUI Generated from Device address, got ' + toStringHelper(device.meta.lorawan.devEUI)} />
-                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="nwkSEncKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'} placeholder={'Network Session key 32 digits required, got ' + toStringHelper(device.meta.lorawan.nwkSEncKey)} />
-                                        <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="appSKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.appSKey} text={'AppKey (App Key)'} placeholder={'App Key 32 digits required, got ' + toStringHelper(device.meta.lorawan.appSKey)} />
-                                    </Box>
+                                    <DropDownCreateDeviceTab1
+                                        handleChangeSelect={handleChangeSelectDeviceType}
+                                        value={device.meta.type}
+                                        options={[{ name: 'Wazidev Board', id: 'WaziDev', imageurl: WaziDevIcon }, { name: 'Generic board', id: 'GenericBoard', imageurl: WaziActIcon }]}
+                                    />
+                                    <SelectElementString 
+                                        mx={0} my={2} 
+                                        title='Device Codec'
+                                        name="codec"
+                                        value={device.meta.codec} 
+                                        handleChange={handleChangeDeviceCodec} 
+                                        conditions={codecsList as { id: string, name: string }[]} 
+                                    />
+                                    <RowContainerBetween additionStyles={{ my: 1 }}>
+                                        <RowContainerNormal>
+                                            <Router sx={{ mx: 1, fontSize: 20, color: 'primary.main' }} />
+                                            <Typography color={'primary.main'} fontSize={13}>{device.meta.lorawan ? 'LoraWAN Settings' : 'Make LoraWAN'} </Typography>
+                                        </RowContainerNormal>
+                                        <Android12Switch checked={device.meta.lorawan} onChange={changeEditMakeLoraWAN} color='info' />
+                                    </RowContainerBetween>
+                                    {
+                                        device.meta.lorawan ? (
+                                            <>
+                                                <Box my={2}>
+                                                    <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="devAddr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devAddr} text={'Device Addr (Device Address)'} placeholder={'Device Address, 8 digits required, got ' + toStringHelper(device.meta.lorawan.devAddr)} />
+                                                    <AddTextShow isPlusHidden={true} name="devEUI" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devEUI} text={'Device EUI (Generated from Device address)'} placeholder={'Device EUI Generated from Device address, got ' + toStringHelper(device.meta.lorawan.devEUI)} />
+                                                    <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="nwkSEncKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'} placeholder={'Network Session key 32 digits required, got ' + toStringHelper(device.meta.lorawan.nwkSEncKey)} />
+                                                    <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="appSKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.appSKey} text={'AppKey (App Key)'} placeholder={'App Key 32 digits required, got ' + toStringHelper(device.meta.lorawan.appSKey)} />
+                                                </Box>
+                                            </>
+                                        ) : null
+                                    }
                                 </>
-                            ) : null
+                            )
                         }
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', pt: 2 }} >
                             <PrimaryButton type="submit" title="Save" />
