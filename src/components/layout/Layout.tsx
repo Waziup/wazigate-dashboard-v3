@@ -6,7 +6,7 @@ import RowContainerBetween from '../shared/RowContainerBetween';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { DevicesContext } from '../../context/devices.context';
 function Layout() {
-    const {setAccessToken} = useContext(DevicesContext);
+    const {setAccessToken, setProfile} = useContext(DevicesContext);
     const navigate = useNavigate();
     const reToken =useCallback(() => {
         window.wazigate.set<string>("auth/retoken", {})
@@ -21,17 +21,19 @@ function Layout() {
     const isAuthorized =useCallback(() => {
         fetch("sys/uptime")
         .then((resp)=>{
-            if(resp.status == 401){
+            if(resp.status !== 200){
+                setAccessToken('');
+                setProfile(null);
                 navigate('/');
             }  
         })
         .catch(()=>{
             (document.getElementById("dashboard") as HTMLElement).innerHTML = "<div style='margin-top: 10%;color:black; text-align: center;border: 1px solid #BBB;border-radius: 5px;padding: 5%;margin-left: 10%;margin-right: 10%;background-color: #EEE;'><h1>Wazigate is not accessible...</h1></div>";
         });
-    },[navigate]);
+    },[navigate, setProfile, setAccessToken]);
     useEffect(()=>{
         const int = setInterval(reToken, 1000 * 60 * 8);
-        const timer = setInterval(isAuthorized, 1000 * 15);
+        const timer = setInterval(isAuthorized, 1000 * 10);
         return ()=>{
             clearInterval(int);
             clearInterval(timer);
