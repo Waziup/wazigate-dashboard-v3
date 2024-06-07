@@ -7,7 +7,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
 import EditDeviceModal from '../components/ui/EditDeviceModal';
-import { DevicesContext } from '../context/devices.context';
+import { DevicesContext, SensorX } from '../context/devices.context';
 import { capitalizeFirstLetter, devEUIGenerateFc, differenceInMinutes } from '../utils';
 import PrimaryIconButton from '../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
@@ -441,8 +441,8 @@ function Devices() {
                                                                 onClick={() => {
                                                                     navigate(`/devices/${device.id}/sensors/${sensor.id}`, { state: { devicename: device.name, sensorId: sensor.id, deviceId: device.id, sensorname: sensor.name } })
                                                                 }}
-                                                                kind={sensor.meta.kind}
-                                                                iconname={sensor.meta.icon}
+                                                                kind={(sensor.meta && sensor.meta.kind)? sensor.meta.kind : (sensor as SensorX).kind? (sensor as SensorX).kind : 'AirThermometer'}
+                                                                iconname={(sensor.meta && sensor.meta.icon)? sensor.meta.icon : ''}
                                                                 name={sensor.name}
                                                                 text={sensor.value? Math.round(sensor.value * 100) / 100 :''}
                                                             />
@@ -460,10 +460,10 @@ function Devices() {
                                                                 }}
                                                                 key={act.id}
                                                                 type='actuator'
-                                                                iconname={act.meta.icon}
+                                                                iconname={(act.meta && act.meta.icon) ? act.meta.icon : ''}
                                                                 name={act.name}
-                                                                kind={act.meta.kind}
-                                                                text={act.meta.quantity==='Boolean' ? act.value ? 'Running' : 'Closed': Math.round(act.value * 100) / 100}
+                                                                kind={(act.meta && act.meta.kind)? act.meta.kind : 'Motor'}
+                                                                text={act.meta? act.meta.quantity==='Boolean' ? act.value ? 'Running' : 'Closed': Math.round(act.value * 100) / 100 : ''}
                                                             />
                                                         </Box>
                                                     )) : (

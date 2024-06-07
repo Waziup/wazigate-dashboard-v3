@@ -1,4 +1,4 @@
-import { Box, Typography, Breadcrumbs, CircularProgress } from "@mui/material";
+import { Box, Typography, Breadcrumbs } from "@mui/material";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Chart from 'react-apexcharts';
@@ -167,7 +167,7 @@ function Device() {
                             />
                         ):(
                             <Box sx={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center',height:300}}>
-                                <CircularProgress />
+                                <Typography fontSize={14} fontWeight={300} color={'#1D2129'}>No readings available</Typography>
                             </Box>
                         )
                     }
