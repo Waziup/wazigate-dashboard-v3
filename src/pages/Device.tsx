@@ -5,7 +5,7 @@ import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import React, { useContext, useEffect, useState } from "react";
 import { Sensor, Actuator, Device } from "waziup";
-import { DevicesContext } from "../context/devices.context";
+import { DevicesContext, SensorX } from "../context/devices.context";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 import CreateSensorModal from "../components/ui/CreateSensorModal";
 import CreateActuatorModal from "../components/ui/CreateActuatorModal";
@@ -323,7 +323,17 @@ function DeviceSettings() {
                                                 <Typography>No Sensors found</Typography>
                                             </Box>
                                         ) : (device?.sensors.map((sens) => (
-                                            <SensorActuatorItem type="sensor" callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={sens} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
+                                            <SensorActuatorItem 
+                                                type="sensor" 
+                                                callbackFc={()=>{getDevicesFc(); navigate('/devices')}} 
+                                                deviceId={device.id} 
+                                                sensActuator={sens} 
+                                                open={open} 
+                                                anchorEl={anchorEl}
+                                                icon={(sens.meta && sens.meta.icon)? sens.meta.icon: ''}
+                                                kind={(sens.meta && sens.meta.kind)? sens.meta.kind : (sens as SensorX).kind? (sens as SensorX).kind : 'AirThermometer'}
+                                                handleClose={handleClose} 
+                                                handleClickMenu={handleClickMenu}>
                                                 <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28} >
                                                     {Math.round(sens.value * 100) / 100} {sens.meta.unitSymbol}
                                                 </Typography>
@@ -342,7 +352,17 @@ function DeviceSettings() {
                                 <Grid container my={2} spacing={1}>
                                     {
                                         device?.actuators?.map((act) => (
-                                            <SensorActuatorItem type={"actuator"} callbackFc={()=>{getDevicesFc(); navigate('/devices')}} deviceId={device.id} sensActuator={act} open={open} anchorEl={anchorEl} handleClose={handleClose} handleClickMenu={handleClickMenu}>
+                                            <SensorActuatorItem 
+                                                type={"actuator"} 
+                                                callbackFc={()=>{getDevicesFc(); navigate('/devices')}} 
+                                                deviceId={device.id} 
+                                                sensActuator={act} 
+                                                open={open} 
+                                                anchorEl={anchorEl} 
+                                                icon={(act.meta && act.meta.icon)? act.meta.icon: ''}
+                                                kind={(act.meta && act.meta.kind)? act.meta.kind : 'Motor'}
+                                                handleClose={handleClose}
+                                                handleClickMenu={handleClickMenu}>
                                                 {
                                                     act.meta.quantity==='Boolean' ?(
                                                         <Typography fontWeight={100} fontSize={15} color={'#2BBBAD'}>
