@@ -16,13 +16,15 @@ interface SensorActuatorItemProps {
     handleClickMenu?:(event: React.MouseEvent<HTMLButtonElement>)=>void,
     children?:React.ReactNode
     deviceId:string
+    kind:string
+    icon:string
     type: "actuator" | "sensor",
     callbackFc?:()=>void,
 }
-const isActuator = (sensActuator: Sensor | Actuator): sensActuator is Actuator => {
-    return Object.keys(ontologies.actingDevices).includes(sensActuator.meta.kind);
+const isActuator = (kind:string): boolean => {
+    return Object.keys(ontologies.actingDevices).includes(kind);
 }
-export default function SensorActuatorItem({ callbackFc,type, sensActuator: sens,handleClose,open,children,deviceId}: SensorActuatorItemProps) {
+export default function SensorActuatorItem({kind, icon, callbackFc,type, sensActuator: sens,handleClose,open,children,deviceId}: SensorActuatorItemProps) {
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const navigate = useNavigate();
     const handleDelete = () => {
@@ -47,10 +49,13 @@ export default function SensorActuatorItem({ callbackFc,type, sensActuator: sens
     return (
         <Grid lg={3} my={1} xl={3} md={4} xs={5.2} sm={5.2}  item sx={{ bgcolor: '#fff',cursor:'pointer', mx: matches?2:1, borderRadius: 2 }}>
             <RowContainerBetween additionStyles={{px:matches?1:.3}}>
-                <RowContainerNormal onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(sens)?'actuators':'sensors'}/${sens.id}`)}} >
+                <RowContainerNormal onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}`)}} >
                     <SVGIcon
-                        src={`${ontologiesicons}#${sens.meta.icon?sens.meta.icon:type==='actuator'?ontologies.actingDevices[sens.meta.kind as  keyof typeof ontologies.actingDevices].icon:ontologies.sensingDevices[sens.meta.kind as  keyof typeof ontologies.sensingDevices].icon}`}
                         style={{ width: 20, height: 20, marginRight: 5 }}
+                        src={`${ontologiesicons}#${
+                            icon ?
+                            icon:
+                                type==='actuator'?ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices].icon:ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices].icon}`}
                     />
                     <Typography fontSize={12}>{removeSpecialChars(sens? sens.name:'')}</Typography>
                 </RowContainerNormal>
@@ -65,7 +70,7 @@ export default function SensorActuatorItem({ callbackFc,type, sensActuator: sens
                         {
                             icon: 'settings',
                             text: 'Settings',
-                            clickHandler: ()=>{navigate(`/devices/${deviceId}/${isActuator(sens)?'actuators':'sensors'}/${sens.id}/settings`);}
+                            clickHandler: ()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}/settings`);}
                         }
                     ]}
                 />
