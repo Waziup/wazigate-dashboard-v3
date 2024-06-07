@@ -8,7 +8,7 @@ import DiscreteSliderMarks from "../components/ui/DiscreteMarks";
 import { useContext, useEffect, useState } from "react";
 import { Actuator, Device, Sensor } from "waziup";
 import ontologies from "../assets/ontologies.json";
-import { DevicesContext } from "../context/devices.context";
+import { ActuatorX, DevicesContext, SensorX } from "../context/devices.context";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 import React,{ChangeEvent} from "react";
 export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -48,8 +48,8 @@ function DeviceSensorSettings() {
     const { pathname } = useLocation();
     const { id, sensorId } = useParams();
     const [device, setDevice] = useState<Device | null>(null);
-    const [sensOrActuator, setSensOrActuator] = useState<Sensor | Actuator | null>(null);
-    const [rActuator, setRemoteActuator] = useState<Actuator | Sensor | null>(null);
+    const [sensOrActuator, setSensOrActuator] = useState<SensorX | ActuatorX | null>(null);
+    const [rActuator, setRemoteActuator] = useState<ActuatorX | SensorX | null>(null);
     const [conditions, setConditions] = useState<string[]>([]);
     const navigate = useNavigate();
     const { getDevicesFc } = useContext(DevicesContext);
@@ -70,15 +70,15 @@ function DeviceSensorSettings() {
         window.wazigate.getDevice(id).then((de) => {
             const sensor = de.sensors.find((sensor) => sensor.id === sensorId);
             if (sensor) {
-                setSensOrActuator(sensor);
-                setRemoteActuator(sensor);
+                setSensOrActuator(sensor as SensorX);
+                setRemoteActuator(sensor as SensorX);
                 const rs = Object.keys(ontologies.sensingDevices)
                 setConditions(rs);
             }
             const actuator = de.actuators.find((actuator) => actuator.id === sensorId);
             if (actuator) {
-                setSensOrActuator(actuator);
-                setRemoteActuator(actuator);
+                setSensOrActuator(actuator as ActuatorX);
+                setRemoteActuator(actuator as ActuatorX);
                 const rs = Object.keys(ontologies.actingDevices)
                 setConditions(rs);
             }
@@ -102,21 +102,25 @@ function DeviceSensorSettings() {
     const [quantitiesCondition, setQuantitiesCondition] = React.useState<string[]>([]);
     const [unitsCondition, setUnitsCondition] = React.useState<string[]>([]);
     React.useEffect(() => {
+        const kind = sensOrActuator?.meta?.kind? sensOrActuator.meta.kind: sensOrActuator?.kind;
         if (sensOrActuator?.meta.kind && pathname.includes('actuators')) {
             setQuantitiesCondition(
-                (ontologies.actingDevices)[sensOrActuator?.meta?.kind as keyof typeof ontologies.actingDevices] ?
-                    (ontologies.actingDevices)[sensOrActuator?.meta?.kind as keyof typeof ontologies.actingDevices].quantities : []);
+                (ontologies.actingDevices)[kind as keyof typeof ontologies.actingDevices] ?
+                (ontologies.actingDevices)[kind as keyof typeof ontologies.actingDevices].quantities: 
+                []
+            );
         }else if(sensOrActuator?.meta.kind && pathname.includes('sensors')){
             setQuantitiesCondition(
-                (ontologies.sensingDevices)[sensOrActuator?.meta?.kind as keyof typeof ontologies.sensingDevices] ?
-                    (ontologies.sensingDevices)[sensOrActuator?.meta?.kind as keyof typeof ontologies.sensingDevices].quantities : []);
+                (ontologies.sensingDevices)[kind as keyof typeof ontologies.sensingDevices] ?
+                    (ontologies.sensingDevices)[kind as keyof typeof ontologies.sensingDevices].quantities : []);
         }
-    }, [pathname, sensOrActuator?.meta.kind]);
+    }, [pathname, sensOrActuator?.kind, sensOrActuator?.meta.kind]);
     React.useEffect(() => {
+        const quantity = sensOrActuator?.meta.quantity? sensOrActuator.meta.quantity: sensOrActuator?.quantity;
         if (sensOrActuator?.meta.quantity ) {
-            setUnitsCondition((ontologies.quantities)[sensOrActuator?.meta?.quantity as keyof typeof ontologies.quantities].units);
+            setUnitsCondition((ontologies.quantities)[quantity as keyof typeof ontologies.quantities].units);
         }
-    }, [sensOrActuator?.meta.quantity])
+    }, [sensOrActuator?.meta.quantity, sensOrActuator?.quantity])
     const onSliderChange=(val:string)=>{
         console.log(val,'slider value');
         setSensOrActuator({
@@ -140,6 +144,7 @@ function DeviceSensorSettings() {
         }
         setSensOrActuator({
             ...sensOrActuator!,
+            [event.target.name]: event.target.value as string,
             meta: {
                 ...sensOrActuator?.meta,
                 [event.target.name]: event.target.value as string,
@@ -256,7 +261,7 @@ function DeviceSensorSettings() {
                                     conditions={conditions}
                                     handleChange={handleChange}
                                     title={`${sensOrActuator?.name} Kind`}
-                                    value={sensOrActuator?.meta.kind}
+                                    value={sensOrActuator?.meta.kind? sensOrActuator.meta.kind: (sensOrActuator)?.kind}
                                     name="kind"
                                     id="kind"
                                 />
@@ -264,7 +269,7 @@ function DeviceSensorSettings() {
                                     handleChange={handleChange}
                                     title={`${sensOrActuator?.name} Quantity`}
                                     conditions={quantitiesCondition}
-                                    value={sensOrActuator?.meta.quantity}
+                                    value={(sensOrActuator?.meta.quantity)? sensOrActuator.meta.quantity : sensOrActuator?.quantity}
                                     name="quantity"
                                     id="quantity"
                                 />
@@ -272,7 +277,7 @@ function DeviceSensorSettings() {
                                     conditions={unitsCondition}
                                     handleChange={handleChange}
                                     title={`${sensOrActuator?.name} Unit`}
-                                    value={sensOrActuator?.meta.unit}
+                                    value={sensOrActuator?.meta.unit? sensOrActuator.meta.unit: sensOrActuator?.unit}
                                     name="unit"
                                     id="unit"
                                 />
