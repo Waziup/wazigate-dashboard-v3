@@ -15,6 +15,7 @@ function Device() {
     const [device, setDevice] = useState<Device | null>(null);
     const [sensOrActuator, setSensOrActuator] = useState<Sensor | Actuator | null>(null)
     const [values, setValues] = useState<{ value: number | string, modified: string }[]>([]);
+    const [valsLimit, setValsLimit] = useState<number>(700);
     const [graphValues, setGraphValues] = useState<{ y: number, x: string }[]>([]);
     const [matches] = useOutletContext<[matches: boolean]>();
 
@@ -48,7 +49,37 @@ function Device() {
                 setValues(valuesTable);
             })
     }, []);
+    async function fetchMoreData() {
+        let newValsx:{time:string,value: number}[]=[];
+        if(pathname.includes('actuators')){
+            newValsx= await window.wazigate.getActuatorValues(id as string, sensorId as string, valsLimit);
+        }else{
+            newValsx= await window.wazigate.getSensorValues(id as string, sensorId as string, valsLimit);
+        }
+        setValsLimit(valsLimit+200);
+        const valuesGraph = (newValsx as { time: string, value: number }[]).map((value) => {
+            const date = new Date(value.time);
+            const hours = String(date.getUTCHours()).padStart(2, '0');
 
+            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+            return { 
+                y: Math.round(value.value * 100) / 100,
+                x: `${hours}:${minutes}`
+            }
+        });
+        setGraphValues(valuesGraph);
+        const valuesTable = (newValsx as { time: string, value: number }[]).map((value) => {
+            const date = new Date(value.time);
+            const hours = String(date.getUTCHours()).padStart(2, '0');
+
+            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+            return {
+                value: Math.round(value.value * 100) / 100,
+                modified: `${date.getFullYear()}-${(date.getMonth()+1)}-${date.getDate()} ${hours}:${minutes}`
+            }
+        });
+        setValues(valuesTable);
+    }
     useLayoutEffect(() => {
         console.log(pathname.includes('actuators'));
         window.wazigate.getDevice(id).then((de) => {
@@ -163,6 +194,7 @@ function Device() {
                     {
                         values.length>0?(
                             <SensorTable
+                                fetchMoreData={fetchMoreData}
                                 values={values}
                             />
                         ):(
