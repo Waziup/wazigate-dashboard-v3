@@ -237,12 +237,13 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   );
 }
 interface Props{
+    fetchMoreData:()=>void,
     values:{
       value:number | string,
       modified:string
     }[]
 }
-export default function SensorTable({values}:Props) {
+export default function SensorTable({values,fetchMoreData}:Props) {
     const rows = useMemo(() => values.map((v,idx,arr)=>{
         const nextItem = arr[idx+1]?arr[idx+1]:arr[idx];
         return createData(idx+1,v.modified,v.value,v.value>nextItem.value?'trending_up':v.value=== nextItem.value?'trending_flat':'trending_down')
@@ -292,6 +293,11 @@ export default function SensorTable({values}:Props) {
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
+    // check if it is the last page, if so, fetch more data
+    if(newPage === Math.floor(rows.length/rowsPerPage)){
+        // fetch more data
+        fetchMoreData();
+    }
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
