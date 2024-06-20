@@ -253,7 +253,7 @@ export default function SensorTable({values,fetchMoreData}:Props) {
     const [selected, setSelected] = React.useState<readonly number[]>([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+    const [showMore,setShowMore] = React.useState(false);
     const handleRequestSort = (
         _event: React.MouseEvent<unknown>,
         property: keyof Data,
@@ -296,7 +296,7 @@ export default function SensorTable({values,fetchMoreData}:Props) {
     // check if it is the last page, if so, fetch more data
     if(newPage === Math.floor(rows.length/rowsPerPage)){
         // fetch more data
-        fetchMoreData();
+        setShowMore(true);
     }
   };
 
@@ -396,15 +396,20 @@ export default function SensorTable({values,fetchMoreData}:Props) {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        <Box sx={{display:'flex',alignItems:'center',p:2}}>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+          <Typography onClick={()=>fetchMoreData()} sx={{visibility:showMore?'visible':'hidden', cursor:'pointer',color:'#499dff',}}>
+            Load More
+          </Typography>
+        </Box>
       </Paper>
     </Box>
   );
