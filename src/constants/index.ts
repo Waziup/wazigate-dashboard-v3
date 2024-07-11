@@ -7,4 +7,4 @@ export const DEFAULT_COLORS={
     secondary_gray:'#D5D6D8',
     navbar_dark:'#292F3F'
 }
-export const VITE_WAZIGATE_API_URL=import.meta.env.VITE_WAZIGATE_API_URL
+export const WaziGateApiUrl=import.meta.env.VITE_WAZIGATE_API_URL || '.'
