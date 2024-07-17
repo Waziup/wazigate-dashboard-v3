@@ -50,10 +50,10 @@ function Layout() {
             {
                 matches ? (
                     <Grid container sx={{ background: 'background.default', height: '100vh', overflow: 'hidden', maxWidth: '1400px', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' } }}>
-                        <Grid item sx={{ height: '100%', bgcolor: 'primary.main' }} md={2} sm={1} lg={3} xl={3} xs={2.5} >
+                        <Grid item sx={{ height: '100%', bgcolor: 'primary.main' }} md={2.3} sm={1} lg={2.3} xl={2.3} xs={2.3} >
                             <Sidebar matchesMd={matchesMd} />
                         </Grid>
-                        <Grid item xs={9.5} sm={11} lg={9} xl={9} md={10} height={'100%'}>
+                        <Grid item sx={{height:'100%'}} md={9.7} sm={11} lg={9.7} xl={9.7} xs={9.7}>
                             <Outlet context={[matches, matchesMd]} />
                         </Grid>
                     </Grid>
