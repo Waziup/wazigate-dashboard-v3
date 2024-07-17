@@ -60,7 +60,6 @@ export default function CreateDeviceTabTwo({ onTextInputChange, newDevice, autoG
                         </RowContainerNormal>
                         {/* <SelectElementString mx={0} title={'Label'} handleChange={()=>{}} conditions={['Input','Level','Humidity']} value={'Temperature'} /> */}
                         <AddTextShow autoGenerateHandler={autoGenerateHandler} textInputValue={newDevice.meta.lorawan.devAddr} onTextInputChange={onTextInputChange} name="devAddr" text={'Device Addr (Device Address)'} placeholder={'8 digits required, got 0'} />
-                        <AddTextShow isPlusHidden autoGenerateHandler={autoGenerateHandler} textInputValue={newDevice.meta.lorawan.devEUI} onTextInputChange={onTextInputChange} name="devEUI" text={'Device EUI (Generated from Device address)'} placeholder={'Generated from Device address, got 0'} />
                         <AddTextShow autoGenerateHandler={autoGenerateHandler} textInputValue={newDevice.meta.lorawan.nwkSEncKey} onTextInputChange={onTextInputChange} name="nwkSEncKey" text={'NwkSKey(Network Session Key)'} placeholder={'32 digits required, got 0'} />
                         <AddTextShow autoGenerateHandler={autoGenerateHandler} textInputValue={newDevice.meta.lorawan.appSKey} onTextInputChange={onTextInputChange} name="appSKey" text={'AppKey (App Key)'} placeholder={'32 digits required, got 0'} />
                     </Box>
