@@ -5,13 +5,14 @@ import './index.css';
 import * as waziup from 'waziup';
 import 'material-icons/iconfont/material-icons.css';
 import { DevicesProvider } from './context/devices.context.tsx';
+import { WaziGateApiUrl } from './constants/index.ts';
 declare global {
     interface Window {
         wazigate: waziup.Waziup;
     }
 }
 waziup.connect({
-    host: '.',
+    host: WaziGateApiUrl,
 }).then((res) => {
     window.wazigate = res.waziup;
     window.wazigate.connectMQTT(() => {

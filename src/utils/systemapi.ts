@@ -1,8 +1,6 @@
-// This is how to run it on your PC
-// chromium-browser --disable-web-security --user-data-dir="./tmp"
+import { WaziGateApiUrl } from '../constants/index.ts'; 
 
-// const URL = "http://10.42.0.33:5000/";
-const URL = "apps/waziup.wazigate-system/";
+const URL = WaziGateApiUrl + "/apps/waziup.wazigate-system/";
 
 async function failResp(resp: Response) {
   const text = await resp.text();
@@ -31,14 +29,14 @@ export async function internet() {
             });
 
             */
-    const resp = await fetch(URL + "internet");
+    const resp = await fetch(URL + "internet", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
 }
 /*--------------*/
 
 export async function getTime() {
-    const resp = await fetch(URL + "time");
+    const resp = await fetch(URL + "time", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
 }
@@ -46,19 +44,19 @@ export async function getTime() {
 /*-------------- */
 
 export async function getTimezones() {
-  const resp = await fetch(URL + "timezones");
+  const resp = await fetch(URL + "timezones", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
   if (!resp.ok) await failResp(resp);
   return await resp.json();
 }
 
 export async function getTimezone() {
-  const resp = await fetch(URL + "timezone");
+  const resp = await fetch(URL + "timezone", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
   if (!resp.ok) await failResp(resp);
   return await resp.json();
 }
 
 export async function getTimezoneAuto() {
-  const resp = await fetch(URL + "timezone/auto");
+  const resp = await fetch(URL + "timezone/auto", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
   if (!resp.ok) await failResp(resp);
   return await resp.json();
 }
@@ -68,6 +66,7 @@ export async function setTimezone(data: string) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + window.wazigate.auth
     },
     body: JSON.stringify(data),
   });
@@ -83,7 +82,7 @@ export async function setTimezone(data: string) {
 export type Devices = Record<string, Device>;
 
 export async function getNetworkDevices(): Promise<Devices> {
-    const resp = await fetch(URL + "net");
+    const resp = await fetch(URL + "net", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
 }
@@ -114,6 +113,7 @@ export async function setAPInfo(r: AccessPointRequest) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + window.wazigate.auth
         },
         body: JSON.stringify(r),
     });
@@ -128,6 +128,7 @@ export async function setAPMode() {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + window.wazigate.auth
         },
     });
     //   console.log(resp);
@@ -150,7 +151,7 @@ export type AccessPoint = {
 };
 
 export async function getWiFiScan(): Promise<AccessPoint[]> {
-    const resp = await fetch(URL + "net/wifi/scan");
+    const resp = await fetch(URL + "net/wifi/scan", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
 }
@@ -166,6 +167,7 @@ export async function setWiFiConnect(r: WifiReq) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + window.wazigate.auth
         },
         body: JSON.stringify(r),
     });
@@ -177,6 +179,7 @@ export async function removeWifi(ssid: string) {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + window.wazigate.auth
         },
         body: JSON.stringify({ssid}),
     });
@@ -230,7 +233,7 @@ export type Device = {
 }
 
 export async function getWlanDevice(): Promise<Device> {
-    const resp = await fetch(URL + "net/wifi");
+    const resp = await fetch(URL + "net/wifi", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
 }
@@ -255,7 +258,7 @@ export type UsageInfo = {
 };
 
 export async function getUsageInfo(): Promise<UsageInfo> {
-    const resp = await fetch(URL + "usage");
+    const resp = await fetch(URL + "usage", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
 }
@@ -271,7 +274,7 @@ export type cInfo = {
 };
 
 export async function getAllContainers(): Promise<cInfo[]> {
-    const resp = await fetch(URL + "docker");
+    const resp = await fetch(URL + "docker", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
 }
@@ -288,6 +291,7 @@ export async function setContainerAction(id: string, action: string) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + window.wazigate.auth
         },
     });
     if (!resp.ok) await failResp(resp);
@@ -296,14 +300,14 @@ export async function setContainerAction(id: string, action: string) {
 }
 
 export async function getContainerLogs(id: string, tail: number) {
-    const resp = await fetch(URL + "docker/" + id + "/logs/" + tail.toString());
+    const resp = await fetch(URL + "docker/" + id + "/logs/" + tail.toString(), {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
 
     if (!resp.ok) await failResp(resp);
     return await resp.text();
 }
 
 export async function dlContainerLogs(id: string) {
-    const resp = await fetch(URL + "docker/" + id + "/logs");
+    const resp = await fetch(URL + "docker/" + id + "/logs", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
 
     if (!resp.ok) await failResp(resp);
     return resp;
@@ -316,6 +320,7 @@ export async function doUpdate() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + window.wazigate.auth
     },
   });
   if (!resp.ok) await failResp(resp);
@@ -323,21 +328,21 @@ export async function doUpdate() {
 }
 
 export async function getUpdateStatus() {
-  const resp = await fetch(URL + "update/status");
+  const resp = await fetch(URL + "update/status", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
 
   if (!resp.ok) await failResp(resp);
   return await resp.json();
 }
 
 export async function getVersion() {
-  const resp = await fetch("/version");
+  const resp = await fetch("/version", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
 
   if (!resp.ok) await failResp(resp);
   return await resp.text();
 }
 
 export async function getBuildNr() {
-    const resp = await fetch("/buildnr");
+    const resp = await fetch("/buildnr", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
 
     if (!resp.ok) await failResp(resp);
     return await resp.text();
@@ -346,14 +351,14 @@ export async function getBuildNr() {
 //
 
 export async function getAllSensors() {
-    const resp = await fetch(URL + "sensors");
+    const resp = await fetch(URL + "sensors", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
 
     if (!resp.ok) await failResp(resp);
     return await resp.json();
 }
 
 export async function getSensorValue(name: string) {
-    const resp = await fetch(URL + "sensors/" + name);
+    const resp = await fetch(URL + "sensors/" + name, {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
 
     if (!resp.ok) await failResp(resp);
     return await resp.json();
@@ -362,7 +367,7 @@ export async function getSensorValue(name: string) {
 //
 
 export async function getBlackout() {
-    const resp = await fetch(URL + "blackout");
+    const resp = await fetch(URL + "blackout", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
 
     if (!resp.ok) await failResp(resp);
     return await resp.json();
@@ -371,7 +376,7 @@ export async function getBlackout() {
 //
 
 export async function getConf() {
-    const resp = await fetch(URL + "conf");
+    const resp = await fetch(URL + "conf", {headers: {Authorization: 'Bearer ' + window.wazigate.auth}});
 
     if (!resp.ok) await failResp(resp);
     return await resp.json();
@@ -382,6 +387,7 @@ export async function setConf(data: { fan_trigger_temp:number,oled_halt_timeout:
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + window.wazigate.auth
     },
     body: JSON.stringify(data),
   });
@@ -395,6 +401,7 @@ export async function setTime(data: string) {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + window.wazigate.auth
     },
     body: JSON.stringify(data),
   });
@@ -410,6 +417,7 @@ export async function shutdown() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + window.wazigate.auth
     },
   });
   if (!resp.ok) await failResp(resp);
@@ -422,6 +430,7 @@ export async function reboot() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": 'Bearer ' + window.wazigate.auth
     },
   });
   if (!resp.ok) await failResp(resp);
