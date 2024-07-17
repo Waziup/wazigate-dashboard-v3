@@ -4,8 +4,8 @@ import { Box, Stack, Typography } from "@mui/material";
 import { DEFAULT_COLORS } from "../../constants";
 import RowContainerBetween from "../shared/RowContainerBetween";
 import RowContainerNormal from "../shared/RowContainerNormal";
-const Item = ({ more, color, children, title }: { more: string, children: React.ReactNode, color: string, title: string }) => (
-    <Box width={'30%'} minWidth={220} mx={1} sx={{ borderRadius: 1, border: '1px solid #ccc', height: '100%', bgcolor: 'white', p: 2 }}>
+const Item = ({ more,path,onClick, color, children, title }: {path:string, onClick:(path: string)=>void, more: string, children: React.ReactNode, color: string, title: string }) => (
+    <Box onClick={()=>onClick(path)} sx={{minWidth:220, boxShadow: 3,mx:1,width:'30%', borderRadius: 1, border: '1px solid #ccc', height: '100%', bgcolor: 'white', p: 2 }}>
         {children}
         <Typography fontSize={13} color={'black'}>{title}</Typography>
         <Typography color={color} fontSize={13} fontWeight={300}>{more}</Typography>
@@ -19,10 +19,11 @@ interface Props{
     apConn: Connection | null | undefined
     eth0: Device | undefined
     apps: App[]
+    onClick: (path:string)=>void
     devices: Dev[]
     selectedCloud: Cl | null
 }
-export default function MobileDashboard({ apConn,apps,devices,selectedCloud, eth0 }: Props) {
+export default function MobileDashboard({onClick, apConn,apps,devices,selectedCloud, eth0 }: Props) {
     const navigate = useNavigate();
     const handleNav = (devId: string,devName:string) => {
         navigate(`/devices/${devId}`,{state:{title:devName,backUrl:'/devices',backTitle:'Devices',showBack:true}});
@@ -30,10 +31,10 @@ export default function MobileDashboard({ apConn,apps,devices,selectedCloud, eth
     return (
         <Box sx={{ overflowY: 'auto', height: '100%' }} >
             <Stack direction={'row'} overflow={'auto'} m={2} spacing={1}>
-                <Item color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
+                <Item path='/settings' onClick={onClick} color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
                     <Router sx={{ fontSize: 20, color: 'black' }} />
                 </Item>
-                <Item color={selectedCloud?.paused?"#E9C68F":DEFAULT_COLORS.primary_blue} title="Cloud Synchronization" more={selectedCloud?.paused?"Inactive":'Active'} >
+                <Item path='/settings' onClick={onClick} color={selectedCloud?.paused?"#E9C68F":DEFAULT_COLORS.primary_blue} title="Cloud Synchronization" more={selectedCloud?.paused?"Inactive":'Active'} >
                     {
                         selectedCloud?.paused?(
                             <CloudOff sx={{ fontSize: 20, color: '#D9D9D9' }} />
@@ -44,11 +45,11 @@ export default function MobileDashboard({ apConn,apps,devices,selectedCloud, eth
                 </Item>
                 {
                     (eth0 && eth0.IP4Config)?(
-                        <Item color={DEFAULT_COLORS.secondary_black} title="Ethernet Connection" more={`IP Address: ${(eth0 && eth0.IP4Config)?eth0.IP4Config.Addresses[0].Address:''}`} >
+                        <Item path='/settings/networking' onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Ethernet Connection" more={`IP Address: ${(eth0 && eth0.IP4Config)?eth0.IP4Config.Addresses[0].Address:''}`} >
                             <Wifi sx={{ fontSize: 20, color: 'black' }} />
                         </Item>
                     ):(
-                        <Item color={DEFAULT_COLORS.secondary_black} title="Wifi Connection" more={`Wifi Name: ${apConn?.connection.id}`} >
+                        <Item path='/settings/networking' onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Wifi Connection" more={`Wifi Name: ${apConn?.connection.id}`} >
                             <Wifi sx={{ fontSize: 20, color: 'black' }} />
                         </Item>
                     )
