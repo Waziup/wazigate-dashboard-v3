@@ -1,5 +1,4 @@
 import * as React from "react";
-import {CheckCircle, ErrorOutline} from '@mui/icons-material';
 import {internet} from '../../utils/systemapi';
 import { Box,CircularProgress, Typography } from "@mui/material";
 export default function InternetIndicator(){
@@ -23,9 +22,10 @@ export default function InternetIndicator(){
 					error: null
 				});
 				if (oneCallOnly) return;
-				setTimeout(() => {
+				const tmId = setTimeout(() => {
 					checkTheStatus();
 				}, 15000); // Check every 15 seconds
+                return () => clearTimeout(tmId);
 			},
 			error => {
 				console.log(error);
@@ -35,9 +35,10 @@ export default function InternetIndicator(){
 				});
 
 				if (oneCallOnly) return;
-				setTimeout(() => {
+				const tmId = setTimeout(() => {
 					checkTheStatus();
 				}, 15000); // Check every 15 seconds
+                return () => clearTimeout(tmId);
 			}
 		);
 	}
@@ -46,21 +47,26 @@ export default function InternetIndicator(){
             {
                 (state.error)?(
                     <Box style={{color:'#fff', margin: 0 }}>
-                        Error <ErrorOutline sx={{color:'#FA9E0E'}}/>
+                        <Typography sx={{ margin: 0,color:'#FA9E0E'}}>
+                            Error Encounted
+                        </Typography>
                     </Box>
                 ): state.status===null?(
                     <Typography sx={{ margin: 0,color:'#fff' }}>
-                        Internet <CircularProgress size={14} sx={{color:'#2BBBAD',mx:1.5,fontSize:14}} />
+                        <CircularProgress size={14} sx={{color:'#2BBBAD',mx:1.5,fontSize:14}} />
                     </Typography>
                 ):(
                     <Box sx={{display:'flex',color:'#fff', alignItems:'center', justifyContent:'center', flexDirection:'row'}}
                         onClick={() => checkTheStatus(true)}
                     >
-                        Internet{" "}
                         {state.status ? (
-                            <CheckCircle sx={{mx:1.5,fontSize:14,color:'#2BBBAD'}}/>
+                            <Typography sx={{  margin: 0,color:'#2BBBAD'}}>
+                                Connected
+                            </Typography>
                         ) : (
-                            <ErrorOutline sx={{mx:1.5,fontSize: 14,color: '#FA9E0E'}}/>
+                            <Typography sx={{  margin: 0,color:'#FA9E0E'}}>
+                                Disconnected
+                            </Typography>
                         )}
                     </Box>
                 )

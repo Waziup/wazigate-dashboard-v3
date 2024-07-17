@@ -7,7 +7,7 @@ interface Props{
 export default function PrimaryButton({title,type, onClick}:Props) {
     return (
         <Button type={type} sx={{mx:1}} onClick={onClick} color="info" variant={'contained'}>
-            <Typography fontSize={14} fontWeight={'700'} color={'#fff'}>{title}</Typography>
+            <Typography fontSize={16} fontWeight={'700'} color={'#fff'}>{title}</Typography>
         </Button>
     )
 }
