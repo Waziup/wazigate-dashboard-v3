@@ -1,6 +1,6 @@
-import {Table,TableBody,TableCell,TableContainer,TableHead,TableRow,Paper, Typography, Box} from '@mui/material';
+import {Table,TableBody,TableCell,TableContainer,TableRow,Paper, Typography, Box} from '@mui/material';
 import { DEFAULT_COLORS } from '../../constants';
-import { Sensors,History } from '@mui/icons-material';
+import { Sensors } from '@mui/icons-material';
 import { Device } from 'waziup';
 import { capitalizeFirstLetter, differenceInMinutes, isActiveDevice } from '../../utils';
 function createData(
@@ -13,16 +13,24 @@ function createData(
 }
 
 interface Props{
+    onDeviceClick:(devId:string)=>void,
     devices: Device[]
 }
-export default function BasicTable({devices}:Props) {
+export default function BasicTable({onDeviceClick, devices}:Props) {
     const rowsData = devices.map((dev)=>{
         return createData(dev.meta.type,dev.name+'*'+Math.round(differenceInMinutes(dev.modified)/60),Math.round(differenceInMinutes(dev.modified)/3600)+' hrs ago',isActiveDevice(dev.modified))
     });
+    const devF =(devName:string)=>{
+        const deviceF =  devices.find((d)=>d.name===devName);
+        if(deviceF){
+            onDeviceClick('/devices/'+deviceF.id);
+            return
+        }
+    }
     return (
         <TableContainer component={Paper}>
             <Table stickyHeader sx={{minWidth:440, maxWidth:'100%' }} aria-label="simple table">
-                <TableHead>
+                {/* <TableHead>
                     <TableRow>
                         <TableCell sx={{fontWeight:'bold'}}></TableCell>
                         <TableCell sx={{fontWeight:'bold'}}>Name</TableCell>
@@ -31,12 +39,20 @@ export default function BasicTable({devices}:Props) {
                         </TableCell>
                         <TableCell sx={{fontWeight:'bold'}} align="left">Status</TableCell>
                     </TableRow>
-                </TableHead>
+                </TableHead> */}
                 <TableBody>
                     {rowsData.map((row) => (
                         <TableRow
+                        onClick={()=>devF(row.name.split('*')[0])}
                         key={row.name}
-                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        sx={{ 
+                            '&:last-child td, &:last-child th': { border: 0 },
+                            cursor:'pointer',
+                            py: 1,
+                            '&:hover':{
+                                bgcolor:'#f5f5f5'
+                            }
+                        }}
                         >
                             <TableCell>
                                 <Box sx={{display:'flex',alignItems:'center',borderRadius:1, mx:.5,px: 1,py: .5,bgcolor:DEFAULT_COLORS.primary_blue}}>
@@ -46,10 +62,10 @@ export default function BasicTable({devices}:Props) {
                             </TableCell>
                             <TableCell>
                                 <Box>
-                                    <Typography fontSize={[10,11,11,12,13]} color={DEFAULT_COLORS.primary_black}>
+                                    <Typography fontSize={[10,12,14,16,18]} color={DEFAULT_COLORS.primary_black}>
                                         {row.name.split('*')[0]}
                                     </Typography> 
-                                    <Typography fontSize={[10,11,11,11,11]}  color='#797979'>Last updated {row.name.split('*')[1]} mins</Typography>
+                                    {/* <Typography fontSize={[8,9,11,13,14]}  color='#797979'>Last updated {row.name.split('*')[1]} mins</Typography> */}
                                 </Box>
                             </TableCell>
                             <TableCell color='#797979' align="left">
