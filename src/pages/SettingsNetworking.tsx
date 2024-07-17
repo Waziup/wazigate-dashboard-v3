@@ -410,7 +410,7 @@ export default function SettingsNetworking() {
                             <Typography color={'#212529'} fontWeight={500}>Available Wifi</Typography>
                         </Box>
                         <Box bgcolor={'#D4E3F5'} p={1}>
-                            <Typography>Connection activated | Access Point Mode</Typography>
+                            <Typography>Connection activated | {apConn?.connection.id==='WAZIGATE_AP'?'Access Point Mode':'Connected'} </Typography>
                         </Box>
                         <Box p={1} borderBottom={'1px solid #ccc'}>
                             <Typography color={'#666'}>Please select a network</Typography>

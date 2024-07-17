@@ -43,26 +43,25 @@ export default function ExportTabMaintenance({matches}:Props) {
     return (
         <Box p={2}>
             <Typography fontWeight={900} fontSize={20}>Export Usage Data</Typography>
-            <Typography fontSize={15} color={'#666666'}>
-                In this section you are able to download the gateways data of all devices at once. You can use to perform a backup, to have all data in one place and for machine learning applications.
-            </Typography>
             <Grid container>
-                <GridItem  spacing={2} md={4.6} xs={12} matches={matches as boolean} >
-                    <GridItemEl  icon={'sensors_outlined'} text={'Export Sensor Data'} >
-                        <Typography m={1} fontSize={12} color={'#666666'}>
-                            You can export the data of all sensors and actuators to a tree of CSV files:
-                        </Typography>
-                        <Button href='/exporttree' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
-                            EXPORT
-                        </Button>
-                    </GridItemEl>
-                    <GridItemEl icon={'precision_manufacturing'} text={'Export Actuator data'} >
-                        <Typography m={1} fontSize={12} color={'#666666'}>
-                            You can export the data of all sensors and actuators to one CSV file:
-                        </Typography>
-                        <Button href='/exportall' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
-                            EXPORT
-                        </Button>
+                <GridItem  spacing={2} md={4.6} xs={12} matches={matches as boolean}>
+                    <GridItemEl additionStyles={{py: 2}}  icon={'sensors_outlined'} text={'Export Sensor Data'}>
+                        <Box bgcolor={'#D4E3F5'} borderRadius={1} p={1} m={1}>
+                            <Typography m={1} fontSize={12} color={'#666666'}>
+                                You can export the data of all sensors and actuators to a tree of CSV files:
+                            </Typography>
+                            <Button href='/exporttree' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
+                                EXPORT
+                            </Button>
+                        </Box>
+                        <Box bgcolor={'#D4E3F5'} borderRadius={1} p={1} m={1}>
+                            <Typography m={1} fontSize={12} color={'#666666'}>
+                                You can export the data of all sensors and actuators to one CSV file:
+                            </Typography>
+                            <Button href='/exportall' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
+                                EXPORT
+                            </Button>
+                        </Box>
                     </GridItemEl>
                 </GridItem>
                 <GridItem  spacing={2} md={7} xs={12} matches={matches as boolean} >
