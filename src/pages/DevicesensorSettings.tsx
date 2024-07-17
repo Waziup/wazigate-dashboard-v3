@@ -1,5 +1,5 @@
 import { Box, Breadcrumbs,Button,TextField, FormControl,NativeSelect,Typography,Icon } from "@mui/material";
-import { useLocation, Link, useOutletContext, useParams, useNavigate } from "react-router-dom";
+import { useLocation, Link, useOutletContext, useParams, } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { ArrowForward } from "@mui/icons-material";
@@ -51,7 +51,6 @@ function DeviceSensorSettings() {
     const [sensOrActuator, setSensOrActuator] = useState<SensorX | ActuatorX | null>(null);
     const [rActuator, setRemoteActuator] = useState<ActuatorX | SensorX | null>(null);
     const [conditions, setConditions] = useState<string[]>([]);
-    const navigate = useNavigate();
     const { getDevicesFc } = useContext(DevicesContext);
     const handleToggleEnableSwitch = () => {
         setSensOrActuator({
@@ -92,11 +91,9 @@ function DeviceSensorSettings() {
         window.wazigate.addActuatorValue(id as string, sensorId as string, actuatorValue)
             .then(() => {
                 alert('Success');
-                getDevicesFc()
-                navigate('/devices');
+                getDevicesFc();
             }).catch((err) => {
-                alert('Error');
-                console.log(err);
+                alert('Error'+err);
             });
     }
     const [quantitiesCondition, setQuantitiesCondition] = React.useState<string[]>([]);
@@ -122,7 +119,6 @@ function DeviceSensorSettings() {
         }
     }, [sensOrActuator?.meta.quantity, sensOrActuator?.quantity])
     const onSliderChange=(val:string)=>{
-        console.log(val,'slider value');
         setSensOrActuator({
             ...sensOrActuator!,
             meta: {
@@ -137,7 +133,6 @@ function DeviceSensorSettings() {
         if(event.target.name === 'kind' && pathname.includes('sensors')){
             icon = ontologies.sensingDevices[event.target.value as keyof typeof ontologies.sensingDevices].icon;
         }else if(event.target.name === 'kind' && pathname.includes('actuators')){
-            console.log(ontologies.actingDevices[event.target.value as keyof typeof ontologies.actingDevices]);
             icon = ontologies.actingDevices[event.target.value as keyof typeof ontologies.actingDevices].icon;
         }else{
             icon = sensOrActuator?.meta.icon;
@@ -159,29 +154,23 @@ function DeviceSensorSettings() {
             window.wazigate.setSensorName(id as string, sensOrActuator?.id as string, sensOrActuator?.name as string).then(() => {
                 window.wazigate.setSensorMeta(id as string, sensOrActuator?.id as string, sensOrActuator?.meta as Sensor['meta']).then(() => {
                     alert('Success');
-                    getDevicesFc()
-                    navigate('/devices');
+                    getDevicesFc();
                 }).catch((err) => {
-                    alert('Error');
-                    console.log(err);
+                    alert('Error'+err);
                 });
             }).catch((err) => {
-                alert('Error');
-                console.log(err);
+                alert('Error'+err);
             });
         }else if(pathname.includes('actuators')){
             window.wazigate.setActuatorName(id as string, sensOrActuator?.id as string, sensOrActuator?.name as string).then(() => {
                 window.wazigate.setActuatorMeta(id as string, sensOrActuator?.id as string, sensOrActuator?.meta as Actuator['meta']).then(() => {
                     alert('Success');
                     getDevicesFc()
-                    navigate('/devices');
                 }).catch((err) => {
-                    alert('Error');
-                    console.log(err);
+                    alert('Error'+err);
                 });
             }).catch((err) => {
-                alert('Error');
-                console.log(err);
+                alert('Error'+err);
             });
         }else{
             return;
@@ -193,20 +182,16 @@ function DeviceSensorSettings() {
         if (pathname.includes('sensors')) {
             window.wazigate.deleteSensor(id as string, sensOrActuator?.id as string).then(() => {
                 alert('Success');
-                getDevicesFc()
-                navigate('/devices');
+                getDevicesFc();
             }).catch((err) => {
-                alert('Error');
-                console.log(err);
+                alert('Error'+err);
             });
         } else if (pathname.includes('actuators')) {
             window.wazigate.deleteActuator(id as string, sensOrActuator?.id as string).then(() => {
                 alert('Success');
                 getDevicesFc()
-                navigate('/devices');
             }).catch((err) => {
-                alert('Error');
-                console.log(err);
+                alert('Error'+err);
             });
         } else {
             return;
@@ -221,7 +206,7 @@ function DeviceSensorSettings() {
     return (
         <Box sx={{ height: '100%', overflowY: 'auto' }}>
             <Box p={2} px={3}>
-                <Typography fontWeight={600} fontSize={18} color={'black'}>{device?.name}</Typography>
+                <Typography fontWeight={600} fontSize={24} color={'black'}>{device?.name}</Typography>
                 <div role="presentation" onClick={() => { }}>
                     <Breadcrumbs aria-label="breadcrumb">
                         <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/devices">
