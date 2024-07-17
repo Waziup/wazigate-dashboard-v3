@@ -117,8 +117,10 @@ function Devices() {
     };
     const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let devEUI = newDevice?.meta.lorawan?.devEUI;
+        let devAddr = newDevice?.meta.lorawan?.devAddr;
         const sharedKey= e.target.name==='nwkSEncKey' ? newDevice?.meta.lorawan?.nwkSEncKey: e.target.name==='appSKey'? newDevice?.meta.lorawan?.appSKey:'';
         if(e.target.name === 'devAddr'){
+            devAddr = e.target.value;
             devEUI = devEUIGenerateFc(e.target.value);
         }
         setNewDevice({
@@ -130,6 +132,7 @@ function Devices() {
                     nwksEncKey: sharedKey,
                     appSKey: sharedKey,
                     devEUI,
+                    devAddr,
                 },
             }
         })
@@ -197,8 +200,10 @@ function Devices() {
     }
     const handleTextInputEditCodec = (e: React.ChangeEvent<HTMLInputElement>) => {
         let devEUI = selectedDevice?.meta.lorawan?.devEUI;
+        let devAddr = selectedDevice?.meta.lorawan?.devAddr;
         const sharedKey= e.target.name==='nwkSEncKey' ? selectedDevice?.meta.lorawan?.nwkSEncKey: e.target.name==='appSKey'? selectedDevice?.meta.lorawan?.appSKey:'';
         if(e.target.name === 'devAddr'){
+            devAddr = e.target.value;
             devEUI = devEUIGenerateFc(e.target.value);
         }
         if(selectedDevice){
@@ -210,6 +215,7 @@ function Devices() {
                         ...selectedDevice.meta.lorawan,
                         nwkSEncKey:  (e.target.name === 'nwkSEncKey' || e.target.name === 'appSKey') ? e.target.value : sharedKey,
                         appSKey: (e.target.name==='appSKey' || e.target.name==='nwkSEncKey') ? e.target.value : sharedKey,
+                        devAddr,
                         devEUI,
                     }
                 }
@@ -383,12 +389,12 @@ function Devices() {
                     changeEditMakeLoraWAN={changeEditMakeLoraWAN}
                     autoGenerateLoraWANOptionsHandler={autoGenerateLoraWANOptions}
                 />
-                <Box sx={{ px:2, py:3,overflowY:'auto',width:'100%',  height: '100%' }}>
+                <Box sx={{ px:3, py:3,overflowY:'auto',width:'100%',  height: '100%' }}>
                     <RowContainerBetween>
-                        <Typography fontWeight={700} color={'black'}>Devices</Typography>
+                        <Typography fontSize={24} fontWeight={700} color={'black'}>Devices</Typography>
                         {
                             matches?(
-                                <PrimaryIconButton title={'New Device'} iconname={'add'} onClick={handleToggleModal} />
+                                <PrimaryIconButton fontSize={16} title={'New Device'} iconname={'add'} onClick={handleToggleModal} />
                             ):null
                         }
                     </RowContainerBetween>
@@ -481,7 +487,7 @@ function Devices() {
             </Box>
             {
                 !matches ? (
-                    <SpeedDial color={DEFAULT_COLORS.primary_blue} ariaLabel='New Device' sx={{color:'#499', position: 'absolute', bottom: 16, right: 16 }} icon={<SpeedDialIcon />}>
+                    <SpeedDial color={DEFAULT_COLORS.primary_blue} ariaLabel='New Device' sx={{color:'#499dff', position: 'absolute', bottom: 16, right: 16 }} icon={<SpeedDialIcon />}>
                         <SpeedDialAction
                             key={'New Device'}
                             icon={<Add />}

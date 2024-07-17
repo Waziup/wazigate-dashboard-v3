@@ -64,8 +64,8 @@ import LogoSig from '../assets/wazi_sig.svg';
 import SnackbarComponent from '../components/shared/Snackbar';
 const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHandler, age }: { customAppInstallHandler: () => void, matches: boolean, recommendedApps: RecomendedApp[], handleChange: (e: SelectChangeEvent) => void, age: string }) => (
     <FormControl sx={{ p: 0, border: 'none', width: matches ? '35%' : '45%', }}>
-        <InputLabel id="demo-simple-select-helper-label">Install App</InputLabel>
-        <Select sx={{ width: '100%', py: 0, }}
+        <InputLabel color='info' id="demo-simple-select-helper-label">Install App</InputLabel>
+        <Select sx={{borderColor:'#499dff', width: '100%', py: 0, }}
             labelId="Recommended Apps"
             id="recommeded_apps _selecter"
             onClose={onCloseHandler}
