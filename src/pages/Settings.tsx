@@ -18,6 +18,7 @@ import SelectElementString from '../components/shared/SelectElementString';
 import GridItemEl from '../components/shared/GridItemElement';
 import SnackbarComponent from '../components/shared/Snackbar';
 import { DevicesContext } from '../context/devices.context';
+import InternetIndicator from '../components/ui/InternetIndicator';
 const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
 const GridItem = ({bgcolor,additionStyles,md, children,}: {xs:number,md:number, matches: boolean,bgcolor?:boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode }) => (
     <Grid sx={{bgcolor: bgcolor?'#fff':'',...additionStyles}} bgcolor={bgcolor?'#fff':''} item md={md} lg={5.8} xl={5.8} sm={6} xs={12} my={1} >
@@ -202,16 +203,18 @@ function Settings() {
                                         }
                                     </Typography>
                                 </RowContainer>
+                                <RowContainer>
+                                    <Typography color={'primary.main'} fontWeight={300}>Internet</Typography>
+                                    <InternetIndicator/>
+                                </RowContainer>
                             </Box>
                         </GridItemEl>
-                        <GridItemEl text='Wazigate ID' icon='fingerprint'>
-                            <Typography sx={{textAlign:'left',textTransform:'uppercase',p:2,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
-                                {wazigateId}
+                        <GridItemEl text='Wazigate Identity' icon='fingerprint'>
+                            <Typography sx={{textAlign:'left',textTransform:'uppercase',p:1,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
+                                ID {wazigateId}
                             </Typography>
-                        </GridItemEl>
-                        <GridItemEl  text='Wazigate Version' icon='account_tree'>
-                            <Typography sx={{textAlign:'left',p:2,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
-                                {buildNr}
+                            <Typography sx={{textAlign:'left',p:1,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
+                                Version: {buildNr}
                             </Typography>
                         </GridItemEl>
                         <GridItemEl text='Gateway Power' icon='power_settings_new'>
@@ -261,7 +264,7 @@ function Settings() {
                             </RowContainer>
                             <Box bgcolor={isSetTimezoneAuto?'#fff':'#D4E3F5'} borderRadius={1} p={1} m={1}>
                                 <RowContainerBetween additionStyles={{ m: 1, px: 1 }}>
-                                    <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>Set TimeZone Automatically</Typography>
+                                    <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>{isSetTimezoneAuto?'--':'Set TimeZone Automatically'}</Typography>
                                     <Android12Switch onChange={(_e,checked)=>switchTimezoneAuto(checked)} checked={isSetTimezoneAuto} color='info' />
                                 </RowContainerBetween>
                                 {
@@ -282,6 +285,7 @@ function Settings() {
                                 </RowContainerBetween>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer
+
                                         components={[
                                             'DatePicker',
                                         ]}

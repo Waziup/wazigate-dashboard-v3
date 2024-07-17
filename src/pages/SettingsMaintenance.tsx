@@ -6,7 +6,6 @@ import ContainersTabMaintenance from "../components/ui/ContainersTab.maintenance
 import ExportTabMaintenance from "../components/ui/ExportTab.maintenance";
 import LogsTabMaintenance from "../components/ui/LogsTab.maintenance";
 import { useOutletContext } from "react-router-dom";
-import InternetIndicator from "../components/ui/InternetIndicator";
 const BTN = ({title,icon,onClick,activeTab,children,idx}:{idx:string,title:string,activeTab:string,children?:React.ReactNode, icon?:string,onClick:(idx:string)=>void})=>(
     <Box  bgcolor={activeTab===idx?'#D1ECF1':'inherit'} >
         <Button onClick={()=>onClick(idx)} sx={{display:'flex',alignItems:'center', color:activeTab===idx?'#000':'#fff',py:1,px:2}}  variant="text" startIcon={
@@ -83,7 +82,6 @@ export default function SettingsMaintenance() {
                         </BTN>
                     </Box>
                 </Stack>
-                <InternetIndicator/>
             </Stack>
             {
                 isPending?(
