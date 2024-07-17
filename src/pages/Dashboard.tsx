@@ -3,27 +3,24 @@ import { Router, CloudOff, Wifi,  Cloud, } from '@mui/icons-material';
 import BasicTable from "../components/ui/BasicTable";
 import React, { useContext, useMemo, } from "react";
 import { DEFAULT_COLORS } from "../constants";
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import MobileDashboard from "../components/layout/MobileDashboard";
 import RowContainerNormal from "../components/shared/RowContainerNormal";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { DevicesContext } from "../context/devices.context";
 import { App, Device } from "waziup";
 import { capitalizeFirstLetter, returnAppURL } from "../utils";
-export const Item = ({ more, color, children, title }: { more: string, children: React.ReactNode, color: string, title: string }) => (
-    <Box mx={2} sx={{ width: '33%', minWidth: 250, mx: 2, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
+export const Item = ({ more,path, color,onClick, children, title }: {path:string, onClick:(path: string)=>void, more: string, children: React.ReactNode, color: string, title: string }) => (
+    <Box onClick={()=>onClick(path)} mx={2} sx={{boxShadow: 3,cursor:'pointer', width: '33%', minWidth: 250, mx: 2, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
         {children}
         <NormalText title={title} />
         <Typography fontSize={14} color={color} fontWeight={300}>{more}</Typography>
     </Box>
 );
-const DeviceStatus = ({ devices }: { devices: Device[] }) => (
-    <Box sx={{ height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
+const DeviceStatus = ({ devices,onDeviceClick }: { onDeviceClick:(devId:string)=>void, devices: Device[] }) => (
+    <Box sx={{boxShadow:3, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
         <NormalText title="Device Status" />
-        <BasicTable devices={devices} />
-        <Link style={{textDecoration:'none',textDecorationColor:'none',width:'100%', color:'#fff',borderBottom:'1px solid #fff',padding:'4px 0', borderTop:'1px solid white'}} to={'/devices'}>
-            <Typography sx={{ fontSize: 12,textAlign:'center', color: DEFAULT_COLORS.secondary_black, fontWeight: 300 }}>View all devices</Typography>
-        </Link>
+        <BasicTable onDeviceClick={onDeviceClick} devices={devices} />
     </Box>
 );
 const TextItem = ({ text }: { text: string }) => <Typography sx={{ fontSize: [10, 10, 12, 13, 10], color: DEFAULT_COLORS.secondary_black, fontWeight: 300 }} >{text}</Typography>
@@ -40,7 +37,7 @@ const MyScrollingElement = styled(Stack)(() => ({
     },
 }));
 const AppStatus = ({ apps }: { apps: App[] }) => (
-    <Box sx={{ height: '100%', bgcolor: 'white', borderRadius: 2, p: 2 }}>
+    <Box sx={{boxShadow: 3, height: '100%', bgcolor: 'white', borderRadius: 2, p: 2 }}>
         <NormalText title="App Status" />
         <MyScrollingElement sx={{overflowY:'auto'}} width={'100%'} height={'100%'}>
             {
@@ -67,7 +64,7 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
                                             </Box>
                                         )
                                     }
-                                    <Box>
+                                    <Box ml={1}>
                                         <Typography color={'black'} fontSize={[10, 12, 10, 12, 14]} fontWeight={300}>{app.name}</Typography>
                                         <TextItem 
                                             text={'Created: '+(app.state !== null || app.state)?app.state?.startedAt?new Date(app.state.startedAt).toDateString():'':''}
@@ -95,18 +92,22 @@ function Dashboard() {
         const eth0 = networkDevices?.eth0;
         return [apCn, eth0]; 
     },[networkDevices]);
+    const navigate = useNavigate();
+    const onClick = (path:string)=>{
+        navigate(path)
+    }
     return (
         <>
             {
                 matches?(
                     <Box sx={{ height: '100%', overflowY: 'hidden' }}>
                         <Box p={3} sx={{ width: '100%' }}>
-                            <Typography color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
+                            <Typography fontSize={24} color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
                             <Stack direction={'row'} mt={2} spacing={2}>
-                                <Item color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
+                                <Item path='/settings' onClick={onClick} color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
                                     <Router sx={{ mb: 2, fontSize: 42, color: 'black' }} />
                                 </Item>
-                                <Item color={selectedCloud?.paused?"#CCC400":DEFAULT_COLORS.primary_blue} title="Cloud Synchronization" more={selectedCloud?.paused?"Inactive":'Active'} >
+                                <Item path='/settings/networking' onClick={onClick} color={selectedCloud?.paused?"#CCC400":DEFAULT_COLORS.primary_blue} title="Cloud Synchronization" more={selectedCloud?.paused?"Inactive":'Active'} >
                                     {
                                         selectedCloud?.paused?(
                                             <CloudOff sx={{ mb: 2, fontSize: 42, color: '#D9D9D9' }} />
@@ -116,12 +117,12 @@ function Dashboard() {
                                     }
                                 </Item>
                                 {
-                                    apConn?(
-                                        <Item color={DEFAULT_COLORS.secondary_black} title="Wifi Connection" more={`Wifi Name: ${apConn.connection.id}`} >
+                                    (eth0 && eth0.IP4Config)?(
+                                        <Item path='/settings/networking' onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Ethernet Connection" more={`IP Address: ${(eth0 && eth0.IP4Config)?eth0.IP4Config.Addresses[0].Address:''}`} >
                                             <Wifi sx={{ mb: 2, fontSize: 42, color: 'black' }} />
                                         </Item>
                                     ):(
-                                        <Item color={DEFAULT_COLORS.secondary_black} title="Ethernet Connection" more={`IP Address: ${(eth0 && eth0.IP4Config)?eth0.IP4Config.Addresses[0].Address:''}`} >
+                                        <Item path='/settings/networking' onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Wifi Connection" more={`Wifi Name: ${apConn?.connection.id}`} >
                                             <Wifi sx={{ mb: 2, fontSize: 42, color: 'black' }} />
                                         </Item>
                                     )
@@ -129,7 +130,7 @@ function Dashboard() {
                             </Stack>
                             <Grid mt={2} container spacing={2}>
                                 <Grid item py={6} sm={11} md={8} >
-                                    <DeviceStatus devices={devices?devices.filter((_device, id) => id < 4): []} />
+                                    <DeviceStatus onDeviceClick={onClick}  devices={devices?devices.filter((_device, id) => id < 4): []} />
                                 </Grid>
                                 <Grid py={6} item sm={12} md={4} >
                                     <AppStatus apps={apps?apps.filter((_i,idx)=>idx<4):[]} />
@@ -140,6 +141,7 @@ function Dashboard() {
                 ):(
                     <Box sx={{ height: '100%', overflowY: 'auto' }}>
                         <MobileDashboard
+                            onClick={onClick}
                             apConn={apConn}
                             eth0={eth0}
                             selectedCloud={selectedCloud}

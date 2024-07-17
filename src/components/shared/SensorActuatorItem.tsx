@@ -1,4 +1,4 @@
-import { Grid, Typography,  } from '@mui/material';
+import { Box, Grid, Typography,  } from '@mui/material';
 import RowContainerBetween from './RowContainerBetween'
 import RowContainerNormal from './RowContainerNormal'
 import SVGIcon from './SVGIcon'
@@ -57,7 +57,7 @@ export default function SensorActuatorItem({kind, icon, callbackFc,type, sensAct
                             icon:
                                 type==='actuator'?ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices].icon:ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices].icon}`}
                     />
-                    <Typography fontSize={12}>{removeSpecialChars(sens? sens.name:'')}</Typography>
+                    <Typography sx={{fontSize:15,fontWeight:'600'}}>{removeSpecialChars(sens? sens.name:'')}</Typography>
                 </RowContainerNormal>
                 <MenuComponent
                     open={open}
@@ -75,7 +75,9 @@ export default function SensorActuatorItem({kind, icon, callbackFc,type, sensAct
                     ]}
                 />
             </RowContainerBetween>
-            {children}
+            <Box onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}`)}}>
+                {children}
+            </Box>
         </Grid>
     )
 }

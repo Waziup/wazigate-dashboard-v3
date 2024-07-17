@@ -124,7 +124,7 @@ function Device() {
         <Box sx={{ height: '100%', overflowY: 'auto' }}>
             <RowContainerBetween additionStyles={{ p: 2 }}>
                 <Box>
-                    <Typography fontWeight={500} fontSize={18} color={'black'}>{device?.name}</Typography>
+                    <Typography fontWeight={500} fontSize={24} color={'black'}>{device?.name}</Typography>
                     <div role="presentation" onClick={handleClick}>
                         <Breadcrumbs aria-label="breadcrumb">
                             <Link  style={{fontSize:14,textDecoration:'none',color:'inherit'}} to={`/devices/${device?.id}`}>
