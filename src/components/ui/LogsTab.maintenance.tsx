@@ -1,4 +1,4 @@
-import { Box,Typography } from '@mui/material';
+import { Box, } from '@mui/material';
 import { getContainerLogs,dlContainerLogs, getAllContainers, cInfo } from '../../utils/systemapi';
 import { useEffect, useState } from 'react';
 import PrimaryIconButton from '../shared/PrimaryIconButton';
@@ -73,9 +73,9 @@ export default function LogsTabMaintenance({matches}:Props) {
     return (
         <Box>
             <Box sx={{bgcolor:'white',boxShadow: 3,width:'90%',p:3,m:2,borderRadius:2,position:'relative',}}>
-                <Typography fontSize={10}>
+                <pre style={{fontSize:13}}>
                     {data}
-                </Typography>
+                </pre>
             </Box>
             <PrimaryIconButton onClick={downloadLogs} iconname='download' title={'Download Logs'} />
         </Box>

@@ -51,6 +51,7 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
+    borderRadius: 2,
     bgcolor: 'background.paper',
     boxShadow: 24,
     py: 2,
@@ -240,7 +241,7 @@ function DeviceSettings() {
                                         modalProps.title ? (
                                             <Typography>Create  {modalProps.title === 'sensor' ? 'a Sensor' : 'an Actuator'} </Typography>
                                         ) : (
-                                            <Typography>Choose Type</Typography>
+                                            <Typography>Select Interface Type</Typography>
                                         )
                                     }
                                     <Button onClick={handleCloseModal} sx={{ textTransform: 'initial', color: '#ff0000' }} variant={'text'}>Cancel</Button>
@@ -265,7 +266,7 @@ function DeviceSettings() {
                                                         )
                                                     }
                                                     <RowContainerBetween additionStyles={{ pt: 2 }}>
-                                                        <Box></Box>
+                                                        <Button onClick={handleCloseModal} sx={{ mx: 2, color: '#fff' }} variant="contained" color="info" >Cancel</Button>
                                                         <Button sx={{ mx: 2, color: '#fff' }} variant="contained" color="info" type="submit">Save</Button>
                                                     </RowContainerBetween>
                                                 </form>
@@ -288,7 +289,7 @@ function DeviceSettings() {
                                     Devices
                                 </Link>
                                 <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
-                                    {device ? device.name.slice(0, 10) + '...' : ''}
+                                    {device && device.name.length > 10 ? device.name.slice(0, 10) + '....' : device?.name}
                                 </p>
                             </Breadcrumbs>
                         </div>
