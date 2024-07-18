@@ -11,10 +11,10 @@ declare global {
         wazigate: waziup.Waziup;
     }
 }
+console.log("WaziGate API URL is: " + WaziGateApiUrl);
 waziup.connect({
     host: WaziGateApiUrl,
 }).then((res) => {
-    console.log("WaziGate API URL is: " + WaziGateApiUrl);
     window.wazigate = res.waziup;
     window.wazigate.connectMQTT(() => {
         console.log("MQTT Connected.");
