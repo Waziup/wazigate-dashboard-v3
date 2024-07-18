@@ -21,7 +21,6 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install --force
 COPY . .
-ENV VITE_WAZIGATE_API_URL=http://localhost
 RUN npm run build
 EXPOSE 5173
 CMD ["npm", "run", "preview"]
