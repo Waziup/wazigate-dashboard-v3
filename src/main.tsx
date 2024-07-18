@@ -11,7 +11,6 @@ declare global {
         wazigate: waziup.Waziup;
     }
 }
-console.log("WaziGate API URL is: " + WaziGateApiUrl);
 waziup.connect({
     host: WaziGateApiUrl,
 }).then((res) => {
@@ -23,6 +22,7 @@ waziup.connect({
     }, {
         reconnectPeriod: 0,
     });
+    console.log("WaziGate API URL is: " + WaziGateApiUrl);
     console.log('Connected to Wazigate API')
     ReactDOM.createRoot(document.getElementById('root')!).render(
         <React.StrictMode>

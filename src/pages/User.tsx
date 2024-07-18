@@ -197,7 +197,7 @@ function User() {
                                 />
                             </TextInput>
                             <Box display={'flex'} justifyContent={'center'} py={1}>
-                                <button type="submit" style={{ width: '50%', border: 'none', justifyContent: 'center', display: 'flex', alignItems: 'center', borderRadius: 5, outline: 'none', padding: 10, backgroundColor: '#2BBBAD', color: 'white' }}>
+                                <button type="submit" style={{ width: '50%', border: 'none', justifyContent: 'center', display: 'flex', alignItems: 'center', borderRadius: 5, outline: 'none', padding: 10, backgroundColor: '#499dff', color: 'white' }}>
                                     <Save sx={{ fontSize: 20 }} />
                                     SAVE
                                 </button>
