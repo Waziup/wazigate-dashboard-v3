@@ -14,6 +14,7 @@ declare global {
 waziup.connect({
     host: WaziGateApiUrl,
 }).then((res) => {
+    console.log("WaziGate API URL is: " + WaziGateApiUrl);
     window.wazigate = res.waziup;
     window.wazigate.connectMQTT(() => {
         console.log("MQTT Connected.");
@@ -22,7 +23,7 @@ waziup.connect({
     }, {
         reconnectPeriod: 0,
     });
-    console.log('Connected to Wazigate')
+    console.log('Connected to Wazigate API')
     ReactDOM.createRoot(document.getElementById('root')!).render(
         <React.StrictMode>
             <DevicesProvider>
