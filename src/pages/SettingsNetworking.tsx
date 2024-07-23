@@ -153,7 +153,8 @@ export default function SettingsNetworking() {
     };
     const fcInit = ()=>{
         window.wazigate.getClouds().then((clouds) => {
-            setSelectedCloud(Object.values(clouds)? Object.values(clouds)[0]:null);
+            const waziupCloud = Object.values(clouds)? clouds['waziup']: null;
+            setSelectedCloud(waziupCloud);
         });
         getConf().then((conf) => {
             setConf(conf);
@@ -210,7 +211,7 @@ export default function SettingsNetworking() {
         scan();
     },[]);
     const apConn = useMemo(() => {
-        const apConn = networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP");
+        const apConn = networkDevices.wlan0? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP"): null
         return apConn; 
     },[networkDevices]);
     console.log('ApCONN: ',apConn);
