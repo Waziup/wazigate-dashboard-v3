@@ -23,10 +23,13 @@ function Docspage() {
                 <Typography fontWeight={500} fontSize={20} color={'black'}>WaziGate Help</Typography>
                 <Typography>Any problem using the WaziGate? Dont Worry!  Help is on the way.</Typography>
                 <Box mt={2}>
-                    <TextEL path="/apps/waziup.wazigate-system/docs/" text='Wazigate Edge Documetation'>
+                    <TextEL path="https://lab.waziup.io/resources/waziup/wazigate" text='Wazigate Documetation'>
                         <DescriptionOutlined/>
                     </TextEL>
-                    <TextEL path='/docs' text='API Documentation'>
+                    <TextEL path="/docs/" text='Wazigate Edge Documetation'>
+                        <DescriptionOutlined/>
+                    </TextEL>
+                    <TextEL path='/apps/waziup.wazigate-system/docs/' text='System API Documentation'>
                         <DataObject/>
                     </TextEL>
                     <TextEL path='mailto:admin@waziup.org' text='Contact'>
