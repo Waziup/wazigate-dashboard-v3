@@ -11,7 +11,7 @@ const Item = ({ more,path,onClick, color, children, title }: {path:string, onCli
         <Typography color={color} fontSize={13} fontWeight={300}>{more}</Typography>
     </Box>
 );
-import { capitalizeFirstLetter, differenceInMinutes, isActiveDevice, returnAppURL } from "../../utils";
+import { capitalizeFirstLetter, isActiveDevice, returnAppURL, time_ago } from "../../utils";
 import { useNavigate, Link } from "react-router-dom";
 import { App, Cloud as Cl, Device as Dev } from "waziup";
 import type { Device, Connection } from "../../utils/systemapi";
@@ -78,7 +78,9 @@ export default function MobileDashboard({onClick, apConn,apps,devices,selectedCl
                                         </Typography>
                                     </RowContainerBetween>
                                     <RowContainerBetween>
-                                        <Typography fontSize={13} color={'#797979'}>Last updated: {differenceInMinutes(dev.modified)} secs ago</Typography>
+                                        <Typography fontSize={13} color={'#797979'}>
+                                            {time_ago(dev.modified).toString()}
+                                        </Typography>
                                         <Typography fontSize={10} color={'#797979'} my={1} lineHeight={.8} fontWeight={300}></Typography>
                                     </RowContainerBetween>
                                 </Box>

@@ -8,7 +8,7 @@ import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
 import EditDeviceModal from '../components/ui/EditDeviceModal';
 import { DevicesContext, SensorX } from '../context/devices.context';
-import { capitalizeFirstLetter, devEUIGenerateFc, differenceInMinutes } from '../utils';
+import { capitalizeFirstLetter, devEUIGenerateFc, time_ago } from '../utils';
 import PrimaryIconButton from '../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
 import MenuComponent from '../components/shared/MenuDropDown';
@@ -412,7 +412,9 @@ function Devices() {
                                                 <RowContainerBetween additionStyles={{}} >
                                                     <Box onClick={() => { navigate(`${device.id}`) }}>
                                                         <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>
-                                                        <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>Last Updated {(Math.round(differenceInMinutes(device.modified) / 60))>60?(Math.round(differenceInMinutes(device.modified) / 3600))+'hrs ago': Math.round(differenceInMinutes(device.modified) / 60)+'mins ago'}</Typography>
+                                                        <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>
+                                                            {time_ago(device.modified).toString()}
+                                                        </Typography>
                                                     </Box>
                                                     <MenuComponent
                                                         open={open}
