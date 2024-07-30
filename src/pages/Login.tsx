@@ -71,8 +71,8 @@ export default function Login() {
                 </Alert>
             </Snackbar>
             <Box height={'100vh'} position={'relative'} width={'100%'} bgcolor={'#F4F7F6'}>
-                <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:'50%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'40%':'90%'}}>
-                    <Box display={'flex'} justifyContent={'center'} py={2} width={'100%'} borderBottom={'1px solid #D5D6D8'} alignItems={'center'}>
+                <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:'50%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'35%':'90%'}}>
+                    <Box display={'flex'} justifyContent={'center'} py={2} width={'100%'} alignItems={'center'}>
                         <Box component={'img'}  src={Logo} mx={2} />
                         <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>Login to Wazigate Dashboard</Typography>
                     </Box>
@@ -84,7 +84,7 @@ export default function Login() {
                             <TextInput label='Password'>
                                 <input {...register('password')} required type='password' placeholder='.....' style={{width:'100%',fontSize:18, border:'none',background:'none',color:DEFAULT_COLORS.third_dark,padding:2, borderBottom:'1px solid #D5D6D8', outline:'none'}} />
                             </TextInput>
-                            <Box borderBottom={'1px solid #D5D6D8'} display={'flex'} justifyContent={'center'} py={1}>
+                            <Box display={'flex'} justifyContent={'center'} py={1}>
                                 <button type='submit'  style={{width:'70%',border:'none',display:'flex',alignItems:'center',justifyContent:'center', borderRadius:5, outline:'none', padding:10, backgroundColor:'#499dff', color:'white'}}>
                                     <LockOpen sx={{fontSize:20}} />
                                     LOGIN
