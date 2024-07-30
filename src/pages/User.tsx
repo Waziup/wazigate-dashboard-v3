@@ -37,12 +37,14 @@ const TextInput = ({ children, label }: TextInputProps) => (
 )
 import Logo from '../assets/wazilogo.svg';
 import { DevicesContext } from "../context/devices.context";
+import NoImageProfile from "../components/shared/NoImageProfile";
 const textinputStyle = { width: '100%', fontSize: 18, border: 'none', background: 'none', color: DEFAULT_COLORS.third_dark, padding: 2, borderBottom: '1px solid #D5D6D8', outline: 'none' }
 function User() {
     const {handleSubmit,setValue} = useForm<Omit<User,'ID'>>({
         resolver: yupResolver(schema),
     });
     const theme = useTheme();
+    const [isEdited,setIsEdited] = useState(false);
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const [loading, setLoading] = useState(false);
     // const [profile, setProfile] = useState<User  | null>(null);
@@ -58,6 +60,7 @@ function User() {
     }, [profile, setValue]);
     const onTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.name as keyof Omit<User,'ID'>, e.target.value);
+        setIsEdited(true);
         setProfile({
             ...profile,
             name: profile?.name ?? '',
@@ -102,6 +105,7 @@ function User() {
             setErr(true);
             setMsg(error as string);
         });
+        setIsEdited(false);
     };
     const handleClose = () => {setErr(false)}
 
@@ -133,8 +137,7 @@ function User() {
                         <Box m={.5} sx={{ cursor: 'pointer' }}>
                             <RowContainerBetween additionStyles={{ alignItems: 'center', bgcolor: '#D4',  cursor: 'pointer', borderRadius: 1, }}>
                                 <RowContainerNormal>
-                                    <Box sx={{ objectFit: 'contain', width: 30, height: 30, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue, borderRadius: '50%' }}></Box>
-                                    {/* <Box component={'img'} sx={{objectFit:'contain',width:20,height:20, borderRadius:'50%'}} src={'https://picsum.photos/200/300'}  /> */}
+                                    <NoImageProfile/>
                                     <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>{profile?.name}</Typography>
                                 </RowContainerNormal>
                                 <Check sx={{ color: DEFAULT_COLORS.primary_black, mx: 1 }} />
@@ -196,12 +199,16 @@ function User() {
                                     style={textinputStyle}
                                 />
                             </TextInput>
-                            <Box display={'flex'} justifyContent={'center'} py={1}>
-                                <button type="submit" style={{ width: '50%', border: 'none', justifyContent: 'center', display: 'flex', alignItems: 'center', borderRadius: 5, outline: 'none', padding: 10, backgroundColor: '#499dff', color: 'white' }}>
-                                    <Save sx={{ fontSize: 20 }} />
-                                    SAVE
-                                </button>
-                            </Box>
+                            {
+                                isEdited?(
+                                    <Box display={'flex'} justifyContent={'center'} py={1}>
+                                        <button type="submit" style={{ width: '50%', border: 'none', justifyContent: 'center', display: 'flex', alignItems: 'center', borderRadius: 5, outline: 'none', padding: 10, backgroundColor: '#499dff', color: 'white' }}>
+                                            <Save sx={{ fontSize: 20 }} />
+                                            SAVE
+                                        </button>
+                                    </Box>
+                                ):null
+                            }
                         </Box>
                     </form>
                 </Box>
