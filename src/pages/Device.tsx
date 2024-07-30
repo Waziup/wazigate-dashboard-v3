@@ -244,7 +244,6 @@ function DeviceSettings() {
                                             <Typography>Select Interface Type</Typography>
                                         )
                                     }
-                                    <Button onClick={handleCloseModal} sx={{ textTransform: 'initial', color: '#ff0000' }} variant={'text'}>Cancel</Button>
                                 </RowContainerBetween>
                                 <Box p={1}>
                                     <SelectElement
@@ -266,12 +265,17 @@ function DeviceSettings() {
                                                         )
                                                     }
                                                     <RowContainerBetween additionStyles={{ pt: 2 }}>
-                                                        <Button onClick={handleCloseModal} sx={{ mx: 2, color: '#fff' }} variant="contained" color="info" >Cancel</Button>
+                                                        <Button onClick={handleCloseModal} sx={{ mx: 2, color: '#fff',backgroundColor:'#ff0000' }} variant="contained" color="warning" >CANCEL</Button>
                                                         <Button sx={{ mx: 2, color: '#fff' }} variant="contained" color="info" type="submit">Save</Button>
                                                     </RowContainerBetween>
                                                 </form>
                                             </Box>
-                                        ) : null
+                                        ) : (
+                                            <RowContainerBetween>
+                                                <Box/>
+                                                <Button onClick={handleCloseModal} sx={{ textTransform: 'initial', }} color="warning" variant={'contained'}>CANCEL</Button>
+                                            </RowContainerBetween>
+                                        )
                                     }
                                 </Box>
                             </Box>
