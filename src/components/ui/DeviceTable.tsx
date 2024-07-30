@@ -13,12 +13,11 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
 import { Icon } from '@mui/material';
-import { Download, Tune } from '@mui/icons-material';
+import { Tune } from '@mui/icons-material';
 import { useMemo } from 'react';
 
 interface Data {
@@ -122,7 +121,7 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
+  const {  order, orderBy,  onRequestSort } =
     props;
   const createSortHandler =
     (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
@@ -132,16 +131,16 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead sx={{bgcolor:'#F6F6F6',border: '.5px solid #d8d8d8'}}>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts',
-            }}
-          />
+        <TableCell  padding="checkbox">
+          <Typography sx={{
+            fontWeight: 'bold',
+            fontSize: '14px',
+            mx:2,
+            lineHeight: '16px',
+            color: '#424242',
+          }}>
+            No.
+          </Typography>
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
@@ -198,6 +197,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     >
       {numSelected > 0 ? (
         <Typography
+        
           sx={{ flex: '1 1 100%' }}
           color="inherit"
           variant="subtitle1"
@@ -226,11 +226,12 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                     />
                 </IconButton>
             </Tooltip>
-            <Tooltip title="Download">
+            <Box></Box>
+            {/* <Tooltip title="Download">
                 <IconButton>
                     <Download sx={{mx:1}}/>
                 </IconButton>
-            </Tooltip>
+            </Tooltip> */}
         </Box>
       )}
     </Toolbar>
@@ -361,13 +362,9 @@ export default function SensorTable({values,fetchMoreData}:Props) {
                     sx={{ cursor: 'pointer' }}
                   >
                     <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId,
-                        }}
-                      />
+                      <Typography sx={{fontWeight: 'bold',fontSize: '14px',mx:2,lineHeight: '16px',color: '#424242'}}>
+                        {index<9?'0'+(index+1):index+1}
+                      </Typography>
                     </TableCell>
                     <TableCell
                       component="th"
