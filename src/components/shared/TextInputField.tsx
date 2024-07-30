@@ -11,11 +11,12 @@ interface InputFieldProps extends React.ComponentProps<typeof TextField> {
     sx?: SxProps<Theme>,
     multiline?: boolean,
     rows?: number
+    bgcolor?: string,
     icon?: React.ReactNode
 }
-export default function TextInputField({onChange,value,label,icon,placeholder,type, name}:InputFieldProps) {
+export default function TextInputField({onChange,value,label,icon,placeholder,type,sx,bgcolor, name}:InputFieldProps) {
     return (
-        <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #ccc'}}>
+        <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #ccc',...sx}}>
             <Typography textAlign={'left'} color={'primary'} mb={.4} fontSize={12}>{label}</Typography>
             <Box sx={{display:'flex',alignItems:'flex-end' }}>
                 {icon}
@@ -26,7 +27,7 @@ export default function TextInputField({onChange,value,label,icon,placeholder,ty
                     value={value}
                     required
                     type={type?type:'text'}
-                    style={{border:'none',width:'100%',fontSize:14,color:'#888', margin:'0 3px', outline:'none'}}
+                    style={{border:'none',width:'100%',fontSize:14,color:'#888',backgroundColor:bgcolor?bgcolor:'', margin:'0 3px', outline:'none'}}
                 />
             </Box>
         </FormControl>

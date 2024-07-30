@@ -177,7 +177,7 @@ function DeviceSensorSettings() {
         }
     }
     const deleteSensorOrActuator = () => {
-        const confDelete = window.confirm(`Are you sure you want to delete ${sensOrActuator?.name}?`);
+        const confDelete = window.confirm(`Are you sure you want to delete ${sensOrActuator?.name}? All data will be lost`);
         if (!confDelete) return;
         if (pathname.includes('sensors')) {
             window.wazigate.deleteSensor(id as string, sensOrActuator?.id as string).then(() => {
@@ -334,7 +334,7 @@ function DeviceSensorSettings() {
                     <Box width={'90%'}>
                         <Typography fontWeight={500} fontSize={20} my={1} color={'#292F3F'}>Delete {sensOrActuator?.name}</Typography>
                         <RowContainerBetween additionStyles={{ width: '100%' }}>
-                            <PrimaryIconButton iconname="delete" onClick={deleteSensorOrActuator} title="DELETE" />
+                            <PrimaryIconButton iconname="delete"  additionStyles={{backgroundColor:'#ff0000'}} onClick={deleteSensorOrActuator} title="DELETE" />
                         </RowContainerBetween>
                     </Box>
                 </Box>
