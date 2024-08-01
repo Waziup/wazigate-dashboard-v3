@@ -45,7 +45,7 @@ export default function ExportTabMaintenance({matches}:Props) {
             <Typography fontWeight={900} fontSize={20}>Export Usage Data</Typography>
             <Grid container>
                 <GridItem  spacing={2} md={4.6} xs={12} matches={matches as boolean}>
-                    <GridItemEl additionStyles={{py: 2}}  icon={'sensors_outlined'} text={'Export Sensor Data'}>
+                    <GridItemEl additionStyles={{pb: 2}}  icon={'sensors_outlined'} text={'Export Sensor Data'}>
                         <Box bgcolor={'#D4E3F5'} borderRadius={1} p={1} m={1}>
                             <Typography m={1} fontSize={12} color={'#666666'}>
                                 You can export the data of all sensors and actuators to a tree of CSV files:

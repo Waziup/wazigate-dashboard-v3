@@ -112,7 +112,7 @@ interface AppProp{
 }
 export const GridItem = ({appUrl, children,disabled }:AppProp) => (
     <Grid item md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={1} >
-        <Box minHeight={100} sx={{ px: 2, py: 1, position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
+        <Box minHeight={100} sx={{ px: 2, py: 1,boxShadow:3, position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
             {children}
             <Link to={appUrl?appUrl:''} >
                 <Button disabled={disabled} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>OPEN</Button>
@@ -339,29 +339,32 @@ export default function Apps() {
             {
                 modalProps.open && modalProps.title === 'Installing New App' && (
                     <Backdrop>
-                        <Box width={matches ? '40%' : '90%'} bgcolor={'#fff'}>
-                            <Box borderBottom={'1px solid black'} px={2} py={2}>
+                        <Box sx={{width:matches?'40%':'90%',bgcolor:'#fff',borderRadius:1.5,}} width={matches ? '40%' : '90%'} bgcolor={'#fff'}>
+                            <Box borderBottom={'1px solid black'} p={2}>
                                 <Typography>{modalProps.title}</Typography>
                             </Box>
                             {
                                 logs && (
-                                    <Box maxWidth={'100%'} overflow={'auto'} width={'100%'} height={200} bgcolor={'#000'}>
-                                        <Typography fontSize={10} color={'#fff'}>
+                                    <Box p={2} maxWidth={'100%'} overflow={'auto'} width={'100%'} height={250} bgcolor={'#000'}>
+                                        <pre style={{fontSize:13,color:'#fff'}}>
                                             {logs.logs}
-                                        </Typography>
+                                        </pre>
                                     </Box>
                                 )
                             }
-                            <Box borderBottom={'1px solid black'} py={2}>
+                            <Box py={2}>
                                 {modalProps.children}
                                 <Box px={2} py={1}>
                                     {
                                         logs.done?(
-                                            <Button onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CLOSE</Button>
+                                            <Box sx={{display:'flex',justifyContent: 'flex-end',alignItems:'center'}}>
+                                                <Button onClick={closeModal} variant={'contained'} sx={{ mx: 2,color:'#fff' }} color={'info'}>CLOSE</Button>
+                                            </Box>
                                         ):(
-                                            <LoadingButton disabled loading={true} onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CLOSE</LoadingButton>
+                                            <Box sx={{display:'flex',justifyContent: 'flex-end',alignItems:'center'}}>
+                                                <LoadingButton disabled loading={true} onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CLOSE</LoadingButton>
+                                            </Box>
                                         )
-                                        
                                     }
                                 </Box>
                             </Box>
@@ -449,7 +452,7 @@ export default function Apps() {
                             }
                             <Box px={2} py={1}>
                                 <Button onClick={uninstall} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>Uninstall</Button>
-                                <Button onClick={() => { setAppToUninstall(null); setUninstLoader(!uninstLoader) }} variant={'contained'} sx={{ mx: 2 }} color={'error'}>Cancel</Button>
+                                <Button onClick={() => { setAppToUninstall(null); setUninstLoader(!uninstLoader) }} variant={'contained'} sx={{ mx: 2 }} color={'error'}>CANCEL</Button>
                             </Box>
                         </Box>
                     </Backdrop>
@@ -459,9 +462,8 @@ export default function Apps() {
                 showAppSettings ? (
                     <Backdrop>
                         <Box zIndex={50} width={matches ? matchesMd ? '50%' : '30%' : '90%'} borderRadius={2} bgcolor={'#fff'}>
-                            <RowContainerBetween additionStyles={{ p: 1, borderBottom: '.5px solid #ccc' }}>
+                            <RowContainerBetween additionStyles={{ p:2, borderBottom: '.5px solid #ccc' }}>
                                 <Typography fontWeight={700} fontSize={15} color={'black'}>{selectedApp?.name} Settings</Typography>
-                                <Button onClick={() => { setShowAppSettings(!showAppSettings) }} sx={{ textTransform: 'initial', color: '#ff0000' }} variant={'text'} >cancel</Button>
                             </RowContainerBetween>
                             <form style={{ padding: '0 10px' }} onSubmit={(e) => { e.preventDefault(); }}>
                                 <FormControl sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
@@ -500,6 +502,10 @@ export default function Apps() {
                                     <Typography color={'primary'} mb={.4} fontSize={12}>{selectedApp?.version}</Typography>
                                 </Box>
                             </form>
+                            <RowContainerBetween additionStyles={{ p: 1,my: 1, borderTop: '.5px solid #ccc' }}>
+                                <Box/>
+                                <Button onClick={() => { setShowAppSettings(!showAppSettings) }} sx={{ textTransform: 'initial', backgroundColor: '#ff0000' }} variant={'contained'} >CANCEL</Button>
+                            </RowContainerBetween>
                         </Box>
                     </Backdrop>
                 ) : null

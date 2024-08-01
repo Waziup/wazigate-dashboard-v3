@@ -11,7 +11,7 @@ const Item = ({ more,path,onClick, color, children, title }: {path:string, onCli
         <Typography color={color} fontSize={13} fontWeight={300}>{more}</Typography>
     </Box>
 );
-import { capitalizeFirstLetter, differenceInMinutes, isActiveDevice, returnAppURL } from "../../utils";
+import { capitalizeFirstLetter, isActiveDevice, returnAppURL, time_ago } from "../../utils";
 import { useNavigate, Link } from "react-router-dom";
 import { App, Cloud as Cl, Device as Dev } from "waziup";
 import type { Device, Connection } from "../../utils/systemapi";
@@ -78,7 +78,9 @@ export default function MobileDashboard({onClick, apConn,apps,devices,selectedCl
                                         </Typography>
                                     </RowContainerBetween>
                                     <RowContainerBetween>
-                                        <Typography fontSize={13} color={'#797979'}>Last updated: {differenceInMinutes(dev.modified)} secs ago</Typography>
+                                        <Typography fontSize={13} color={'#797979'}>
+                                            {time_ago(dev.modified).toString()}
+                                        </Typography>
                                         <Typography fontSize={10} color={'#797979'} my={1} lineHeight={.8} fontWeight={300}></Typography>
                                     </RowContainerBetween>
                                 </Box>
@@ -101,6 +103,17 @@ export default function MobileDashboard({onClick, apConn,apps,devices,selectedCl
                             <Box onClick={() => {!(app.id.includes("wazigate-system"))? navigate(returnAppURL(app)):'/' }} key={id} sx={{ cursor: 'pointer', ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, borderBottom: '1px solid #E2E2E2', width: '95%', height: '100%', position: 'relative', px: 1, bgcolor: 'white', }}>
                                 <RowContainerBetween>
                                     <RowContainerNormal >
+                                        {
+                                            (app.waziapp && (app.waziapp as App['waziapp'] &{icon:string}).icon) ? (
+                                                <Box sx={{ width: 40, height: 40,alignItems:'center',display:'flex',justifyContent:'center', borderRadius: 20, overflow: 'hidden' }}>
+                                                    <img src={`/apps/${app.id}/`+(app.waziapp as App['waziapp'] &{icon:string}).icon} alt={app.name} style={{ width: 20, height: 20 }} />
+                                                </Box>
+                                            ) : (
+                                                <Box sx={{ width: 40, height: 40, borderRadius: 20, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <Typography sx={{ fontSize: 15, color: 'white'}}>W</Typography>
+                                                </Box>
+                                            )
+                                        }
                                         <Box sx={{ width: 30, height: 30, borderRadius: 15, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                             <Typography sx={{ fontSize: 15, color: 'white'}}>W</Typography>
                                         </Box>

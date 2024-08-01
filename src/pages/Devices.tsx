@@ -8,7 +8,7 @@ import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
 import EditDeviceModal from '../components/ui/EditDeviceModal';
 import { DevicesContext, SensorX } from '../context/devices.context';
-import { capitalizeFirstLetter, devEUIGenerateFc, differenceInMinutes } from '../utils';
+import { capitalizeFirstLetter, devEUIGenerateFc, time_ago } from '../utils';
 import PrimaryIconButton from '../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
 import MenuComponent from '../components/shared/MenuDropDown';
@@ -389,8 +389,8 @@ function Devices() {
                     changeEditMakeLoraWAN={changeEditMakeLoraWAN}
                     autoGenerateLoraWANOptionsHandler={autoGenerateLoraWANOptions}
                 />
-                <Box sx={{ px:3, py:3,overflowY:'auto',width:'100%',  height: '100%' }}>
-                    <RowContainerBetween>
+                <Box sx={{ px: 2, py:3,overflowY:'auto',width:'100%',  height: '100%' }}>
+                    <RowContainerBetween >
                         <Typography fontSize={24} fontWeight={700} color={'black'}>Devices</Typography>
                         {
                             matches?(
@@ -402,7 +402,7 @@ function Devices() {
                         {
                             devices.map((device, id) => {
                                 return (
-                                    <Grid item m={1} key={id} md={5.5} lg={3.5} xl={3.5} sm={8} xs={12} >
+                                    <Grid item key={id}  md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={1} >
                                         <Box sx={{ boxShadow: 3, cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -8, my: -1, px: 1, py: .4, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
                                                 <Sensors sx={{ fontSize: 15, color: '#fff' }} />
@@ -412,7 +412,9 @@ function Devices() {
                                                 <RowContainerBetween additionStyles={{}} >
                                                     <Box onClick={() => { navigate(`${device.id}`) }}>
                                                         <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>
-                                                        <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>Last Updated {(Math.round(differenceInMinutes(device.modified) / 60))>60?(Math.round(differenceInMinutes(device.modified) / 3600))+'hrs ago': Math.round(differenceInMinutes(device.modified) / 60)+'mins ago'}</Typography>
+                                                        <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>
+                                                            {time_ago(device.modified).toString()}
+                                                        </Typography>
                                                     </Box>
                                                     <MenuComponent
                                                         open={open}

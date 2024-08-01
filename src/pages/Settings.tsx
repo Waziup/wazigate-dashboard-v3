@@ -211,7 +211,7 @@ function Settings() {
                         </GridItemEl>
                         <GridItemEl text='Wazigate Identity' icon='fingerprint'>
                             <Typography sx={{textAlign:'left',textTransform:'uppercase',p:1,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
-                                ID {wazigateId}
+                                Wazigate ID: {wazigateId}
                             </Typography>
                             <Typography sx={{textAlign:'left',p:1,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
                                 Version: {buildNr}

@@ -100,7 +100,8 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     }
     const getApps = ()=>{
         window.wazigate.getApps().then((res)=>{
-            setApps(res);
+            const appFiltered = res.filter((a)=> !(a.id.includes("wazigate"))); // remove wazigate apps
+            setApps(appFiltered);
         });
     }
     const getDevices = useCallback(()=>{

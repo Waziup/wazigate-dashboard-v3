@@ -153,7 +153,8 @@ export default function SettingsNetworking() {
     };
     const fcInit = ()=>{
         window.wazigate.getClouds().then((clouds) => {
-            setSelectedCloud(Object.values(clouds)? Object.values(clouds)[0]:null);
+            const waziupCloud = Object.values(clouds)? clouds['waziup']: null;
+            setSelectedCloud(waziupCloud);
         });
         getConf().then((conf) => {
             setConf(conf);
@@ -194,7 +195,9 @@ export default function SettingsNetworking() {
             SSID: formEl.SSID.value,
             password: formEl.password.value,
         }
-        console.log("data from submitSSID form: ",data);
+        const confirm = window.confirm('Are you sure you want to change the Access Point settings?');
+        if (!confirm) return;
+
         
         setAPInfo(data)
         .then(
@@ -210,7 +213,7 @@ export default function SettingsNetworking() {
         scan();
     },[]);
     const apConn = useMemo(() => {
-        const apConn = networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP");
+        const apConn = networkDevices.wlan0? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP"): null
         return apConn; 
     },[networkDevices]);
     console.log('ApCONN: ',apConn);
@@ -238,7 +241,7 @@ export default function SettingsNetworking() {
                         <Close sx={{ ...IconStyle, fontSize: 20 }} onClick={()=>setSelectedWifi(undefined)} />
                     </RowContainerBetween>
                     <Box sx={{p:2}}>
-                        <form id="submitform" onSubmit={submitHandler}>
+                        <form  onSubmit={submitHandler}>
                             <TextInputField 
                                 icon={<CellTower sx={{fontSize:20,mx:1}}/>} 
                                 label="Access Point SSID"
@@ -341,39 +344,42 @@ export default function SettingsNetworking() {
                             }
                         </GridItemEl>
                         
-                        <GridItemEl text={'Access Point'} icon={'power_settings_new'}>
-                            <Box p={2}>
-                                <form onSubmit={submitSSID}>
+                        <GridItemEl text={'Access Point Settings'} icon={'power_settings_new'}>
+                            <Box bgcolor={'#D4E3F5'} borderRadius={1} p={2} m={1}>
+                                <form id="submitform" onSubmit={submitSSID}>
                                     <TextInputField 
-                                        icon={<CellTower sx={{fontSize:20,mx:1}}/>} 
+                                        icon={<CellTower sx={{fontSize:20,mx:1,}}/>} 
                                         label="Access Point SSID" 
+                                        sx={{}}
+                                        bgcolor={'#d4e3f5'}
                                         value={apConn? atob(apConn["802-11-wireless"]?.ssid as string) : ""}
                                         name="SSID"
                                         id="SSID"
                                         placeholder="Enter SSID"
                                     />
                                     <TextInputField 
+                                        sx={{bgcolor:'#d4e3f5'}}
                                         icon={<LockOutlined 
-                                        sx={{fontSize:20,mx:1}}/>} 
+                                        sx={{fontSize:20,mx:1,}}/>} 
                                         label="Access Point Pasword" 
                                         placeholder="Enter password"
                                         onChange={()=>{}} 
+                                        bgcolor={'#d4e3f5'}
                                         name="password"
                                         id="password"
                                     />
                                     <PrimaryButton title="Save" type="submit" />
                                 </form>
                             </Box>
-                        </GridItemEl>
-                        
-                        <GridItemEl text={'Access Point Mode'} icon={'settings'}>
-                            <Box p={2}>
-                                <Typography fontSize={13} color={'#FA9E0E'}>
-                                    Warning: If you're using WiFi to access your gateway, 
-                                    after pressing this button you will need to connect to the Wazigate Hotspot in prder to control
-                                    your gateway
-                                </Typography>
-                                <PrimaryButton title="Switch " onClick={switchToAPMode} type="button" />
+                            <Box bgcolor={'#D4E3F5'} borderRadius={1} p={1} m={1}>
+                                <Box p={2}>
+                                    <Typography fontSize={13} color={'#FA9E0E'}>
+                                        Warning: If you're using WiFi to access your gateway, 
+                                        after pressing this button you will need to connect to the Wazigate Hotspot in prder to control
+                                        your gateway
+                                    </Typography>
+                                    <PrimaryButton title="Switch " onClick={switchToAPMode} type="button" />
+                                </Box>
                             </Box>
                         </GridItemEl>
                         <GridItemEl text={'Misc. Settings'} icon={'settings'}>
