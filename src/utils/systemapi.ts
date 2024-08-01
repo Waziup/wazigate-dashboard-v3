@@ -356,7 +356,7 @@ export async function getUpdateStatus() {
 
 export async function getVersion() {
   const token = window.localStorage.getItem("token");
-  const resp = await fetch("/version", {headers: {Authorization: 'Bearer ' + token}});
+  const resp = await fetch(URL + "version", {headers: {Authorization: 'Bearer ' + token}});
 
   if (!resp.ok) await failResp(resp);
   return await resp.text();
@@ -364,7 +364,7 @@ export async function getVersion() {
 
 export async function getBuildNr() {
   const token = window.localStorage.getItem("token");
-    const resp = await fetch("/buildnr", {headers: {Authorization: 'Bearer ' + token}});
+    const resp = await fetch(URL + "buildnr", {headers: {Authorization: 'Bearer ' + token}});
 
     if (!resp.ok) await failResp(resp);
     return await resp.text();
