@@ -1,4 +1,4 @@
-import { Alert, Box,  Snackbar,  Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Alert, Box,  Snackbar, useMediaQuery, useTheme } from '@mui/material';
 import {  DEFAULT_COLORS } from '../constants';
 import { LockOpen } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -28,7 +28,7 @@ const TextInput = ({children,label}:TextInputProps)=>(
         {children}
     </Box>
 ); // Referesh the token every 10-2 minutes
-import Logo from '../assets/wazilogo.svg'
+import Logo from '../assets/wazigate.svg';
 export default function Login() {
     const navigate = useNavigate();
     const [showErrSnackbar, setShowErrSnackbar] = useState<boolean>(false);
@@ -73,8 +73,7 @@ export default function Login() {
             <Box height={'100vh'} position={'relative'} width={'100%'} bgcolor={'#F4F7F6'}>
                 <Box position={'absolute'} sx={{transform:'translate(-50%,-50%)',top:'50%',left:'50%',borderRadius:2, bgcolor:'white',width:matches?'35%':'90%'}}>
                     <Box display={'flex'} justifyContent={'center'} py={2} width={'100%'} alignItems={'center'}>
-                        <Box component={'img'}  src={Logo} mx={2} />
-                        <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>Login to Wazigate Dashboard</Typography>
+                        <Box component={'img'} src={Logo} alignSelf="center" mx={"auto"} width={'70%'} mb={1} height={50} />
                     </Box>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <Box p={2}>
