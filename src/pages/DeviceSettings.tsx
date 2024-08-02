@@ -269,9 +269,9 @@ export default function DeviceSettings() {
                                 name="devAddr"
                                 onTextInputChange={handleTextInputChange}
                                 autoGenerateHandler={autoGenerateLoraWANOptions}
-                                textInputValue={thisDevice?.meta.lorawan.devAddr} 
+                                textInputValue={thisDevice?.meta.lorawan? thisDevice.meta.lorawan.devAddr:''} 
                                 text={'Device Addr (Device Address)'} 
-                                placeholder={'Device Address. 8 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.devAddr)} 
+                                placeholder={'Device Address. 8 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan? thisDevice?.meta.lorawan.devAddr:'')} 
                             />
                             <AddTextShow
                                 onTextInputChange={handleTextInputChange}
@@ -279,15 +279,15 @@ export default function DeviceSettings() {
                                 name="nwkSEncKey"
                                 textInputValue={thisDevice?.meta.lorawan.nwkSEncKey} 
                                 text={'NwkSKey(Network Session Key)'} 
-                                placeholder={'Network Session Key. 32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.nwkSEncKey)}
+                                placeholder={'Network Session Key. 32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan? thisDevice?.meta.lorawan.nwkSEncKey:'')}
                             />
                             <AddTextShow
                                 onTextInputChange={handleTextInputChange}
                                 autoGenerateHandler={autoGenerateLoraWANOptions}
                                 name="appSKey"
-                                textInputValue={thisDevice?.meta.lorawan.appSKey} 
+                                textInputValue={thisDevice?.meta.lorawan? thisDevice?.meta.lorawan.appSKey:''} 
                                 text={'AppKey (App Key)'} 
-                                placeholder={'App Key. 32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan.appSKey)} 
+                                placeholder={'App Key. 32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan? thisDevice?.meta.lorawan.appSKey:'')} 
                             />
                         </Box>
                         {
