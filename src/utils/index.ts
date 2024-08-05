@@ -1,4 +1,4 @@
-import { App } from "waziup";
+import { App, Device } from "waziup";
 export function differenceInMinutes(date:Date){
     const now = new Date();
     const diff = (now.getTime() - date.getTime()) / 1000;
@@ -24,6 +24,15 @@ export function isActiveDevice(modifiedTime: Date): boolean{
     const diff = now.getTime() - modified.getTime();
     const diffInMinutes = Math.floor(diff / 1000 / 60);
     return diffInMinutes < 7;
+}
+export function allActiveDevices(devices: Device[]): number{
+    let count = 0;
+    devices.forEach((device)=>{
+        if(isActiveDevice(device.modified)){
+            count++;
+        }
+    });
+    return count;
 }
 export function humanFileSize(size: number ) {
     const  i = Math.floor(Math.log(size) / Math.log(1024));
@@ -56,10 +65,9 @@ export const removeSpecialChars = (value:string) => {
     return value.replace(/[/""]/gi, '');
 }
 export function time_ago(time: string | number | Date | null) {
-
     if (!time || time === null || time === '') //should be all the same
-      return "";
-  
+        return "";
+
     switch (typeof time) {
         case 'number':
             break;

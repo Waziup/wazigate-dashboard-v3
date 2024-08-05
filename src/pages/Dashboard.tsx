@@ -9,7 +9,7 @@ import RowContainerNormal from "../components/shared/RowContainerNormal";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { DevicesContext } from "../context/devices.context";
 import { App, Device } from "waziup";
-import { capitalizeFirstLetter, returnAppURL } from "../utils";
+import { allActiveDevices, capitalizeFirstLetter, returnAppURL } from "../utils";
 export const Item = ({ more,path, color,onClick, children, title }: {path:string, onClick:(path: string)=>void, more: string, children: React.ReactNode, color: string, title: string }) => (
     <Box onClick={()=>onClick(path)} mx={2} sx={{boxShadow: 3,cursor:'pointer', width: '33%', minWidth: 250, mx: 2, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
         {children}
@@ -17,9 +17,16 @@ export const Item = ({ more,path, color,onClick, children, title }: {path:string
         <Typography fontSize={14} color={color} fontWeight={300}>{more}</Typography>
     </Box>
 );
-const DeviceStatus = ({ devices,onDeviceClick }: { onDeviceClick:(devId:string)=>void, devices: Device[] }) => (
-    <Box sx={{boxShadow:3, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
-        <NormalText title="Device Status" />
+const DeviceStatus = ({ devices,onDeviceClick,activeDevices,totalDevices }: {totalDevices: number,activeDevices:number, onDeviceClick:(devId:string)=>void, devices: Device[] }) => (
+    <Box sx={{boxShadow:3, height: '100%',width:'100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
+        <RowContainerBetween additionStyles={{width:'100%',my:2}}>
+            <NormalText title="Device Status" />
+            <Box sx={{display:'flex',alignItems:'center',}}>
+                <Typography fontSize={14} mx={1} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>Total Devices: {totalDevices} </Typography>
+                <Typography></Typography>
+                <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>Active Devices: {activeDevices}</Typography>
+            </Box>
+        </RowContainerBetween>
         <BasicTable onDeviceClick={onDeviceClick} devices={devices} />
     </Box>
 );
@@ -130,7 +137,12 @@ function Dashboard() {
                             </Stack>
                             <Grid mt={2} container spacing={2}>
                                 <Grid item py={6} sm={11} md={8} >
-                                    <DeviceStatus onDeviceClick={onClick}  devices={devices?devices.filter((_device, id) => id < 4): []} />
+                                    <DeviceStatus 
+                                        onDeviceClick={onClick}
+                                        totalDevices={devices?devices.length:0}
+                                        activeDevices={devices? allActiveDevices(devices):0}
+                                        devices={devices?devices.filter((_device, id) => id < 4): []} 
+                                    />
                                 </Grid>
                                 <Grid py={6} item sm={12} md={4} >
                                     <AppStatus apps={apps?apps.filter((_i,idx)=>idx<4):[]} />
