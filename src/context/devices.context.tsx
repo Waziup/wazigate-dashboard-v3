@@ -35,6 +35,7 @@ interface ContextValues{
     profile: User | null
     setProfile: (profile:User | null)=>void
     selectedCloud: Cloud | null
+    setSelectedCloud:(cl: Cloud | null)=>void
     getDevicesFc:()=>void,
     setAppsFc:(apps:App[])=>void,
     getApps:()=>void,
@@ -59,6 +60,7 @@ export const DevicesContext = createContext<ContextValues>({
     apps:[],
     wazigateId:'',
     selectedCloud:null,
+    setSelectedCloud:()=>{},
     profile: null,
     loadProfile: ()=>{},
     setProfile: ()=>{},
@@ -141,7 +143,8 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     const [wazigateId, setWazigateId] = useState<string>(''); 
     const setNetWorkDevicesFc = useCallback(async ()=>{
         window.wazigate.getClouds().then((clouds) => {
-            setSelectedCloud(Object.values(clouds)? Object.values(clouds)[0]:null);
+            const waziupCloud = Object.values(clouds)? clouds['waziup']: null;
+            setSelectedCloud(waziupCloud);
         });
         const netWorkDevices = await getNetworkDevices();
         setNetWorkDevices(netWorkDevices);
@@ -164,13 +167,6 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
                 window.wazigate.subscribe<DeviceX[]>("devices", getDevices);
                 return async () => window.wazigate.unsubscribe("devices", getDevices);
             }
-            // else{
-            //     const token = window.localStorage.getItem('token');
-            //     if(token){
-            //         window.wazigate.setToken(token as unknown as string);
-            //         setAccessToken(token);
-            //     }
-            // }
         }
         fc();
     },[getDevices, setAccessToken, setNetWorkDevicesFc, token]);
@@ -200,6 +196,7 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         setNetWorkDevices:setNetWorkDevicesFc,
         addApp,
         loadProfile,
+        setSelectedCloud,
         setProfile:setProfileFc,
         token,
         selectedCloud,
