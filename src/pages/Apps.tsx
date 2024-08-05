@@ -339,7 +339,7 @@ export default function Apps() {
             {
                 modalProps.open && modalProps.title === 'Installing New App' && (
                     <Backdrop>
-                        <Box sx={{width:matches?'40%':'90%',bgcolor:'#fff',borderRadius:1.5,}} width={matches ? '40%' : '90%'} bgcolor={'#fff'}>
+                        <Box sx={{width:matches?'40%':'90%',bgcolor:'#fff',borderRadius:1.5,boxShadow:3}} width={matches ? '40%' : '90%'} bgcolor={'#fff'}>
                             <Box borderBottom={'1px solid black'} p={2}>
                                 <Typography>{modalProps.title}</Typography>
                             </Box>
