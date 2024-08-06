@@ -1,10 +1,11 @@
 import { ArrowBack, Close } from "@mui/icons-material"
-import { Modal, Box, SelectChangeEvent } from "@mui/material"
+import { Modal, Box, SelectChangeEvent, Typography } from "@mui/material"
 import CreateDeviceTab1 from "./CreateDeviceTab1"
 import CreateDeviceTabTwo from "./CreateDeviceTab2"
 import RowContainerBetween from "../shared/RowContainerBetween";
 import { Device } from "waziup";
 import PrimaryButton from "../shared/PrimaryButton";
+import RowContainerNormal from "../shared/RowContainerNormal";
 interface Props {
     openModal: boolean
     handleToggleModal: () => void
@@ -49,9 +50,14 @@ export default function CreateDeviceModalWindow({ openModal, autoGenerateLoraWAN
                     <RowContainerBetween>
                         {
                             screen === 'tab2' ? (
-                                <ArrowBack onClick={() => { handleScreenChange('tab1') }} sx={{ ...IconStyle, fontSize: 20 }} />
+                                <RowContainerNormal>
+                                    <ArrowBack onClick={() => { handleScreenChange('tab1') }} sx={{ ...IconStyle, fontSize: 20 }} />
+                                    <Typography mx={2}>{newDevice.name} settings</Typography>
+                                </RowContainerNormal>
                             ) : (
-                                <Box></Box>
+                                <Box>
+                                    <Typography color={'#000'} fontWeight={600} >Create a new Device</Typography>
+                                </Box>
                             )
                         }
                         <Close onClick={() => { handleScreenChange('tab1'); handleToggleModal() }} sx={{ ...IconStyle, fontSize: 20 }} />
