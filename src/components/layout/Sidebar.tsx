@@ -121,6 +121,8 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
     const location = useLocation().pathname;
     const {profile,setProfile,setAccessToken} = useContext(DevicesContext);
     const handleLogout = ()=>{
+        const cf = window.confirm('Are you sure you want to logout?');
+        if(!cf) return;
         setProfile(null);
         setAccessToken('');
         navigate('/')
