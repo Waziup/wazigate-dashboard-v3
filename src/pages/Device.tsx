@@ -273,7 +273,7 @@ function DeviceSettings() {
                                         ) : (
                                             <RowContainerBetween>
                                                 <Box/>
-                                                <Button onClick={handleCloseModal} sx={{ textTransform: 'initial', }} color="warning" variant={'contained'}>CANCEL</Button>
+                                                <Button onClick={handleCloseModal} sx={{ textTransform: 'initial',backgroundColor:'#ff0000' }} color="warning" variant={'contained'}>CANCEL</Button>
                                             </RowContainerBetween>
                                         )
                                     }
@@ -333,7 +333,8 @@ function DeviceSettings() {
                                                 callbackFc={()=>{getDevicesFc(); navigate('/devices')}} 
                                                 deviceId={device.id} 
                                                 sensActuator={sens} 
-                                                open={open} 
+                                                open={open}
+                                                modified={sens.modified}
                                                 anchorEl={anchorEl}
                                                 icon={(sens.meta && sens.meta.icon)? sens.meta.icon: ''}
                                                 kind={(sens.meta && sens.meta.kind)? sens.meta.kind : (sens as SensorX).kind? (sens as SensorX).kind : 'AirThermometer'}
@@ -363,6 +364,7 @@ function DeviceSettings() {
                                                 deviceId={device.id} 
                                                 sensActuator={act} 
                                                 open={open} 
+                                                modified={act.modified}
                                                 anchorEl={anchorEl} 
                                                 icon={(act.meta && act.meta.icon)? act.meta.icon: ''}
                                                 kind={(act.meta && act.meta.kind)? act.meta.kind : 'Motor'}
