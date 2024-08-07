@@ -3,7 +3,6 @@ import { useLocation, Link, useOutletContext, useParams, } from "react-router-do
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { ArrowForward } from "@mui/icons-material";
-import RowContainerNormal from "../components/shared/RowContainerNormal";
 import DiscreteSliderMarks from "../components/ui/DiscreteMarks";
 import { useContext, useEffect, useState } from "react";
 import { Actuator, Device, Sensor } from "waziup";
@@ -204,7 +203,7 @@ function DeviceSensorSettings() {
         })
     }
     return (
-        <Box sx={{ height: '100%', overflowY: 'auto' }}>
+        <Box sx={{ height: '100%',  }}>
             <Box p={2} px={3}>
                 <Typography fontWeight={600} fontSize={24} color={'black'}>{device?.name}</Typography>
                 <div role="presentation" onClick={() => { }}>
@@ -235,8 +234,8 @@ function DeviceSensorSettings() {
                     </Breadcrumbs>
                 </div>
             </Box>
-            <Box display={'flex'} flexDirection={matches?'row':'column'} bgcolor={matches ? '#fff' : 'inherit'} height={'100%'} width={'100%'} px={2} pt={matches ? 2 : .5}  >
-                <Box m={2} width={matches?'45%':'95%'}>
+            <Box display={'flex'} flexDirection={matches?'row':'column'} bgcolor={matches ? '#fff' : 'inherit'} height={'100%'} width={'100%'} px={1} pt={matches ? 2 : .5}  >
+                <Box m={matches?2:0} width={matches?'45%':'95%'}>
                     <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Setup {sensOrActuator?.name} kind, quantity and unit</Typography>
                     <>
                         <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
@@ -267,16 +266,17 @@ function DeviceSensorSettings() {
                                     id="unit"
                                 />
                             </Box>
-                            <Box width={matches ? '100%' : '90%'}>
-                                <RowContainerNormal additionStyles={{ width: '100%' }}>
-                                    <PrimaryIconButton type="submit" iconname="save" onClick={() => { }} title="SAVE" />
+                            <RowContainerBetween additionStyles={{ width: '100%' }}>
+                                <Box />
+                                <RowContainerBetween >
+                                    <PrimaryIconButton type="submit" iconname="save" title="SAVE" />
                                     <Button onClick={resetHandler} sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
-                                </RowContainerNormal>
-                            </Box>
+                                </RowContainerBetween>
+                            </RowContainerBetween>
                         </form>
                     </>
                 </Box>
-                <Box width={matches?'45%':'95%'} m={2}>
+                <Box width={matches?'45%':'95%'} m={matches?2:0}>
                     {
                         pathname.includes('actuators') ? (
                             <>
@@ -304,7 +304,7 @@ function DeviceSensorSettings() {
                             <form style={{margin:'3px 0'}} onSubmit={handleChangeSensorOrActuatorSubmittion} >
                                 <Box width={ '90%'}>
                                     <Box>
-                                        <Typography sx={{fontWeight:500,fontSize:20,my:2,color:'#292F3F'}}>Setup sync and sync-interface</Typography>
+                                        <Typography sx={{fontWeight:500,fontSize:matches?20:18,my:2,color:'#292F3F'}}>Setup sync and sync-interface</Typography>
                                         <RowContainerBetween additionStyles={{ my: .5 }}>
                                             <Typography fontSize={15} color={'#292F3F'}>Sync Sensor</Typography>
                                             <Icon 
@@ -322,16 +322,17 @@ function DeviceSensorSettings() {
                                     onSliderChange={onSliderChange} 
                                     matches={matches} 
                                 />
-                                <Box sx={{ width: '100%', mt: 1 }}>
-                                    <RowContainerBetween additionStyles={{ width: matches ? '35%' : '90%',  }} >
+                                <RowContainerBetween additionStyles={{}}>
+                                    <Box/>
+                                    <RowContainerBetween additionStyles={{  }} >
                                         <PrimaryIconButton type="submit" iconname="save" title="SAVE" />
                                         <Button onClick={resetHandler} sx={{ mx: 1, color: '#292F3F' }} variant={'text'}>RESET</Button>
                                     </RowContainerBetween>
-                                </Box>
+                                </RowContainerBetween>
                             </form>
                         ) : null
                     }
-                    <Box width={'90%'}>
+                    <Box width={'90%'} mt={2}>
                         <Typography fontWeight={500} fontSize={20} my={1} color={'#292F3F'}>Delete {sensOrActuator?.name}</Typography>
                         <RowContainerBetween additionStyles={{ width: '100%' }}>
                             <PrimaryIconButton iconname="delete"  additionStyles={{backgroundColor:'#ff0000'}} onClick={deleteSensorOrActuator} title="DELETE" />
