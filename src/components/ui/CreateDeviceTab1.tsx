@@ -1,4 +1,4 @@
-import { Box, FormControl, Typography, Radio, InputLabel, MenuItem, Select, SelectChangeEvent, } from "@mui/material"
+import { Box, FormControl, Typography, InputLabel, MenuItem, Select, SelectChangeEvent, } from "@mui/material"
 import { Device } from "waziup";
 export const DropDownCreateDeviceTab1 = ({handleChangeSelect,showNameOnly,title,options,value}:{showNameOnly?:boolean, title?:string, handleChangeSelect:(e:SelectChangeEvent<string>)=>void,  options:{id:string,name:string,imageurl:string}[], value: string})=>(
     <FormControl variant="standard" sx={{p:0,mt:2, border:'none', width: '100%', }}>
@@ -28,15 +28,7 @@ export const DropDownCreateDeviceTab1 = ({handleChangeSelect,showNameOnly,title,
                             </Box>
                             {
                                 showNameOnly?null:(
-                                    <Radio
-                                        checked={value===op.id}
-                                        // onChange={handleChangeSelect}
-                                        value={op.id}
-                                        size='small'
-                                        sx={{color:'primary.main',fontSize:20}}
-                                        name="radio-buttons"
-                                        inputProps={{ 'aria-label': 'A' }}
-                                    />
+                                    <Box m={1}/>
                                 )
                             }
                         </MenuItem>

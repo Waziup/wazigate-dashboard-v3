@@ -56,7 +56,7 @@ export default function InternetIndicator(){
                         <CircularProgress size={14} sx={{color:'#2BBBAD',mx:1.5,fontSize:14}} />
                     </Typography>
                 ):(
-                    <Box sx={{display:'flex',color:'#fff', alignItems:'center', justifyContent:'center', flexDirection:'row'}}
+                    <Box sx={{display:'flex',color:'#fff', }}
                         onClick={() => checkTheStatus(true)}
                     >
                         {state.status ? (
