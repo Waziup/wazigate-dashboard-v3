@@ -1,5 +1,5 @@
 import { Box, Breadcrumbs,Button,TextField, FormControl,NativeSelect,Typography,Icon } from "@mui/material";
-import { useLocation, Link, useOutletContext, useParams, } from "react-router-dom";
+import { useLocation, Link, useOutletContext, useParams, useNavigate, } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { ArrowForward } from "@mui/icons-material";
@@ -64,6 +64,7 @@ function DeviceSensorSettings() {
     const resetHandler = () => {
         setSensOrActuator(rActuator);
     }
+    const navigate = useNavigate()
     useEffect(() => {
         window.wazigate.getDevice(id).then((de) => {
             const sensor = de.sensors.find((sensor) => sensor.id === sensorId);
@@ -182,6 +183,7 @@ function DeviceSensorSettings() {
             window.wazigate.deleteSensor(id as string, sensOrActuator?.id as string).then(() => {
                 alert('Success');
                 getDevicesFc();
+                navigate('devices/'+id)
             }).catch((err) => {
                 alert('Error'+err);
             });
@@ -189,6 +191,7 @@ function DeviceSensorSettings() {
             window.wazigate.deleteActuator(id as string, sensOrActuator?.id as string).then(() => {
                 alert('Success');
                 getDevicesFc()
+                navigate('devices/'+id)
             }).catch((err) => {
                 alert('Error'+err);
             });
