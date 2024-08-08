@@ -46,21 +46,23 @@ export default function ExportTabMaintenance({matches}:Props) {
             <Grid container>
                 <GridItem  spacing={2} md={4.6} xs={12} matches={matches as boolean}>
                     <GridItemEl additionStyles={{pb: 2}}  icon={'sensors_outlined'} text={'Export Sensor Data'}>
-                        <Box bgcolor={'#D4E3F5'} borderRadius={1} p={1} m={1}>
-                            <Typography m={1} fontSize={12} color={'#666666'}>
-                                You can export the data of all sensors and actuators to a tree of CSV files:
-                            </Typography>
-                            <Button href='/exporttree' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
-                                EXPORT
-                            </Button>
-                        </Box>
-                        <Box bgcolor={'#D4E3F5'} borderRadius={1} p={1} m={1}>
-                            <Typography m={1} fontSize={12} color={'#666666'}>
-                                You can export the data of all sensors and actuators to one CSV file:
-                            </Typography>
-                            <Button href='/exportall' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
-                                EXPORT
-                            </Button>
+                        <Box m={1} borderRadius={1} bgcolor={'#D4E3F5'}>
+                            <Box  borderRadius={1} p={1} >
+                                <Typography fontSize={12} color={'#666666'}>
+                                    Export as CSV files tree
+                                </Typography>
+                                <Button href='/exporttree' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
+                                    EXPORT
+                                </Button>
+                            </Box>
+                            <Box p={1} >
+                                <Typography  fontSize={12} color={'#666666'}>
+                                    Export as one CSV file
+                                </Typography>
+                                <Button href='/exportall' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
+                                    EXPORT
+                                </Button>
+                            </Box>
                         </Box>
                     </GridItemEl>
                 </GridItem>
