@@ -1,5 +1,5 @@
 import { Box, Grid, Stack, Typography,styled } from "@mui/material";
-import { Router, CloudOff, Wifi,  Cloud, } from '@mui/icons-material';
+import {  CloudOff, Wifi,  Cloud, SearchOff, } from '@mui/icons-material';
 import BasicTable from "../components/ui/BasicTable";
 import React, { useContext, useMemo, } from "react";
 import { DEFAULT_COLORS } from "../constants";
@@ -9,12 +9,24 @@ import RowContainerNormal from "../components/shared/RowContainerNormal";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { DevicesContext } from "../context/devices.context";
 import { App, Device } from "waziup";
-import { allActiveDevices, capitalizeFirstLetter, returnAppURL } from "../utils";
-export const Item = ({ more,path, color,onClick, children, title }: {path:string, onClick:(path: string)=>void, more: string, children: React.ReactNode, color: string, title: string }) => (
+import { allActiveDevices, capitalizeFirstLetter,orderByLastUpdated, returnAppURL } from "../utils";
+import InternetIndicator from "../components/ui/InternetIndicator";
+export const Item = ({ more,path, color,onClick, children,isSynched, title,showInternet, }: {path:string,showInternet?:boolean,isSynched?:boolean,  onClick:(path: string)=>void, more: string, children: React.ReactNode, color: string, title: string }) => (
     <Box onClick={()=>onClick(path)} mx={2} sx={{boxShadow: 3,cursor:'pointer', width: '33%', minWidth: 250, mx: 2, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
         {children}
         <NormalText title={title} />
         <Typography fontSize={14} color={color} fontWeight={300}>{more}</Typography>
+        {
+            showInternet?(
+                <Box display={'flex'} >
+                    <Typography fontSize={14} fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Internet:   </Typography> <InternetIndicator />
+                </Box>
+            ):<Box >
+                <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
+                    {isSynched?'Synched with Waziup Cloud':'Not Synchronized'}
+                </Typography>
+            </Box>
+        }
     </Box>
 );
 const DeviceStatus = ({ devices,onDeviceClick,activeDevices,totalDevices }: {totalDevices: number,activeDevices:number, onDeviceClick:(devId:string)=>void, devices: Device[] }) => (
@@ -48,7 +60,7 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
         <NormalText title="App Status" />
         <MyScrollingElement sx={{overflowY:'auto'}} width={'100%'} height={'100%'}>
             {
-                apps.map((app, index) => {
+                apps && apps.length >0?apps.map((app, index) => {
                     // eslint-disable-next-line react-hooks/rules-of-hooks
                     const [imageError, setImageError] = React.useState(false);
                     const handleImageError = () => {setImageError(true)}
@@ -85,7 +97,12 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
                                 </Typography>
                             </RowContainerBetween>
                         </Link>
-                )})
+                )}): (
+                    <Box sx={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                        <SearchOff sx={{fontSize:20,color:'#325460'}}/>
+                        <Typography fontSize={18} color={'#325460'}>No Apps Installed</Typography>
+                    </Box>
+                )
             }
         </MyScrollingElement>
     </Box>
@@ -111,10 +128,8 @@ function Dashboard() {
                         <Box p={3} sx={{ width: '100%' }}>
                             <Typography fontSize={24} color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
                             <Stack direction={'row'} mt={2} spacing={2}>
-                                <Item path='/settings' onClick={onClick} color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
-                                    <Router sx={{ mb: 2, fontSize: 42, color: 'black' }} />
-                                </Item>
-                                <Item path='/settings/networking' onClick={onClick} color={selectedCloud?.paused?"#CCC400":DEFAULT_COLORS.primary_blue} title="Cloud Synchronization" more={selectedCloud?.paused?"Inactive":'Active'} >
+                                
+                                <Item isSynched={selectedCloud?.paused?false: true} path='/settings/networking' onClick={onClick} color={selectedCloud?.paused?"#CCC400":DEFAULT_COLORS.primary_blue} title="Cloud Synchronization" more={selectedCloud?.paused?"Inactive":'Active'} >
                                     {
                                         selectedCloud?.paused?(
                                             <CloudOff sx={{ mb: 2, fontSize: 42, color: '#D9D9D9' }} />
@@ -125,11 +140,11 @@ function Dashboard() {
                                 </Item>
                                 {
                                     (eth0 && eth0.IP4Config)?(
-                                        <Item path='/settings/networking' onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Ethernet Connection" more={`IP Address: ${(eth0 && eth0.IP4Config)?eth0.IP4Config.Addresses[0].Address:''}`} >
+                                        <Item path='/settings/networking' showInternet onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Ethernet Connection" more={`IP Address: ${(eth0 && eth0.IP4Config)?eth0.IP4Config.Addresses[0].Address:''}`} >
                                             <Wifi sx={{ mb: 2, fontSize: 42, color: 'black' }} />
                                         </Item>
                                     ):(
-                                        <Item path='/settings/networking' onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Wifi Connection" more={`Wifi Name: ${apConn?.connection.id}`} >
+                                        <Item path='/settings/networking' showInternet onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Wifi Connection" more={`Wifi Name: ${apConn?.connection.id}`} >
                                             <Wifi sx={{ mb: 2, fontSize: 42, color: 'black' }} />
                                         </Item>
                                     )
@@ -141,7 +156,7 @@ function Dashboard() {
                                         onDeviceClick={onClick}
                                         totalDevices={devices?devices.length:0}
                                         activeDevices={devices? allActiveDevices(devices):0}
-                                        devices={devices?devices.filter((_device, id) => id < 4): []} 
+                                        devices={devices?orderByLastUpdated(devices.filter((_device, id) => id < 4)).reverse(): []} 
                                     />
                                 </Grid>
                                 <Grid py={6} item sm={12} md={4} >
@@ -158,7 +173,9 @@ function Dashboard() {
                             eth0={eth0}
                             selectedCloud={selectedCloud}
                             apps={apps}
-                            devices={devices?devices.filter((_device, id) => id < 5):[]}
+                            totalDevices={devices?devices.length:0}
+                            activeDevices={devices? allActiveDevices(devices):0}
+                            devices={devices?orderByLastUpdated(devices.filter((_device, id) => id < 4)).reverse(): []}
                         />
                     </Box>
                 )
