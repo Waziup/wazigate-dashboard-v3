@@ -18,7 +18,7 @@ interface Props{
 }
 export default function BasicTable({onDeviceClick, devices}:Props) {
     const rowsData = devices.map((dev)=>{
-        return createData(dev.meta.type,dev.name+'*'+Math.round(differenceInMinutes(dev.modified)/60),Math.round(differenceInMinutes(dev.modified)/3600)+' hrs ago',isActiveDevice(dev.modified))
+        return createData(dev.meta.type,dev.name+'*'+differenceInMinutes(dev.modified),differenceInMinutes(dev.modified) ??'',isActiveDevice(dev.modified))
     });
     const devF =(devName:string)=>{
         const deviceF =  devices.find((d)=>d.name===devName);
