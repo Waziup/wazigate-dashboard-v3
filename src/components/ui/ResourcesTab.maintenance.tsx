@@ -71,7 +71,7 @@ export default function ResourcesTabMaintenance({matches}:Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
     return (
-        <Box  sx={{ overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100vh' }}>
+        <Box  sx={{ height: '100vh' }}>
             <Stack direction={matches?'row':'column'} justifyContent={'space-evenly'} spacing={2}>
                 <ReactSpeedometer
                     maxValue={100}
@@ -143,6 +143,11 @@ export default function ResourcesTabMaintenance({matches}:Props) {
                         labels:{
                             show: false
                         }
+                    },
+                    yaxis: {
+                        min: 0, // Minimum value for the y-axis
+                        // max: 1000, // Maximum value for the y-axis
+                        tickAmount: 4,
                     },
                     dataLabels:{
                         enabled:false
