@@ -1,13 +1,13 @@
 import { Box, Grid, Typography,  } from '@mui/material';
-import RowContainerBetween from './RowContainerBetween'
-import RowContainerNormal from './RowContainerNormal'
+import RowContainerBetween from './RowContainerBetween';
 import SVGIcon from './SVGIcon'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import ontologiesicons from '../../assets/ontologies.svg';
 import { Sensor,Actuator } from 'waziup';
 import ontologies from '../../assets/ontologies.json';
 import MenuComponent from './MenuDropDown';
-import { removeSpecialChars } from '../../utils';
+import { removeSpecialChars, time_ago } from '../../utils';
+import { DEFAULT_COLORS } from '../../constants';
 interface SensorActuatorItemProps {
     sensActuator: Sensor | Actuator;
     open:boolean,
@@ -18,13 +18,14 @@ interface SensorActuatorItemProps {
     deviceId:string
     kind:string
     icon:string
+    modified: Date,
     type: "actuator" | "sensor",
     callbackFc?:()=>void,
 }
 const isActuator = (kind:string): boolean => {
     return Object.keys(ontologies.actingDevices).includes(kind);
 }
-export default function SensorActuatorItem({kind, icon, callbackFc,type, sensActuator: sens,handleClose,open,children,deviceId}: SensorActuatorItemProps) {
+export default function SensorActuatorItem({kind, icon, callbackFc,type, modified, sensActuator: sens,handleClose,open,children,deviceId}: SensorActuatorItemProps) {
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const navigate = useNavigate();
     const handleDelete = () => {
@@ -47,18 +48,14 @@ export default function SensorActuatorItem({kind, icon, callbackFc,type, sensAct
         })
     }
     return (
-        <Grid lg={3} my={1} xl={3} md={4} xs={5.2} sm={5.2}  item sx={{ bgcolor: '#fff',cursor:'pointer', mx: matches?2:1, borderRadius: 2 }}>
-            <RowContainerBetween additionStyles={{px:matches?1:.3}}>
-                <RowContainerNormal onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}`)}} >
-                    <SVGIcon
-                        style={{ width: 20, height: 20, marginRight: 5 }}
-                        src={`${ontologiesicons}#${
-                            icon ?
-                            icon:
-                                type==='actuator'?ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices].icon:ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices].icon}`}
-                    />
+        <Grid lg={3} my={1} xl={3} md={4} xs={5.5} sm={6}  item sx={{boxShadow:3, bgcolor: '#fff',cursor:'pointer', mx: matches?2:.8, borderRadius: 2 }}>
+            <RowContainerBetween additionStyles={{px:matches?1:0}}>
+                <Box onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}`)}} >
                     <Typography sx={{fontSize:15,fontWeight:'600'}}>{removeSpecialChars(sens? sens.name:'')}</Typography>
-                </RowContainerNormal>
+                    <Typography color={DEFAULT_COLORS.secondary_black} fontSize={matches?12:10} fontWeight={300}>
+                        {time_ago(modified).toString()}
+                    </Typography>
+                </Box>
                 <MenuComponent
                     open={open}
                     menuItems={[
@@ -75,7 +72,14 @@ export default function SensorActuatorItem({kind, icon, callbackFc,type, sensAct
                     ]}
                 />
             </RowContainerBetween>
-            <Box onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}`)}}>
+            <Box sx={{display:'flex',alignItems:'center',mb:.5}} onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}`)}}>
+                <SVGIcon
+                    style={{ width: 35, height: 35, marginRight: 5 }}
+                    src={`${ontologiesicons}#${
+                        icon ?
+                        icon:
+                            type==='actuator'?ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices].icon:ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices].icon}`}
+                />
                 {children}
             </Box>
         </Grid>
