@@ -8,7 +8,7 @@ import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
 import EditDeviceModal from '../components/ui/EditDeviceModal';
 import { DevicesContext, SensorX } from '../context/devices.context';
-import { capitalizeFirstLetter, devEUIGenerateFc, time_ago } from '../utils';
+import { capitalizeFirstLetter, devEUIGenerateFc, differenceInMinutes,  } from '../utils';
 import PrimaryIconButton from '../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
 import MenuComponent from '../components/shared/MenuDropDown';
@@ -32,7 +32,7 @@ function Devices() {
     const { devices, wazigateId, getDevicesFc } = useContext(DevicesContext);
     const [selectedDevice, setSelectedDevice] = useState<null | Device>(null);
     const [newDevice, setNewDevice] = useState<Device>(initialNewDevice);
-    const [matches] = useOutletContext<[matches: boolean]>();
+    const [matches] = useOutletContext<[matches: boolean,matchesMd: boolean]>();
     const handleToggleModal = () => {
         setOpenModal(!openModal);
         if (!openModal) {
@@ -237,7 +237,7 @@ function Devices() {
                     });
             }
             if (device?.name !== selectedDevice?.name) {
-                window.wazigate.setDeviceName(selectedDevice.id as string, selectedDevice.name.toString())
+                window.wazigate.setDeviceName(selectedDevice.id as string, selectedDevice.name)
                     .then(() => {
                         alert("Device name updated");
                         return;
@@ -359,7 +359,7 @@ function Devices() {
     }
     return (
         <>
-            <Box sx={{ height: '100%', overflowY: 'auto' }}>
+            <Box sx={{ height: '100%',}}>
                 <CreateDeviceModalWindow
                     openModal={openModal}
                     handleToggleModal={handleToggleModal}
@@ -389,7 +389,7 @@ function Devices() {
                     changeEditMakeLoraWAN={changeEditMakeLoraWAN}
                     autoGenerateLoraWANOptionsHandler={autoGenerateLoraWANOptions}
                 />
-                <Box sx={{ px: 2, py:3,overflowY:'auto',width:'100%',  height: '100%' }}>
+                <Box sx={{ px: 2, py: matches?3:2,width:'100%', bgcolor:'#F0F2F5',  height: '100%' }}>
                     <RowContainerBetween >
                         <Typography fontSize={24} fontWeight={700} color={'black'}>Devices</Typography>
                         {
@@ -398,7 +398,7 @@ function Devices() {
                             ):null
                         }
                     </RowContainerBetween>
-                    <Grid container my={2} spacing={2}>
+                    <Grid container my={matches?2:0} spacing={2}>
                         {
                             devices.map((device, id) => {
                                 return (
@@ -413,7 +413,7 @@ function Devices() {
                                                     <Box onClick={() => { navigate(`${device.id}`) }}>
                                                         <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>
                                                         <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>
-                                                            {time_ago(device.modified).toString()}
+                                                            Last updated {differenceInMinutes(new Date(device.modified).toISOString())}
                                                         </Typography>
                                                     </Box>
                                                     <MenuComponent
@@ -452,11 +452,12 @@ function Devices() {
                                                                 kind={(sensor.meta && sensor.meta.kind)? sensor.meta.kind : (sensor as SensorX).kind? (sensor as SensorX).kind : 'AirThermometer'}
                                                                 iconname={(sensor.meta && sensor.meta.icon)? sensor.meta.icon : ''}
                                                                 name={sensor.name}
-                                                                text={sensor.value? Math.round(sensor.value * 100) / 100 :''}
+                                                                unit={(sensor.meta  && sensor.meta.unitSymbol)? sensor.meta.unitSymbol : ''}
+                                                                text={sensor.value? sensor.value :0}
                                                             />
                                                         </Box>
                                                     )) : (
-                                                        <Box my={2}></Box>
+                                                        null
                                                     )
                                                 }
                                                 {
@@ -470,12 +471,13 @@ function Devices() {
                                                                 type='actuator'
                                                                 iconname={(act.meta && act.meta.icon) ? act.meta.icon : ''}
                                                                 name={act.name}
+                                                                unit={(act.meta && act.meta.unit && act.value) ? act.meta.unit : ''}
                                                                 kind={(act.meta && act.meta.kind)? act.meta.kind : 'Motor'}
                                                                 text={act.meta? act.meta.quantity==='Boolean' ? act.value ? 'Running' : 'Closed': Math.round(act.value * 100) / 100 : ''}
                                                             />
                                                         </Box>
                                                     )) : (
-                                                        <Box my={2}></Box>
+                                                        null
                                                     )
                                                 }
                                             </CardContent>
