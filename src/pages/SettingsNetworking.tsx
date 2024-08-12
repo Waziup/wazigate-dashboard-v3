@@ -3,7 +3,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import RowContainerNormal from "../components/shared/RowContainerNormal";
-import { CellTower, Close, DesktopWindowsOutlined, LockOutlined, ModeFanOffOutlined, WifiOutlined } from "@mui/icons-material";
+import { ArrowBack, CellTower, Close, DesktopWindowsOutlined, LockOutlined, ModeFanOffOutlined, WifiOutlined } from "@mui/icons-material";
 import { Android12Switch } from "../components/shared/Switch";
 import PrimaryButton from "../components/shared/PrimaryButton";
 import { getWiFiScan,setConf as setConfFc, AccessPoint,getConf, setWiFiConnect, WifiReq, setAPMode, setAPInfo } from "../utils/systemapi";
@@ -14,12 +14,18 @@ const GridItem = ({ children,matches,lg,xl, xs,md,additionStyles }: {xs:number,m
         {children}
     </Grid>
 );
-const style = {
+const style1 = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 440,
+    // height: 500,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    // overflowY: 'auto',
+    
     bgcolor: 'background.paper',
     boxShadow: 24,
     borderRadius: 2,
@@ -31,13 +37,18 @@ import MenuComponent from "../components/shared/MenuDropDown";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 import { DevicesContext } from "../context/devices.context";
 import Backdrop from "../components/Backdrop";
-import WaziLogo from '../assets/wazilogo.svg'
+import WaziLogo from '../assets/wazilogo.svg';
 export default function SettingsNetworking() {
     const [matches] = useOutletContext<[matches:boolean]>();
     const [scanLoading,setScanLoading]=useState<boolean>(false);
     const [wifiList,setWifiList]=useState<AccessPoint[]>([]);
+    const [openModal, setOpenModal] = useState(false);
+    const [screen, setScreen] = useState<'tab1' | 'tab2'>('tab1');
+    const handleScreenChange = (tab: 'tab1' | 'tab2') => {
+        setScreen(tab);
+    }
     const [selectedWifi,setSelectedWifi]=useState<AccessPoint & {password?:string}|undefined>(undefined);
-    const {networkDevices} = useContext(DevicesContext)
+    const {networkDevices,selectedCloud,setNetWorkDevices,setSelectedCloud} = useContext(DevicesContext)
     const scan = () => {
         setScanLoading(true);
         getWiFiScan()
@@ -51,7 +62,6 @@ export default function SettingsNetworking() {
     }
     const [saving, setSaving] = useState(false);
     const [loading,setLoading] = useState(false);
-    const [selectedCloud, setSelectedCloud] = useState<Cloud | null>(null);
     const [hasUnsavedChanges, sethasUnsavedChanges] = useState(false);
     const [conf, setConf] = useState<{fan_trigger_temp:string,oled_halt_timeout:string }>({
         fan_trigger_temp:'',
@@ -113,9 +123,9 @@ export default function SettingsNetworking() {
         setSaving(true);
         const timer = new Promise(resolve => setTimeout(resolve, 2000));
         await window.wazigate.setCloudPaused(selectedCloud?.id as string, !checked)
-        .then(() => {
+        .then(async() => {
             alert("Sync activated!");
-            fcInit();
+            setNetWorkDevices()
             timer.then(() => {
                 setSaving(false);
             })
@@ -152,10 +162,6 @@ export default function SettingsNetworking() {
         });
     };
     const fcInit = ()=>{
-        window.wazigate.getClouds().then((clouds) => {
-            const waziupCloud = Object.values(clouds)? clouds['waziup']: null;
-            setSelectedCloud(waziupCloud);
-        });
         getConf().then((conf) => {
             setConf(conf);
         }).catch((err) => {
@@ -165,7 +171,6 @@ export default function SettingsNetworking() {
             });
             console.log(err);
         });
-        
     }
     useEffect(() => {
         fcInit();
@@ -197,8 +202,6 @@ export default function SettingsNetworking() {
         }
         const confirm = window.confirm('Are you sure you want to change the Access Point settings?');
         if (!confirm) return;
-
-        
         setAPInfo(data)
         .then(
             (msg) => {
@@ -212,11 +215,13 @@ export default function SettingsNetworking() {
     useEffect(() => {
         scan();
     },[]);
-    const apConn = useMemo(() => {
-        const apConn = networkDevices.wlan0? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP"): null
-        return apConn; 
+    const [apConn,eth0, accessName] = useMemo(() => {
+        const accessName = networkDevices.wlan0? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP"): null
+        const apCn = networkDevices?.wlan0? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === networkDevices.wlan0.ActiveConnectionId): null
+        const eth0 = networkDevices?.eth0;
+        return [apCn, eth0,accessName]; 
     },[networkDevices]);
-    console.log('ApCONN: ',apConn);
+    const cancelHander = () => {setSelectedWifi(undefined); setOpenModal(false); handleScreenChange('tab1')};
     return (
         <>
             {
@@ -227,48 +232,53 @@ export default function SettingsNetworking() {
                 ):null
             }
             <Modal
-                open={selectedWifi !== undefined}
-                onClose={() => setSelectedWifi(undefined)}
+                open={openModal}
+                onClose={cancelHander}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={style}>
-                    <RowContainerBetween additionStyles={{bgcolor: '#D8D8D8',borderRadius:2,}}>
-                        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', alignItems: 'center' }} p={1} >
-                            <WifiOutlined sx={IconStyle}/>
-                            <Typography color={'#212529'} fontWeight={500}>Connect to Wifi</Typography>
-                        </Box>
-                        <Close sx={{ ...IconStyle, fontSize: 20 }} onClick={()=>setSelectedWifi(undefined)} />
-                    </RowContainerBetween>
-                    <Box sx={{p:2}}>
-                        <form  onSubmit={submitHandler}>
-                            <TextInputField 
-                                icon={<CellTower sx={{fontSize:20,mx:1}}/>} 
-                                label="Access Point SSID"
-                                value={selectedWifi?.ssid}
-                                name="SSID"
-                                id="SSID"
-                                placeholder="Enter SSID"
-                            />
-                            <TextInputField 
-                                icon={<LockOutlined 
-                                sx={{fontSize:20,mx:1}}/>} 
-                                onChange={(e)=>{
-                                    setSelectedWifi({
-                                        ...selectedWifi as AccessPoint,
-                                        password:e.target.value
-                                    }) as unknown as AccessPoint;
-                                }}
-                                label="Access Point Pasword" 
-                                placeholder="Enter password" 
-                                name="password"
-                            />
-                            <PrimaryButton title="Save"  type="submit" />
-                        </form>
-                    </Box>
+                <Box sx={style1}>
+                    {
+                        screen ==='tab1'?(
+                            <Box sx={{}}>
+                                <RowContainerBetween additionStyles={{p:2,borderBottom:'1px solid #ccc'}}>
+                                    <Box>
+                                        <Typography color={'#000'} fontWeight={500} >Available Wifi Networks</Typography>
+                                        <Typography fontSize={14} color={'#666'}>Please select a network to connect</Typography>
+                                    </Box>
+                                    <Close onClick={cancelHander} sx={{ ...IconStyle,cursor: 'pointer', fontSize: 20 }} />
+                                </RowContainerBetween>
+                                <Box sx={{overflowY:'auto',height:380}}>
+                                    {
+                                        scanLoading?
+                                            <Box sx={{mx:'auto',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',width:'100%'}}>
+                                                <Typography>Checking for available networks</Typography>
+                                                <CircularProgress />
+                                            </Box>
+                                        :(
+                                            wifiList.map((wifi) => (
+                                                <Box key={wifi.ssid} onClick={()=>setSelectedWifi(wifi)}>
+                                                    <RowContainerBetween additionStyles={{bgcolor:selectedWifi?.ssid===wifi.ssid?'#ccc':'', cursor:'pointer',":hover":{bgcolor:'#ccc'},borderBottom:'1px solid #ccc',p:1}}>
+                                                        <Typography>{wifi.ssid}</Typography>
+                                                        <Icon sx={IconStyle}>wifi_outlined</Icon>
+                                                    </RowContainerBetween>
+                                                </Box>
+                                            )
+                                        ))
+                                    }
+                                </Box>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between',borderTop:'1px solid #ccc', alignItems: 'center', p: 2 }} >
+                                    <Box></Box>
+                                    <PrimaryButton title="NEXT" disabled={selectedWifi===undefined} onClick={() => { handleScreenChange('tab2') }} />
+                                </Box>
+                            </Box>
+                        ):(
+                            <SelectedNetwork cancelHander={cancelHander} backHandler={()=>{setSelectedWifi(undefined);handleScreenChange('tab1')}} submitHandler={submitHandler} selectedWifi={selectedWifi} setSelectedWifi={setSelectedWifi} />
+                        )
+                    }
                 </Box>
             </Modal>
-            <Box sx={{pl:2.5,pt:2.5, position: 'relative', width: '100%',overflowY:'auto', height: '100vh' }}>
+            <Box sx={{pl:matches?2.5:1,pt:2.5, position: 'relative', width: '100%', height: '100vh' }}>
                 <Box>
                     <Typography fontWeight={600} fontSize={24} color={'black'}>Wifi</Typography>
                     <div role="presentation" >
@@ -344,44 +354,6 @@ export default function SettingsNetworking() {
                             }
                         </GridItemEl>
                         
-                        <GridItemEl text={'Access Point Settings'} icon={'power_settings_new'}>
-                            <Box bgcolor={'#D4E3F5'} borderRadius={1} p={2} m={1}>
-                                <form id="submitform" onSubmit={submitSSID}>
-                                    <TextInputField 
-                                        icon={<CellTower sx={{fontSize:20,mx:1,}}/>} 
-                                        label="Access Point SSID" 
-                                        sx={{}}
-                                        bgcolor={'#d4e3f5'}
-                                        value={apConn? atob(apConn["802-11-wireless"]?.ssid as string) : ""}
-                                        name="SSID"
-                                        id="SSID"
-                                        placeholder="Enter SSID"
-                                    />
-                                    <TextInputField 
-                                        sx={{bgcolor:'#d4e3f5'}}
-                                        icon={<LockOutlined 
-                                        sx={{fontSize:20,mx:1,}}/>} 
-                                        label="Access Point Pasword" 
-                                        placeholder="Enter password"
-                                        onChange={()=>{}} 
-                                        bgcolor={'#d4e3f5'}
-                                        name="password"
-                                        id="password"
-                                    />
-                                    <PrimaryButton title="Save" type="submit" />
-                                </form>
-                            </Box>
-                            <Box bgcolor={'#D4E3F5'} borderRadius={1} p={1} m={1}>
-                                <Box p={2}>
-                                    <Typography fontSize={13} color={'#FA9E0E'}>
-                                        Warning: If you're using WiFi to access your gateway, 
-                                        after pressing this button you will need to connect to the Wazigate Hotspot in prder to control
-                                        your gateway
-                                    </Typography>
-                                    <PrimaryButton title="Switch " onClick={switchToAPMode} type="button" />
-                                </Box>
-                            </Box>
-                        </GridItemEl>
                         <GridItemEl text={'Misc. Settings'} icon={'settings'}>
                             <Box p={2}>
                                 <form onSubmit={submitConf}>
@@ -410,37 +382,126 @@ export default function SettingsNetworking() {
                             </Box>
                         </GridItemEl>
                     </GridItem>
-                    <GridItem xl={7.5} lg={7.4} md={7} xs={12} matches={matches}  additionStyles={{bgcolor:'#fff',overflowY:'auto',minHeight:'500px',height:'100%',width:'100%'}}>
-                        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5,border:'.5px solid #d8d8d8', bgcolor: '#f7f7f7', alignItems: 'center' }} p={1} >
-                            <WifiOutlined sx={IconStyle}/>
-                            <Typography color={'#212529'} fontWeight={500}>Available Wifi</Typography>
-                        </Box>
-                        <Box bgcolor={'#D4E3F5'} p={1}>
-                            <Typography>Connection activated | {apConn?.connection.id==='WAZIGATE_AP'?'Access Point Mode':'Connected'} </Typography>
-                        </Box>
-                        <Box p={1} borderBottom={'1px solid #ccc'}>
-                            <Typography color={'#666'}>Please select a network</Typography>
-                        </Box>
-                        {
-                            scanLoading?
-                                <Box sx={{mx:'auto',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',width:'100%'}}>
-                                    <Typography>Checking for available networks</Typography>
-                                    <CircularProgress />
+                    <GridItem xl={7.5} lg={7.4} md={7} xs={12} matches={matches}  additionStyles={{overflowY:'auto',minHeight:'500px',height:'100%',width:'100%'}}>
+                        <GridItemEl text={'Access Point Settings'} icon={'power_settings_new'}>
+                            <Box sx={{display:'flex',flexDirection:matches?'row':'column', alignItems:'center'}}>
+                                <Box bgcolor={'#D4E3F5'} width={matches?'50%':'90%'} borderRadius={1} p={2} m={1}>
+                                    <form id="submitform" onSubmit={submitSSID}>
+                                        <TextInputField 
+                                            icon={<CellTower sx={{fontSize:20,mx:1,}}/>} 
+                                            label="Access Point SSID" 
+                                            sx={{}}
+                                            bgcolor={'#d4e3f5'}
+                                            value={accessName? atob(accessName["802-11-wireless"]?.ssid as string) : ""}
+                                            name="SSID"
+                                            id="SSID"
+                                            placeholder="Enter SSID"
+                                        />
+                                        <TextInputField 
+                                            sx={{bgcolor:'#d4e3f5'}}
+                                            icon={<LockOutlined 
+                                            sx={{fontSize:20,mx:1,}}/>} 
+                                            label="Access Point Pasword" 
+                                            placeholder="Enter password"
+                                            onChange={()=>{}} 
+                                            bgcolor={'#d4e3f5'}
+                                            name="password"
+                                            id="password"
+                                        />
+                                        <PrimaryButton title="Save" type="submit" />
+                                    </form>
                                 </Box>
-                            :(
-                                wifiList.map((wifi) => (
-                                    <Box key={wifi.ssid} onClick={()=>setSelectedWifi(wifi)}>
-                                        <RowContainerBetween additionStyles={{cursor:'pointer',":hover":{bgcolor:'#ccc'},borderBottom:'1px solid #ccc',p:1}}>
-                                            <Typography>{wifi.ssid}</Typography>
-                                            <Icon sx={IconStyle}>wifi_outlined</Icon>
-                                        </RowContainerBetween>
+                                <Box bgcolor={'#D4E3F5'} width={matches?'50%':'90%'} borderRadius={1} p={2} m={1}>
+                                    <Box p={2}>
+                                        <Typography fontSize={13} color={'#FA9E0E'}>
+                                            Warning: If you're using WiFi to access your gateway, 
+                                            after pressing this button you will need to connect to the Wazigate Hotspot in prder to control
+                                            your gateway
+                                        </Typography>
+                                        <PrimaryButton title="Switch " onClick={switchToAPMode} type="button" />
                                     </Box>
-                                )
-                            ))
-                        }
+                                </Box>
+                            </Box>
+                        </GridItemEl>
+                        <Box bgcolor={'#fff'} boxShadow={3} borderRadius={1}>
+                            <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5,border:'.5px solid #d8d8d8', bgcolor: '#f7f7f7', alignItems: 'center' }} p={1} >
+                                <WifiOutlined sx={IconStyle}/>
+                                <Typography color={'#212529'} fontWeight={500}>Available Wifi</Typography>
+                            </Box>
+                            <Box bgcolor={'#D4E3F5'} p={1}>
+                                <Typography>
+                                    {
+                                        (eth0 && eth0.IP4Config)?(
+                                            <Typography>Connected to Ethernet </Typography>
+                                        ):
+                                        (apConn && apConn.connection.id==='WAZIGATE_AP')?(
+                                            <Typography>Access Point Mode</Typography>
+                                        ):(
+                                            <Typography>Connected to {"  "}
+                                                {
+                                                    apConn? atob(apConn["802-11-wireless"]?.ssid as string):"No network"
+                                                }
+                                            </Typography>
+                                        )
+                                    } 
+                                </Typography>
+                            </Box>
+                            <Box p={1} onClick={() => setOpenModal(true)}>
+                                <Typography color={'#666'}>Click here to change network connection</Typography>
+                            </Box>
+                        </Box>
                     </GridItem>
                 </Grid>
             </Box>
         </>
+    )
+}
+interface Props {
+    submitHandler: (event: React.FormEvent<HTMLFormElement>) => void;
+    backHandler: () => void;
+    selectedWifi: AccessPoint | undefined;
+    cancelHander: () => void;
+    setSelectedWifi: React.Dispatch<React.SetStateAction<AccessPoint & {password?:string} | undefined>>;
+}
+function SelectedNetwork({submitHandler,selectedWifi,backHandler,cancelHander,setSelectedWifi}:Props){
+    return(
+        <Box>
+            <RowContainerBetween additionStyles={{p:2,borderBottom:'1px solid #ccc'}}>
+                <Box sx={{ display: 'flex',  alignItems: 'center' }} >
+                    <ArrowBack onClick={backHandler} sx={{ fontSize: 20, mr: 1, color: DEFAULT_COLORS.primary_black, cursor:'pointer'}} />
+                    <Typography color={'#212529'} fontWeight={500}>Connect to {(selectedWifi && selectedWifi.ssid && selectedWifi.ssid.length > 10 ? selectedWifi.ssid.slice(0, 10) + '....' : selectedWifi?.ssid)}</Typography>
+                </Box>
+                <Close onClick={cancelHander} sx={{ ...IconStyle,cursor:'pointer', fontSize: 20 }} />
+            </RowContainerBetween>
+            <Box sx={{p:2}}>
+                <form  onSubmit={submitHandler}>
+                    <TextInputField 
+                        icon={<CellTower sx={{fontSize:20,mx:1}}/>} 
+                        label="Access Point SSID"
+                        value={selectedWifi?.ssid}
+                        name="SSID"
+                        id="SSID"
+                        placeholder="Enter SSID"
+                    />
+                    <TextInputField 
+                        icon={<LockOutlined 
+                        sx={{fontSize:20,mx:1}}/>} 
+                        onChange={(e)=>{
+                            setSelectedWifi({
+                                ...selectedWifi as AccessPoint,
+                                password:e.target.value
+                            }) as unknown as AccessPoint;
+                        }}
+                        label="Access Point Pasword" 
+                        placeholder="Enter password" 
+                        name="password"
+                    />
+                    <RowContainerBetween>
+                        <PrimaryButton additionStyles={{backgroundColor:'#ff0000'}} color="error" title="Cancel" onClick={cancelHander} />
+                        <PrimaryButton title="Connect" type="submit" />
+                    </RowContainerBetween>
+                </form>
+            </Box>
+        </Box>
     )
 }
