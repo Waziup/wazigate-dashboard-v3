@@ -2,8 +2,8 @@ import { Box, Button, CircularProgress, FormControl, Grid, InputLabel,  MenuItem
 import { NormalText, } from './Dashboard';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
-import {  Close, Download, FiberNew,  } from '@mui/icons-material';
-import React, { useState, useEffect, useContext } from 'react';
+import {  Close, Download, FiberNew, SearchOff,  } from '@mui/icons-material';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import { StartAppConfig, type App } from 'waziup';
 import Backdrop from '../components/Backdrop';
@@ -132,13 +132,13 @@ export default function Apps() {
     const [loadingUninstall, setLoadingUninstall] = React.useState<boolean>(false);
     const [loading, setLoading] = React.useState<boolean>(false);
     const open = Boolean(anchorEl)
-    const [modalProps, setModalProps] = useState<{ open: boolean, title: string, children: React.ReactNode }>({ open: false, title: '', children: null });
+    const [modalProps, setModalProps] = useState<{ open: boolean, title: string, children: React.ReactNode,otherArgs?:string }>({ open: false, title: '', children: null,otherArgs:'' });
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const { apps, addApp, getApps } = useContext(DevicesContext);
+    const { apps,  getApps } = useContext(DevicesContext);
     const [recommendedApps, setRecommendedApps] = useState<RecomendedApp[]>([]);
-    const [logs, setLogs] = useState<{ logs: string, done: boolean }>({ logs: '', done: false });
+    const [logs, setLogs] = useState<{ logs: string, done: boolean,error?:string }>({ logs: '', done: false,error: undefined });
     const logsRef = React.useRef<string>('');
     const [error, setError] = useState<Error | null | string>(null);
     function installAppFunction(image: string, id: string) {
@@ -153,28 +153,58 @@ export default function Apps() {
         }).catch((err) => {
             setLogs({
                 done: true,
-                logs: err as string
+                logs: 'Error encountered while installing app: ' + err,
+                error: err as string
             });
+            setAppToInstallId('');
             return;
         })
+    }
+    const getRecApps = async()=>{
+        window.wazigate.get<RecomendedApp[]>('apps?available')
+        .then((appsr) => {
+            setRecommendedApps(appsr);
+        })
+        .catch(setError)
     }
     useEffect(() => {
         if(apps.length ===0){
             getApps()
         }
-        window.wazigate.get<RecomendedApp[]>('apps?available')
-            .then((appsr) => {
-                setRecommendedApps(appsr);
-            })
-            .catch(setError)
+        getRecApps()
     }, [apps, getApps]);
     const handleSubmitNewCustomApp = () => {
         const yesNo = confirm('Are you sure you want to install this app?');
         if (!yesNo) {
             return;
         }
-        addApp(customAppId as unknown as App);
-        setModalProps({ open: false, title: '', children: null });
+        // addApp(customAppId as unknown as App);
+        setAppToInstallId(customAppId.image.replace("/", ".").split(":")[0]);
+        window.wazigate.installApp(customAppId.image).then((res) => {
+            logsRef.current = res as unknown as string;
+            setLogs({
+                done: logsRef.current ? true : false,
+                logs: res as unknown as string
+            });
+            getApps();
+        }).catch((err) => {
+            setLogs({
+                done: true,
+                error: 'Error encountered when installing app: '+err as string,
+                logs: '',
+            });
+            setAppToInstallId('');
+            return;
+        })
+        setModalProps({ 
+            open: true, 
+            title: 'Installing New App', 
+            children: <>
+                <Box width={'100%'} bgcolor={'#fff'}>
+                    
+                </Box>
+            </> 
+        });
     }
     const [appToInstallId, setAppToInstallId] = useState<string>('');
     const handleCustomAppIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -184,13 +214,15 @@ export default function Apps() {
         }) as unknown as App2;
     }
     function handleInstallAppModal() {
-        setModalProps({ open: true, title: 'Install App', children: <></> });
+        setModalProps({...modalProps, title: 'Install App', children: <></> });
     }
 
     function handleLogsModal(image: string, id: string) {
         setAppToInstallId(id);
         setModalProps({
-            open: true, title: 'Installing New App', children: <>
+            open: true, 
+            title: 'Installing New App', 
+            children: <>
                 <Box width={'100%'} bgcolor={'#fff'}>
                     
                 </Box>
@@ -198,20 +230,11 @@ export default function Apps() {
         });
         installAppFunction(image, id);
     }
-    const handleChangeLogsModal = (e: SelectChangeEvent) => {
-        if (parseInt(e.target.value) === 20) {
-            handleInstallAppModal();
-            return;
-        }
-        const [image, id] = e.target.value.split('*');
-        handleLogsModal(image, id);
-    }
     const [uninstLoader, setUninstLoader] = useState<boolean>(false);
     const [showAppSettings, setShowAppSettings] = useState<boolean>(false);
     const [selectedApp, setSelectedApp] = useState<App | null>(null);
     const [appToUninstall, setAppToUninstall] = useState<App | null>(null);
-    async function fetchInstallLogs(id: string) {
-
+    const fetchInstallLogs = useCallback(async (id: string)=>{
         await window.wazigate.get(`apps/${id}?install_logs`).then((fetchedLogs) => {
             logsRef.current = (fetchedLogs as { log: string, done: boolean }).log as string;
             if ((fetchedLogs as { log: string, done: boolean }).log !== logs.logs) {
@@ -223,36 +246,39 @@ export default function Apps() {
         }).catch((err) => {
             setLogs({
                 done: true,
-                logs: 'Error encountered while fetching logs: ' + err
+                logs: '',
+                error: 'Error encountered while fetching logs: ' + err
             });
         })
-    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[])
     const load = () => {
         window.wazigate.getApp(appToUninstall ? appToUninstall.id : '').then(setAppToUninstall, (error) => {
             alert("There was an error loading the app info:\n" + error);
         });
     };
     useEffect(() => {
-        if (modalProps.open && modalProps.title === 'Installing New App') {
+        if ((modalProps.open && modalProps.title === 'Installing New App') || (modalProps.open && modalProps.title === 'Install App') && appToInstallId) {
             fetchInstallLogs(appToInstallId);
             const intervalId = setInterval(async () => {
                 await fetchInstallLogs(appToInstallId);
-            }, 1000); // Adjust the interval duration (in milliseconds) as needed
+            }, 1500); // Adjust the interval duration (in milliseconds) as needed
             // Clean up the interval on component unmount
-            if (logs.done) {
-                clearInterval(intervalId);
-                setLogs({
-                    done: false,
-                    logs: ''
-                });
-                setModalProps({ open: false, title: '', children: null });
-                getApps();
-                return;
-            }
+            // if (logs.done) {
+            //     clearInterval(intervalId);
+            //     setLogs({
+            //         ...logs,
+            //         done: false,
+            //     });
+            //     setModalProps({ open: false, title: '', children: null,otherArgs:'' });
+            //     setAppToInstallId('');
+            //     getApps();
+            //     return;
+            // }
             return () => clearInterval(intervalId);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [modalProps.open && modalProps.title === 'Installing New App']);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [appToInstallId, fetchInstallLogs, getApps, logs.done, modalProps.open, modalProps.title]);
     const setAppToUninstallFc = (id: number) => {
         const appToUninstallFind = apps[id];
         setAppToUninstall(appToUninstallFind);
@@ -262,21 +288,26 @@ export default function Apps() {
     const uninstall = () => {
         setLoadingUninstall(true)
         window.wazigate.uninstallApp(appToUninstall ? appToUninstall?.id : '', false)
-            .then(() => {
-                setUninstLoader(false);
-                load();
-                setAppToUninstall(null);
-                getApps();
-            }).catch(() => {
-                setLoadingUninstall(false);
-            })
+        .then(() => {
+            setUninstLoader(false);
+            load();
+            getRecApps()
+            setAppToUninstall(null);
+            getApps();
+        }).catch(() => {
+            alert('Could not uninstall ' + appToUninstall?.name);
+            setAppToUninstall(null);
+            getApps();
+            getRecApps()
+        })
+        setLoadingUninstall(false);
     };
     function closeModal() {
         setLogs({
             done: false,
             logs: ''
         });
-        setModalProps({ open: false, title: '', children: null });
+        setModalProps({ open: false, title: '', children: null, otherArgs:'' });
     }
     const updateSettings = (event: SelectChangeEvent<string>) => {
         setLoading(true);
@@ -352,21 +383,23 @@ export default function Apps() {
                                     </Box>
                                 )
                             }
+                            {
+                                logs.error &&(
+                                    <Box px={2} py={1} bgcolor={'#fec61f'}>
+                                        <Typography color={'error'}>{logs.error}</Typography>
+                                    </Box>
+                                )
+                            }
                             <Box py={2}>
                                 {modalProps.children}
-                                <Box px={2} py={1}>
+                                <RowContainerBetween additionStyles={{px:2,py:1}}>
+                                    <Button disabled={!logs.done} onClick={closeModal} variant={'contained'} sx={{ mx: 2,color:'#fff' }} color={'info'}>CLOSE</Button>
                                     {
-                                        logs.done?(
-                                            <Box sx={{display:'flex',justifyContent: 'flex-end',alignItems:'center'}}>
-                                                <Button onClick={closeModal} variant={'contained'} sx={{ mx: 2,color:'#fff' }} color={'info'}>CLOSE</Button>
-                                            </Box>
-                                        ):(
-                                            <Box sx={{display:'flex',justifyContent: 'flex-end',alignItems:'center'}}>
-                                                <LoadingButton disabled loading={true} onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CLOSE</LoadingButton>
-                                            </Box>
-                                        )
+                                        <Box sx={{display:'flex',justifyContent: 'flex-end',alignItems:'center'}}>
+                                            <LoadingButton disabled loading={true} onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CLOSE</LoadingButton>
+                                        </Box>
                                     }
-                                </Box>
+                                </RowContainerBetween>
                             </Box>
                         </Box>
                     </Backdrop>
@@ -375,22 +408,14 @@ export default function Apps() {
             {
                 (modalProps.open && modalProps.title === 'Install App') ? (
                     <Backdrop>
-                        <Box width={matches ? '40%' : '90%'} bgcolor={'#fff'}>
+                        <Box sx={{width: matches ? '30%' : '90%',borderRadius:1.5,boxShadow:3,bgcolor:'#fff'}} >
                             <RowContainerBetween additionStyles={{ borderBottom: '1px solid black', p: 2 }}>
                                 <Typography>{modalProps.title}</Typography>
                                 <Close sx={{ cursor: 'pointer',color: 'black', fontSize: 20 }} onClick={() => { setCustomAppId(customAppProps); setLogs({ done: false, logs: '' }); closeModal() }} />
                             </RowContainerBetween>
-                            <Box width={'90%'} bgcolor={'#fff'}>
+                            <Box my={2} bgcolor={'#fff'}>
                                 <form onSubmit={(e) => { e.preventDefault(); handleSubmitNewCustomApp() }}>
-                                    <Box borderBottom={'1px solid black'} px={2} >
-                                        <TextInputField
-                                            placeholder='Enter app name'
-                                            label='Name'
-                                            required
-                                            name='name'
-                                            value={customAppId.name}
-                                            onChange={handleCustomAppIdChange}
-                                        />
+                                    <Box borderBottom={'1px solid black'} p={2} >
                                         <TextInputField
                                             placeholder="Docker Image: format(owner/image_name:tag)"
                                             label='Image'
@@ -398,32 +423,6 @@ export default function Apps() {
                                             name='image'
                                             value={customAppId.image}
                                             onChange={handleCustomAppIdChange}
-                                        />
-                                        <TextInputField
-                                            placeholder="Version of app"
-                                            label='Version'
-                                            required
-                                            name='version'
-                                            value={customAppId.version}
-                                            onChange={handleCustomAppIdChange}
-                                        />
-                                        <TextInputField
-                                            id="author"
-                                            onChange={handleCustomAppIdChange}
-                                            name="author"
-                                            required
-                                            label='Author'
-                                            value={customAppId.author}
-                                            placeholder="Author of app"
-                                        />
-                                        <TextInputField
-                                            id="description"
-                                            label='description'
-                                            onChange={handleCustomAppIdChange}
-                                            name="description"
-                                            required
-                                            value={customAppId.description}
-                                            placeholder="Description of app"
                                         />
                                     </Box>
                                     <RowContainerBetween additionStyles={{ py: 2 }}>
@@ -437,9 +436,9 @@ export default function Apps() {
                 ) : null
             }
             {
-                uninstLoader && (
+                uninstLoader ? (
                     <Backdrop>
-                        <Box width={matches ? '40%' : '90%'} bgcolor={'#fff'}>
+                        <Box width={matches ? '30%' : '90%'} bgcolor={'#fff'}>
                             <Box borderBottom={'1px solid black'} px={2} py={2}>
                                 <Typography>Do you wish to uninstall {appToUninstall?.name}</Typography>
                             </Box>
@@ -456,7 +455,7 @@ export default function Apps() {
                             </Box>
                         </Box>
                     </Backdrop>
-                )
+                ): null
             }
             {
                 showAppSettings ? (
@@ -510,6 +509,36 @@ export default function Apps() {
                     </Backdrop>
                 ) : null
             }
+            {
+                (modalProps.open && modalProps.title ==='Confirm Installation') ? (
+                    <Backdrop>
+                        <Box zIndex={50} width={matches ? matchesMd ? '50%' : '30%' : '90%'} borderRadius={1} bgcolor={'#fff'}>
+                            <RowContainerBetween additionStyles={{ p:2, borderBottom: '.5px solid #ccc' }}>
+                                <Typography fontWeight={700} fontSize={15} color={'black'}>{modalProps.title}</Typography>
+                            </RowContainerBetween>
+                            <Box height={100} p={2}>
+                                <Typography>
+                                    {/* Do you wish to install {JSON.stringify(modalProps)}? */}
+                                    Do you wish to install {modalProps.otherArgs?modalProps.otherArgs.split('*')[1] :'a new app'}?
+                                </Typography>
+                            </Box>
+                            <RowContainerBetween additionStyles={{ p: 1, borderTop: '.5px solid #ccc' }}>
+                                <Button onClick={() => { setModalProps({ open: false, title: '', children: null,otherArgs:undefined }) }} sx={{ textTransform: 'initial', backgroundColor: '#ff0000' }} variant={'contained'} >CANCEL</Button>
+                                <Button 
+                                    // onClick={() => { setModalProps({ open: false, title: '', children: null }) }} 
+                                    onClick={() => {
+                                        modalProps.otherArgs ? handleLogsModal(modalProps.otherArgs.split('*')[0], modalProps.otherArgs.split('*')[1]) : handleInstallAppModal() 
+                                    }}
+                                    sx={{textTransform: 'initial', backgroundColor: '#499dff'}}
+                                    variant={'contained'}
+                                    >
+                                        INSTALL
+                                </Button>
+                            </RowContainerBetween>
+                        </Box>
+                    </Backdrop>
+                ): null
+            }
             <Box px={2} onClick={() => { open ? handleClose() : null }} sx={{ overflowY: 'auto', my: 2, height: '100%' }}>
                 <RowContainerBetween>
                     <Box >
@@ -521,15 +550,25 @@ export default function Apps() {
                         }
                     </Box>
                     <DropDown
-                        customAppInstallHandler={handleInstallAppModal}
+                        customAppInstallHandler={()=>{ setModalProps({ open: true, title: 'Confirm Installation', children: <></>,otherArgs: undefined }) }}
+                        // customAppInstallHandler={handleInstallAppModal}
                         recommendedApps={recommendedApps}
                         matches={matches}
-                        handleChange={handleChangeLogsModal} age={''}
+                        handleChange={(e)=>{
+                            setModalProps({ 
+                                open: true, 
+                                title: 'Confirm Installation',
+                                children: <></>,
+                                otherArgs: isNaN(parseInt(e.target.value))?e.target.value: undefined
+                            })
+                        }}
+                        // handleChange={handleChangeLogsModal}
+                        age={''}
                     />
                 </RowContainerBetween>
                 <Grid container spacing={2} py={2}>
                     {
-                        apps.map((app, idx) => {
+                        apps.length >0?apps.map((app, idx) => {
                             return (
                                 <>
                                     {
@@ -562,11 +601,11 @@ export default function Apps() {
                                                                 text: 'Uninstall',
                                                                 clickHandler: () => { setAppToUninstallFc(idx) }
                                                             },
-                                                            (app.state && !(app.id.includes("system")))?{
+                                                            {
                                                                 icon: `pause`,
                                                                 text: app.state ? app.state.running ? 'Stop' : 'Start' : 'Start',
                                                                 clickHandler: () => { startOrStopApp(app.id, app.state ? app.state.running : false) }
-                                                            }:null
+                                                            },
                                                         ]}
                                                     />
                                                 </Box>
@@ -577,7 +616,12 @@ export default function Apps() {
                                     }
                                 </>
                             )
-                        })
+                        }):(
+                            <Box sx={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+                                <SearchOff sx={{fontSize:100,color:'#325460'}}/>
+                                <Typography fontSize={20} color={'#325460'}>No Apps Installed</Typography>
+                            </Box>
+                        )
                     }
                 </Grid>
             </Box>
