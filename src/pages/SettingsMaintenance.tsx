@@ -68,16 +68,16 @@ export default function SettingsMaintenance() {
     const [matches] = useOutletContext<[matches: boolean]>();
     const TabComponent = tabs[activeTab].component;
     return (
-        <Box sx={{ overflowY: 'auto',p:2,width:'100%', height: '100%',position:'relative' }}>
+        <Box sx={{ p:2,width:'100%', height: '100%',position:'relative' }}>
             <Box>
-                <Typography fontWeight={600} fontSize={24} color={'black'}>Wifi</Typography>
+                <Typography fontWeight={600} fontSize={24} color={'black'}>Maintenance</Typography>
                 <div role="presentation" >
                     <Breadcrumbs aria-label="breadcrumb">
                         <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/settings">
                             Settings
                         </Link>
                         <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
-                            Maintenance
+                            maintenance
                         </p>
                     </Breadcrumbs>
                 </div>

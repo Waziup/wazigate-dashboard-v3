@@ -1,29 +1,43 @@
 import React from "react";
-import { Cloud, CloudOff, Router,  Wifi } from "@mui/icons-material";
+import { Cloud, CloudOff, Wifi } from "@mui/icons-material";
 import { Box, Stack, Typography } from "@mui/material";
 import { DEFAULT_COLORS } from "../../constants";
 import RowContainerBetween from "../shared/RowContainerBetween";
 import RowContainerNormal from "../shared/RowContainerNormal";
-const Item = ({ more,path,onClick, color, children, title }: {path:string, onClick:(path: string)=>void, more: string, children: React.ReactNode, color: string, title: string }) => (
+const Item = ({ more,path,onClick, color, children,showInternet,isSynched, title }: {isSynched?: boolean, path:string,showInternet?:boolean, onClick:(path: string)=>void, more: string, children: React.ReactNode, color: string, title: string }) => (
     <Box onClick={()=>onClick(path)} sx={{minWidth:220, boxShadow: 3,mx:1,width:'30%', borderRadius: 1, border: '1px solid #ccc', height: '100%', bgcolor: 'white', p: 2 }}>
         {children}
         <Typography fontSize={13} color={'black'}>{title}</Typography>
         <Typography color={color} fontSize={13} fontWeight={300}>{more}</Typography>
+        {
+            showInternet?(
+                <Box display={'flex'} >
+                    <Typography fontSize={14} fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Internet:   </Typography> <InternetIndicator />
+                </Box>
+            ):<Box >
+                <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
+                    {isSynched?'Synched with Waziup Cloud':'Not Synchronized'}
+                </Typography>
+            </Box>
+        }
     </Box>
 );
 import { capitalizeFirstLetter, isActiveDevice, returnAppURL, time_ago } from "../../utils";
 import { useNavigate, Link } from "react-router-dom";
 import { App, Cloud as Cl, Device as Dev } from "waziup";
 import type { Device, Connection } from "../../utils/systemapi";
+import InternetIndicator from "../ui/InternetIndicator";
 interface Props{
     apConn: Connection | null | undefined
     eth0: Device | undefined
     apps: App[]
     onClick: (path:string)=>void
     devices: Dev[]
+    activeDevices: number,
+    totalDevices: number
     selectedCloud: Cl | null
 }
-export default function MobileDashboard({onClick, apConn,apps,devices,selectedCloud, eth0 }: Props) {
+export default function MobileDashboard({onClick,activeDevices,totalDevices, apConn,apps,devices,selectedCloud, eth0 }: Props) {
     const navigate = useNavigate();
     const handleNav = (devId: string,devName:string) => {
         navigate(`/devices/${devId}`,{state:{title:devName,backUrl:'/devices',backTitle:'Devices',showBack:true}});
@@ -31,10 +45,7 @@ export default function MobileDashboard({onClick, apConn,apps,devices,selectedCl
     return (
         <Box sx={{ overflowY: 'auto', height: '100%' }} >
             <Stack direction={'row'} overflow={'auto'} m={2} spacing={1}>
-                <Item path='/settings' onClick={onClick} color={DEFAULT_COLORS.primary_blue} title="Gateway Status" more="Good" >
-                    <Router sx={{ fontSize: 20, color: 'black' }} />
-                </Item>
-                <Item path='/settings' onClick={onClick} color={selectedCloud?.paused?"#E9C68F":DEFAULT_COLORS.primary_blue} title="Cloud Synchronization" more={selectedCloud?.paused?"Inactive":'Active'} >
+                <Item isSynched={selectedCloud?.paused?false: true} path='/settings/networking' onClick={onClick} color={selectedCloud?.paused?"#E9C68F":DEFAULT_COLORS.primary_blue} title="Cloud Synchronization" more={selectedCloud?.paused?"Inactive":'Active'} >
                     {
                         selectedCloud?.paused?(
                             <CloudOff sx={{ fontSize: 20, color: '#D9D9D9' }} />
@@ -45,11 +56,11 @@ export default function MobileDashboard({onClick, apConn,apps,devices,selectedCl
                 </Item>
                 {
                     (eth0 && eth0.IP4Config)?(
-                        <Item path='/settings/networking' onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Ethernet Connection" more={`IP Address: ${(eth0 && eth0.IP4Config)?eth0.IP4Config.Addresses[0].Address:''}`} >
+                        <Item path='/settings/networking' showInternet onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Ethernet Connection" more={`IP Address: ${(eth0 && eth0.IP4Config)?eth0.IP4Config.Addresses[0].Address:''}`} >
                             <Wifi sx={{ fontSize: 20, color: 'black' }} />
                         </Item>
                     ):(
-                        <Item path='/settings/networking' onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Wifi Connection" more={`Wifi Name: ${apConn?.connection.id}`} >
+                        <Item path='/settings/networking' showInternet onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Wifi Connection" more={`Wifi Name: ${apConn?.connection.id}`} >
                             <Wifi sx={{ fontSize: 20, color: 'black' }} />
                         </Item>
                     )
@@ -61,6 +72,14 @@ export default function MobileDashboard({onClick, apConn,apps,devices,selectedCl
                     <Link style={{textDecoration:'none', color:DEFAULT_COLORS.primary_blue,}} to={'/devices'}>
                         <Typography fontSize={10} textAlign={'center'}>See all</Typography>
                     </Link>
+                </RowContainerBetween>
+                <RowContainerBetween>
+                    <Box sx={{display:'flex',alignItems:'center',}}>
+                        <Typography fontSize={14} mx={1} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>Total Devices: {totalDevices} </Typography>
+                        <Typography></Typography>
+                        <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>Active Devices: {activeDevices}</Typography>
+                    </Box>
+                    <Box/>
                 </RowContainerBetween>
                 <Box display={'flex'} flexDirection={'column'} mt={1} py={1} alignItems={'center'}>
                     {
