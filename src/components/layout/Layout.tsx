@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { Link, Outlet, useLocation,useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { Menu, SettingsOutlined } from '@mui/icons-material';
@@ -42,6 +42,7 @@ function Layout() {
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const matchesMd = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+    const matchesLg = useMediaQuery(theme.breakpoints.between('md', 'lg'));
     const [open, setOpen] = useState(false);
     const handleToggle = () => {setOpen(!open)}
     const { state, pathname } = useLocation();
@@ -49,14 +50,14 @@ function Layout() {
         <>
             {
                 matches ? (
-                    <Grid container sx={{ background: 'background.default', height: '100vh', overflow: 'hidden', maxWidth: '1400px', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' } }}>
-                        <Grid item sx={{ height: '100%', bgcolor: 'primary.main' }} md={2.3} sm={1} lg={2.3} xl={2.3} xs={2.3} >
+                    <Box sx={{display:'flex',flexWrap:'wrap',height:'100vh',width:matchesMd?'820px':matchesLg?'1000px':'1400px',bgcolor:'#F0F2F5',}}>
+                        <Box sx={{position:'fixed',top:0,left:0,width: matchesMd?'8%':'18%', bgcolor:'#292F3F',height:'100%',}}>
                             <Sidebar matchesMd={matchesMd} />
-                        </Grid>
-                        <Grid item sx={{height:'100%'}} md={9.7} sm={11} lg={9.7} xl={9.7} xs={9.7}>
-                            <Outlet context={[matches, matchesMd]} />
-                        </Grid>
-                    </Grid>
+                        </Box>
+                        <Box sx={{marginLeft:matchesMd?'5%': '20%',flexGrow:1,position:'relative',float:'left', bgcolor:'#F0F2F5',}}>
+                            <Outlet context={[matches]} />
+                        </Box>
+                    </Box>
                 ) : (
                     <Box sx={{height:'100vh',  bgcolor: '#F0F2F5', overflow: 'hidden' }}>
                         <RowContainerBetween additionStyles={{ bgcolor: 'primary.main' }} >
@@ -83,7 +84,7 @@ function Layout() {
                                 <Sidebar matchesMd={matchesMd} />
                             </Box>
                         </Box>
-                        <Box sx={{height:'100%',mb:4}}>
+                        <Box sx={{height:'100%',overflowY:'auto',mb:4}}>
                             <Outlet context={[matches]} />
                         </Box>
                     </Box>
