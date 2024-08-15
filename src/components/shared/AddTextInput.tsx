@@ -1,5 +1,6 @@
 import { AddCircleOutline } from "@mui/icons-material";
 import { Box, Tooltip, Typography } from "@mui/material";
+import { DEFAULT_COLORS } from "../../constants";
 interface AddTextProps{
     text:string
     placeholder:string
@@ -21,7 +22,7 @@ export default function AddTextShow({text,isReadOnly,name,isPlusHidden,autoGener
     return (
         <Box sx={{my:2}}>
             <Box sx={{display:'flex',justifyContent:'space-between',alignItems:'center', borderBottom:'1px solid #ccc'}}>
-                <input readOnly={isReadOnly} required name={name} value={textInputValue} onChange={onTextInputChange} placeholder={text} style={{border:'none',color:'#757474',fontWeight:200, outline:'none',width:'100%',padding:'6px 0'}} />
+                <input readOnly={isReadOnly} required name={name} value={textInputValue} onChange={onTextInputChange} placeholder={text} style={{border:'none',color: DEFAULT_COLORS.navbar_dark,fontWeight:200, outline:'none',width:'100%',padding:'6px 0'}} />
                 {
                     isPlusHidden?null:(
                         <Tooltip onClick={()=> autoGenerateHandler && autoGenerateHandler(name as "devAddr"|"nwkSEncKey"|"appSKey")} title={"AutoGenerate "+name}>

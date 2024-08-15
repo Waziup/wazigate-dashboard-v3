@@ -72,7 +72,7 @@ export default function BasicTable({onDeviceClick, devices}:Props) {
                                 <Typography color={'#797979'} fontWeight={300}>{row.runtime}</Typography>
                             </TableCell>
                             <TableCell color={row.status?'#499DFF':'#797979'} align="left">
-                                <Typography color={row.status?'#499DFF':'#797979'} fontWeight={300}>{row.status?'active':'inactive'}</Typography>
+                                <Typography color={row.status?'#499DFF':'#797979'} fontWeight={300}>{row.status?'Active':'Inactive'}</Typography>
                             </TableCell>
                         </TableRow>
                     ))}
