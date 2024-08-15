@@ -409,8 +409,8 @@ function Devices() {
                                                 <Typography fontSize={13} mx={1} color={'white'} component={'span'}>{device.meta ? capitalizeFirstLetter(device.meta.type) : ''}</Typography>
                                             </Box>
                                             <Box sx={{ borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5, ":hover": { py: 1.5 }, px: 1, }}>
-                                                <RowContainerBetween additionStyles={{}} >
-                                                    <Box onClick={() => { navigate(`${device.id}`) }}>
+                                                <RowContainerBetween  additionStyles={{}} >
+                                                    <Box sx={{width:'85%'}} onClick={() => {navigate(`${device.id}`)}}>
                                                         <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>
                                                         <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>
                                                             Last updated {differenceInMinutes(new Date(device.modified).toISOString())}
