@@ -30,7 +30,7 @@ interface TabTwoProps {
 const AddTextShow = ({ text,isPlusHidden,isReadOnly, name, autoGenerateHandler, placeholder, onTextInputChange, textInputValue }: AddTextProps) => (
     <Box sx={{ my: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ccc' }}>
-            <input readOnly={isReadOnly} name={name} value={textInputValue} onInput={onTextInputChange} onChange={onTextInputChange} placeholder={text} style={{ border: 'none', color: '#757474', fontWeight: 200, outline: 'none', width: '100%', padding: '6px 0' }} />
+            <input readOnly={isReadOnly} name={name} value={textInputValue} onInput={onTextInputChange} onChange={onTextInputChange} placeholder={text} style={{ border: 'none', color: DEFAULT_COLORS.navbar_dark, fontWeight: 200, outline: 'none', width: '100%', padding: '6px 0' }} />
             {
                 isPlusHidden ? null : (
                     <Tooltip onClick={() => autoGenerateHandler(name as "devAddr" | "nwkSEncKey" | "appSKey")} title="AutoGenerate">
