@@ -108,7 +108,7 @@ function DeviceSettings() {
     const handleCreateSensorClick = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log('Creating a sensor', newSensOrAct);
-        const sensor: Sensor & { unit: string,kind:string,quantity:string} = {
+        const sensor = {
             name: newSensOrAct.name,
             id: "",
             kind: newSensOrAct.kind,
@@ -121,13 +121,12 @@ function DeviceSettings() {
                 icon: newSensOrAct.icon,
                 unitSymbol:newSensOrAct.unitSymbol
             },
-            value: 0,
             time: new Date(),
             modified: new Date(),
             created: new Date(),
         };
         console.log(sensor);
-        window.wazigate.addSensor(id as string, sensor)
+        window.wazigate.addSensor(id as string, sensor as unknown as Sensor)
             .then((res) => {
                 console.log(res);
                 handleToggleModal();
@@ -142,7 +141,7 @@ function DeviceSettings() {
     const handleCreateActuatorClick = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log('Creating an actuator', newSensOrAct);
-        const actuator: Actuator & {unit?: string,kind:string,quantity:string} = {
+        const actuator = {
             name: newSensOrAct.name,
             id: "",
             kind: newSensOrAct.kind,
@@ -155,13 +154,12 @@ function DeviceSettings() {
                 icon: newSensOrAct.icon,
                 unitSymbol:newSensOrAct.unitSymbol
             },
-            value: false,
             time: null,
             modified: new Date(),
             created: new Date(),
         };
         console.log(actuator);
-        window.wazigate.addActuator(id as string, actuator)
+        window.wazigate.addActuator(id as string, actuator as unknown as  Actuator)
             .then((res) => {
                 console.log(res);
                 handleToggleModal();
