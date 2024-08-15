@@ -84,7 +84,7 @@ export default function Login() {
                                 <input {...register('password')} required type='password' placeholder='.....' style={{width:'100%',fontSize:18, border:'none',background:'none',color:DEFAULT_COLORS.third_dark,padding:2, borderBottom:'1px solid #D5D6D8', outline:'none'}} />
                             </TextInput>
                             <Box display={'flex'} justifyContent={'center'} py={1}>
-                                <button type='submit'  style={{width:'70%',border:'none',display:'flex',alignItems:'center',justifyContent:'center', borderRadius:5, outline:'none', padding:10, backgroundColor:'#499dff', color:'white'}}>
+                                <button type='submit'  style={{width:'70%',border:'none',display:'flex',alignItems:'center',justifyContent:'center', borderRadius:5,cursor:'pointer', outline:'none', padding:10, backgroundColor:'#499dff', color:'white'}}>
                                     <LockOpen sx={{fontSize:20}} />
                                     LOGIN
                                 </button>

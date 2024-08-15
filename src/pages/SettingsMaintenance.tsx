@@ -90,7 +90,7 @@ export default function SettingsMaintenance() {
                     <Box component={'img'} mr={.5} src={DockerSVG} color={activeTab?'#fff':'#000'} height={20} width={20} />
                 </BTN>
                 <BTN activeTab={activeTab} idx='3' onClick={handleTabChange} title={'Logs'} icon={'description'}/>
-                <Box sx={{":hover":{bgcolor:'#ccc',borderBottom:'4px solid #535353'}}} minWidth={240}>
+                <Box minWidth={240}>
                     <BTN activeTab={activeTab} idx='4' onClick={handleTabChange} title={'Export gateway data'}>
                         <Box component={'img'} mr={.5} src={ExportSVG} color={activeTab?'#000':'#535353'} height={15} width={15} />
                     </BTN>
