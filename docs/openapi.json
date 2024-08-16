@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "description": "This is the API specication for the [Wazigte Edge](https://github.com/Waziup/wazigate-edge).",
+    "description": "This is the API specication for the [Wazigate Edge](https://github.com/Waziup/wazigate-edge).",
     "version": "1.0.0",
     "title": "Wazigate Edge",
     "termsOfService": "http://swagger.io/terms/",
@@ -14,6 +14,10 @@
     }
   },
   "tags": [
+    {
+      "name": "Auth",
+      "description": "Authorization"
+    },
     {
       "name": "Your Gateway",
       "description": "Local Device Management"
@@ -40,6 +44,125 @@
     }
   ],
   "paths": {
+    "/auth/token":{
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Get authorization key",
+        "description": "Returns the authorization key based on login credentials.",
+        "requestBody": {
+          "description": "Give a username and password of an existing WaziGate user.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Username",
+                    "example": "admin"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password",
+                    "example": "loragateway"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/retoken":{
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Refresh the authorization key",
+        "description": "Refreshes the authorization key based on login credentials.",
+        "requestBody": {
+          "description": "Give a username and password of an existing WaziGate user.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Username",
+                    "example": "admin"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password",
+                    "example": "loragateway"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/profile": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authorized user profile",
+        "description": "Return the current authorized user's profile details.",
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfile"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/device/id": {
       "get": {
         "tags": [
@@ -96,7 +219,7 @@
             "application/json": {
               "schema": {
                 "type": "string",
-                "example": "My New Gateay Name"
+                "example": "My New Gateway Name"
               }
             }
           }

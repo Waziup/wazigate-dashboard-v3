@@ -8,3 +8,6 @@ export const DEFAULT_COLORS={
     navbar_dark:'#292F3F'
 }
 export const WaziGateApiUrl=import.meta.env.VITE_WAZIGATE_API_URL || '.'
+
+// set WaziGateApiUrl to localhost when running with a local wazigate-edge server
+//export const WaziGateApiUrl='http://localhost'
