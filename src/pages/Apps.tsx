@@ -178,33 +178,34 @@ export default function Apps() {
         if (!yesNo) {
             return;
         }
-        // addApp(customAppId as unknown as App);
-        setAppToInstallId(customAppId.image.replace("/", ".").split(":")[0]);
-        window.wazigate.installApp(customAppId.image).then((res) => {
-            logsRef.current = res as unknown as string;
-            setLogs({
-                done: logsRef.current ? true : false,
-                logs: res as unknown as string
-            });
-            getApps();
-        }).catch((err) => {
-            setLogs({
-                done: true,
-                error: 'Error encountered when installing app: '+err as string,
-                logs: '',
-            });
-            setAppToInstallId('');
-            return;
-        })
-        setModalProps({ 
-            open: true, 
-            title: 'Installing New App', 
-            children: <>
-                <Box width={'100%'} bgcolor={'#fff'}>
+        handleLogsModal(customAppId.image, customAppId.image.replace("/", ".").split(":")[0]);
+        // // addApp(customAppId as unknown as App);
+        // setAppToInstallId(customAppId.image.replace("/", ".").split(":")[0]);
+        // window.wazigate.installApp(customAppId.image).then((res) => {
+        //     logsRef.current = res as unknown as string;
+        //     setLogs({
+        //         done: logsRef.current ? true : false,
+        //         logs: res as unknown as string
+        //     });
+        //     getApps();
+        // }).catch((err) => {
+        //     setLogs({
+        //         done: true,
+        //         error: 'Error encountered when installing app: '+err as string,
+        //         logs: '',
+        //     });
+        //     setAppToInstallId('');
+        //     return;
+        // })
+        // setModalProps({ 
+        //     open: true, 
+        //     title: 'Installing New App', 
+        //     children: <>
+        //         <Box width={'100%'} bgcolor={'#fff'}>
                     
-                </Box>
-            </> 
-        });
+        //         </Box>
+        //     </> 
+        // });
     }
     const [appToInstallId, setAppToInstallId] = useState<string>('');
     const handleCustomAppIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -258,23 +259,24 @@ export default function Apps() {
         });
     };
     useEffect(() => {
-        if ((modalProps.open && modalProps.title === 'Installing New App') || (modalProps.open && modalProps.title === 'Install App') && appToInstallId) {
+        if ((modalProps.open && modalProps.title === 'Installing New App')) {
+            // || (modalProps.open && modalProps.title === 'Install App') && appToInstallId
             fetchInstallLogs(appToInstallId);
             const intervalId = setInterval(async () => {
                 await fetchInstallLogs(appToInstallId);
             }, 1500); // Adjust the interval duration (in milliseconds) as needed
             // Clean up the interval on component unmount
-            // if (logs.done) {
-            //     clearInterval(intervalId);
-            //     setLogs({
-            //         ...logs,
-            //         done: false,
-            //     });
-            //     setModalProps({ open: false, title: '', children: null,otherArgs:'' });
-            //     setAppToInstallId('');
-            //     getApps();
-            //     return;
-            // }
+            if (logs.done) {
+                clearInterval(intervalId);
+                setLogs({
+                    ...logs,
+                    done: false,
+                });
+                setModalProps({ open: false, title: '', children: null,otherArgs:'' });
+                setAppToInstallId('');
+                getApps();
+                return;
+            }
             return () => clearInterval(intervalId);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
