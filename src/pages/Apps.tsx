@@ -179,33 +179,6 @@ export default function Apps() {
             return;
         }
         handleLogsModal(customAppId.image, customAppId.image.replace("/", ".").split(":")[0]);
-        // // addApp(customAppId as unknown as App);
-        // setAppToInstallId(customAppId.image.replace("/", ".").split(":")[0]);
-        // window.wazigate.installApp(customAppId.image).then((res) => {
-        //     logsRef.current = res as unknown as string;
-        //     setLogs({
-        //         done: logsRef.current ? true : false,
-        //         logs: res as unknown as string
-        //     });
-        //     getApps();
-        // }).catch((err) => {
-        //     setLogs({
-        //         done: true,
-        //         error: 'Error encountered when installing app: '+err as string,
-        //         logs: '',
-        //     });
-        //     setAppToInstallId('');
-        //     return;
-        // })
-        // setModalProps({ 
-        //     open: true, 
-        //     title: 'Installing New App', 
-        //     children: <>
-        //         <Box width={'100%'} bgcolor={'#fff'}>
-                    
-        //         </Box>
-        //     </> 
-        // });
     }
     const [appToInstallId, setAppToInstallId] = useState<string>('');
     const handleCustomAppIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
