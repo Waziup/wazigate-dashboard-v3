@@ -17,14 +17,29 @@ function Layout() {
         .catch((error) => {
             console.log(error);
         });
-    },[setAccessToken]);
+    },[setAccessToken]); 
     const isAuthorized =useCallback(() => {
         fetch("sys/uptime")
         .then((resp)=>{
             if(resp.status !== 200){
-                setAccessToken('');
-                setProfile(null);
-                navigate('/');
+                const creds = window.localStorage.getItem("creds");
+                if(creds){
+                    const {username,password} = JSON.parse(creds);
+                    window.wazigate.authToken(username,password)
+                    .then((res)=>{
+                        setAccessToken(res)
+                        window.wazigate.setToken(res);
+                    })
+                    .catch(()=>{
+                        setAccessToken('');
+                        setProfile(null);
+                        navigate('/')
+                    })
+                }else{
+                    setAccessToken('');
+                    setProfile(null);
+                    navigate('/');
+                }
             }  
         })
         .catch(()=>{
