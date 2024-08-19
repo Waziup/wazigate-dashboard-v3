@@ -45,6 +45,7 @@ export default function Login() {
             .then((res)=>{
                 setAccessToken(res)
                 handleClose();
+                window.localStorage.setItem("creds",JSON.stringify({username:data.username,password:data.password}))
                 window.wazigate.setToken(res);
                 navigate('/dashboard',{state:{title:'Dashboard'}})
             })
