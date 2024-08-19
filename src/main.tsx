@@ -22,6 +22,9 @@ waziup.connect({
     }, {
         reconnectPeriod: 0,
     });
+    window.addEventListener('beforeunload', () => {
+        window.localStorage.removeItem("creds");
+    });
     console.log("WaziGate API URL is: " + WaziGateApiUrl);
     console.log('Connected to Wazigate API')
     ReactDOM.createRoot(document.getElementById('root')!).render(
