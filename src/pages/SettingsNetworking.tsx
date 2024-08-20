@@ -3,7 +3,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import RowContainerNormal from "../components/shared/RowContainerNormal";
-import { ArrowBack, CellTower, Close, DesktopWindowsOutlined, LockOutlined, ModeFanOffOutlined, WifiOutlined } from "@mui/icons-material";
+import { ArrowBack, CellTower, Close, DesktopWindowsOutlined, LockOutlined, ModeFanOffOutlined, WarningAmber, WifiOutlined } from "@mui/icons-material";
 import { Android12Switch } from "../components/shared/Switch";
 import PrimaryButton from "../components/shared/PrimaryButton";
 import { getWiFiScan,setConf as setConfFc, AccessPoint,getConf, setWiFiConnect, WifiReq, setAPMode, setAPInfo } from "../utils/systemapi";
@@ -413,10 +413,9 @@ export default function SettingsNetworking() {
                                 </Box>
                                 <Box bgcolor={'#D4E3F5'} width={matches?'50%':'90%'} borderRadius={1} p={2} m={1}>
                                     <Box p={2}>
-                                        <Typography fontSize={13} color={'#FA9E0E'}>
-                                            Warning: If you're using WiFi to access your gateway, 
-                                            after pressing this button you will need to connect to the Wazigate Hotspot in prder to control
-                                            your gateway
+                                        <Typography  fontSize={13} color={'#FA9E0E'}>
+                                            <WarningAmber component={'span'} sx={{color:'#FA9E0E',fontWeight:700,fontSize:15}} />
+                                            Connect to Wazigate Hotspot after pressing the button to manage your gateway over WiFi.
                                         </Typography>
                                         <PrimaryButton title="Switch " onClick={switchToAPMode} type="button" />
                                     </Box>
