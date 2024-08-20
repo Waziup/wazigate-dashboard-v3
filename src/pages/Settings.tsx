@@ -174,7 +174,7 @@ function Settings() {
     return (
         <>
             <SnackbarComponent anchorOrigin={{ vertical: 'top', horizontal: 'center' }} severity='success' autoHideDuration={6000} message={responseMessage} />
-            <Box sx={{ pt: matches?3:1.5,pl: matches?3:1.5,  overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
+            <Box sx={{ px: 2,  overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
                 <Box>
                     <Typography fontWeight={700} color={'black'}>Settings</Typography>
                     <Typography sx={{ fontSize:13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography>
