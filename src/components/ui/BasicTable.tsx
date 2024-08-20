@@ -54,12 +54,16 @@ export default function BasicTable({onDeviceClick, devices}:Props) {
                             }
                         }}
                         >
-                            <TableCell>
-                                <Box sx={{display:'flex',alignItems:'center',borderRadius:1, mx:.5,px: 1,py: .5,bgcolor:DEFAULT_COLORS.primary_blue}}>
-                                    <Sensors sx={{fontSize:12,mr: .2, color:'#fff'}}/>
-                                    <Typography fontSize={12} color={'white'}>{capitalizeFirstLetter(row.devType)}</Typography>
-                                </Box>
-                            </TableCell>
+                            {
+                                (row && row.devType && row.devType.length>0) ?(
+                                    <TableCell>
+                                        <Box sx={{display:'flex',alignItems:'center',borderRadius:1, mx:.5,px: 1,py: .5,bgcolor:DEFAULT_COLORS.primary_blue}}>
+                                            <Sensors sx={{fontSize:12,mr: .2, color:'#fff'}}/>
+                                            <Typography fontSize={12} color={'white'}>{capitalizeFirstLetter(row.devType)}</Typography>
+                                        </Box>
+                                    </TableCell>
+                                ):<Typography></Typography>
+                            }
                             <TableCell>
                                 <Box>
                                     <Typography fontSize={[10,12,14,16,18]} color={DEFAULT_COLORS.primary_black}>
