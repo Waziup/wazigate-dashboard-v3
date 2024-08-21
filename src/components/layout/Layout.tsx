@@ -58,6 +58,7 @@ function Layout() {
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const matchesMd = useMediaQuery(theme.breakpoints.between('sm', 'md'));
     const matchesLg = useMediaQuery(theme.breakpoints.between('md', 'lg'));
+    
     const [open, setOpen] = useState(false);
     const handleToggle = () => {setOpen(!open)}
     const { state, pathname } = useLocation();
@@ -66,10 +67,10 @@ function Layout() {
             {
                 matches ? (
                     <Box sx={{display:'flex',flexWrap:'wrap',height:'100vh',width:matchesMd?'820px':matchesLg?'1000px':'1400px',bgcolor:'#F0F2F5',}}>
-                        <Box sx={{position:'fixed',top:0,left:0,width: matchesMd?'8%':'18%', bgcolor:'#292F3F',height:'100%',}}>
+                        <Box sx={{position:'fixed',top:0,left:0,width: (matchesMd || matchesLg)?'5%':'18%', bgcolor:'#292F3F',height:'100%',}}>
                             <Sidebar matchesMd={matchesMd} />
                         </Box>
-                        <Box sx={{marginLeft:matchesMd?'5%': '20%',flexGrow:1,position:'relative',float:'left', bgcolor:'#F0F2F5',}}>
+                        <Box sx={{marginLeft:(matchesMd || matchesLg)?'5%': '20%',flexGrow:1,position:'relative',float:'left', bgcolor:'#F0F2F5',}}>
                             <Outlet context={[matches]} />
                         </Box>
                     </Box>
