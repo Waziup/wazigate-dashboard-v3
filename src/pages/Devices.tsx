@@ -440,6 +440,9 @@ function Devices() {
                                                 </RowContainerBetween>
                                             </Box>
                                             <CardContent sx={{ py: 0 }}>
+                                                {device.sensors.length === 0 && device.actuators.length === 0 &&(
+                                                    <Typography fontSize={14} textAlign={'center'} m={5} position={'relative'} top={'50%'} fontWeight={500} color={'black'}>No interfaces found</Typography>
+                                                )}
                                                 {
                                                     device.sensors.length > 0 ? device.sensors.map((sensor) => (
                                                         <Box key={sensor.id}>

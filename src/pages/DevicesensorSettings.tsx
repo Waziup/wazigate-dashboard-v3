@@ -10,6 +10,7 @@ import ontologies from "../assets/ontologies.json";
 import { ActuatorX, DevicesContext, SensorX } from "../context/devices.context";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 import React,{ChangeEvent} from "react";
+import OntologyKindInput from "../components/shared/OntologyKindInput";
 export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: ChangeEvent<HTMLSelectElement>) => void,
     title: string,
@@ -49,7 +50,7 @@ function DeviceSensorSettings() {
     const [device, setDevice] = useState<Device | null>(null);
     const [sensOrActuator, setSensOrActuator] = useState<SensorX | ActuatorX | null>(null);
     const [rActuator, setRemoteActuator] = useState<ActuatorX | SensorX | null>(null);
-    const [conditions, setConditions] = useState<string[]>([]);
+    // const [conditions, setConditions] = useState<string[]>([]);
     const { getDevicesFc } = useContext(DevicesContext);
     const handleToggleEnableSwitch = () => {
         setSensOrActuator({
@@ -71,15 +72,15 @@ function DeviceSensorSettings() {
             if (sensor) {
                 setSensOrActuator(sensor as SensorX);
                 setRemoteActuator(sensor as SensorX);
-                const rs = Object.keys(ontologies.sensingDevices)
-                setConditions(rs);
+                // const rs = Object.keys(ontologies.sensingDevices)
+                // setConditions(rs);
             }
             const actuator = de.actuators.find((actuator) => actuator.id === sensorId);
             if (actuator) {
                 setSensOrActuator(actuator as ActuatorX);
                 setRemoteActuator(actuator as ActuatorX);
-                const rs = Object.keys(ontologies.actingDevices)
-                setConditions(rs);
+                // const rs = Object.keys(ontologies.actingDevices)
+                // setConditions(rs);
             }
             setDevice(de);
         });
@@ -127,22 +128,22 @@ function DeviceSensorSettings() {
             }
         })
     }
-    const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        const unitSymbol = event.target.name === 'unit' ? ontologies.units[event.target.value as keyof typeof ontologies.units].label : sensOrActuator?.meta.unitSymbol;
+    const handleChange = (name:string,value:string) => {
+        const unitSymbol = name === 'unit' ? ontologies.units[value as keyof typeof ontologies.units].label : sensOrActuator?.meta.unitSymbol;
         let icon = '';
-        if(event.target.name === 'kind' && pathname.includes('sensors')){
-            icon = ontologies.sensingDevices[event.target.value as keyof typeof ontologies.sensingDevices].icon;
-        }else if(event.target.name === 'kind' && pathname.includes('actuators')){
-            icon = ontologies.actingDevices[event.target.value as keyof typeof ontologies.actingDevices].icon;
+        if(name === 'kind' && pathname.includes('sensors')){
+            icon = ontologies.sensingDevices[value as keyof typeof ontologies.sensingDevices].icon;
+        }else if(name === 'kind' && pathname.includes('actuators')){
+            icon = ontologies.actingDevices[value as keyof typeof ontologies.actingDevices].icon;
         }else{
             icon = sensOrActuator?.meta.icon;
         }
         setSensOrActuator({
             ...sensOrActuator!,
-            [event.target.name]: event.target.value as string,
+            [name]: value as string,
             meta: {
                 ...sensOrActuator?.meta,
-                [event.target.name]: event.target.value as string,
+                [name]: value as string,
                 unitSymbol,
                 icon,
             }
@@ -244,16 +245,17 @@ function DeviceSensorSettings() {
                         <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
                             <TextField sx={{width:'100%'}} onChange={handleTextInputChange} id="name" value={(sensOrActuator)?.name} variant="standard" />
                             <Box width={'90%'}>
+                                <Box my={1}>
+                                    <OntologyKindInput
+                                        title={`${sensOrActuator?.name} Kind`}
+                                        value={sensOrActuator?.meta.kind? sensOrActuator.meta.kind: sensOrActuator?.kind}
+                                        onChange={(name, value) => handleChange(name, value as string)}
+                                        deviceType={pathname.includes('sensors') ? 'sensor' : 'actuator'}
+                                        name="kind"
+                                    />
+                                </Box>
                                 <SelEl
-                                    conditions={conditions}
-                                    handleChange={handleChange}
-                                    title={`${sensOrActuator?.name} Kind`}
-                                    value={sensOrActuator?.meta.kind? sensOrActuator.meta.kind: (sensOrActuator)?.kind}
-                                    name="kind"
-                                    id="kind"
-                                />
-                                <SelEl
-                                    handleChange={handleChange}
+                                    handleChange={(event) => handleChange('quantity', event.target.value)}
                                     title={`${sensOrActuator?.name} Quantity`}
                                     conditions={quantitiesCondition}
                                     value={(sensOrActuator?.meta.quantity)? sensOrActuator.meta.quantity : sensOrActuator?.quantity}
@@ -262,7 +264,7 @@ function DeviceSensorSettings() {
                                 />
                                 <SelEl
                                     conditions={unitsCondition}
-                                    handleChange={handleChange}
+                                    handleChange={(event) => handleChange('unit', event.target.value)}
                                     title={`${sensOrActuator?.name} Unit`}
                                     value={sensOrActuator?.meta.unit? sensOrActuator.meta.unit: sensOrActuator?.unit}
                                     name="unit"
