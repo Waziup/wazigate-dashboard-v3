@@ -8,10 +8,11 @@ interface Props{
     onChange: (name: string, value: string | null) => void;
     deviceType?: string;
     name: string
+    title?: string;
 }
 type ActingDevice = typeof actingDevices[keyof typeof actingDevices];
 type SensingDevice = typeof sensingDevices[keyof typeof sensingDevices];
-export default function OntologyKindInput({deviceType,onChange,value,name}:Props) {
+export default function OntologyKindInput({deviceType,onChange,title,value,name}:Props) {
     let ontology: { [x: string]: ActingDevice | SensingDevice } | null = null
     switch (deviceType) {
         case "actuator": ontology = ontologies.actingDevices; break;
@@ -94,7 +95,7 @@ export default function OntologyKindInput({deviceType,onChange,value,name}:Props
                 return (
                     <TextField
                         {...params}
-                        label={deviceType == "actuator" ? "Actuator Type" : "Sensor Type"}
+                        label={deviceType == "actuator" ? title || "Actuator Type" : title || "Sensor Type"}
                         placeholder="no kind"
                         variant='standard'
                     />

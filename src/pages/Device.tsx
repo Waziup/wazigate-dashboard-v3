@@ -83,7 +83,7 @@ function DeviceSettings() {
                 setDevice(dev);
             })
             .catch((err) => {
-                console.log('Error encounted', err);
+                alert('Error encounted'+err);
                 setIsError(true);
             })
     }
@@ -107,7 +107,6 @@ function DeviceSettings() {
     };
     const handleCreateSensorClick = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('Creating a sensor', newSensOrAct);
         const sensor = {
             name: newSensOrAct.name,
             id: "",
@@ -125,22 +124,19 @@ function DeviceSettings() {
             modified: new Date(),
             created: new Date(),
         };
-        console.log(sensor);
         window.wazigate.addSensor(id as string, sensor as unknown as Sensor)
-            .then((res) => {
-                console.log(res);
+            .then(() => {
                 handleToggleModal();
                 getDevice();
                 getDevicesFc();
             })
             .catch((err) => {
-                console.log('Error encounted', err);
+                alert('Error encounted'+err);
             })
     }
     const handleToggleModal = () => setOpenModal(!openModal);
     const handleCreateActuatorClick = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('Creating an actuator', newSensOrAct);
         const actuator = {
             name: newSensOrAct.name,
             id: "",
@@ -158,43 +154,37 @@ function DeviceSettings() {
             modified: new Date(),
             created: new Date(),
         };
-        console.log(actuator);
         window.wazigate.addActuator(id as string, actuator as unknown as  Actuator)
-            .then((res) => {
-                console.log(res);
+            .then(() => {
                 handleToggleModal();
                 getDevice();
                 getDevicesFc();
             })
             .catch((err) => {
-                console.log('Error encounted', err);
+                alert('Error encounted'+err);
                 handleToggleModal();
             })
     }
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.value, e.target.name);
         setNewSensOrAct({
             ...newSensOrAct,
             name: e.target.value
         });
     }
-    const handleSelectChange = (e: SelectChangeEvent) => {
-        console.log(e.target.value, e.target.name);
-        const unitSymbol = e.target.name === 'unit' ? ontologies.units[e.target.value as keyof typeof ontologies.units].label : newSensOrAct.unit;
+    const handleSelectChange = (name: string,value: string) => {
+        const unitSymbol = name === 'unit' ? ontologies.units[value as keyof typeof ontologies.units].label : newSensOrAct.unit;
         let icon = '';
-        if(e.target.name === 'kind' && modalProps.title==='sensor'){
-            icon = ontologies.sensingDevices[e.target.value as keyof typeof ontologies.sensingDevices].icon;
-        }else if(e.target.name === 'kind' && modalProps.title==='actuator'){
-            console.log(ontologies.actingDevices[e.target.value as keyof typeof ontologies.actingDevices]);
-            icon = ontologies.actingDevices[e.target.value as keyof typeof ontologies.actingDevices].icon;
+        if(name === 'kind' && modalProps.title==='sensor'){
+            icon = ontologies.sensingDevices[value as keyof typeof ontologies.sensingDevices].icon;
+        }else if(name === 'kind' && modalProps.title==='actuator'){
+            // reset the unit, quantity and icon
+            icon = ontologies.actingDevices[value as keyof typeof ontologies.actingDevices].icon;
         }else{
             icon = newSensOrAct.icon;
         }
-        console.log(icon,unitSymbol);
-        
         setNewSensOrAct({
             ...newSensOrAct,
-            [e.target.name]: e.target.value,
+            [name]: value,
             unitSymbol,
             icon,
         });
@@ -326,7 +316,7 @@ function DeviceSettings() {
                                             <Box>
                                                 <Typography>No Sensors found</Typography>
                                             </Box>
-                                        ) : (device?.sensors.map((sens) => {console.log('sensor modifiered',typeof sens.modified); return(
+                                        ) : (device?.sensors.map((sens) =>(
                                             <SensorActuatorItem 
                                                     type="sensor" 
                                                     callbackFc={()=>{getDevice(); getDevicesFc();}} 
@@ -359,8 +349,7 @@ function DeviceSettings() {
                                                         )
                                                     }
                                             </SensorActuatorItem>
-                                            
-                                        )}))
+                                        )))
                                     }
                                 </Grid>
                             </>
