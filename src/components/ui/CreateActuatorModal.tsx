@@ -1,10 +1,11 @@
-import { SelectChangeEvent,Box } from "@mui/material"
+import { Box } from "@mui/material"
 import SelectElementString from "../shared/SelectElementString";
 import ontologies from '../../assets/ontologies.json';
 import React from "react";
+import OntologyKindInput from "../shared/OntologyKindInput";
 interface Props{
     newSensOrAct: {name:string, kind:string,quantity:string,unit?:string},
-    handleSelectChange:(event: SelectChangeEvent<string>)=>void
+    handleSelectChange:(name:string,value: string)=>void
 }
 export default function CreateActuatorModal({newSensOrAct,handleSelectChange}:Props) {
     const [quantitiesCondition,setQuantitiesCondition]=React.useState<string[]>([]);
@@ -21,18 +22,16 @@ export default function CreateActuatorModal({newSensOrAct,handleSelectChange}:Pr
     },[newSensOrAct.quantity])
     return (
         <>
-            <SelectElementString
-                conditions={Object.keys(ontologies.actingDevices)}
-                handleChange={handleSelectChange}
-                title="Actuator Type"
+            <OntologyKindInput
                 value={newSensOrAct.kind}
-                id="kind"
+                onChange={(name, value) => handleSelectChange(name, value as string)}
+                deviceType="actuator"
                 name="kind"
             />
             <Box sx={{display:'flex',alignItems:'center',my:1, justifyContent:'space-between'}}>
                 <SelectElementString
                     conditions={quantitiesCondition}
-                    handleChange={handleSelectChange}
+                    handleChange={(event) => handleSelectChange('quantity', event.target.value)}
                     title="Quantity"
                     value={newSensOrAct.quantity}
                     id="quantity"
@@ -41,7 +40,7 @@ export default function CreateActuatorModal({newSensOrAct,handleSelectChange}:Pr
                 />
                 <SelectElementString
                     conditions={unitsCondition}
-                    handleChange={handleSelectChange}
+                    handleChange={(event) => handleSelectChange('unit', event.target.value)}
                     title="Unit"
                     value={newSensOrAct.unit?newSensOrAct.unit:''}
                     widthPassed="48%"

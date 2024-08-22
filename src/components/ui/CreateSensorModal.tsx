@@ -1,10 +1,11 @@
-import { Box, SelectChangeEvent } from '@mui/material';
+import { Box, SelectChangeEvent,  } from '@mui/material';
 import ontologies from '../../assets/ontologies.json';
 import SelectElementString from '../shared/SelectElementString';
 import React from 'react';
+import OntologyKindInput from '../shared/OntologyKindInput';
 interface Props{
     newSensOrAct: {name:string,kind:string,quantity:string,unit?:string},
-    handleSelectChange:(event: SelectChangeEvent<string>)=>void
+    handleSelectChange:(name:string,value: string)=>void
 }
 export default function CreateSensorModal({newSensOrAct,handleSelectChange}:Props) {
     const [quantitiesCondition,setQuantitiesCondition]=React.useState<string[]>([]);
@@ -27,19 +28,17 @@ export default function CreateSensorModal({newSensOrAct,handleSelectChange}:Prop
     return (
         <>
             <Box my={1}>
-                <SelectElementString
-                    conditions={Object.keys(ontologies.sensingDevices)}
-                    handleChange={handleSelectChange}
-                    title="Sensor Type"
+                <OntologyKindInput
                     value={newSensOrAct.kind}
+                    onChange={(name, value) => handleSelectChange(name, value as string)}
+                    deviceType="sensor"
                     name="kind" 
-                    id="kind"
                 />
             </Box>
             <Box sx={{display:'flex',alignItems:'center',my:1, justifyContent:'space-between'}}>
                 <SelectElementString
                     conditions={quantitiesCondition}
-                    handleChange={handleSelectChange}
+                    handleChange={(event: SelectChangeEvent<string>) => handleSelectChange('quantity', event.target.value)}
                     title="Quantity"
                     value={newSensOrAct.quantity}
                     name="quantity" 
@@ -48,7 +47,7 @@ export default function CreateSensorModal({newSensOrAct,handleSelectChange}:Prop
                 />
                 <SelectElementString
                     conditions={unitsCondition}
-                    handleChange={handleSelectChange}
+                    handleChange={(event: SelectChangeEvent<string>) => handleSelectChange('unit', event.target.value)}
                     title="Unit"
                     value={newSensOrAct.unit?newSensOrAct.unit:''}
                     name="unit" 
