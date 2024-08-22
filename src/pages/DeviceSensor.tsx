@@ -165,6 +165,7 @@ function Device() {
                             },
                             xaxis: {
                                 categories: graphValues.map((value) => value.x),
+                                tickAmount: 10,
                                 // type: 'numeric',
                             },
                             markers:{
