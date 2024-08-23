@@ -236,19 +236,19 @@ function Settings() {
                         <Box my={2}>
                             <RowContainer>
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Local Time</Typography>
-                                <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.primary_black} fontWeight={700}>{currentTime}</Typography>
-                            </RowContainer>
-                            <RowContainer>
-                                <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Date</Typography>
-                                <Typography textTransform={'uppercase'} fontSize={14} color={DEFAULT_COLORS.primary_black} fontWeight={700}>
-                                    {
-                                        data?(
-                                            dayjs(data.time).format('DD/MM/YYYY')
-                                        ):(
-                                            <CircularProgress size={10} sx={{fontSize:10 }} />
-                                        )
-                                    }
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.primary_black} fontWeight={700}>{currentTime}</Typography>
+                                    {" -  "}
+                                    <Typography textTransform={'uppercase'} fontSize={14} color={DEFAULT_COLORS.primary_black} fontWeight={700}>
+                                        {
+                                            data?(
+                                                dayjs(data.time).format('DD/MM/YYYY')
+                                            ):(
+                                                <CircularProgress size={10} sx={{fontSize:10 }} />
+                                            )
+                                        }
                                 </Typography>
+                                </Box>
                             </RowContainer>
                             <RowContainer>
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Time Zone</Typography>
