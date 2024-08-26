@@ -4,7 +4,7 @@ import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { ArrowForward } from "@mui/icons-material";
 import DiscreteSliderMarks from "../components/ui/DiscreteMarks";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Actuator, Device, Sensor } from "waziup";
 import ontologies from "../assets/ontologies.json";
 import { ActuatorX, DevicesContext, SensorX } from "../context/devices.context";
@@ -65,8 +65,8 @@ function DeviceSensorSettings() {
     const resetHandler = () => {
         setSensOrActuator(rActuator);
     }
-    const navigate = useNavigate()
-    useEffect(() => {
+    const navigate = useNavigate();
+    const init = useCallback(() => {
         window.wazigate.getDevice(id).then((de) => {
             const sensor = de.sensors.find((sensor) => sensor.id === sensorId);
             if (sensor) {
@@ -84,7 +84,10 @@ function DeviceSensorSettings() {
             }
             setDevice(de);
         });
-    }, [id,sensorId]);
+    },[id, sensorId])
+    useEffect(() => {
+        init();
+    }, [init]);
     const [actuatorValue, setActuatorValue] = useState<number>(0);
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => { setActuatorValue(Number(e.target.value)) }
     const addActuatorValueSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -152,27 +155,47 @@ function DeviceSensorSettings() {
     const handleChangeSensorOrActuatorSubmittion = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if(pathname.includes('sensors')){
-            window.wazigate.setSensorName(id as string, sensOrActuator?.id as string, sensOrActuator?.name as string).then(() => {
+            if(sensOrActuator?.name !== rActuator?.name){
+                if(!window.confirm(`Are you sure you want to change the name of ${sensOrActuator?.name}?`)) return;
+                window.wazigate.setSensorName(id as string, sensOrActuator?.id as string, sensOrActuator?.name as string).then(() => {
+                    alert('Success');
+                    init();
+                    getDevicesFc();
+                }).catch((err) => {
+                    alert('Error'+err);
+                })
+            }
+            if((sensOrActuator?.meta.kind !== rActuator?.meta.kind) || (sensOrActuator?.meta.quantity !== rActuator?.meta.quantity) || (sensOrActuator?.meta.unit !== rActuator?.meta.unit)){
+                if(!window.confirm(`Are you sure you want to change fields of ${sensOrActuator?.name}?`)) return;
                 window.wazigate.setSensorMeta(id as string, sensOrActuator?.id as string, sensOrActuator?.meta as Sensor['meta']).then(() => {
                     alert('Success');
+                    init();
                     getDevicesFc();
                 }).catch((err) => {
                     alert('Error'+err);
                 });
-            }).catch((err) => {
-                alert('Error'+err);
-            });
+            }
         }else if(pathname.includes('actuators')){
-            window.wazigate.setActuatorName(id as string, sensOrActuator?.id as string, sensOrActuator?.name as string).then(() => {
-                window.wazigate.setActuatorMeta(id as string, sensOrActuator?.id as string, sensOrActuator?.meta as Actuator['meta']).then(() => {
+            if(sensOrActuator?.name !== rActuator?.name){
+                if(!window.confirm(`Are you sure you want to change the name of ${sensOrActuator?.name}?`)) return;
+                window.wazigate.setActuatorName(id as string, sensOrActuator?.id as string, sensOrActuator?.name as string).then(() => {
                     alert('Success');
+                    init();
                     getDevicesFc()
                 }).catch((err) => {
                     alert('Error'+err);
                 });
-            }).catch((err) => {
-                alert('Error'+err);
-            });
+            }
+            if((sensOrActuator?.meta !== rActuator?.meta) ){
+                if(!window.confirm(`Are you sure you want to change fields of ${sensOrActuator?.name}?`)) return;
+                window.wazigate.setActuatorMeta(id as string, sensOrActuator?.id as string, sensOrActuator?.meta as Actuator['meta']).then(() => {
+                    alert('Success');
+                    init();
+                    getDevicesFc()
+                }).catch((err) => {
+                    alert('Error'+err);
+                });
+            }
         }else{
             return;
         }
@@ -244,7 +267,7 @@ function DeviceSensorSettings() {
                     <>
                         <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
                             <TextField sx={{width:'100%'}} onChange={handleTextInputChange} id="name" value={(sensOrActuator)?.name} variant="standard" />
-                            <Box width={'90%'}>
+                            <Box width={'100%'}>
                                 <Box my={1}>
                                     <OntologyKindInput
                                         title={`${sensOrActuator?.name} Kind`}
