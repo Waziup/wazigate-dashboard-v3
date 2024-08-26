@@ -16,16 +16,25 @@ export default function SensorActuatorInfo({type, text,unit, name,kind, onClick,
         }
         return text
     },[text]);
+    const icon = useMemo(() => {
+        if(iconname){
+            return iconname
+        }else if(type==='actuator'){
+            return (ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices] && ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices]).icon?ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices].icon:'meter'
+        }else{
+            return (ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices] && ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices].icon)? ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices].icon:'meter'
+        }
+    },[iconname,kind,type])
     return (
         <RowContainerBetween onClick={onClick} additionStyles={{ my: 2, py: 1, px: .5, ":hover": { bgcolor: '#f5f5f5' } }}>
             <Box sx={{ display: 'flex',alignItems:'center', width: '70%' }}>
                 <SVGIcon 
                     style={{ width: 35, height: 35, marginRight: 5 }}
-                    src={`${ontologiesicons}#${iconname?iconname:type==='actuator'?ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices].icon:ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices].icon}`}
+                    src={`${ontologiesicons}#${icon}`}
                 />
                 <Typography color={'primary'} ml={1} fontSize={12} fontWeight={300}>{name}</Typography>
             </Box>
-            <Box display={'flex'} alignItems={'center'}>
+            <Box display={'flex'} alignItems={'center'}>    
                 <Typography color={'primary.main'}mr={0.5} fontSize={14} fontWeight={300}>{val}</Typography>
                 <Typography color={'primary'} fontSize={12} fontWeight={300}>{typeof text==='object'?'':unit}</Typography>
             </Box>
