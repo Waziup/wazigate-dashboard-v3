@@ -132,20 +132,30 @@ function DeviceSensorSettings() {
         })
     }
     const handleChange = (name:string,value:string) => {
-        const unitSymbol = name === 'unit' ? ontologies.units[value as keyof typeof ontologies.units].label : sensOrActuator?.meta.unitSymbol;
+        let unitSymbol = name === 'unit' ? ontologies.units[value as keyof typeof ontologies.units].label : sensOrActuator?.meta.unitSymbol;
+        let quantity = sensOrActuator?.meta.quantity? sensOrActuator.meta.quantity: sensOrActuator?.quantity;
+        let unit = sensOrActuator?.meta.unit? sensOrActuator.meta.unit: sensOrActuator?.unit;
         let icon = '';
-        if(name === 'kind' && pathname.includes('sensors')){
+        if(name === 'kind' && pathname.includes('sensors') && value in ontologies.sensingDevices){
             icon = ontologies.sensingDevices[value as keyof typeof ontologies.sensingDevices].icon;
-        }else if(name === 'kind' && pathname.includes('actuators')){
+        }else if(name === 'kind' && pathname.includes('actuators') && value in ontologies.actingDevices){
             icon = ontologies.actingDevices[value as keyof typeof ontologies.actingDevices].icon;
+        }else if(name==='kind' && !(value in ontologies.sensingDevices) && !(value in ontologies.actingDevices)){
+            icon = '';
+            unitSymbol = '';
+            unit = '';
+            quantity = '';
         }else{
-            icon = sensOrActuator?.meta.icon;
+            icon = sensOrActuator?.meta.icon? sensOrActuator.meta.icon: '';
         }
+    
         setSensOrActuator({
             ...sensOrActuator!,
             [name]: value as string,
             meta: {
                 ...sensOrActuator?.meta,
+                quantity,
+                unit,
                 [name]: value as string,
                 unitSymbol,
                 icon,
@@ -277,22 +287,25 @@ function DeviceSensorSettings() {
                                         name="kind"
                                     />
                                 </Box>
-                                <SelEl
+                                { ((quantitiesCondition.length>0))?
+                                    <SelEl
                                     handleChange={(event) => handleChange('quantity', event.target.value)}
                                     title={`${sensOrActuator?.name} Quantity`}
                                     conditions={quantitiesCondition}
                                     value={(sensOrActuator?.meta.quantity)? sensOrActuator.meta.quantity : sensOrActuator?.quantity}
                                     name="quantity"
                                     id="quantity"
-                                />
-                                <SelEl
+                                />: null}
+                                {
+                                    ((unitsCondition.length>0))?
+                                    <SelEl
                                     conditions={unitsCondition}
                                     handleChange={(event) => handleChange('unit', event.target.value)}
                                     title={`${sensOrActuator?.name} Unit`}
                                     value={sensOrActuator?.meta.unit? sensOrActuator.meta.unit: sensOrActuator?.unit}
                                     name="unit"
                                     id="unit"
-                                />
+                                />:null}
                             </Box>
                             <RowContainerBetween additionStyles={{ width: '100%' }}>
                                 <Box />
