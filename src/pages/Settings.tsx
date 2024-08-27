@@ -237,8 +237,7 @@ function Settings() {
                             <RowContainer>
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Local Time</Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.primary_black} fontWeight={700}>{currentTime}</Typography>
-                                    {" -  "}
+                                    <Typography textTransform={'uppercase'} mr={1} color={DEFAULT_COLORS.primary_black} fontWeight={700}>{currentTime}</Typography>  
                                     <Typography textTransform={'uppercase'} fontSize={14} color={DEFAULT_COLORS.primary_black} fontWeight={700}>
                                         {
                                             data?(
