@@ -24,7 +24,7 @@ export default function OntologyKindInput({deviceType,onChange,title,value,name}
     return (
         <Autocomplete
             value={value}
-            options={Object.keys(ontology) as string[]}
+            options={ontology ? Object.keys(ontology) as string[]: []}
             id='kind-select'
             onChange={(_event: SyntheticEvent<Element, Event>, newValue: string | null) => {
                 if(typeof newValue === "string" && newValue?.startsWith('use ')){
@@ -48,7 +48,7 @@ export default function OntologyKindInput({deviceType,onChange,title,value,name}
                 return filtered;
             }}
             getOptionLabel={(option) => {
-                if (option in ontology) {
+                if (ontology && option in ontology) {
                     return ontology[option].label;
                 } 
                 return option;
@@ -62,8 +62,8 @@ export default function OntologyKindInput({deviceType,onChange,title,value,name}
                 const defaultKindIcon = "meter";
                 let icon: string;
                 if (typeof option === "string") {
-                    if (option in ontology) {
-                        icon = ontology[option].icon;
+                    if (ontology &&  option in ontology) {
+                        icon = (ontology && ontology[option]).icon;
                     } else {
                         icon = defaultKindIcon;
                     }
@@ -83,8 +83,8 @@ export default function OntologyKindInput({deviceType,onChange,title,value,name}
             freeSolo
             renderInput={(params) => {
                 let icon = 'meter';
-                if (value in ontology) {
-                    icon = ontology[value].icon;
+                if (ontology && value in ontology) {
+                    icon = (ontology && ontology[value]).icon;
                 } else {
                     icon = 'meter';
                 }
@@ -104,7 +104,7 @@ export default function OntologyKindInput({deviceType,onChange,title,value,name}
                         {...params}
                         // value={ontology[value] && ontology[value].label && <Box ml={1}>{ontology[value].label}</Box>}
                         label={deviceType == "actuator" ? title || "Actuator Type" : title || "Sensor Type"}
-                        placeholder={ontology[value] ? ontology[value].label : value}
+                        placeholder={(ontology && ontology[value]) ? (ontology && ontology[value]).label : value}
                         value={value}
                         variant='standard'
                         color='primary'
