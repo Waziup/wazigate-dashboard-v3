@@ -129,6 +129,7 @@ function DeviceSettings() {
                 handleToggleModal();
                 getDevice();
                 getDevicesFc();
+                setNewSensOrAct(initialState);
             })
             .catch((err) => {
                 alert('Error encounted'+err);
@@ -159,6 +160,7 @@ function DeviceSettings() {
                 handleToggleModal();
                 getDevice();
                 getDevicesFc();
+                setNewSensOrAct(initialState);
             })
             .catch((err) => {
                 alert('Error encounted'+err);
@@ -172,18 +174,27 @@ function DeviceSettings() {
         });
     }
     const handleSelectChange = (name: string,value: string) => {
-        const unitSymbol = name === 'unit' ? ontologies.units[value as keyof typeof ontologies.units].label : newSensOrAct.unit;
+        let unitSymbol = name === 'unit' ? ontologies.units[value as keyof typeof ontologies.units].label : newSensOrAct.unit;
+        let quantity = newSensOrAct.quantity? newSensOrAct.quantity: '';
+        let unit = newSensOrAct.unit? newSensOrAct.unit: '';
         let icon = '';
-        if(name === 'kind' && modalProps.title==='sensor'){
+        if(name === 'kind' && modalProps.title==='sensor' && ontologies.sensingDevices[value as keyof typeof ontologies.sensingDevices].icon){
             icon = ontologies.sensingDevices[value as keyof typeof ontologies.sensingDevices].icon;
-        }else if(name === 'kind' && modalProps.title==='actuator'){
+        }else if(name === 'kind' && modalProps.title==='actuator' && ontologies.actingDevices[value as keyof typeof ontologies.actingDevices].icon){
             // reset the unit, quantity and icon
             icon = ontologies.actingDevices[value as keyof typeof ontologies.actingDevices].icon;
+        } else if(name ==='kind' && modalProps.title==='sensor' && !ontologies.sensingDevices[value as keyof typeof ontologies.sensingDevices].icon && !(ontologies.actingDevices[value as keyof typeof ontologies.actingDevices].icon)){
+            icon = ''
+            quantity = '';
+            unit = '';
+            unitSymbol = '';
         }else{
-            icon = newSensOrAct.icon;
+            icon = newSensOrAct.icon? newSensOrAct.icon: '';
         }
         setNewSensOrAct({
             ...newSensOrAct,
+            quantity,
+            unit,
             [name]: value,
             unitSymbol,
             icon,
