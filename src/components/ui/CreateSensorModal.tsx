@@ -12,7 +12,8 @@ export default function CreateSensorModal({newSensOrAct,handleSelectChange}:Prop
     const [unitsCondition,setUnitsCondition]=React.useState<string[]>([]);
     React.useEffect(()=>{
         if(newSensOrAct.kind){
-            setQuantitiesCondition((ontologies.sensingDevices)[newSensOrAct?.kind as keyof typeof ontologies.sensingDevices].quantities);
+            const quantitiesCondition=(ontologies.sensingDevices)[newSensOrAct?.kind as keyof typeof ontologies.sensingDevices]? (ontologies.sensingDevices)[newSensOrAct?.kind as keyof typeof ontologies.sensingDevices].quantities:[];
+            setQuantitiesCondition(quantitiesCondition);
         }else{
             setQuantitiesCondition([]);
         }

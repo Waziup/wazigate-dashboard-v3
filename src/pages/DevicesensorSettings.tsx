@@ -120,6 +120,10 @@ function DeviceSensorSettings() {
         const quantity = sensOrActuator?.meta.quantity? sensOrActuator.meta.quantity: sensOrActuator?.quantity;
         if (sensOrActuator?.meta.quantity ) {
             setUnitsCondition((ontologies.quantities)[quantity as keyof typeof ontologies.quantities].units);
+        }else if(sensOrActuator?.quantity){
+            setUnitsCondition((ontologies.quantities)[quantity as keyof typeof ontologies.quantities].units);
+        } else {
+            setUnitsCondition([]);
         }
     }, [sensOrActuator?.meta.quantity, sensOrActuator?.quantity])
     const onSliderChange=(val:string)=>{
@@ -217,7 +221,7 @@ function DeviceSensorSettings() {
             window.wazigate.deleteSensor(id as string, sensOrActuator?.id as string).then(() => {
                 alert('Success');
                 getDevicesFc();
-                navigate('devices/'+id)
+                navigate('/devices/'+id)
             }).catch((err) => {
                 alert('Error'+err);
             });
@@ -225,7 +229,7 @@ function DeviceSensorSettings() {
             window.wazigate.deleteActuator(id as string, sensOrActuator?.id as string).then(() => {
                 alert('Success');
                 getDevicesFc()
-                navigate('devices/'+id)
+                navigate('/devices/'+id)
             }).catch((err) => {
                 alert('Error'+err);
             });

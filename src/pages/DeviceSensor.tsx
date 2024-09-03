@@ -21,7 +21,6 @@ function Device() {
 
     const navigate = useNavigate();
     const { id, sensorId } = useParams();
-    console.log(id);
     const getGraphValues = useCallback(function (deviceId: string, sensorId: string) {
         window.wazigate.getSensorValues(deviceId, sensorId)
             .then((res) => {
@@ -81,7 +80,6 @@ function Device() {
         setValues(valuesTable);
     }
     useLayoutEffect(() => {
-        console.log(pathname.includes('actuators'));
         window.wazigate.getDevice(id).then((de) => {
             const sensor = de.sensors.find((sensor) => sensor.id === sensorId);
             if (sensor) {

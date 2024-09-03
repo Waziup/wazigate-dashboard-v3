@@ -12,12 +12,18 @@ export default function CreateActuatorModal({newSensOrAct,handleSelectChange}:Pr
     const [unitsCondition,setUnitsCondition]=React.useState<string[]>([]);
     React.useEffect(()=>{
         if(newSensOrAct.kind){
-            setQuantitiesCondition((ontologies.actingDevices)[newSensOrAct?.kind as keyof typeof ontologies.actingDevices].quantities);
+            const quantitiesCondition=(ontologies.actingDevices)[newSensOrAct?.kind as keyof typeof ontologies.actingDevices]? (ontologies.actingDevices)[newSensOrAct?.kind as keyof typeof ontologies.actingDevices].quantities:[];
+            setQuantitiesCondition(quantitiesCondition);
+        }else{
+            setQuantitiesCondition([]);
         }
     },[newSensOrAct.kind])
     React.useEffect(()=>{
         if(newSensOrAct.quantity){
-            setUnitsCondition((ontologies.quantities)[newSensOrAct?.quantity as keyof typeof ontologies.quantities].units);
+            const unitsCondition=(ontologies.quantities)[newSensOrAct?.quantity as keyof typeof ontologies.quantities] ? (ontologies.quantities)[newSensOrAct?.quantity as keyof typeof ontologies.quantities].units: [];
+            setUnitsCondition(unitsCondition);
+        }else{
+            setUnitsCondition([]);
         }
     },[newSensOrAct.quantity])
     return (
