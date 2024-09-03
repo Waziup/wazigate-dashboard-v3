@@ -20,9 +20,9 @@ export default function SensorActuatorInfo({type, text,unit, name,kind, onClick,
         if(iconname){
             return iconname
         }else if(type==='actuator'){
-            return (ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices] && ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices]).icon?ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices].icon:'meter'
+            return (ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices] && ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices])?ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices].icon:'meter'
         }else{
-            return (ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices] && ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices].icon)? ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices].icon:'meter'
+            return (ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices] && ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices])? ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices].icon:'meter'
         }
     },[iconname,kind,type])
     return (

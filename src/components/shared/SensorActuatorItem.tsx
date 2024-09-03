@@ -47,6 +47,9 @@ export default function SensorActuatorItem({kind, icon, callbackFc,type, modifie
             console.log(err);
         })
     }
+    const iconPath = type === 'actuator' ? 
+        ontologies.actingDevices[kind as keyof typeof ontologies.actingDevices]? ontologies.actingDevices[kind as keyof typeof ontologies.actingDevices].icon: 'motor'
+        : ontologies.sensingDevices[kind as keyof typeof ontologies.sensingDevices]? ontologies.sensingDevices[kind as keyof typeof ontologies.sensingDevices].icon: 'temperature';
     return (
         <Grid lg={3} my={1} xl={3} md={4} xs={5.5} sm={6}  item sx={{boxShadow:3, bgcolor: '#fff',cursor:'pointer', mx: matches?2:.8, borderRadius: 2 }}>
             <RowContainerBetween additionStyles={{px:matches?1:0}}>
@@ -75,10 +78,7 @@ export default function SensorActuatorItem({kind, icon, callbackFc,type, modifie
             <Box sx={{display:'flex',alignItems:'center',mb:.5}} onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}`)}}>
                 <SVGIcon
                     style={{ width: 35, height: 35, marginRight: 5 }}
-                    src={`${ontologiesicons}#${
-                        icon ?
-                        icon:
-                            type==='actuator'?ontologies.actingDevices[kind as  keyof typeof ontologies.actingDevices].icon:ontologies.sensingDevices[kind as  keyof typeof ontologies.sensingDevices].icon}`}
+                    src={`${ontologiesicons}#${icon ? icon: iconPath}`}
                 />
                 {children}
             </Box>
