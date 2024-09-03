@@ -178,18 +178,18 @@ function DeviceSettings() {
         let quantity = newSensOrAct.quantity? newSensOrAct.quantity: '';
         let unit = newSensOrAct.unit? newSensOrAct.unit: '';
         let icon = '';
-        if(name === 'kind' && modalProps.title==='sensor' && ontologies.sensingDevices[value as keyof typeof ontologies.sensingDevices].icon){
+        if(name === 'kind' && modalProps.title==='sensor' && value in ontologies.sensingDevices){
             icon = ontologies.sensingDevices[value as keyof typeof ontologies.sensingDevices].icon;
-        }else if(name === 'kind' && modalProps.title==='actuator' && ontologies.actingDevices[value as keyof typeof ontologies.actingDevices].icon){
+        }else if(name === 'kind' && modalProps.title==='actuator' && value in ontologies.actingDevices){
             // reset the unit, quantity and icon
             icon = ontologies.actingDevices[value as keyof typeof ontologies.actingDevices].icon;
-        } else if(name ==='kind' && modalProps.title==='sensor' && !ontologies.sensingDevices[value as keyof typeof ontologies.sensingDevices].icon && !(ontologies.actingDevices[value as keyof typeof ontologies.actingDevices].icon)){
-            icon = ''
+        } else if(name ==='kind' && !(value in ontologies.sensingDevices) && !(value in ontologies.actingDevices)){
+            icon = 'meter'
             quantity = '';
             unit = '';
             unitSymbol = '';
         }else{
-            icon = newSensOrAct.icon? newSensOrAct.icon: '';
+            icon = newSensOrAct.icon? newSensOrAct.icon: 'meter';
         }
         setNewSensOrAct({
             ...newSensOrAct,

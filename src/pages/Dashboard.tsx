@@ -156,11 +156,11 @@ function Dashboard() {
                                         onDeviceClick={onClick}
                                         totalDevices={devices?devices.length:0}
                                         activeDevices={devices? allActiveDevices(devices):0}
-                                        devices={devices?orderByLastUpdated(devices.filter((_device, id) => id < 4)).reverse(): []} 
+                                        devices={devices?orderByLastUpdated(devices.filter((_device, id) => id <= 4)).reverse(): []} 
                                     />
                                 </Grid>
                                 <Grid py={6} item sm={12} md={4} >
-                                    <AppStatus apps={apps?apps.filter((_i,idx)=>idx<4):[]} />
+                                    <AppStatus apps={apps?apps.filter((_i,idx)=>idx<=4):[]} />
                                 </Grid>
                             </Grid>
                         </Box>
