@@ -445,7 +445,7 @@ export default function SettingsNetworking() {
                                     } 
                                 </Typography>
                             </Box>
-                            <Box p={1} onClick={() => setOpenModal(true)}>
+                            <Box sx={{p:1,cursor:'pointer'}} onClick={() => setOpenModal(true)}>
                                 <Typography color={'#666'}>Click here to change network connection</Typography>
                             </Box>
                         </Box>
