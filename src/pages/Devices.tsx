@@ -404,10 +404,14 @@ function Devices() {
                                 return (
                                     <Grid item key={id}  md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={1} >
                                         <Box sx={{ boxShadow: 3, cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -8, my: -1, px: 1, py: .4, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
-                                                <Sensors sx={{ fontSize: 15, color: '#fff' }} />
-                                                <Typography fontSize={13} mx={1} color={'white'} component={'span'}>{device.meta ? capitalizeFirstLetter(device.meta.type) : ''}</Typography>
-                                            </Box>
+                                            {
+                                                (device.meta && device.meta.type) ?(
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -8, my: -1, px: 1, py: .4, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
+                                                        <Sensors sx={{ fontSize: 15, color: '#fff' }} />
+                                                        <Typography fontSize={13} mx={1} color={'white'} component={'span'}>{device.meta ? capitalizeFirstLetter(device.meta.type) : ''}</Typography>
+                                                    </Box>
+                                                ):null
+                                            }
                                             <Box sx={{ borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5, ":hover": { py: 1.5 }, px: 1, }}>
                                                 <RowContainerBetween  additionStyles={{}} >
                                                     <Box sx={{width:'85%'}} onClick={() => {navigate(`${device.id}`)}}>
