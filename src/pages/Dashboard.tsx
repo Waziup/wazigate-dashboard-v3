@@ -175,7 +175,7 @@ function Dashboard() {
                             apps={apps}
                             totalDevices={devices?devices.length:0}
                             activeDevices={devices? allActiveDevices(devices):0}
-                            devices={devices?orderByLastUpdated(devices.filter((_device, id) => id < 4)).reverse(): []}
+                            devices={devices?orderByLastUpdated(devices.filter((_device, id) => id <= 4)).reverse(): []}
                         />
                     </Box>
                 )

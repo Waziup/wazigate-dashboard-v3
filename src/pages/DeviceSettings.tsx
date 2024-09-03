@@ -277,7 +277,7 @@ export default function DeviceSettings() {
                                 onTextInputChange={handleTextInputChange}
                                 autoGenerateHandler={autoGenerateLoraWANOptions}
                                 name="nwkSEncKey"
-                                textInputValue={thisDevice?.meta.lorawan.nwkSEncKey} 
+                                textInputValue={thisDevice?.meta.lorawan? thisDevice?.meta.lorawan.nwkSEncKey:''} 
                                 text={'NwkSKey(Network Session Key)'} 
                                 placeholder={'Network Session Key. 32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan? thisDevice?.meta.lorawan.nwkSEncKey:'')}
                             />
