@@ -105,7 +105,22 @@ export default function DeviceSettings() {
     }
     useEffect(() => {
         window.wazigate.getDevice(id as string).then((de) => {
-            setThisDevice(de);
+            if(de.meta.lorawan){
+                setThisDevice(de);
+            }else{
+                setThisDevice({
+                    ...de,
+                    meta: {
+                        ...de.meta,
+                        lorawan: {
+                            devEUI: '',
+                            devAddr: '',
+                            nwkSEncKey: '',
+                            appSKey: ''
+                        }
+                    }
+                });
+            }
         });
     }, [id]);
     const handleChangeDeviceCodec = (event: React.ChangeEvent<HTMLSelectElement>) => {
