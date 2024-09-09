@@ -161,7 +161,7 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                 location={location} 
                                 path={'/apps'} 
                                 icon='apps'
-                                iconColor={location==='/apps'?'#292F3F':''}
+                                iconColor={location.includes('/apps')?'#292F3F':''}
                                 // icon={<Apps sx={{...IconStyle,color:location.includes('/apps')?'#292F3F':'white'}} />} 
                                 text={'Apps'} 
                             />
