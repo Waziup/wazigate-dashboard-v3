@@ -16,6 +16,12 @@ const time_formats = [
     [5806080000, 'Last century', 'Next century'], // 60*60*24*7*4*12*100*2
     [58060800000, 'centuries', 2903040000] // 60*60*24*7*4*12*100*20, 60*60*24*7*4*12*100
 ];
+export const cleanString =(text: string | undefined)=>{
+    if(!text){
+        return '';
+    }
+    return text.replace(/[^a-zA-Z0-9 ]/g, "")
+}
 export function differenceInMinutes(date:Date | string){
     const now = new Date();
     const diffInSecconds = (now.getTime() - new Date(date).getTime()) / 1000;
