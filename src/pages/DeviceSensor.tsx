@@ -7,6 +7,7 @@ import type { Actuator, Device, Sensor } from "waziup";
 import { Link } from "react-router-dom";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 import SensorTable from "../components/ui/DeviceTable";
+import { cleanString } from "../utils";
 function Device() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
@@ -83,12 +84,12 @@ function Device() {
         window.wazigate.getDevice(id).then((de) => {
             const sensor = de.sensors.find((sensor) => sensor.id === sensorId);
             if (sensor) {
-                setSensOrActuator(sensor);
+                setSensOrActuator({...sensor,name: cleanString(sensor.name)});
                 getGraphValues(id as string, sensorId as string);
             }
             const actuator = de.actuators.find((actuator) => actuator.id === sensorId);
             if (actuator) {
-                setSensOrActuator(actuator);
+                setSensOrActuator({...actuator,name: cleanString(actuator.name)});
                 window.wazigate.getActuatorValues(id as string, sensorId as string)
                 .then((res) => {
                     const values = (res as { time: string, value: number }[]).map((value) => {
@@ -115,7 +116,10 @@ function Device() {
                     setValues(valuesTable);
                 })
             }
-            setDevice(de)
+            setDevice({
+                ...de,
+                name: cleanString(de.name)
+            })
         });
     }, [getGraphValues, id, pathname, sensorId]);
     return (
@@ -128,7 +132,7 @@ function Device() {
                             <Link  style={{fontSize:14,textDecoration:'none',color:'inherit'}} to={`/devices/${device?.id}`}>
                                 {device?.name}
                             </Link>
-                            <Typography fontSize={14} fontWeight={300} color="inherit">{pathname.includes('actuators') ? 'actuators' : 'sensors'} <span style={{fontSize:14,color:'inherit',fontWeight:500}}>/</span>  {sensOrActuator?.name.toLocaleLowerCase()}</Typography>
+                            <Typography fontSize={14} fontWeight={300} color="inherit">{pathname.includes('actuators') ? 'actuators' : 'sensors'} <span style={{fontSize:14,color:'inherit',fontWeight:500}}>/</span>  {cleanString(sensOrActuator?.name.toLocaleLowerCase())}</Typography>
                         </Breadcrumbs>
                     </div>
                 </Box>

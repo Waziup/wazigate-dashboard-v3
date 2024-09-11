@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import AddTextShow from "../components/shared/AddTextInput";
 import type { Device, } from "waziup";
 import { DevicesContext } from "../context/devices.context";
-import { devEUIGenerateFc, toStringHelper } from "../utils";
+import { cleanString, devEUIGenerateFc, toStringHelper } from "../utils";
 import { SelectElementString } from "./Automation";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { DEFAULT_COLORS } from "../constants";
@@ -106,10 +106,14 @@ export default function DeviceSettings() {
     useEffect(() => {
         window.wazigate.getDevice(id as string).then((de) => {
             if(de.meta.lorawan){
-                setThisDevice(de);
+                setThisDevice({
+                    ...de,
+                    name: cleanString(de.name),
+                });
             }else{
                 setThisDevice({
                     ...de,
+                    name: cleanString(de.name),
                     meta: {
                         ...de.meta,
                         lorawan: {

@@ -64,6 +64,7 @@ const initialState = {
     unitSymbol:''
 }
 import Logo404 from '../assets/preview.png';
+import { cleanString } from "../utils";
 function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
@@ -80,7 +81,10 @@ function DeviceSettings() {
     const getDevice = () => {
         window.wazigate.getDevice(id)
             .then((dev) => {
-                setDevice(dev);
+                setDevice({
+                    ...dev,
+                    name: cleanString(dev.name),
+                });
             })
             .catch((err) => {
                 alert('Error encounted'+err);

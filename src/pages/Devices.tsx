@@ -8,7 +8,7 @@ import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
 import EditDeviceModal from '../components/ui/EditDeviceModal';
 import { DevicesContext, SensorX } from '../context/devices.context';
-import { capitalizeFirstLetter, devEUIGenerateFc, differenceInMinutes,  } from '../utils';
+import { capitalizeFirstLetter, cleanString, devEUIGenerateFc, differenceInMinutes,  } from '../utils';
 import PrimaryIconButton from '../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
 import MenuComponent from '../components/shared/MenuDropDown';
@@ -224,9 +224,9 @@ function Devices() {
     }
     const handleSubmitEditDevice = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const device = devices.find((dev) => dev.id === selectedDevice?.id);
+        const devdev = devices.find((dev) => dev.id === selectedDevice?.id);
         if (selectedDevice?.meta) {
-            if (device?.meta !== selectedDevice?.meta) {
+            if (devdev?.meta !== selectedDevice?.meta) {
                 window.wazigate.setDeviceMeta(selectedDevice?.id as string, selectedDevice?.meta as Device)
                     .then(() => {
                         alert("Device meta updated");
@@ -236,14 +236,15 @@ function Devices() {
                         alert("Error updating device meta"+err);
                     });
             }
-            if (device?.name !== selectedDevice?.name) {
-                window.wazigate.setDeviceName(selectedDevice.id as string, selectedDevice.name)
-                    .then(() => {
-                        alert("Device name updated");
-                        return;
-                    }).catch(err => {
-                        alert("Error updating device name"+err);
-                    });
+            if (devdev?.name !== selectedDevice?.name) {
+                // window.wazigate.setDeviceName(selectedDevice.id as string, selectedDevice.name)
+                window.wazigate.set(`devices/${selectedDevice?.id}/name`, selectedDevice?.name)
+                .then(() => {
+                    alert("Device name updated");
+                    return;
+                }).catch(err => {
+                    alert("Error updating device name"+err);
+                });
             }
         }
         setSelectedDevice(null);
@@ -415,7 +416,7 @@ function Devices() {
                                             <Box sx={{ borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5, ":hover": { py: 1.5 }, px: 1, }}>
                                                 <RowContainerBetween  additionStyles={{}} >
                                                     <Box sx={{width:'85%'}} onClick={() => {navigate(`${device.id}`)}}>
-                                                        <Typography color={'info'} fontWeight={700}>{device.name.length > 10 ? device.name.slice(0, 10) + '....' : device.name}</Typography>
+                                                        <Typography color={'info'} fontWeight={700}>{(device.name && device.name.length > 10) ? cleanString(device.name).slice(0, 10) + '....' : cleanString(device.name?device.name:'')}</Typography>
                                                         <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>
                                                             Last updated {differenceInMinutes(new Date(device.modified).toISOString())}
                                                         </Typography>

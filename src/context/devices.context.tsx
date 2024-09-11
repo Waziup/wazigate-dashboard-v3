@@ -1,6 +1,7 @@
 import { createContext, useCallback, useEffect,useState } from "react";
 import { App, Cloud ,ID, Value, Device, Meta } from "waziup";
 import { Devices,getNetworkDevices } from "../utils/systemapi";
+import { cleanString } from "../utils";
 export type SensorX =  {
     id: ID;
     name: string;
@@ -120,7 +121,18 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
                 window.wazigate.subscribe<DeviceX>(`devices/${dev.id}/actuators/#`, ()=>{
                     getDevices();
                 });
-                return dev;
+                return {
+                    ...dev,
+                    name: cleanString(dev.name),
+                    sensors: dev.sensors.map((sensor)=>({
+                        ...sensor,
+                        name: cleanString(sensor.name)
+                    })),
+                    actuators: dev.actuators.map((actuator)=>({
+                        ...actuator,
+                        name: cleanString(actuator.name)
+                    })),
+                };
             });
             setDevices(devFilter as DeviceX[]);
         });

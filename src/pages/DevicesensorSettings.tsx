@@ -11,6 +11,7 @@ import { ActuatorX, DevicesContext, SensorX } from "../context/devices.context";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 import React,{ChangeEvent} from "react";
 import OntologyKindInput from "../components/shared/OntologyKindInput";
+import { cleanString } from "../utils";
 export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: ChangeEvent<HTMLSelectElement>) => void,
     title: string,
@@ -55,6 +56,7 @@ function DeviceSensorSettings() {
     const handleToggleEnableSwitch = () => {
         setSensOrActuator({
             ...sensOrActuator!,
+            name: cleanString(sensOrActuator?.name),
             meta: {
                 ...sensOrActuator?.meta,
                 doNotSync: !sensOrActuator?.meta.doNotSync
@@ -63,22 +65,38 @@ function DeviceSensorSettings() {
     
     }
     const resetHandler = () => {
-        setSensOrActuator(rActuator);
+        setSensOrActuator({
+            ...rActuator!,
+            name: cleanString(rActuator?.name)
+        });
     }
     const navigate = useNavigate();
     const init = useCallback(() => {
         window.wazigate.getDevice(id).then((de) => {
             const sensor = de.sensors.find((sensor) => sensor.id === sensorId);
             if (sensor) {
-                setSensOrActuator(sensor as SensorX);
-                setRemoteActuator(sensor as SensorX);
+                setSensOrActuator({
+                    ...sensor,
+                    name: cleanString(sensor.name)
+                } as SensorX);
+                setRemoteActuator({
+                    ...sensor,
+                    name: cleanString(sensor.name)
+                } as SensorX);
+            
                 // const rs = Object.keys(ontologies.sensingDevices)
                 // setConditions(rs);
             }
             const actuator = de.actuators.find((actuator) => actuator.id === sensorId);
             if (actuator) {
-                setSensOrActuator(actuator as ActuatorX);
-                setRemoteActuator(actuator as ActuatorX);
+                setSensOrActuator({
+                    ...actuator,
+                    name: cleanString(actuator.name)
+                } as ActuatorX);
+                setRemoteActuator({
+                    ...actuator,
+                    name: cleanString(actuator.name)
+                } as ActuatorX);
                 // const rs = Object.keys(ontologies.actingDevices)
                 // setConditions(rs);
             }
@@ -169,10 +187,9 @@ function DeviceSensorSettings() {
     const handleChangeSensorOrActuatorSubmittion = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if(pathname.includes('sensors')){
-            if(sensOrActuator?.name !== rActuator?.name){
-                if(!window.confirm(`Are you sure you want to change the name of ${sensOrActuator?.name}?`)) return;
+            if(sensOrActuator?.name !== rActuator?.name){ 
+                if(!window.confirm(`Are you sure you want to change the name of ${rActuator?.name} to ${sensOrActuator?.name}?`)) return;
                 window.wazigate.setSensorName(id as string, sensOrActuator?.id as string, sensOrActuator?.name as string).then(() => {
-                    alert('Success');
                     init();
                     getDevicesFc();
                 }).catch((err) => {
@@ -240,7 +257,7 @@ function DeviceSensorSettings() {
     const handleTextInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSensOrActuator({
             ...sensOrActuator!,
-            name: event.target.value as string,
+            name: cleanString(event.target.value) as string,
         })
     }
     return (
@@ -254,37 +271,41 @@ function DeviceSensorSettings() {
                         </Link>
                         {
                             matches ? (
-                                <Link
-                                    style={{ fontSize: 14, color: 'black', fontWeight: '300', textDecoration: 'none' }}
-                                    color="black"
-                                    to={"/devices/" + device?.id}
-                                    state={{ ...device }}
-                                >
-                                    {device?.name}
-                                </Link>
+                                <Typography fontSize={14} sx={{":hover":{textDecoration:'underlined'}}} color="text.primary">
+                                    <Link
+                                        style={{ fontSize: 14, color: 'black', fontWeight: '300', textDecoration: 'none' }}
+                                        color="black"
+                                        to={"/devices/" + device?.id}
+                                        state={{ ...device }}
+                                    >
+                                        {cleanString(device?.name)}
+                                    </Link>
+                                </Typography>
                             ) : <Typography fontSize={15} color="text.primary">...</Typography>
                         }
-                        <Link
-                            style={{ fontSize: 14, color: 'black', fontWeight: '300', textDecoration: 'none' }}
-                            color="black"
-                            to={"/devices/" + device?.id + "/sensors/" + sensOrActuator?.id}
-                        >
-                            {sensOrActuator?.name}
-                        </Link>
+                        <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                            <Link
+                                style={{ fontSize: 14, color: 'black', fontWeight: '300', textDecoration: 'none' }}
+                                color="black"
+                                to={"/devices/" + device?.id + "/sensors/" + sensOrActuator?.id}
+                            >
+                                {sensOrActuator?.name}
+                            </Link>
+                        </Typography>
                         <Typography fontSize={14} fontWeight={300} color="text.primary">Settings</Typography>
                     </Breadcrumbs>
                 </div>
             </Box>
             <Box display={'flex'} flexDirection={matches?'row':'column'} bgcolor={matches ? '#fff' : 'inherit'} height={'100%'} width={'100%'} px={1} pt={matches ? 2 : .5}  >
                 <Box m={matches?2:0} width={matches?'45%':'95%'}>
-                    <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Setup {sensOrActuator?.name} kind, quantity and unit</Typography>
+                    <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Setup {cleanString(sensOrActuator?.name)} kind, quantity and unit</Typography>
                     <>
                         <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
                             <TextField sx={{width:'100%'}} onChange={handleTextInputChange} id="name" value={(sensOrActuator)?.name} variant="standard" />
                             <Box width={'100%'}>
                                 <Box my={1}>
                                     <OntologyKindInput
-                                        title={`${sensOrActuator?.name} Kind`}
+                                        title={`${cleanString(sensOrActuator?.name)} Kind`}
                                         value={sensOrActuator?.meta.kind? sensOrActuator.meta.kind: sensOrActuator?.kind}
                                         onChange={(name, value) => handleChange(name, value as string)}
                                         deviceType={pathname.includes('sensors') ? 'sensor' : 'actuator'}
@@ -294,7 +315,7 @@ function DeviceSensorSettings() {
                                 { ((quantitiesCondition.length>0))?
                                     <SelEl
                                     handleChange={(event) => handleChange('quantity', event.target.value)}
-                                    title={`${sensOrActuator?.name} Quantity`}
+                                    title={`${cleanString(sensOrActuator?.name)} Quantity`}
                                     conditions={quantitiesCondition}
                                     value={(sensOrActuator?.meta.quantity)? sensOrActuator.meta.quantity : sensOrActuator?.quantity}
                                     name="quantity"
@@ -305,7 +326,7 @@ function DeviceSensorSettings() {
                                     <SelEl
                                     conditions={unitsCondition}
                                     handleChange={(event) => handleChange('unit', event.target.value)}
-                                    title={`${sensOrActuator?.name} Unit`}
+                                    title={`${cleanString(sensOrActuator?.name)} Unit`}
                                     value={sensOrActuator?.meta.unit? sensOrActuator.meta.unit: sensOrActuator?.unit}
                                     name="unit"
                                     id="unit"
