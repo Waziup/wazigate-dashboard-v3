@@ -55,7 +55,6 @@ export const SelectElementString = ({ handleChange, title, mx, my, conditions, i
                     name: 'age',
                     id: 'uncontrolled-native',
                 }}
-                required
                 value={value}
                 onChange={handleChange}
             >
