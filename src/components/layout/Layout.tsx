@@ -21,7 +21,7 @@ function Layout() {
     const isAuthorized =useCallback(() => {
         fetch("sys/uptime")
         .then((resp)=>{
-            if(resp.status !== 200){
+            if(resp.status === 401){
                 const creds = window.localStorage.getItem("creds");
                 if(creds){
                     const {username,password} = JSON.parse(creds);
@@ -47,8 +47,8 @@ function Layout() {
         });
     },[navigate, setProfile, setAccessToken]);
     useEffect(()=>{
-        const int = setInterval(reToken, 1000 * 60 * 5);
-        const timer = setInterval(isAuthorized, 1000 * 10);
+        const int = setInterval(reToken, 1000 * 60 * 8);
+        const timer = setInterval(isAuthorized, 1000 * 15);
         return ()=>{
             clearInterval(int);
             clearInterval(timer);

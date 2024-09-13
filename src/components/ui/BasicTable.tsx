@@ -57,7 +57,7 @@ export default function BasicTable({onDeviceClick, devices}:Props) {
                             {
                                 (row && row.devType && row.devType.length>0) ?(
                                     <TableCell>
-                                        <Box sx={{display:'flex',alignItems:'center',borderRadius:1, mx:.5,px: 1,py: .5,bgcolor:DEFAULT_COLORS.primary_blue}}>
+                                        <Box sx={{display:'flex',alignItems:'center',borderRadius:1,pl: 1,py: .5,bgcolor:DEFAULT_COLORS.primary_blue}}>
                                             <Sensors sx={{fontSize:12,mr: .2, color:'#fff'}}/>
                                             <Typography fontSize={12} color={'white'}>{capitalizeFirstLetter(row.devType)}</Typography>
                                         </Box>
