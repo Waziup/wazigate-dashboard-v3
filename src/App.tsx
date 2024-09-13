@@ -1,5 +1,5 @@
 // import './App.css'
-import { HashRouter, Route,  Routes, } from 'react-router-dom'
+import { HashRouter, Navigate, Route,  Routes, } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import Dashboard from './pages/Dashboard'
 import Devices from './pages/Devices'
@@ -37,17 +37,17 @@ function App() {
         },
     });
     const { token } = useContext(DevicesContext);
+    const creds = window.localStorage.getItem("creds");
     return (
             <ThemeProvider theme={theme}>
                 <Box bgcolor={'#F0F2F5'}>
                     <HashRouter>
                         <Routes>
-                            <Route  path='*' element={<Login/>}
-                            />
                             {
-                                token ? (
+                                (token && creds) ? (
                                     <Route >
                                         <Route element={<Layout/>}>
+                                            <Route path='/' element={<Navigate to='/dashboard' replace />}/>
                                             <Route path='/dashboard' element={<Dashboard/>}/>
                                             <Route path='/devices' element={<Devices/>}/>
                                             <Route path='/devices/:id' element={<Device/>}/>
@@ -71,8 +71,8 @@ function App() {
                                     <Route path='/' element={<Login/>}/>
                                 )
                             }
+                            <Route  path='*' element={<Login/>}  />
                         </Routes>
-                        {/* <RouterProvider router={router}/> */}
                     </HashRouter>
                 </Box>
             </ThemeProvider>
