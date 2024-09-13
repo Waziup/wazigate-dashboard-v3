@@ -503,8 +503,9 @@ function Devices() {
                         <SpeedDialAction
                             key={'New Device'}
                             icon={<Add />}
+                            tooltipOpen
                             onClick={handleToggleModal}
-                            tooltipTitle='New Device'
+                            tooltipTitle='New'
                         />
                     </SpeedDial>
                 ): null

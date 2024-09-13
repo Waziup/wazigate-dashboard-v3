@@ -11,7 +11,7 @@ import CreateSensorModal from "../components/ui/CreateSensorModal";
 import CreateActuatorModal from "../components/ui/CreateActuatorModal";
 import { Android12Switch } from "../components/shared/Switch";
 import SensorActuatorItem from "../components/shared/SensorActuatorItem";
-import { PlusOne } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import Backdrop from "../components/Backdrop";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: SelectChangeEvent<string>) => void,
@@ -87,7 +87,7 @@ function DeviceSettings() {
                 });
             })
             .catch((err) => {
-                alert('Error encounted'+err);
+                alert('Error encounted '+err);
                 setIsError(true);
             })
     }
@@ -134,6 +134,7 @@ function DeviceSettings() {
                 getDevice();
                 getDevicesFc();
                 setNewSensOrAct(initialState);
+                setModalEls('', '');
             })
             .catch((err) => {
                 alert('Error encounted'+err);
@@ -160,16 +161,17 @@ function DeviceSettings() {
             created: new Date(),
         };
         window.wazigate.addActuator(id as string, actuator as unknown as  Actuator)
-            .then(() => {
-                handleToggleModal();
-                getDevice();
-                getDevicesFc();
-                setNewSensOrAct(initialState);
-            })
-            .catch((err) => {
-                alert('Error encounted'+err);
-                handleToggleModal();
-            })
+        .then(() => {
+            handleToggleModal();
+            getDevice();
+            getDevicesFc();
+            setNewSensOrAct(initialState);
+            setModalEls('', '');
+        })
+        .catch((err) => {
+            alert('Error encounted'+err);
+            handleToggleModal();
+        })
     }
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewSensOrAct({
@@ -293,9 +295,11 @@ function DeviceSettings() {
                         <Typography fontWeight={600} fontSize={24} color={'black'}>{device?.name}</Typography>
                         <div role="presentation" onClick={handleClick}>
                             <Breadcrumbs aria-label="breadcrumb">
-                                <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/devices">
-                                    Devices
-                                </Link>
+                                <Typography fontSize={16} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                    <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/devices">
+                                        Devices
+                                    </Link>
+                                </Typography>
                                 <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
                                     {device && device.name.length > 10 ? device.name.slice(0, 10) + '....' : device?.name}
                                 </p>
@@ -436,8 +440,8 @@ function DeviceSettings() {
             {
                 !matches ? (
                     <SpeedDial ariaLabel='New Device' sx={{ position: 'absolute', bottom: 16, right: 16 }} icon={<SpeedDialIcon />}>
-                        <SpeedDialAction key={'New Sensor'} icon={<PlusOne />} tooltipTitle={'New Sensor'} onClick={() => { setModalEls('sensor', 'Sensor Name'); handleToggleModal() }} />
-                        <SpeedDialAction key={'New Actuator'} icon={<PlusOne />} tooltipTitle={'New Actuator'} onClick={() => { setModalEls('actuator', 'Actuator Name'); handleToggleModal() }} />
+                        <SpeedDialAction key={'New Sensor'} icon={<Add />} tooltipOpen tooltipTitle={'Sensor'} onClick={() => { setModalEls('sensor', 'Sensor Name'); handleToggleModal() }} />
+                        <SpeedDialAction key={'New Actuator'} icon={<Add />} tooltipOpen tooltipTitle={'Actuator'} onClick={() => { setModalEls('actuator', 'Actuator Name'); handleToggleModal() }} />
                     </SpeedDial>
                 ): null
             }
