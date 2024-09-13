@@ -248,18 +248,22 @@ export default function DeviceSettings() {
                         <Typography fontSize={24} fontWeight={700} color={'black'}>{thisDevice?.name}</Typography>
                         <div role="presentation" onClick={handleClick}>
                             <Breadcrumbs aria-label="breadcrumb">
-                                <Link style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }} state={{ title: 'Devices' }} color="inherit" to="/devices">
-                                    Devices
-                                </Link>
+                                <Typography fontSize={15} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                    <Link style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }} state={{ title: 'Devices' }} color="inherit" to="/devices">
+                                        Devices
+                                    </Link>
+                                </Typography>
 
-                                <Link
-                                    color="inherit"
-                                    state={{ title: thisDevice?.name }}
-                                    to={`/devices/${id}`}
-                                    style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }}
-                                >
-                                    {thisDevice?.name ? thisDevice.name.slice(0, 10) + '...' : ''}
-                                </Link>
+                                <Typography fontSize={15} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                    <Link
+                                        color="inherit"
+                                        state={{ title: thisDevice?.name }}
+                                        to={`/devices/${id}`}
+                                        style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }}
+                                    >
+                                        {thisDevice?.name ? thisDevice.name.slice(0, 10) + '...' : ''}
+                                    </Link>
+                                </Typography>
                                 <Typography fontSize={15} color="text.primary">
                                     settings
                                 </Typography>

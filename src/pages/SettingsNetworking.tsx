@@ -283,9 +283,11 @@ export default function SettingsNetworking() {
                     <Typography fontWeight={600} fontSize={24} color={'black'}>Wifi</Typography>
                     <div role="presentation" >
                         <Breadcrumbs aria-label="breadcrumb">
-                            <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/settings">
-                                Settings
-                            </Link>
+                            <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/settings">
+                                    Settings
+                                </Link>
+                            </Typography>
                             <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
                                 wifi
                             </p>

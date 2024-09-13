@@ -129,9 +129,11 @@ function Device() {
                     <Typography fontWeight={500} fontSize={24} color={'black'}>{device?.name}</Typography>
                     <div role="presentation" onClick={handleClick}>
                         <Breadcrumbs aria-label="breadcrumb">
-                            <Link  style={{fontSize:14,textDecoration:'none',color:'inherit'}} to={`/devices/${device?.id}`}>
-                                {device?.name}
-                            </Link>
+                            <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                <Link  style={{fontSize:14,textDecoration:'none',color:'inherit'}} to={`/devices/${device?.id}`}>
+                                    {device?.name}
+                                </Link>
+                            </Typography>
                             <Typography fontSize={14} fontWeight={300} color="inherit">{pathname.includes('actuators') ? 'actuators' : 'sensors'} <span style={{fontSize:14,color:'inherit',fontWeight:500}}>/</span>  {cleanString(sensOrActuator?.name.toLocaleLowerCase())}</Typography>
                         </Breadcrumbs>
                     </div>
