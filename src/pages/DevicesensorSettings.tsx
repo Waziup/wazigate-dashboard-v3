@@ -196,7 +196,7 @@ function DeviceSensorSettings() {
                     alert('Error'+err);
                 })
             }
-            if((sensOrActuator?.meta.kind !== rActuator?.meta.kind) || (sensOrActuator?.meta.quantity !== rActuator?.meta.quantity) || (sensOrActuator?.meta.unit !== rActuator?.meta.unit)){
+            if((sensOrActuator?.meta !== rActuator?.meta)){
                 if(!window.confirm(`Are you sure you want to change fields of ${sensOrActuator?.name}?`)) return;
                 window.wazigate.setSensorMeta(id as string, sensOrActuator?.id as string, sensOrActuator?.meta as Sensor['meta']).then(() => {
                     alert('Success');
@@ -266,12 +266,14 @@ function DeviceSensorSettings() {
                 <Typography fontWeight={600} fontSize={24} color={'black'}>{device?.name}</Typography>
                 <div role="presentation" onClick={() => { }}>
                     <Breadcrumbs aria-label="breadcrumb">
-                        <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/devices">
-                            Devices
-                        </Link>
+                        <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                            <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/devices">
+                                Devices
+                            </Link>
+                        </Typography>
                         {
                             matches ? (
-                                <Typography fontSize={14} sx={{":hover":{textDecoration:'underlined'}}} color="text.primary">
+                                <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
                                     <Link
                                         style={{ fontSize: 14, color: 'black', fontWeight: '300', textDecoration: 'none' }}
                                         color="black"
