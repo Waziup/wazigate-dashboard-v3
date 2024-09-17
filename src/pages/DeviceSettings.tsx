@@ -120,7 +120,8 @@ export default function DeviceSettings() {
                             devEUI: '',
                             devAddr: '',
                             nwkSEncKey: '',
-                            appSKey: ''
+                            appSKey: '',
+                            profile: "WaziDev",
                         }
                     }
                 });
@@ -157,6 +158,7 @@ export default function DeviceSettings() {
                             ...thisDevice.meta.lorawan,
                             devAddr,
                             devEUI,
+                            profile: "WaziDev",
                         }
                     }
                 });
@@ -170,7 +172,8 @@ export default function DeviceSettings() {
                         lorawan: {
                             ...thisDevice.meta.lorawan,
                             nwkSEncKey: sharedKey,
-                            appSKey: sharedKey
+                            appSKey: sharedKey,
+                            profile: "WaziDev",
                         }
                     }
                 });
@@ -184,7 +187,8 @@ export default function DeviceSettings() {
                         lorawan: {
                             ...thisDevice.meta.lorawan,
                             nwkSEncKey: sharedKey,
-                            appSKey: sharedKey
+                            appSKey: sharedKey,
+                            profile: "WaziDev",
                         }
                     }
                 });
@@ -212,6 +216,7 @@ export default function DeviceSettings() {
                     devEUI,
                     nwkSEncKey:  (e.target.name === 'nwkSEncKey' || e.target.name === 'appSKey') ? e.target.value : sharedKey,
                     appSKey: (e.target.name==='appSKey' || e.target.name==='nwkSEncKey') ? e.target.value : sharedKey,
+                    profile: "WaziDev",
                 },
             }
         });
@@ -235,7 +240,14 @@ export default function DeviceSettings() {
             ...thisDevice,
             meta: {
                 ...thisDevice.meta,
-                type: event.target.value
+                type: event.target.value,
+                lorawan: event.target.value === 'WaziDev' ? {
+                    devEUI: '',
+                    devAddr: '',
+                    nwkSEncKey: '',
+                    appSKey: '',
+                    profile: "WaziDev",
+                } : null
             }
         });
         setIsEdited(true);
