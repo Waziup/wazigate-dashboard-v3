@@ -120,8 +120,7 @@ export default function ExportTabMaintenance({matches}:Props) {
                                     {/* <Typography  fontSize={12} color={'#666666'}>Bin Size in seconds: </Typography> */}
                                     <FormControl sx={{width:'100%',bgcolor:'#D4E3F5', borderBottom:'1px solid #292F3F'}}>
                                         <Typography color={'#666666'} mb={.4} fontSize={12}>Bin Size in seconds</Typography>
-                                        <input 
-                                            autoFocus 
+                                        <input
                                             onChange={(ev) => {
                                                 updateSearchParams('duration',ev.target.value)
                                             }}

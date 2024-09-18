@@ -344,7 +344,7 @@ function DeviceSensorSettings() {
                         </form>
                     </>
                 </Box>
-                <Box width={matches?'45%':'95%'} m={matches?2:0}>
+                <Box width={matches?'45%':'95%'} mt={matches?0:2} m={matches?2:0}>
                     {
                         pathname.includes('actuators') ? (
                             <>
@@ -352,12 +352,11 @@ function DeviceSensorSettings() {
                                     <form onSubmit={addActuatorValueSubmit}>
                                         <Typography color={'primary'} mb={.4} fontSize={12}>Add a value with the current time stamp</Typography>
                                         <input
-                                            autoFocus
                                             onInput={onInputChange}
                                             name="name" 
                                             placeholder='Actuator value'
                                             required
-                                            style={{ border: 'none', width: '100%', padding: '6px 0', borderBottom: '1px solid #292F3F', outline: 'none' }}
+                                            style={{ border: 'none', width: '100%',backgroundColor:'none', padding: '6px 0', borderBottom: '1px solid #292F3F', outline: 'none' }}
                                         />
                                         <Button type="submit" sx={{ mx: 1, mt: 2, color: '#fff' }} color="info" startIcon={<ArrowForward />} variant={'contained'}>Push</Button>
                                     </form>
