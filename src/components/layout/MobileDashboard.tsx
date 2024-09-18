@@ -75,11 +75,11 @@ export default function MobileDashboard({onClick,activeDevices,totalDevices, apC
                 </RowContainerBetween>
                 <RowContainerBetween>
                     <Box sx={{display:'flex',alignItems:'center',}}>
-                        <Typography fontSize={14} mx={1} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>Total Devices: {totalDevices} </Typography>
-                        <Typography></Typography>
+                        <Typography fontSize={14} my={1} mr={1} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>Total Devices: {totalDevices} </Typography>
+                        <Typography>  </Typography>
                         <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>Active Devices: {activeDevices}</Typography>
                     </Box>
-                    <Box/>
+                <Box/>
                 </RowContainerBetween>
                 <Box display={'flex'} flexDirection={'column'} mt={1} py={1} alignItems={'center'}>
                     {
@@ -115,7 +115,7 @@ export default function MobileDashboard({onClick,activeDevices,totalDevices, apC
                         <Typography fontSize={10} textAlign={'center'}>See all</Typography>
                     </Link>
                 </RowContainerBetween>
-                <Box display={'flex'} flexDirection={'column'} mt={1} borderRadius={2} bgcolor={'#fff'} alignItems={'center'}>
+                <Box display={'flex'} flexDirection={'column'} mt={1} overflow={'auto'} borderRadius={2} bgcolor={'#fff'} alignItems={'center'}>
                     {
                         apps.length>0?apps.map((app, id) => {
                             return(
