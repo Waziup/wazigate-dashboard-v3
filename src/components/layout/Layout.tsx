@@ -76,7 +76,7 @@ function Layout() {
                     </Box>
                 ) : (
                     <Box sx={{height:'100vh',  bgcolor: '#F0F2F5', overflowY: 'auto' }}>
-                        <RowContainerBetween additionStyles={{ bgcolor: 'primary.main' }} >
+                        <RowContainerBetween additionStyles={{position:'absolute',top:0,width:'100%',zIndex:50,height: 55, bgcolor: 'primary.main' }} >
                             <Box sx={{ display: 'flex', py: 2, alignItems: 'center' }} >
                                 <Menu onClick={handleToggle} sx={{ mx: 2, color: 'white', cursor: 'pointer' }} />
                                 <Typography color={'white'} fontWeight={'600'}>{state ? state.title : 'Wazigate'}</Typography>
@@ -100,7 +100,7 @@ function Layout() {
                                 <Sidebar matchesMd={matchesMd} />
                             </Box>
                         </Box>
-                        <Box sx={{height:'100%',overflowY:'auto',mb:4}}>
+                        <Box sx={{height:'100%',overflowY:'auto',mb:4,mt: 6}}>
                             <Outlet context={[matches]} />
                         </Box>
                     </Box>
