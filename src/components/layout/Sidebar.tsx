@@ -175,7 +175,7 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     iconColor={(location==='/settings' || location==='/settings/networking' || location==='/settings/maintenance')?'#292F3F':''}
                                     // icon={ <SettingsTwoTone sx={{...IconStyle,color:(location==='/settings' || location==='/settings/networking' || location==='/settings/maintenance')?'#292F3F':'#fff'}} />} 
                                     text={'Settings'}
-                                    otherItem={open ? <ArrowDropDown sx={{cursor:'pointer',color:location === '/settings'? '#000':'#fff',}} onClick={handleClick} /> : <ArrowDropDown sx={{cursor:'pointer',color:location ==='/settings'? '#000':'#fff',borderRadius:2}} onClick={handleClick} />}
+                                    otherItem={open ? <ArrowDropDown sx={{cursor:'pointer',color:location.includes('/settings')? '#000':'#fff',}} onClick={handleClick} /> : <ArrowDropDown sx={{cursor:'pointer',color:location.includes('/settings')? '#000':'#fff',borderRadius:2}} onClick={handleClick} />}
                                 />
                                 
                                 <Collapse in={open} timeout="auto" unmountOnExit>
