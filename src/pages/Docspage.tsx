@@ -23,7 +23,7 @@ function Docspage() {
                 <Typography fontWeight={500} fontSize={20} color={'black'}>WaziGate Help</Typography>
                 <Typography>Any problem using the WaziGate? Dont Worry!  Help is on the way.</Typography>
                 <Box mt={2}>
-                    <TextEL path="https://lab.waziup.io/resources/waziup/wazigate" text='Wazigate Documetation'>
+                    <TextEL path="https://lab.waziup.io/resources/waziup-e-v/wazigate" text='Wazigate Documetation'>
                         <Language/>
                     </TextEL>
                     <TextEL path="/docs/" text='Wazigate Edge Documetation'>
