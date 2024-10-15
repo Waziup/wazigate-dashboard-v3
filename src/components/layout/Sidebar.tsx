@@ -127,7 +127,7 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
     }
     return (
         <Box position={'relative'} height={'100%'} width={'100%'} display={'flex'}  flexDirection={'column'} alignItems={'center'}>
-            <Box my={1} width={'100%'} alignSelf={'center'} mx={'auto'} py={1} borderBottom={'0.05px solid rgba(255, 255, 255, 0.4)'}>
+            <Box display='flex' justifyContent='center' alignItems='center' width='100%' py={1} borderBottom={'0.05px solid rgba(255, 255, 255, 0.4)'}>
                 <Box component={'img'} src={WaziGateSVG} width={'70%'} mb={1} height={50} />
             </Box>
             {
