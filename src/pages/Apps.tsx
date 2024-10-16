@@ -1,8 +1,8 @@
-import { Box, Button, CircularProgress, FormControl, Grid, InputLabel,  MenuItem, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Tooltip, Typography } from '@mui/material';
 import { NormalText, } from './Dashboard';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
-import {  Close, Download, FiberNew,  } from '@mui/icons-material';
+import { Close, Download, FiberNew, } from '@mui/icons-material';
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import { StartAppConfig, type App } from 'waziup';
@@ -65,11 +65,12 @@ import SnackbarComponent from '../components/shared/Snackbar';
 const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHandler, age }: { customAppInstallHandler: () => void, matches: boolean, recommendedApps: RecomendedApp[], handleChange: (e: SelectChangeEvent) => void, age: string }) => (
     <FormControl sx={{ p: 0, border: 'none', width: matches ? '35%' : '45%', }}>
         <InputLabel color='info' id="demo-simple-select-helper-label">Install App</InputLabel>
-        <Select sx={{borderColor:'#499dff', width: '100%', py: 0, }}
+        <Select sx={{ borderColor: '#499dff', width: '100%', py: 0, }}
             labelId="Recommended Apps"
             id="recommeded_apps _selecter"
             onClose={onCloseHandler}
-            value={age} label="Age" onChange={handleChange}>
+            value={age} label="Age" onChange={handleChange}
+        >
             {
                 recommendedApps.map((app) => (
                     <MenuItem key={app.id} value={app.image + "*" + app.id} sx={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
@@ -88,14 +89,14 @@ const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHand
                     </MenuItem>
                 ))
             }
-            <MenuItem onClick={customAppInstallHandler} value={20} sx={{ display: 'flex', py: 1, width: '100%', borderTop: '1px solid black', justifyContent: 'space-between' }}>
+            <MenuItem onClick={customAppInstallHandler} value={20} sx={{ display: 'flex', borderTop: '1px solid gray', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Box display={'flex'} alignItems={'center'}>
                     <FiberNew sx={{ fontSize: 20, mx: 1, color: '#F48652' }} />
-                    <Typography color={'#325460'} fontSize={15}>Install Custom App</Typography>
+                    <Typography color={'#325460'} fontSize={15}>Custom App</Typography>
                 </Box>
-                <Box display={'flex'} alignItems={'center'}>
-                    <Download sx={{ fontSize: 20, mx: 1, color: '#325460' }} />
-                    <Typography sx={{ textTransform: 'uppercase', color: '#325460', fontSize: 15 }}>
+                <Box display={'flex'} alignItems={'center'} gap={1}>
+                    <Download sx={{ fontSize: 16, color: '#325460' }} />
+                    <Typography variant='overline' fontWeight={600} color='#325460' fontSize={12}>
                         Install
                     </Typography>
                 </Box>
@@ -105,16 +106,16 @@ const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHand
 
     </FormControl>
 );
-interface AppProp{
-    disabled?:boolean,
-    appUrl?:string
+interface AppProp {
+    disabled?: boolean,
+    appUrl?: string
     children: React.ReactNode
 }
-export const GridItem = ({appUrl, children,disabled }:AppProp) => (
+export const GridItem = ({ appUrl, children, disabled }: AppProp) => (
     <Grid item md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={1} >
         <Box minHeight={100} sx={{ px: 2, py: 1, position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
             {children}
-            <Link to={appUrl?appUrl:''} >
+            <Link to={appUrl ? appUrl : ''} >
                 <Button disabled={disabled} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>OPEN</Button>
             </Link>
         </Box>
@@ -159,7 +160,7 @@ export default function Apps() {
         })
     }
     useEffect(() => {
-        if(apps.length ===0){
+        if (apps.length === 0) {
             getApps()
         }
         window.wazigate.get<RecomendedApp[]>('apps?available')
@@ -192,7 +193,7 @@ export default function Apps() {
         setModalProps({
             open: true, title: 'Installing New App', children: <>
                 <Box width={'100%'} bgcolor={'#fff'}>
-                    
+
                 </Box>
             </>
         });
@@ -282,18 +283,18 @@ export default function Apps() {
         setLoading(true);
         window.wazigate.setAppConfig(selectedApp?.id as string, {
             restart: event.target.value as "no" | "always" | "on-failure" | "unless-stopped" | undefined,
-            state:'started'
+            state: 'started'
         })
-        .then(() => {
-            setLoading(false);
-            getApps();
-            setShowAppSettings(!showAppSettings);
-        })
-        .catch((err) => {
-            setLoading(false);
-            alert('Error: ' + err);
-            setShowAppSettings(!showAppSettings);
-        });
+            .then(() => {
+                setLoading(false);
+                getApps();
+                setShowAppSettings(!showAppSettings);
+            })
+            .catch((err) => {
+                setLoading(false);
+                alert('Error: ' + err);
+                setShowAppSettings(!showAppSettings);
+            });
     }
     function startOrStopApp(appId: string, running: boolean) {
         const yesNo = confirm('Are you sure you want to ' + (running ? 'stop' : 'start') + ' ' + appId + '?');
@@ -306,15 +307,15 @@ export default function Apps() {
         }
         setLoading(true);
         window.wazigate.startStopApp(appId, config)
-        .then(() => {
-            alert('App ' + appId + ' ' + (running ? 'stopped' : 'started') + ' successfully');
-            getApps();
-            setLoading(false);
-        }).catch(() => {
-            alert('Could not ' + (running ? 'stop' : 'start') + ' ' + appId);
-            getApps();
-            setLoading(false);
-        })
+            .then(() => {
+                alert('App ' + appId + ' ' + (running ? 'stopped' : 'started') + ' successfully');
+                getApps();
+                setLoading(false);
+            }).catch(() => {
+                alert('Could not ' + (running ? 'stop' : 'start') + ' ' + appId);
+                getApps();
+                setLoading(false);
+            })
 
     }
     return (
@@ -325,16 +326,16 @@ export default function Apps() {
                         autoHideDuration={5000}
                         severity='error'
                         message={(error as Error).message ? (error as Error).message : (error as string)}
-                        anchorOrigin={{vertical:'top',horizontal:'center'}}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                     />
-                ):null
+                ) : null
             }
             {
-                loading?(
+                loading ? (
                     <Backdrop>
                         <CircularProgress color="info" size={70} />
                     </Backdrop>
-                ):null
+                ) : null
             }
             {
                 modalProps.open && modalProps.title === 'Installing New App' && (
@@ -356,12 +357,12 @@ export default function Apps() {
                                 {modalProps.children}
                                 <Box px={2} py={1}>
                                     {
-                                        logs.done?(
+                                        logs.done ? (
                                             <Button onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CLOSE</Button>
-                                        ):(
+                                        ) : (
                                             <LoadingButton disabled loading={true} onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CLOSE</LoadingButton>
                                         )
-                                        
+
                                     }
                                 </Box>
                             </Box>
@@ -369,18 +370,100 @@ export default function Apps() {
                     </Backdrop>
                 )
             }
-            {
+            <Dialog
+                open={modalProps.open}
+                onClose={handleClose}
+            // PaperProps={{
+            //     component: 'form',
+            //     onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            //         event.preventDefault();
+            //         const formData = new FormData(event.currentTarget);
+            //         const formJson = Object.fromEntries((formData as any).entries());
+            //         const email = formJson.email;
+            //         console.log(email);
+            //         handleClose();
+            //     },
+            // }}
+            >
+                <DialogTitle>Customize Your App</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        To curtomize your app please fill up the following fields.
+                    </DialogContentText>
+                    <form onSubmit={(e) => { e.preventDefault(); handleSubmitNewCustomApp() }}>
+
+                        <TextInputField
+                            variant="filled"
+                            placeholder='Enter app name'
+                            label='Name'
+                            required
+                            name='name'
+                            value={customAppId.name}
+                            onChange={handleCustomAppIdChange}
+                        />
+                        <TextInputField
+                            variant="filled"
+                            placeholder="Docker Image: format(owner/image_name:tag)"
+                            label='Image'
+                            required
+                            name='image'
+                            value={customAppId.image}
+                            onChange={handleCustomAppIdChange}
+                        />
+                        <TextInputField
+                            variant="filled"
+                            placeholder="Version of app"
+                            label='Version'
+                            required
+                            name='version'
+                            value={customAppId.version}
+                            onChange={handleCustomAppIdChange}
+                        />
+                        <TextInputField
+                            variant="filled"
+                            id="author"
+                            onChange={handleCustomAppIdChange}
+                            name="author"
+                            required
+                            label='Author'
+                            value={customAppId.author}
+                            placeholder="Author of app"
+                        />
+                        <TextInputField
+                            variant="filled"
+                            id="description"
+                            label='description'
+                            onChange={handleCustomAppIdChange}
+                            name="description"
+                            required
+                            value={customAppId.description}
+                            placeholder="Description of app"
+                        />
+                        <RowContainerBetween additionStyles={{ py: 2 }}>
+                            <PrimaryButton title='Install' type='submit' />
+                            <Box></Box>
+                        </RowContainerBetween>
+                    </form>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => { setCustomAppId(customAppProps); setLogs({ done: false, logs: '' }); closeModal() }}>Cancel</Button>
+                    <Button type="submit">Install</Button>
+                </DialogActions>
+            </Dialog>
+            {/* {
                 (modalProps.open && modalProps.title === 'Install App') ? (
                     <Backdrop>
                         <Box width={matches ? '40%' : '90%'} bgcolor={'#fff'}>
                             <RowContainerBetween additionStyles={{ borderBottom: '1px solid black', p: 2 }}>
                                 <Typography>{modalProps.title}</Typography>
-                                <Close sx={{ cursor: 'pointer',color: 'black', fontSize: 20 }} onClick={() => { setCustomAppId(customAppProps); setLogs({ done: false, logs: '' }); closeModal() }} />
+                                <Typography>Setup you custom app</Typography>
+                                <Close sx={{ cursor: 'pointer', color: 'black', fontSize: 20 }} onClick={() => { setCustomAppId(customAppProps); setLogs({ done: false, logs: '' }); closeModal() }} />
                             </RowContainerBetween>
                             <Box width={'90%'} bgcolor={'#fff'}>
                                 <form onSubmit={(e) => { e.preventDefault(); handleSubmitNewCustomApp() }}>
                                     <Box borderBottom={'1px solid black'} px={2} >
                                         <TextInputField
+                                            variant="filled"
                                             placeholder='Enter app name'
                                             label='Name'
                                             required
@@ -389,6 +472,7 @@ export default function Apps() {
                                             onChange={handleCustomAppIdChange}
                                         />
                                         <TextInputField
+                                            variant="filled"
                                             placeholder="Docker Image: format(owner/image_name:tag)"
                                             label='Image'
                                             required
@@ -397,6 +481,7 @@ export default function Apps() {
                                             onChange={handleCustomAppIdChange}
                                         />
                                         <TextInputField
+                                            variant="filled"
                                             placeholder="Version of app"
                                             label='Version'
                                             required
@@ -405,6 +490,7 @@ export default function Apps() {
                                             onChange={handleCustomAppIdChange}
                                         />
                                         <TextInputField
+                                            variant="filled"
                                             id="author"
                                             onChange={handleCustomAppIdChange}
                                             name="author"
@@ -414,6 +500,7 @@ export default function Apps() {
                                             placeholder="Author of app"
                                         />
                                         <TextInputField
+                                            variant="filled"
                                             id="description"
                                             label='description'
                                             onChange={handleCustomAppIdChange}
@@ -424,7 +511,7 @@ export default function Apps() {
                                         />
                                     </Box>
                                     <RowContainerBetween additionStyles={{ py: 2 }}>
-                                        <PrimaryButton title='Install' type='submit'/>
+                                        <PrimaryButton title='Install' type='submit' />
                                         <Box></Box>
                                     </RowContainerBetween>
                                 </form>
@@ -432,7 +519,7 @@ export default function Apps() {
                         </Box>
                     </Backdrop>
                 ) : null
-            }
+            } */}
             {
                 uninstLoader && (
                     <Backdrop>
@@ -486,10 +573,10 @@ export default function Apps() {
                                             name='restartPolicy'
                                             value={(selectedApp as App)?.state ? (selectedApp as App)?.state.restartPolicy : ''}
                                             handleChange={updateSettings}
-                                            conditions={['no','unless-stopped', 'on-failure', 'always']}
+                                            conditions={['no', 'unless-stopped', 'on-failure', 'always']}
                                             title='Restart Policy'
                                         />
-                                    ):null
+                                    ) : null
                                 }
                                 <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
                                     <Typography color={'primary'} mb={.4} fontSize={12}>Description</Typography>
@@ -509,9 +596,9 @@ export default function Apps() {
                     <Box >
                         <Typography fontWeight={700} fontSize={20} color={'black'}>Apps</Typography>
                         {
-                            matches?(
+                            matches ? (
                                 <Typography fontSize={matches ? 15 : 13} sx={{ color: DEFAULT_COLORS.secondary_black }}>Setup your Wazigate Edge Apps</Typography>
-                            ):null
+                            ) : null
                         }
                     </Box>
                     <DropDown
@@ -521,6 +608,7 @@ export default function Apps() {
                         handleChange={handleChangeLogsModal} age={''}
                     />
                 </RowContainerBetween>
+                
                 <Grid container spacing={2} py={2}>
                     {
                         apps.map((app, idx) => {
@@ -533,7 +621,7 @@ export default function Apps() {
                                                 app={app}
                                             />
                                         ) : (
-                                            <GridItem appUrl={returnAppURL(app)} disabled={app.state ?!app.state.running:true} key={app.id}>
+                                            <GridItem appUrl={returnAppURL(app)} disabled={app.state ? !app.state.running : true} key={app.id}>
                                                 <Box px={.4} display={'flex'} alignItems={'center'} sx={{ position: 'absolute', top: -5, my: -1, }} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
                                                     <Box component={'img'} src={LogoSig} />
                                                     <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
@@ -556,11 +644,11 @@ export default function Apps() {
                                                                 text: 'Uninstall',
                                                                 clickHandler: () => { setAppToUninstallFc(idx) }
                                                             },
-                                                            (app.state && !(app.id.includes("system")))?{
+                                                            (app.state && !(app.id.includes("system"))) ? {
                                                                 icon: `pause`,
                                                                 text: app.state ? app.state.running ? 'Stop' : 'Start' : 'Start',
                                                                 clickHandler: () => { startOrStopApp(app.id, app.state ? app.state.running : false) }
-                                                            }:null
+                                                            } : null
                                                         ]}
                                                     />
                                                 </Box>
