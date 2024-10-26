@@ -10,25 +10,6 @@ async function failResp(resp: Response) {
 /*--------------*/
 
 export async function internet() {
-    /*	console.log("Call internet");
-        return await fetch(URL + "internet")
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw "Something went wrong";
-                    // throw new Error("Something went wrong");
-                }
-            })
-            .then(responseJson => {
-                // Do something with the response
-                return responseJson;
-            })
-            .catch(error => {
-                console.log(error);
-            });
-
-            */
     const token = window.localStorage.getItem("token");
     const resp = await fetch(URL + "internet", {headers: {Authorization: 'Bearer ' + token}});
     if (!resp.ok) await failResp(resp);
@@ -140,7 +121,6 @@ export async function setAPMode() {
             "Authorization": 'Bearer ' + token
         },
     });
-    //   console.log(resp);
     if (!resp.ok) await failResp(resp);
     return await resp.json();
 }

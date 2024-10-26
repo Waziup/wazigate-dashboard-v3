@@ -53,7 +53,6 @@ export default function ResourcesTabMaintenance({matches}:Props) {
     });
     useEffect(() => {
         getUsageInfo().then((res) => {
-            console.log(res);
             setUsageInfo(res);
         });
         const fetchInterval = setInterval(()=>{
