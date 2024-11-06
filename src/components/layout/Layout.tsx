@@ -22,7 +22,7 @@ function Layout() {
         fetch("sys/uptime")
         .then((resp)=>{
             if(resp.status === 401){
-                const creds = window.localStorage.getItem("creds");
+                const creds = window.sessionStorage.getItem("creds");
                 if(creds){
                     const {username,password} = JSON.parse(creds);
                     window.wazigate.authToken(username,password)

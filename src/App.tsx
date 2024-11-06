@@ -37,7 +37,7 @@ function App() {
         },
     });
     const { token } = useContext(DevicesContext);
-    const creds = window.localStorage.getItem("creds");
+    const creds = window.sessionStorage.getItem("creds");
     return (
             <ThemeProvider theme={theme}>
                 <Box bgcolor={'#F0F2F5'}>
