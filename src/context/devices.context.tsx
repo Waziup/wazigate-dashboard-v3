@@ -89,7 +89,7 @@ export const DevicesContext = createContext<ContextValues>({
 export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     const [devices, setDevices] = useState<DeviceX[]>([]);
     const [token,setToken] = useState<string>(()=>{
-        const token = window.localStorage.getItem('token');
+        const token = window.sessionStorage.getItem('token');
         if(token){
             return token;
         }
@@ -162,7 +162,7 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         setNetWorkDevices(netWorkDevices);
     },[]);
     const setAccessToken = useCallback(async (accessToken:string)=>{
-        window.localStorage.setItem('token',accessToken as unknown as string);
+        window.sessionStorage.setItem('token',accessToken as unknown as string);
         setToken(accessToken);
         // window.localStorage.removeItem('token');
     },[]);
