@@ -1,11 +1,12 @@
-import { ArrowBack, Close } from "@mui/icons-material"
-import { Modal, Box, SelectChangeEvent, Typography } from "@mui/material"
+import { ArrowBack, } from "@mui/icons-material"
+import { Box, SelectChangeEvent, Typography, Button, Dialog, DialogContent, DialogActions } from "@mui/material"
 import CreateDeviceTab1 from "./CreateDeviceTab1"
 import CreateDeviceTabTwo from "./CreateDeviceTab2"
 import RowContainerBetween from "../shared/RowContainerBetween";
 import { Device } from "waziup";
 import PrimaryButton from "../shared/PrimaryButton";
 import RowContainerNormal from "../shared/RowContainerNormal";
+import { DEFAULT_COLORS } from "../../constants";
 interface Props {
     openModal: boolean
     handleToggleModal: () => void
@@ -23,15 +24,9 @@ interface Props {
     autoGenerateLoraWANOptionsHandler: (title: "devAddr" | "nwkSEncKey" | "appSKey") => void
 }
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
     width: 400,
     bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 2,
-    borderRadius: 2,
+    p: 0,
 };
 const IconStyle = {
     cursor: 'pointer',
@@ -39,68 +34,58 @@ const IconStyle = {
 }
 export default function CreateDeviceModalWindow({ openModal, autoGenerateLoraWANOptionsHandler, onTextInputChange, handleChangeDeviceCodec, handleToggleModal, submitCreateDevice, handleChange, handleChangeSelect, selectedValue, screen, handleScreenChange, blockOnClick, newDevice, changeMakeLoraWAN, }: Props) {
     return (
-        <Modal
-            open={openModal}
-            onClose={handleToggleModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-        >
-            <Box>
-                <Box sx={style}>
-                    <RowContainerBetween>
-                        {
-                            screen === 'tab2' ? (
-                                <RowContainerNormal>
-                                    <ArrowBack onClick={() => { handleScreenChange('tab1') }} sx={{ ...IconStyle, fontSize: 20 }} />
-                                    <Typography mx={2}>{newDevice.name} settings</Typography>
-                                </RowContainerNormal>
-                            ) : (
-                                <Box>
-                                    <Typography color={'#000'} fontWeight={600} >Create a new Device</Typography>
-                                </Box>
-                            )
-                        }
-                        <Close onClick={() => { handleScreenChange('tab1'); handleToggleModal() }} sx={{ ...IconStyle, fontSize: 20 }} />
-                    </RowContainerBetween>
-                    <Box p={2}>
-                        <form onSubmit={submitCreateDevice}>
-                            {
-                                screen === 'tab1' ? (
-                                    <CreateDeviceTab1
-                                        blockOnClick={blockOnClick}
-                                        newDevice={newDevice}
-                                        handleChange={handleChange}
-                                        handleChangeSelect={handleChangeSelect}
-                                    />
-                                ) : (
-                                    <CreateDeviceTabTwo
-                                        handleChangeDeviceCodec={handleChangeDeviceCodec}
-                                        changeMakeLoraWAN={changeMakeLoraWAN}
-                                        makeLoraWAN={newDevice.meta.lorawan}
-                                        onTextInputChange={onTextInputChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
-                                        newDevice={newDevice}
-                                        selectedValue={selectedValue}
-                                        autoGenerateHandler={autoGenerateLoraWANOptionsHandler}
-                                    />
-                                )
-                            }
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 2 }} >
-                                <Box></Box>
-                                {
-                                    screen === 'tab2' ? (
-                                        <PrimaryButton title="CREATE" type="submit" />
-                                    ) : null
-                                }
-                                {
-                                    screen === 'tab1' ? (
-                                        <PrimaryButton title="NEXT" onClick={() => { handleScreenChange('tab2') }} />
-                                    ) : null
-                                }
+        <Dialog  open={openModal} onClose={handleToggleModal}  PaperProps={{component:'form', onSubmit:(e: React.FormEvent<HTMLFormElement>)=>{e.preventDefault(); submitCreateDevice(e) } }}>
+            <Box sx={style}>
+                <RowContainerBetween additionStyles={{p:2}}>
+                    {
+                        screen === 'tab2' ? (
+                            <RowContainerNormal>
+                                <ArrowBack onClick={() => { handleScreenChange('tab1') }} sx={{ ...IconStyle, fontSize: 20 }} />
+                                <Typography mx={2}>{newDevice.name} settings</Typography>
+                            </RowContainerNormal>
+                        ) : (
+                            <Box>
+                                <Typography color={'#000'} fontWeight={600} >Create a new Device</Typography>
                             </Box>
-                        </form>
-                    </Box>
-                </Box>
+                        )
+                    }
+                </RowContainerBetween>
+                <DialogContent>
+                    {
+                        screen === 'tab1' ? (
+                            <CreateDeviceTab1
+                                blockOnClick={blockOnClick}
+                                newDevice={newDevice}
+                                handleChange={handleChange}
+                                handleChangeSelect={handleChangeSelect}
+                            />
+                        ) : (
+                            <CreateDeviceTabTwo
+                                handleChangeDeviceCodec={handleChangeDeviceCodec}
+                                changeMakeLoraWAN={changeMakeLoraWAN}
+                                makeLoraWAN={newDevice.meta.lorawan}
+                                onTextInputChange={onTextInputChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
+                                newDevice={newDevice}
+                                selectedValue={selectedValue}
+                                autoGenerateHandler={autoGenerateLoraWANOptionsHandler}
+                            />
+                        )
+                    }
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => { handleScreenChange('tab1'); handleToggleModal() }} variant={'text'} sx={{ mx: 1,color:'#ff0000' }} color={'info'}>CLOSE</Button>
+                    {
+                        screen === 'tab2' ? (
+                            <PrimaryButton textColor={(!newDevice.name || !newDevice.meta.type)?'#d9d9d9':DEFAULT_COLORS.primary_blue} variant="text" disabled={!newDevice.name || !newDevice.meta.type} title="CREATE" type="submit" />
+                        ) : null
+                    }
+                    {
+                        screen === 'tab1' ? (
+                            <PrimaryButton textColor={(!newDevice.name || !newDevice.meta.type)?'#d9d9d9':DEFAULT_COLORS.primary_blue} variant="text" disabled={!newDevice.name || !newDevice.meta.type} title="NEXT" onClick={() => { handleScreenChange('tab2') }} />
+                        ) : null
+                    }
+                </DialogActions>
             </Box>
-        </Modal>
+        </Dialog>
     )
 }
