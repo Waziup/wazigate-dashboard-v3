@@ -1,5 +1,5 @@
 import { MoreVert,  } from '@mui/icons-material';
-import { Box, Button, Menu,Icon, MenuItem, ListItemIcon } from '@mui/material';
+import { Box, Menu,Icon, MenuItem, ListItemIcon } from '@mui/material';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import React from 'react'
 interface Props{
@@ -12,15 +12,13 @@ export default function MenuComponent({open,menuItems}:Props) {
             <PopupState variant="popover" popupId="demo-popup-menu">
                 {(popupState) => (
                     <React.Fragment>
-                        <Button id="demo-positioned-button"
-                            aria-controls={open ? 'demo-positioned-menu' : undefined}
+                        <MoreVert 
                             aria-haspopup="true"
-                            aria-expanded={open ? 'true' : undefined}
-                            {...bindTrigger(popupState)}
-                        >
-                            <MoreVert sx={{ color: 'black' }} />
-                        </Button>
-
+                            aria-expanded={open ? 'true' : undefined} 
+                            aria-controls={open ? 'demo-positioned-menu' : undefined} 
+                            {...bindTrigger(popupState)} 
+                            sx={{ color: 'black',cursor:'pointer' }} 
+                        />
                         <Menu {...bindMenu(popupState)}>
                             {
                                 menuItems.map((item,id)=> item&&(
