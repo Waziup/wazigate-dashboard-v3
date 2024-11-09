@@ -1,8 +1,8 @@
-import { Box, Button, CircularProgress, FormControl, Grid, InputLabel,  MenuItem, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel,  MenuItem, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material';
 import { NormalText, } from './Dashboard';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
-import {  Close, Download, FiberNew, SearchOff,  } from '@mui/icons-material';
+import {  Download, FiberNew, SearchOff,  } from '@mui/icons-material';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import { StartAppConfig, type App } from 'waziup';
@@ -14,7 +14,6 @@ import { LoadingButton } from '@mui/lab';
 import { returnAppURL } from '../utils';
 import TextInputField from '../components/shared/TextInputField';
 import MenuComponent from '../components/shared/MenuDropDown';
-import PrimaryButton from '../components/shared/PrimaryButton';
 type App1 = App & {
     description: string
 }
@@ -63,16 +62,16 @@ import Logo from '../assets/wazilogo.svg';
 import LogoSig from '../assets/wazi_sig.svg';
 import SnackbarComponent from '../components/shared/Snackbar';
 const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHandler, age }: { customAppInstallHandler: () => void, matches: boolean, recommendedApps: RecomendedApp[], handleChange: (e: SelectChangeEvent) => void, age: string }) => (
-    <FormControl sx={{ p: 0, border: 'none', width: matches ? '35%' : '45%', }}>
+    <FormControl color='info' size='small' sx={{ p: 0, border: 'none', width: matches ? '25%' : '45%', }}>
         <InputLabel color='info' id="demo-simple-select-helper-label">Install App</InputLabel>
         <Select sx={{borderColor:'#499dff', width: '100%', py: 0, }}
             labelId="Recommended Apps"
             id="recommeded_apps _selecter"
             onClose={onCloseHandler}
-            value={age} label="Age" onChange={handleChange}>
+            value={age} label="Install App" onChange={handleChange}>
             {
-                recommendedApps.map((app) => (
-                    <MenuItem key={app.id} value={app.image + "*" + app.id} sx={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
+                recommendedApps.map((app,idx) => (
+                    <MenuItem key={app.id} value={app.image + "*" + app.id} sx={{ display: 'flex',bgcolor:idx%2?'#D4E3F5':'', width: '100%', justifyContent: 'space-between' }}>
                         <Box display={'flex'} alignItems={'center'}>
                             <Box component={'img'} sx={{ width: 20, mx: 1, height: 20 }} src={Logo} />
                             <Tooltip color='black' followCursor title={app.description} placement="top-start">
@@ -88,7 +87,7 @@ const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHand
                     </MenuItem>
                 ))
             }
-            <MenuItem onClick={customAppInstallHandler} value={20} sx={{ display: 'flex', py: 1, width: '100%', borderTop: '1px solid black', justifyContent: 'space-between' }}>
+            <MenuItem onClick={customAppInstallHandler} value={20} sx={{ display: 'flex', py: 1, width: '100%', borderTop: '1px solid #D9D9D9', justifyContent: 'space-between' }}>
                 <Box display={'flex'} alignItems={'center'}>
                     <FiberNew sx={{ fontSize: 20, mx: 1, color: '#F48652' }} />
                     <Typography color={'#325460'} fontSize={15}>Install Custom App</Typography>
@@ -106,17 +105,13 @@ const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHand
     </FormControl>
 );
 interface AppProp{
-    disabled?:boolean,
-    appUrl?:string
     children: React.ReactNode
 }
-export const GridItem = ({appUrl, children,disabled }:AppProp) => (
+export const GridItem = ({ children, }:AppProp) => (
     <Grid item md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={1} >
         <Box minHeight={100} sx={{ px: 2, py: 1,boxShadow:3, position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
             {children}
-            <Link to={appUrl?appUrl:''} >
-                <Button disabled={disabled} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>OPEN</Button>
-            </Link>
+            
         </Box>
     </Grid>
 );
@@ -260,9 +255,9 @@ export default function Apps() {
         // handleClose();
         setUninstLoader(!uninstLoader)
     }
-    const uninstall = () => {
+    const uninstall = async () => {
         setLoadingUninstall(true)
-        window.wazigate.uninstallApp(appToUninstall ? appToUninstall?.id : '', false)
+        await window.wazigate.uninstallApp(appToUninstall ? appToUninstall?.id : '', false)
         .then(() => {
             setUninstLoader(false);
             load();
@@ -272,6 +267,7 @@ export default function Apps() {
         }).catch(() => {
             alert('Could not uninstall ' + appToUninstall?.name);
             setAppToUninstall(null);
+            setUninstLoader(false);
             getApps();
             getRecApps()
         })
@@ -317,11 +313,11 @@ export default function Apps() {
             getApps();
             setLoading(false);
         }).catch(() => {
-            alert('Could not ' + (running ? 'stop' : 'start') + ' ' + appId);
+            // alert('Could not ' + (running ? 'stop' : 'start') + ' ' + appId);
+            setError('Could not ' + (running ? 'stop' : 'start') + ' ' + appId)
             getApps();
             setLoading(false);
         })
-
     }
     return (
         <>
@@ -342,96 +338,70 @@ export default function Apps() {
                     </Backdrop>
                 ):null
             }
-            {
-                modalProps.open && modalProps.title === 'Installing New App' && (
-                    <Backdrop>
-                        <Box sx={{width:matches?'40%':'90%',bgcolor:'#fff',borderRadius:1.5,boxShadow:3}} width={matches ? '40%' : '90%'} bgcolor={'#fff'}>
-                            <Box borderBottom={'1px solid black'} p={2}>
-                                <Typography>{modalProps.title}</Typography>
+            <Dialog open={modalProps.open && modalProps.title === 'Installing New App'} onClose={closeModal}>
+                <DialogTitle>{modalProps.title}</DialogTitle>
+                <DialogContent sx={{borderTop:'1px solid black',bgcolor:'#000',overflow:'auto',height:250}}>
+                    {
+                        logs && (
+                            <Box p={2} maxWidth={'100%'} overflow={'auto'} width={'100%'} bgcolor={'#000'}>
+                                <pre style={{fontSize:13,color:'#fff'}}>
+                                    {logs.logs}
+                                </pre>
                             </Box>
-                            {
-                                logs && (
-                                    <Box p={2} maxWidth={'100%'} overflow={'auto'} width={'100%'} height={250} bgcolor={'#000'}>
-                                        <pre style={{fontSize:13,color:'#fff'}}>
-                                            {logs.logs}
-                                        </pre>
-                                    </Box>
-                                )
-                            }
-                            {
-                                logs.error &&(
-                                    <Box px={2} py={1} bgcolor={'#fec61f'}>
-                                        <Typography color={'error'}>{logs.error}</Typography>
-                                    </Box>
-                                )
-                            }
-                            <Box py={2}>
-                                {modalProps.children}
-                                <RowContainerBetween additionStyles={{px:2,py:1}}>
-                                    <Button disabled={!logs.done} onClick={closeModal} variant={'contained'} sx={{ mx: 2,color:'#fff' }} color={'info'}>CLOSE</Button>
-                                    {
-                                        <Box sx={{display:'flex',justifyContent: 'flex-end',alignItems:'center'}}>
-                                            <LoadingButton disabled loading={true} onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CLOSE</LoadingButton>
-                                        </Box>
-                                    }
-                                </RowContainerBetween>
+                        )
+                    }
+                    {
+                        logs.error &&(
+                            <Box px={2} py={1} bgcolor={'#fec61f'}>
+                                <Typography color={'error'}>{logs.error}</Typography>
                             </Box>
-                        </Box>
-                    </Backdrop>
-                )
-            }
-            {
-                (modalProps.open && modalProps.title === 'Install App') ? (
-                    <Backdrop>
-                        <Box sx={{width: matches ? '30%' : '90%',borderRadius:1.5,boxShadow:3,bgcolor:'#fff'}} >
-                            <RowContainerBetween additionStyles={{ borderBottom: '1px solid black', p: 2 }}>
-                                <Typography>{modalProps.title}</Typography>
-                                <Close sx={{ cursor: 'pointer',color: 'black', fontSize: 20 }} onClick={() => { setCustomAppId(customAppProps); setLogs({ done: false, logs: '' }); closeModal() }} />
-                            </RowContainerBetween>
-                            <Box my={2} bgcolor={'#fff'}>
-                                <form onSubmit={(e) => { e.preventDefault(); handleSubmitNewCustomApp() }}>
-                                    <Box borderBottom={'1px solid black'} p={2} >
-                                        <TextInputField
-                                            placeholder="Docker Image: format(owner/image_name:tag)"
-                                            label='Image'
-                                            required
-                                            name='image'
-                                            value={customAppId.image}
-                                            onChange={handleCustomAppIdChange}
-                                        />
-                                    </Box>
-                                    <RowContainerBetween additionStyles={{ py: 2 }}>
-                                        <PrimaryButton title='Install' type='submit'/>
-                                        <Box></Box>
-                                    </RowContainerBetween>
-                                </form>
+                        )
+                    }
+                </DialogContent>
+                <DialogActions>
+                    <Button disabled={!logs.done} onClick={closeModal} variant={'text'} sx={{ mx: 2,color:'#ff0000' }} color={'info'}>CLOSE</Button>
+                    <LoadingButton disabled loading={true} onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CLOSE</LoadingButton>
+                    
+                </DialogActions>
+            </Dialog>
+            <Dialog  fullWidth PaperProps={{component:'form', onSubmit:(e: React.FormEvent<HTMLFormElement>)=>{e.preventDefault(); handleSubmitNewCustomApp() } }} open={modalProps.open && modalProps.title === 'Install App'} onClose={() => { setCustomAppId(customAppProps); setLogs({ done: false, logs: '' }); closeModal() }} >
+                <DialogTitle>{modalProps.title}</DialogTitle>
+                <RowContainerBetween additionStyles={{ borderBottom: '1px solid black', p: 0 }}/>
+                <DialogContent sx={{my:0,borderBottom:'1px solid black',}} >
+                    <TextInputField
+                        placeholder="Docker Image: format(owner/image_name:tag)"
+                        label='Image'
+                        required
+                        name='image'
+                        value={customAppId.image}
+                        onChange={handleCustomAppIdChange}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    {/* <PrimaryButton color={'secondary'} variant='text' title='Install' type='submit'/> */}
+                    <Button onClick={() => { setCustomAppId(customAppProps); setLogs({ done: false, logs: '' }); closeModal() }} sx={{ mx: 2, color: '#ff0000', }} variant="text" color="warning" >CANCEL</Button>
+                    <Button sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >INSTALL</Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={uninstLoader} onClose={() => { setAppToUninstall(null); setUninstLoader(!uninstLoader) }}>
+                <DialogTitle>Do you wish to uninstall {appToUninstall?.name}</DialogTitle>
+                <DialogContent sx={{my:2,}} >
+                    <DialogContentText>
+                        This app will be removed and uninstalled from the gateway, you can still reinstall it for have it running in the gateway.
+                    </DialogContentText>
+                    {
+                        loadingUninstall && (
+                            <Box borderBottom={'1px solid black'} width={'100%'} my={1}>
+                                <CircularProgress color='info' />
                             </Box>
-                        </Box>
-                    </Backdrop>
-                ) : null
-            }
-            {
-                uninstLoader ? (
-                    <Backdrop>
-                        <Box width={matches ? '30%' : '90%'} bgcolor={'#fff'}>
-                            <Box borderBottom={'1px solid black'} px={2} py={2}>
-                                <Typography>Do you wish to uninstall {appToUninstall?.name}</Typography>
-                            </Box>
-                            {
-                                loadingUninstall && (
-                                    <Box borderBottom={'1px solid black'} width={'100%'} my={1}>
-                                        <CircularProgress color='info' />
-                                    </Box>
-                                )
-                            }
-                            <Box px={2} py={1}>
-                                <Button onClick={uninstall} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>Uninstall</Button>
-                                <Button onClick={() => { setAppToUninstall(null); setUninstLoader(!uninstLoader) }} variant={'contained'} sx={{ mx: 2 }} color={'error'}>CANCEL</Button>
-                            </Box>
-                        </Box>
-                    </Backdrop>
-                ): null
-            }
+                        )
+                    }
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => { setAppToUninstall(null); setUninstLoader(!uninstLoader) }} sx={{ mx: 2, color: '#ff0000', }} variant="text" color="warning" >CANCEL</Button>
+                    <Button autoFocus onClick={uninstall} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >UNINSTALL</Button>
+                </DialogActions>
+            </Dialog>
             {
                 showAppSettings ? (
                     <Backdrop>
@@ -484,36 +454,26 @@ export default function Apps() {
                     </Backdrop>
                 ) : null
             }
-            {
-                (modalProps.open && modalProps.title ==='Confirm Installation') ? (
-                    <Backdrop>
-                        <Box zIndex={50} width={matches ? matchesMd ? '50%' : '30%' : '90%'} borderRadius={1} bgcolor={'#fff'}>
-                            <RowContainerBetween additionStyles={{ p:2, borderBottom: '.5px solid #ccc' }}>
-                                <Typography fontWeight={700} fontSize={15} color={'black'}>{modalProps.title}</Typography>
-                            </RowContainerBetween>
-                            <Box height={100} p={2}>
-                                <Typography>
-                                    {/* Do you wish to install {JSON.stringify(modalProps)}? */}
-                                    Do you wish to install {modalProps.otherArgs?modalProps.otherArgs.split('*')[1] :'a new app'}?
-                                </Typography>
-                            </Box>
-                            <RowContainerBetween additionStyles={{ p: 1, borderTop: '.5px solid #ccc' }}>
-                                <Button onClick={() => { setModalProps({ open: false, title: '', children: null,otherArgs:undefined }) }} sx={{ textTransform: 'initial', backgroundColor: '#ff0000' }} variant={'contained'} >CANCEL</Button>
-                                <Button 
-                                    // onClick={() => { setModalProps({ open: false, title: '', children: null }) }} 
-                                    onClick={() => {
-                                        modalProps.otherArgs ? handleLogsModal(modalProps.otherArgs.split('*')[0], modalProps.otherArgs.split('*')[1]) : handleInstallAppModal() 
-                                    }}
-                                    sx={{textTransform: 'initial', backgroundColor: '#499dff'}}
-                                    variant={'contained'}
-                                    >
-                                        INSTALL
-                                </Button>
-                            </RowContainerBetween>
-                        </Box>
-                    </Backdrop>
-                ): null
-            }
+            <Dialog open={modalProps.open && modalProps.title ==='Confirm Installation'} onClose={() => { setModalProps({ open: false, title: '', children: null,otherArgs:undefined }) }}>
+                <DialogTitle>{modalProps.title}</DialogTitle>
+                <DialogContent sx={{my:2,}} >
+                    <DialogContentText>
+                        Do you wish to install {modalProps.otherArgs?modalProps.otherArgs.split('*')[1] :'a new app'}?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => { setModalProps({ open: false, title: '', children: null,otherArgs:undefined }) }} sx={{ textTransform: 'initial', color: '#ff0000' }} variant={'text'} >CANCEL</Button>
+                    <Button autoFocus
+                        onClick={() => {
+                            modalProps.otherArgs ? handleLogsModal(modalProps.otherArgs.split('*')[0], modalProps.otherArgs.split('*')[1]) : handleInstallAppModal() 
+                        }}
+                        sx={{textTransform: 'initial', color: '#499dff'}}
+                        variant={'text'}
+                        >
+                            INSTALL
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <Box px={2} onClick={() => { open ? handleClose() : null }} sx={{ overflowY: 'auto', my: 2, height: '100%' }}>
                 <RowContainerBetween>
                     <Box >
@@ -553,19 +513,24 @@ export default function Apps() {
                                                 app={app}
                                             />
                                         ) : (
-                                            <GridItem appUrl={returnAppURL(app)} disabled={app.state ?!app.state.running:true} key={app.id}>
+                                            <GridItem key={app.id}>
                                                 <Box px={.4} display={'flex'} alignItems={'center'} sx={{ position: 'absolute', top: -5, my: -1, }} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
                                                     <Box component={'img'} src={LogoSig} />
-                                                    <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author.name}</Typography>
+                                                    <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author?app.author.name??'Generic':''}</Typography>
                                                 </Box>
                                                 <Box display={'flex'} py={2} justifyContent={'space-between'}>
                                                     <Box>
                                                         <NormalText title={app.name} />
-                                                        <Typography color={DEFAULT_COLORS.secondary_black} fontWeight={300}>{app.id}</Typography>
+                                                        <Typography color={'#325460'} fontWeight={300}>{app.id}</Typography>
                                                     </Box>
                                                     <MenuComponent
                                                         open={open}
                                                         menuItems={[
+                                                            app.state && app.state.running?{
+                                                                icon: `stop-circle-outlined`,
+                                                                text: app.state ? app.state.running ? 'Stop' : 'Start' : 'Start',
+                                                                clickHandler: () => { startOrStopApp(app.id, app.state ? app.state.running : false) }
+                                                            }:null,
                                                             {
                                                                 icon: 'settings',
                                                                 text: 'Settings',
@@ -576,16 +541,20 @@ export default function Apps() {
                                                                 text: 'Uninstall',
                                                                 clickHandler: () => { setAppToUninstallFc(idx) }
                                                             },
-                                                            {
-                                                                icon: `pause`,
-                                                                text: app.state ? app.state.running ? 'Stop' : 'Start' : 'Start',
-                                                                clickHandler: () => { startOrStopApp(app.id, app.state ? app.state.running : false) }
-                                                            },
                                                         ]}
                                                     />
                                                 </Box>
-                                                <Typography fontSize={15} fontWeight={100} my={1} color={DEFAULT_COLORS.secondary_black}>Status: <Typography component={'span'} fontSize={15} color={DEFAULT_COLORS.navbar_dark}>{app.state ? app.state.running ? 'Running' : 'Stopped' : 'Running'}</Typography></Typography>
+                                                <Typography fontSize={15} fontWeight={100} my={1} color={DEFAULT_COLORS.secondary_black}>Status: <Typography component={'span'} fontSize={15} color={app.state ? app.state.running ? DEFAULT_COLORS.primary_blue : DEFAULT_COLORS.navbar_dark : DEFAULT_COLORS.navbar_dark}>{app.state ? app.state.running ? 'Running' : 'Stopped' : 'Stopped'}</Typography></Typography>
                                                 <Typography fontWeight={100} fontSize={14} my={1} color={DEFAULT_COLORS.secondary_black}>{(app as App1).description.length > 40 ? (app as App1).description.slice(0, 39) + '...' : (app as App1).description}</Typography>
+                                                {
+                                                    app.state && app.state.running?(
+                                                        <Link to={returnAppURL(app)} >
+                                                            <Button disabled={app.state ?!app.state.running:true} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>OPEN</Button>
+                                                        </Link>
+                                                    ):(
+                                                        <Button onClick={() => { startOrStopApp(app.id, app.state ? app.state.running : false) }}  sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>START APP</Button>
+                                                    )
+                                                }
                                             </GridItem>
                                         )
                                     }
