@@ -22,7 +22,7 @@ const bottomStyle:SxProps<Theme> = {
     width:'100%'
 };
 export const ListItemButtonStyle:SxProps<Theme> ={
-    color: '#fff',
+    color: 'inherit',
     borderRadius: 1,
     ":hover": {
         bgcolor: '#fff',
@@ -34,11 +34,10 @@ const itemStyles:SxProps<Theme> ={
     ":hover": {
         bgcolor:'#fff',
         color:'#000',
-        py: .5
     },
     display: 'flex',
     width: '100%',
-    py: .5,
+    py: 1,
     alignItems: 'center',
     alignSelf: 'center'
 }
@@ -46,23 +45,22 @@ const commonstyle = {
     display:'flex',
     alignItems:'center',
     justifyContent: 'space-between',
-    // borderRadius:4,
     textDecoration:'none',
-    padding:'7px 0px',
     width:'100%'
 }
-const styleFunc = ({isActive,}:{isActive:boolean}):CSSProperties=>{
+const styleFunc = ():CSSProperties=>{
     return{
-        color:isActive?DEFAULT_COLORS.primary_black:'',
-        backgroundColor:isActive?'white':'',
-
-        ...commonstyle
+        textDecoration:'none',
+        alignSelf:'center',
+        alignItems:'center',
+        width:'100%',
     }
 }
 const styleFunc1 = ({isActive,}:{isActive:boolean}):CSSProperties=>{
     return{
         color:isActive?DEFAULT_COLORS.primary_black:'inherit',
         backgroundColor:isActive?'#D4E3F5':'inherit',
+        borderBottom:'0.1px solid #797979',
         ...commonstyle
     }
 }
@@ -91,11 +89,11 @@ interface NavigationItemProps{
 }
 const NavigationItem = ({path,otherItem,icon,onClick,location,iconColor, text}:NavigationItemProps) => {
     return(
-        <Box sx={{display:'flex',bgcolor:location===path?'#fff':'',justifyContent:'space-between',width:'100%',alignItems:'center'}}>
+        <Box sx={{ display:'flex', alignItems:'center'}}>
             <NavLink state={{title:text}} to={path} onClick={onClick} style={styleFunc}>
-                <Box sx={{...itemStyles,px:1,py:.7}}>
+                <Box sx={{...itemStyles,px:2,bgcolor:location.includes(path)?'#fff':'',}}>
                     <Icon sx={{mr:2, color: iconColor}}>{icon}</Icon>
-                    <Typography color={iconColor}>{text}</Typography>
+                    <ListItemText sx={{color:iconColor}} primary={text} />
                 </Box>
             </NavLink>
             {otherItem}
@@ -166,7 +164,7 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                 text={'Apps'} 
                             />
                             {/* <NavigationItem location={location} path={'/automation'} icon={<PrecisionManufacturing sx={{...IconStyle,color:location==='/automation'?'black':'white'}} />} text={'Automation'} /> */}
-                            <Box sx={{":hover":{bgcolor:'#fff',color:'#000'}, bgcolor:(location==='/settings' || location==='/settings/networking' || location==='/settings/maintenance')? '#fff':'inherit'}}>
+                            <Box sx={{":hover":{bgcolor:'#fff',color:'#000'},color:'white', bgcolor:(location==='/settings' || location==='/settings/networking' || location==='/settings/maintenance')? '#fff':'inherit'}}>
                                 <NavigationItem 
                                     location={location} 
                                     path={'/settings'}
@@ -175,25 +173,25 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     iconColor={(location==='/settings' || location==='/settings/networking' || location==='/settings/maintenance')?'#292F3F':''}
                                     // icon={ <SettingsTwoTone sx={{...IconStyle,color:(location==='/settings' || location==='/settings/networking' || location==='/settings/maintenance')?'#292F3F':'#fff'}} />} 
                                     text={'Settings'}
-                                    otherItem={open ? <ArrowDropDown sx={{cursor:'pointer',color:location.includes('/settings')? '#000':'#fff',}} onClick={handleClick} /> : <ArrowDropDown sx={{cursor:'pointer',color:location.includes('/settings')? '#000':'#fff',borderRadius:2}} onClick={handleClick} />}
+                                    otherItem={open ? <ArrowDropDown sx={{cursor:'pointer',color:location.includes('/settings')? '#000':'inherit',}} onClick={handleClick} /> : <ArrowDropDown sx={{cursor:'pointer',color:location.includes('/settings')? '#000':'inherit',borderRadius:2}} onClick={handleClick} />}
                                 />
                                 
                                 <Collapse in={open} timeout="auto" unmountOnExit>
-                                    <List component="div" disablePadding>
+                                    <List component="div" sx={{}} disablePadding>
                                         <NavLink state={{title:'Networking'}} to={'/settings/networking'} style={styleFunc1}>
-                                            <Box display='flex' width={'87%'} alignItems='center'>
+                                            <Box display='flex' sx={{py:.8,px:2,":hover":{bgcolor:'#D4E3F5'}}} width={'100%'} alignItems='center'>
                                                 <ListItemIcon>
-                                                    <Wifi sx={{...IconStyle,ml:2, color:location.includes('/settings')?'#292F3F':'white'}} />
+                                                    <Wifi sx={{...IconStyle,ml:2,fontSize:20, color:location.includes('/settings')?'#292F3F':'white'}} />
                                                 </ListItemIcon>
-                                                <ListItemText sx={{fontSize:1}} primary='Networking' />
+                                                <ListItemText sx={{fontSize:1,color:'#000'}} primary='Networking' />
                                             </Box>
                                         </NavLink>
                                         <NavLink state={{title:'Maintenance'}} to={'/settings/maintenance'} style={styleFunc1}>
-                                            <Box display='flex' width={'87%'} alignItems='center'>
+                                            <Box display='flex' sx={{py:.8,px:2,":hover":{bgcolor:'#D4E3F5'}}} width={'100%'} alignItems='center'>
                                                 <ListItemIcon>
-                                                    <WifiLock sx={{...IconStyle,ml:2, color:location.includes('/settings')?'#292F3F':'white'}} />
+                                                    <WifiLock sx={{...IconStyle,ml:2,fontSize:20, color:location.includes('/settings')?'#292F3F':'white'}} />
                                                 </ListItemIcon>
-                                                <ListItemText sx={{fontSize:1}} primary='Maintenance' />
+                                                <ListItemText sx={{fontSize:1,color:'#000'}} primary='Maintenance' />
                                             </Box>
                                         </NavLink>
                                         
@@ -203,18 +201,18 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                             
                         </List>
                         <Box sx={bottomStyle}>
-                            <NavLink onClick={()=>setOpen(false)} style={{textDecoration:'none',alignSelf:'center',alignItems:'center',width:'100%'}} to={'/help'}>
-                                <Box sx={{...itemStyles,px: 2,}}>
-                                    <HelpCenter sx={{mr: 2}} />
-                                    <ListItemText primary={'Help and feedback'} />
+                            <NavLink onClick={()=>setOpen(false)} style={{display:'flex',justifyContent:'space-between', textDecoration:'none',alignSelf:'center',alignItems:'center',width:'100%'}} to={'/help'}>
+                                <Box sx={{...itemStyles,px: 2,bgcolor:location==='/help'?'#fff':''}}>
+                                    <HelpCenter sx={{mr: 2,color:location==='/help'?'#000':''}} />
+                                    <ListItemText sx={{color:location==='/help'?'#000':''}} primary={'Help and feedback'} />
                                 </Box>
                             </NavLink>
-                            <Link onClick={()=>setOpen(false)} style={{textDecoration:'none',alignSelf:'center',alignItems:'center',textDecorationColor:'none',width:'100%', color:'#fff', padding:'4px 0',}} to={'/user'}>
-                                <Box sx={{...itemStyles,px: 2,}}>
-                                    <AccountCircle sx={{mr: 2}} />
+                            <Link onClick={()=>setOpen(false)} style={{textDecoration:'none',alignSelf:'center',alignItems:'center',textDecorationColor:'none',width:'100%', color:'#fff', padding:'0px 0',}} to={'/user'}>
+                                <Box sx={{...itemStyles,px: 2,bgcolor:location==='/user'?'#fff':''}}>
+                                    <AccountCircle sx={{mr: 2,color:location==='/user'?'#000':''}} />
                                     <Box>
-                                        <Typography>{profile?.name}</Typography>
-                                        <Typography fontSize={13}>{profile?.username}</Typography>
+                                        <Typography sx={{color:location==='/user'?'#000':''}}>Account</Typography>
+                                        <Typography sx={{color:location==='/user'?'#000':''}} fontSize={13}>{profile?.username}</Typography>
                                     </Box>
                                 </Box>
                             </Link>
