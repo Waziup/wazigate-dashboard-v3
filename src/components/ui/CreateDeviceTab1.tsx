@@ -1,6 +1,6 @@
 import { Box, FormControl, Typography, InputLabel, MenuItem, Select, SelectChangeEvent, } from "@mui/material"
 import { Device } from "waziup";
-export const DropDownCreateDeviceTab1 = ({handleChangeSelect,showNameOnly,title,options,value}:{showNameOnly?:boolean, title?:string, handleChangeSelect:(e:SelectChangeEvent<string>)=>void,  options:{id:string,name:string,imageurl:string}[], value: string})=>(
+export const DropDownCreateDeviceTab1 = ({handleChangeSelect,showNameOnly,title,options,value}:{showNameOnly?:boolean, title?:string, handleChangeSelect:(e:SelectChangeEvent<string>)=>void,  options:{id:string,name:string}[], value: string})=>(
     <FormControl variant="standard" sx={{p:0,mt:2, border:'none', width: '100%', }}>
         <InputLabel id="demo-simple-select-helper-labe/l">{title?title:'Select board Type'}</InputLabel>
         <Select sx={{width:'100%',py:0,border:'none'}} labelId="demo-simple-select-helper-label"
@@ -20,7 +20,6 @@ export const DropDownCreateDeviceTab1 = ({handleChangeSelect,showNameOnly,title,
                                         <Typography fontSize={14} color={'#325460'} >{op.name}</Typography>
                                     ):(
                                         <>
-                                            <Box component={'img'} sx={{width:20,mx:1, height:20}} src={op.imageurl} />
                                             <Typography fontSize={14} color={'#325460'} >{op.name}</Typography>
                                         </>
                                     )
@@ -35,11 +34,8 @@ export const DropDownCreateDeviceTab1 = ({handleChangeSelect,showNameOnly,title,
                     ))
                 }
         </Select>
-        
     </FormControl>
 );
-import WaziDevIcon from './wazidev.svg';
-import WaziActIcon from './WaziAct.svg';
 export default function CreateDeviceTab1({handleChange,newDevice,handleChangeSelect,}:{newDevice:Device,blockOnClick:(va:string)=>void,handleChange:(event: React.ChangeEvent<HTMLInputElement>)=>void,handleChangeSelect:(event: SelectChangeEvent<string>)=>void}){
     return(
             <Box>
@@ -57,7 +53,7 @@ export default function CreateDeviceTab1({handleChange,newDevice,handleChangeSel
                 <DropDownCreateDeviceTab1 
                     value={newDevice.meta.type}
                     handleChangeSelect={handleChangeSelect}
-                    options={[{name:'Wazidev Board',id:'WaziDev', imageurl:WaziDevIcon},{id:'GenericBoard',name:'Generic board',imageurl:WaziActIcon}]} 
+                    options={[{name:'Wazidev Board',id:'WaziDev',},{id:'GenericBoard',name:'Generic board',}]} 
                 />
                 
             </Box>
