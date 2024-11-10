@@ -45,8 +45,7 @@ export const SelectElement = ({ handleChange, title, conditions, isDisabled, wid
 import BoxDownload from '../assets/box_download.svg';
 import PrimaryButton from "../components/shared/PrimaryButton";
 import { DropDownCreateDeviceTab1 } from "../components/ui/CreateDeviceTab1";
-import WaziDevIcon from '../components/ui/wazidev.svg';
-import WaziActIcon from '../components/ui/WaziAct.svg';
+
 export default function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
@@ -298,7 +297,7 @@ export default function DeviceSettings() {
                                 title="Application Type"
                                 value={thisDevice.meta.type}
                                 handleChangeSelect={handleChangeSelect}
-                                options={[{name:'Wazidev Board',id:'WaziDev', imageurl:WaziDevIcon},{id:'GenericBoard',name:'Generic board',imageurl:WaziActIcon}]} 
+                                options={[{name:'Wazidev Board',id:'WaziDev', },{id:'GenericBoard',name:'Generic board',}]} 
                             />
                             <AddTextShow 
                                 name="devAddr"

@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Button, Typography, Grid, SelectChangeEvent, TextField, FormControl, MenuItem, Select, SpeedDial, SpeedDialAction, SpeedDialIcon, } from "@mui/material";
+import { Box, Breadcrumbs, Button, Typography, Grid, SelectChangeEvent, TextField, FormControl, MenuItem, Select, SpeedDial, SpeedDialAction, SpeedDialIcon, Dialog, DialogActions, DialogContent, } from "@mui/material";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import ontologies from '../assets/ontologies.json';
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
@@ -12,7 +12,6 @@ import CreateActuatorModal from "../components/ui/CreateActuatorModal";
 import { Android12Switch } from "../components/shared/Switch";
 import SensorActuatorItem from "../components/shared/SensorActuatorItem";
 import { Add } from "@mui/icons-material";
-import Backdrop from "../components/Backdrop";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: SelectChangeEvent<string>) => void,
     title: string,
@@ -46,15 +45,9 @@ export const SelectElement = ({ handleChange, title, conditions, isDisabled, wid
     </Box>
 );
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
     width: 400,
-    borderRadius: 2,
     bgcolor: 'background.paper',
-    boxShadow: 24,
-    py: 2,
+
 };
 const initialState = {
     name: '',
@@ -75,7 +68,7 @@ function DeviceSettings() {
     const [device, setDevice] = useState<Device | null>(null);
     const [isError, setIsError] = useState<boolean>(false);
     const [modalProps, setModalProps] = useState<{ title: string, placeholder: string }>({ title: '', placeholder: '' });
-    const [matches,matchesMd] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
+    const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const { getDevicesFc } = useContext(DevicesContext)
     const { id } = useParams();
     const getDevice = () => {
@@ -237,58 +230,58 @@ function DeviceSettings() {
     }
     return (
         <>
-            {
-                openModal?(
-                    <Backdrop>
-                        <Box width={matches ? matchesMd ? '50%' : '30%' : '90%'} sx={{zIndex:50, borderRadius: 10, p: 2 }}>
-                            <Box sx={style}>
-                                <RowContainerBetween additionStyles={{ p: 1, borderBottom: '.5px solid #ccc' }}>
-                                    {
-                                        modalProps.title ? (
-                                            <Typography>Create  {modalProps.title === 'sensor' ? 'a Sensor' : 'an Actuator'} </Typography>
-                                        ) : (
-                                            <Typography>Select Interface Type</Typography>
-                                        )
-                                    }
-                                </RowContainerBetween>
-                                <Box p={1}>
-                                    <SelectElement
-                                        conditions={['actuator', 'sensor']}
-                                        handleChange={selectHandler}
-                                        title="Type"
-                                        value={modalProps.title}
-                                    />
-                                    {
-                                        modalProps.title ? (
-                                            <Box borderRadius={2} my={1} >
-                                                <form style={{borderRadius:2}} onSubmit={modalProps.title === 'actuator' ? handleCreateActuatorClick : handleCreateSensorClick}>
-                                                    <TextField value={newSensOrAct.name} onInput={handleNameChange} sx={{ width: '100%', my: 1 }} placeholder={modalProps.placeholder} type="text" id="name" required name="name" label="Name" variant="standard"></TextField>
-                                                    {
-                                                        modalProps.title === 'sensor' ? (
-                                                            <CreateSensorModal newSensOrAct={newSensOrAct} handleSelectChange={handleSelectChange} />
-                                                        ) : (
-                                                            <CreateActuatorModal newSensOrAct={newSensOrAct} handleSelectChange={handleSelectChange} />
-                                                        )
-                                                    }
-                                                    <RowContainerBetween additionStyles={{ pt: 2 }}>
-                                                        <Button onClick={handleCloseModal} sx={{ mx: 2, color: '#fff',backgroundColor:'#ff0000' }} variant="contained" color="warning" >CANCEL</Button>
-                                                        <Button sx={{ mx: 2, color: '#fff' }} variant="contained" color="info" type="submit">Save</Button>
-                                                    </RowContainerBetween>
-                                                </form>
-                                            </Box>
-                                        ) : (
-                                            <RowContainerBetween>
-                                                <Box/>
-                                                <Button onClick={handleCloseModal} sx={{ textTransform: 'initial',backgroundColor:'#ff0000' }} color="warning" variant={'contained'}>CANCEL</Button>
-                                            </RowContainerBetween>
-                                        )
-                                    }
-                                </Box>
-                            </Box>
+            <Dialog onClose={handleCloseModal} PaperProps={{component:'form', onSubmit:(e: React.FormEvent<HTMLFormElement>)=>{e.preventDefault(); modalProps.title === 'actuator' ? handleCreateActuatorClick(e) : handleCreateSensorClick(e) } }} open={openModal}>
+                <Box sx={style}>
+                    <RowContainerBetween additionStyles={{ p: 2, borderBottom: '.5px solid #ccc' }}>
+                        {
+                            modalProps.title ? (
+                                <Typography>Create  {modalProps.title === 'sensor' ? 'a Sensor' : 'an Actuator'} </Typography>
+                            ) : (
+                                <Typography>Select Interface Type</Typography>
+                            )
+                        }
+                    </RowContainerBetween>
+                    <DialogContent >
+                        <Box p={0}>
+                            <SelectElement
+                                conditions={['actuator', 'sensor']}
+                                handleChange={selectHandler}
+                                title="Type"
+                                value={modalProps.title}
+                            />
+                            {
+                                modalProps.title ? (
+                                    <Box borderRadius={2} my={1} >
+                                        <TextField value={newSensOrAct.name} onInput={handleNameChange} sx={{ width: '100%', my: 1 }} placeholder={modalProps.placeholder} type="text" id="name" required name="name" label="Name" variant="standard"></TextField>
+                                        {
+                                            modalProps.title === 'sensor' ? (
+                                                <CreateSensorModal newSensOrAct={newSensOrAct} handleSelectChange={handleSelectChange} />
+                                            ) : (
+                                                <CreateActuatorModal newSensOrAct={newSensOrAct} handleSelectChange={handleSelectChange} />
+                                            )
+                                        }
+                                    </Box>
+                                ) :null
+                            }
                         </Box>
-                    </Backdrop>
-                ):null
-            }
+                    </DialogContent>
+                    <DialogActions>
+                        {
+                            modalProps.title?(
+                                <>
+                                    <Button onClick={handleCloseModal} sx={{color:'#ff0000' }} variant="text" color="warning" >CANCEL</Button>
+                                    <Button autoFocus variant="text" color="info" type="submit">Save</Button>
+                                </>
+                            ):(
+                                <>
+                                    <Box/>
+                                    <Button onClick={handleCloseModal} sx={{color:'#ff0000' }} variant="text" color="warning">CANCEL</Button>
+                                </>
+                            )
+                        }
+                    </DialogActions>
+                </Box>
+            </Dialog>
             <Box p={matches?3:1} sx={{ position: 'relative', width: '100%',overflowY: device? (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0?'hidden':'auto':'hidden', height: '100%' }}>
                 <RowContainerBetween>
                     <Box>
@@ -309,7 +302,7 @@ function DeviceSettings() {
                     {
                         matches ? (
                             <Box>
-                                <PrimaryIconButton hideText={!matches} title="Settings" iconname="settingstwotone" onClick={() => { navigate(`/devices/${device?.id}/settings`) }} />
+                                <PrimaryIconButton hideText={!matches} title="Settings" iconname="settingstwotone" onClick={() => { navigate(`/devices/${device?.id}/setting`) }} />
                                 <PrimaryIconButton hideText={!matches} title="New Interface" iconname="add" onClick={handleToggleModal} />
                             </Box>
                         ):null
@@ -342,7 +335,7 @@ function DeviceSettings() {
                                                     deviceId={device.id} 
                                                     sensActuator={sens} 
                                                     open={open}
-                                                    modified={sens.time}
+                                                    modified={sens.modified}
                                                     anchorEl={anchorEl}
                                                     icon={(sens.meta && sens.meta.icon)? sens.meta.icon: ''}
                                                     kind={(sens.meta && sens.meta.kind)? sens.meta.kind : (sens as SensorX).kind? (sens as SensorX).kind : 'AirThermometer'}
@@ -387,7 +380,7 @@ function DeviceSettings() {
                                                 deviceId={device.id} 
                                                 sensActuator={act} 
                                                 open={open} 
-                                                modified={act.time as Date}
+                                                modified={act.modified as Date}
                                                 anchorEl={anchorEl} 
                                                 icon={(act.meta && act.meta.icon)? act.meta.icon: ''}
                                                 kind={(act.meta && act.meta.kind)? act.meta.kind : 'Motor'}
