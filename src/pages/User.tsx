@@ -1,8 +1,6 @@
-import { Check, Save } from "@mui/icons-material";
+import { Save } from "@mui/icons-material";
 import { Alert, Box, CircularProgress, ListItemText, Snackbar, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DEFAULT_COLORS } from "../constants";
-import RowContainerBetween from "../components/shared/RowContainerBetween";
-import RowContainerNormal from "../components/shared/RowContainerNormal";
 import { useContext, useCallback, useEffect, useState } from "react";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -37,7 +35,6 @@ const TextInput = ({ children, label }: TextInputProps) => (
 )
 import Logo from '../assets/wazilogo.svg';
 import { DevicesContext } from "../context/devices.context";
-import NoImageProfile from "../components/shared/NoImageProfile";
 const textinputStyle = { width: '100%', fontSize: 18, border: 'none', background: 'none', color: DEFAULT_COLORS.third_dark, padding: 2, borderBottom: '1px solid #D5D6D8', outline: 'none' }
 function User() {
     const {handleSubmit,setValue} = useForm<Omit<User,'ID'>>({
@@ -131,18 +128,6 @@ function User() {
                             primary={profile?.name}
                             secondary={`ID ${profile?.id}`}
                         />
-                    </Box>
-                    <Box py={.5} px={1} width={'100%'} borderBottom={'1px solid #D5D6D8'}>
-                        <Typography fontWeight={200} fontSize={13} color={'#9CA4AB'}>PROFILES</Typography>
-                        <Box m={.5} sx={{ cursor: 'pointer' }}>
-                            <RowContainerBetween additionStyles={{ alignItems: 'center', bgcolor: '#D4',  cursor: 'pointer', borderRadius: 1, }}>
-                                <RowContainerNormal>
-                                    <NoImageProfile/>
-                                    <Typography fontWeight={500} color={DEFAULT_COLORS.third_dark}>{profile?.name}</Typography>
-                                </RowContainerNormal>
-                                <Check sx={{ color: DEFAULT_COLORS.primary_black, mx: 1 }} />
-                            </RowContainerBetween>
-                        </Box>
                     </Box>
                     <form onSubmit={handleSubmit(saveProfile)}>
                         <Typography  sx={{ fontWeight: 200, fontSize: 13,mx:1,my:.5, color: '#9CA4AB' }}>GENERAL</Typography>

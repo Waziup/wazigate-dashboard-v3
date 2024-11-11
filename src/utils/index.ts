@@ -1,4 +1,4 @@
-import { App, Device } from "waziup";
+import { App, AppState, Device } from "waziup";
 const time_formats = [
     [60, 'seconds', 1], // 60
     [120, '1 minute ago', '1 minute from now'], // 60*2
@@ -71,11 +71,16 @@ export function allActiveDevices(devices: Device[]): number{
     });
     return count;
 }
-export function orderByLastUpdated(devices: Device[]): Device[]{
-    return devices.sort((a,b)=>{
-        return a.modified.getTime() - b.modified.getTime();
-    });
+export const orderByLastUpdated = (devices: Device[]) => devices.sort((a,b)=>b.modified.getTime()-a.modified.getTime())
+
+export const appChecker = (appState: AppState)=>{
+    if(appState.running){
+        return 'Started on: ' + (appState.startedAt?new Date(appState.startedAt).toDateString():'')
+    }else{
+        return 'Stopped on' + appState.finishedAt?new Date(appState.finishedAt).toDateString():''
+    }
 }
+
 export function humanFileSize(size: number ) {
     const  i = Math.floor(Math.log(size) / Math.log(1024));
     return (
