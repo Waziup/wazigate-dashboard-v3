@@ -26,10 +26,10 @@ export default function SensorActuatorInfo({type, text,unit, name,kind, onClick,
         }
     },[iconname,kind,type])
     return (
-        <RowContainerBetween onClick={onClick} additionStyles={{ my: 2, py: 1, px: .5, ":hover": { bgcolor: '#f5f5f5' } }}>
-            <Box sx={{ display: 'flex',alignItems:'center', width: '70%' }}>
+        <RowContainerBetween onClick={onClick} additionStyles={{  px: 2,py:1.4,  ":hover": { bgcolor: '#f5f5f5' } }}>
+            <Box sx={{ display: 'flex',alignItems:'center', }}>
                 <SVGIcon 
-                    style={{ width: 35, height: 35, marginRight: 5 }}
+                    style={{ width: 35, height: 35, }}
                     src={`${ontologiesicons}#${icon}`}
                 />
                 <Typography color={'primary'} ml={1} fontSize={12} fontWeight={300}>{name}</Typography>
