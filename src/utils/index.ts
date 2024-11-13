@@ -1,3 +1,4 @@
+import { CSSProperties } from "react";
 import { App, AppState, Device } from "waziup";
 const time_formats = [
     [60, 'seconds', 1], // 60
@@ -77,7 +78,18 @@ export const appChecker = (appState: AppState)=>{
     if(appState.running){
         return 'Started on: ' + (appState.startedAt?new Date(appState.startedAt).toDateString():'')
     }else{
-        return 'Stopped on' + appState.finishedAt?new Date(appState.finishedAt).toDateString():''
+        return 'Stopped on: ' + (appState.finishedAt?new Date(appState.finishedAt).toDateString():'')
+    }
+}
+
+export function lineClamp(n: number): CSSProperties {
+    return {
+        lineClamp: `${n}`,
+        WebkitLineClamp: `${n}`,
+        WebkitBoxOrient: "vertical",
+        textOverflow: "ellipsis",
+        overflow: "hidden",
+        display: "-webkit-box"
     }
 }
 
@@ -90,14 +102,15 @@ export function humanFileSize(size: number ) {
     );
 }
 export function removeFirstChar(value:string,capitalize?:boolean){
-    if(value && value.startsWith('#')&& value.length>1){
-        const val = value.slice(1);
+    if(value &&( value.startsWith('#') || value.length>1)){
+        const val = value.slice(0);
         if(capitalize){
             return capitalizeFirstLetter(val);
         }
         return value.slice(1);
+    }else{
+        return value;
     }
-    return value;
 }
 export function returnAppURL(app:App): string{
     if(app.id.includes('lora')){
