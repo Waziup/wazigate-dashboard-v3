@@ -1,8 +1,8 @@
-import { Box,  Grid, CardContent, Typography, SelectChangeEvent, SpeedDial, SpeedDialAction, SpeedDialIcon, } from '@mui/material';
+import { Box,  Grid, CardContent, Typography, SelectChangeEvent, SpeedDial, SpeedDialAction, SpeedDialIcon, CardHeader, } from '@mui/material';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { Add,  Sensors, } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
-import { useNavigate, useOutletContext, } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext, } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
 import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
@@ -362,6 +362,7 @@ function Devices() {
         <>
             <Box sx={{ height: '100%',}}>
                 <CreateDeviceModalWindow
+                    fullWidth={matches}
                     openModal={openModal}
                     handleToggleModal={handleToggleModal}
                     submitCreateDevice={submitCreateDevice}
@@ -403,24 +404,26 @@ function Devices() {
                         {
                             devices.map((device, id) => {
                                 return (
-                                    <Grid item key={id}  md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={1} >
-                                        <Box sx={{ boxShadow: 3, cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
+                                    <Grid item key={id}  md={6} lg={4} xl={4} sm={6} xs={12}  my={1} px={0} >
+                                        <Box sx={{ boxShadow: 0, cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
                                             {
                                                 (device.meta && device.meta.type) ?(
                                                     <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -8, my: -1, px: 1, py: .4, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
                                                         <Sensors sx={{ fontSize: 15, color: '#fff' }} />
                                                         <Typography fontSize={13} mx={1} color={'white'} component={'span'}>{device.meta ? capitalizeFirstLetter(device.meta.type) : ''}</Typography>
                                                     </Box>
-                                                ):null
-                                            }
-                                            <Box sx={{ borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5, ":hover": { py: 1.5 }, px: 1, }}>
-                                                <RowContainerBetween  additionStyles={{}} >
-                                                    <Box sx={{width:'85%'}} onClick={() => {navigate(`${device.id}`)}}>
-                                                        <Typography color={'info'} fontWeight={700}>{(device.name && device.name.length > 10) ? cleanString(device.name).slice(0, 10) + '....' : cleanString(device.name?device.name:'')}</Typography>
-                                                        <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}>
-                                                            Last updated {differenceInMinutes(new Date(device.modified).toISOString())}
-                                                        </Typography>
+                                                ):(
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -8, my: -1, px: 1, py: .4, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
+                                                        <Sensors sx={{ fontSize: 15, color: '#fff' }} />
+                                                        <Typography fontSize={13} mx={1} color={'white'} component={'span'}>Generic</Typography>
                                                     </Box>
+                                                )
+                                            }
+                                            <CardHeader
+                                                sx={{borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5,}}
+                                                title={<Typography color={'info'} fontWeight={700}>{(device.name && device.name.length > 10) ? cleanString(device.name).slice(0, 10) + '....' : cleanString(device.name?device.name:'')}</Typography>}
+                                                subheader={<Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}> Last updated {differenceInMinutes(new Date(device.modified).toISOString())} </Typography>  }
+                                                action={
                                                     <MenuComponent
                                                         open={open}
                                                         menuItems={[
@@ -442,11 +445,14 @@ function Devices() {
                                                             }
                                                         ]}
                                                     />
-                                                </RowContainerBetween>
-                                            </Box>
-                                            <CardContent sx={{ py: 0 }}>
+                                                }
+                                            />
+                                            <CardContent sx={{ py: 0,px:0 }}>
                                                 {device.sensors.length === 0 && device.actuators.length === 0 &&(
-                                                    <Typography fontSize={14} textAlign={'center'} m={5} position={'relative'} top={'50%'} fontWeight={500} color={'black'}>No interfaces found</Typography>
+                                                    <Box m={5} position={'relative'} textAlign={'center'} top={'50%'}>
+                                                        <Typography color={'#797979'}  fontSize={14} fontWeight={400}>No interfaces found</Typography>
+                                                        <Typography color={'#797979'} fontWeight={300} component={'span'}> Click <Link style={{textDecoration:'none',color:'#499dff'}} to={device.id}> here </Link> to create </Typography>
+                                                    </Box>
                                                 )}
                                                 {
                                                     device.sensors.length > 0 ? device.sensors.map((sensor) => (

@@ -270,7 +270,7 @@ function DeviceSettings() {
                             modalProps.title?(
                                 <>
                                     <Button onClick={handleCloseModal} sx={{color:'#ff0000' }} variant="text" color="warning" >CANCEL</Button>
-                                    <Button autoFocus variant="text" color="info" type="submit">Save</Button>
+                                    <Button disabled={!newSensOrAct.name} autoFocus variant="text" color="info" type="submit">Save</Button>
                                 </>
                             ):(
                                 <>

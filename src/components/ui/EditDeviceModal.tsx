@@ -49,7 +49,7 @@ export default function EditDeviceModal({handleChangeDeviceCodec, isFirst,change
                                 <DropDownCreateDeviceTab1
                                     handleChangeSelect={handleChangeSelectDeviceType}
                                     value={device.meta.type}
-                                    options={[{ name: 'Wazidev Board', id: 'WaziDev' }, { name: 'Generic board', id: 'GenericBoard' }]}
+                                    options={[{ name: 'Wazidev Board', id: 'WaziDev' }, { name: 'Generic board', id: 'generic' }]}
                                 />
                                 <SelectElementString 
                                     mx={0} my={2} 
