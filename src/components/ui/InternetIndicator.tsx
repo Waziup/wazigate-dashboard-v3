@@ -1,6 +1,7 @@
 import * as React from "react";
 import {internet} from '../../utils/systemapi';
 import { Box,CircularProgress, Typography } from "@mui/material";
+import { DEFAULT_COLORS } from "../../constants";
 export default function InternetIndicator(){
     const [state,setState] = React.useState({
         status: null,
@@ -53,14 +54,14 @@ export default function InternetIndicator(){
                     </Box>
                 ): state.status===null?(
                     <Typography sx={{ margin: 0,color:'#fff' }}>
-                        <CircularProgress size={14} sx={{color:'#2BBBAD',mx:1.5,fontSize:14}} />
+                        <CircularProgress size={14} sx={{color:DEFAULT_COLORS.primary_blue,mx:1.5,fontSize:14}} />
                     </Typography>
                 ):(
                     <Box sx={{display:'flex',color:'#fff', }}
                         onClick={() => checkTheStatus(true)}
                     >
                         {state.status ? (
-                            <Typography sx={{  margin: 0,color:'#2BBBAD'}}>
+                            <Typography sx={{  margin: 0,color: DEFAULT_COLORS.primary_blue}}>
                                 Connected
                             </Typography>
                         ) : (
