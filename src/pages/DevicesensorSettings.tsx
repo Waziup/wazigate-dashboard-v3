@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs,Button,TextField, FormControl,NativeSelect,Typography,Icon } from "@mui/material";
+import { Box, Breadcrumbs,Button, FormControl,Typography,Icon, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { useLocation, Link, useOutletContext, useParams, useNavigate, } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
@@ -9,11 +9,11 @@ import { Actuator, Device, Sensor } from "waziup";
 import ontologies from "../assets/ontologies.json";
 import { ActuatorX, DevicesContext, SensorX } from "../context/devices.context";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
-import React,{ChangeEvent} from "react";
+import React from "react";
 import OntologyKindInput from "../components/shared/OntologyKindInput";
 import { cleanString } from "../utils";
 export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSelectElement> {
-    handleChange: (event: ChangeEvent<HTMLSelectElement>) => void,
+    handleChange: (e:SelectChangeEvent<string>)=>void,
     title: string,
     conditions: string[],
     value: string
@@ -23,10 +23,9 @@ export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSe
 }
 export const SelEl = ({ handleChange, title, my,name, conditions, isDisabled, value }: HTMLSelectPropsString) => (
     <Box minWidth={120}  my={my !== undefined ? my : 2} >
-        <Typography fontSize={12} color={DEFAULT_COLORS.navbar_dark}>{title}</Typography>
-        <FormControl color="primary" disabled={isDisabled} fullWidth>
-            <NativeSelect
-                defaultValue={30}
+        <Typography fontSize={12} color={DEFAULT_COLORS.secondary_black}>{title}</Typography>
+        <FormControl variant="standard" color="primary" disabled={isDisabled} fullWidth>
+            <Select
                 inputProps={{
                     name: name,
                     id: 'uncontrolled-native',
@@ -36,11 +35,18 @@ export const SelEl = ({ handleChange, title, my,name, conditions, isDisabled, va
                 value={value}
                 onChange={handleChange}
             >
-                <option selected style={{ color: '#ccc' }} defaultValue={''}>select option</option>
-                {conditions.map((condition, index) => (
-                    <option color={DEFAULT_COLORS.navbar_dark} key={index} value={condition}>{condition}</option>
-                ))}
-            </NativeSelect>
+                {
+                    conditions.map((op,idx)=>(
+                        <MenuItem key={idx} value={op} sx={{display:'flex',width:'100%', justifyContent:'space-between'}}>
+                            <Box display={'flex'} alignItems={'center'}>
+                                <Typography fontSize={14} color={'#325460'} >{op}</Typography>
+                                
+                            </Box>
+                            
+                        </MenuItem>
+                    ))
+                }
+            </Select>
         </FormControl>
     </Box>
 );
@@ -299,15 +305,27 @@ function DeviceSensorSettings() {
                 </div>
             </Box>
             <Box display={'flex'} flexDirection={matches?'row':'column'} bgcolor={matches ? '#fff' : 'inherit'} height={'100%'} width={'100%'} px={1} pt={matches ? 2 : .5}  >
-                <Box m={matches?2:0} width={matches?'45%':'95%'}>
-                    <Typography fontWeight={500} fontSize={20} my={3} color={'#292F3F'}>Setup {cleanString(sensOrActuator?.name)} kind, quantity and unit</Typography>
+                <Box mx={matches?2:0} width={matches?'45%':'95%'}>
+                    <Typography fontWeight={500} fontSize={20} my={2} color={'#292F3F'}>Setup {sensOrActuator?.name} kind, quantity and unit</Typography>
                     <>
                         <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
-                            <TextField sx={{width:'100%'}} onChange={handleTextInputChange} id="name" value={(sensOrActuator)?.name} variant="standard" />
+                            <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #292F3F'}}>
+                                <Typography color={'primary'} mb={.4} fontSize={12}>Name</Typography>
+                                <input 
+                                    autoFocus 
+                                    onInput={handleTextInputChange} 
+                                    name="name"
+                                    placeholder='Enter device name' 
+                                    value={(sensOrActuator)?.name}
+                                    required
+                                    id="name"
+                                    style={{border:'none',width:'100%',padding:'6px 0', outline:'none'}}
+                                />
+                            </FormControl>
                             <Box width={'100%'}>
                                 <Box my={1}>
                                     <OntologyKindInput
-                                        title={`${cleanString(sensOrActuator?.name)} Kind`}
+                                        title={`Measurement Kind`}
                                         value={sensOrActuator?.meta.kind? sensOrActuator.meta.kind: sensOrActuator?.kind}
                                         onChange={(name, value) => handleChange(name, value as string)}
                                         deviceType={pathname.includes('sensors') ? 'sensor' : 'actuator'}
@@ -316,19 +334,19 @@ function DeviceSensorSettings() {
                                 </Box>
                                 { ((quantitiesCondition.length>0))?
                                     <SelEl
-                                    handleChange={(event) => handleChange('quantity', event.target.value)}
-                                    title={`${cleanString(sensOrActuator?.name)} Quantity`}
-                                    conditions={quantitiesCondition}
-                                    value={(sensOrActuator?.meta.quantity)? sensOrActuator.meta.quantity : sensOrActuator?.quantity}
-                                    name="quantity"
-                                    id="quantity"
-                                />: null}
+                                        handleChange={(event) => handleChange('quantity', event.target.value)}
+                                        title={`Measurement Type`}
+                                        conditions={quantitiesCondition}
+                                        value={(sensOrActuator?.meta.quantity)? sensOrActuator.meta.quantity : sensOrActuator?.quantity}
+                                        name="quantity"
+                                        id="quantity"
+                                    />: null}
                                 {
                                     ((unitsCondition.length>0))?
                                     <SelEl
                                     conditions={unitsCondition}
                                     handleChange={(event) => handleChange('unit', event.target.value)}
-                                    title={`${cleanString(sensOrActuator?.name)} Unit`}
+                                    title={`Measurement Unit`}
                                     value={sensOrActuator?.meta.unit? sensOrActuator.meta.unit: sensOrActuator?.unit}
                                     name="unit"
                                     id="unit"
@@ -371,7 +389,7 @@ function DeviceSensorSettings() {
                             <form style={{margin:'3px 0'}} onSubmit={handleChangeSensorOrActuatorSubmittion} >
                                 <Box width={ '90%'}>
                                     <Box>
-                                        <Typography sx={{fontWeight:500,fontSize:matches?20:18,my:2,color:'#292F3F'}}>Setup sync and sync-interface</Typography>
+                                        <Typography sx={{fontWeight:500,fontSize:matches?20:18,mb:2,color:'#292F3F'}}>Setup sync and sync-interface</Typography>
                                         <RowContainerBetween additionStyles={{ my: .5 }}>
                                             <Typography fontSize={15} color={'#292F3F'}>Sync Sensor</Typography>
                                             <Icon 

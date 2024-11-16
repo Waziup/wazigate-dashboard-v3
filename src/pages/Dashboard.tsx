@@ -9,34 +9,21 @@ import RowContainerNormal from "../components/shared/RowContainerNormal";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { DevicesContext } from "../context/devices.context";
 import { App, Device } from "waziup";
-import { allActiveDevices, capitalizeFirstLetter,orderByLastUpdated, returnAppURL } from "../utils";
+import { allActiveDevices, appChecker, capitalizeFirstLetter,orderByLastUpdated, returnAppURL } from "../utils";
 import InternetIndicator from "../components/ui/InternetIndicator";
-export const Item = ({ more,path, color,onClick, children,isSynched, title,showInternet, }: {path:string,showInternet?:boolean,isSynched?:boolean,  onClick:(path: string)=>void, more: string, children: React.ReactNode, color: string, title: string }) => (
-    <Box onClick={()=>onClick(path)} mx={2} sx={{boxShadow: 3,cursor:'pointer', width: '33%', minWidth: 250, mx: 2, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
-        {children}
+export const Item = ({ path, onClick, children,icon, title, }: { path:string, onClick:(path: string)=>void ,icon: React.ReactNode, children: React.ReactNode, title: string }) => (
+    <Box onClick={()=>onClick(path)} mx={2} sx={{cursor:'pointer', width: '33%', minWidth: 250, mx: 2, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
+        {icon}
         <NormalText title={title} />
-        <Typography fontSize={14} color={color} fontWeight={300}>{more}</Typography>
-        {
-            showInternet?(
-                <Box display={'flex'} >
-                    <Typography fontSize={14} fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Internet:   </Typography> <InternetIndicator />
-                </Box>
-            ):<Box >
-                <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
-                    {isSynched?'Synched with Waziup Cloud':'Not Synchronized'}
-                </Typography>
-            </Box>
-        }
+        {children}
     </Box>
 );
 const DeviceStatus = ({ devices,onDeviceClick,activeDevices,totalDevices }: {totalDevices: number,activeDevices:number, onDeviceClick:(devId:string)=>void, devices: Device[] }) => (
-    <Box sx={{boxShadow:3, height: '100%',width:'100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
-        <RowContainerBetween additionStyles={{width:'100%',my:2}}>
+    <Box sx={{ height: '100%',width:'100%', borderRadius: 2, bgcolor: 'white', p: 0 }}>
+        <RowContainerBetween additionStyles={{width:'100%',my:0, p:2}}>
             <NormalText title="Device Status" />
             <Box sx={{display:'flex',alignItems:'center',}}>
-                <Typography fontSize={14} mx={1} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>Total Devices: {totalDevices} </Typography>
-                <Typography></Typography>
-                <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>Active Devices: {activeDevices}</Typography>
+                <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>{activeDevices} of {totalDevices} devices {activeDevices===1?'are':'is'} active.</Typography>
             </Box>
         </RowContainerBetween>
         <BasicTable onDeviceClick={onDeviceClick} devices={devices} />
@@ -56,8 +43,10 @@ const MyScrollingElement = styled(Stack)(() => ({
     },
 }));
 const AppStatus = ({ apps }: { apps: App[] }) => (
-    <Box sx={{boxShadow: 3, height: '100%', bgcolor: 'white', borderRadius: 2, p: 2 }}>
-        <NormalText title="App Status" />
+    <Box sx={{ height: '100%', bgcolor: 'white', borderRadius: 2,  }}>
+        <Box p={2}>
+            <NormalText title="App Status" />
+        </Box>
         <MyScrollingElement sx={{overflowY:'auto'}} width={'100%'} height={'100%'}>
             {
                 apps && apps.length >0?apps.map((app, index) => {
@@ -66,19 +55,19 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
                     const handleImageError = () => {setImageError(true)}
                     return(
                         <Link to={returnAppURL(app)} style={{textDecoration: 'none',cursor:'pointer' }} key={index}>
-                            <RowContainerBetween additionStyles={{":hover":{bgcolor:'#f5f5f5',cursor:'pointer',}}} key={index}>
+                            <RowContainerBetween additionStyles={{px:2,":hover":{bgcolor:'#f5f5f5',cursor:'pointer',}}} key={index}>
                                 <RowContainerNormal>
                                     {
                                         imageError?(
-                                            <Box sx={{ width: 40, height: 40, borderRadius: 20, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <Box sx={{ width: 32, height: 32, borderRadius: 16, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                 <Typography sx={{ fontSize: 15, color: 'white'}}>W</Typography>
                                             </Box>
                                         ):(app.waziapp && (app.waziapp as App['waziapp'] &{icon:string}).icon) ? (
-                                            <Box sx={{ width: 40, height: 40,alignItems:'center',display:'flex',justifyContent:'center', borderRadius: 20, overflow: 'hidden' }}>
+                                            <Box sx={{ width: 32, height: 32,alignItems:'center',display:'flex',justifyContent:'center', borderRadius: 16, overflow: 'hidden' }}>
                                                 <img onError={handleImageError} src={`/apps/${app.id}/`+(app.waziapp as App['waziapp'] &{icon:string}).icon} alt={app.name} style={{ width: 20, height: 20 }} />
                                             </Box>
                                         ) : (
-                                            <Box sx={{ width: 40, height: 40, borderRadius: 20, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <Box sx={{ width: 32, height: 32, borderRadius: 16, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                 <Typography sx={{ fontSize: 15, color: 'white'}}>W</Typography>
                                             </Box>
                                         )
@@ -86,13 +75,13 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
                                     <Box ml={1}>
                                         <Typography color={'black'} fontSize={[10, 12, 10, 12, 14]} fontWeight={300}>{app.name}</Typography>
                                         <TextItem 
-                                            text={'Created: '+(app.state !== null || app.state)?app.state?.startedAt?new Date(app.state.startedAt).toDateString():'':''}
+                                            text={((app.state !== null || app.state)?appChecker(app.state):'')}
                                         />
                                     </Box>
                                 </RowContainerNormal>
                                 <Typography sx={{  color: app.state ? app.state.running ? 'info.main' : '#CCC400' : 'info.main', fontWeight: 300,  fontSize: [10, 12, 12, 12, 14] }}>
                                     {
-                                        app.state ? capitalizeFirstLetter(app.state.status) : 'Running'
+                                        app.state ? capitalizeFirstLetter(app.state.status) : ''
                                     }
                                 </Typography>
                             </RowContainerBetween>
@@ -125,45 +114,51 @@ function Dashboard() {
             {
                 matches?(
                     <Box sx={{ height: '100%', overflowY: 'hidden' }}>
-                        <Box p={3} sx={{ width: '100%' }}>
-                            <Typography fontSize={24} color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
-                            <Stack direction={'row'} mt={2} spacing={2}>
-                                
-                                <Item isSynched={selectedCloud?.paused?false: true} path='/settings/networking' onClick={onClick} color={selectedCloud?.paused?"#CCC400":DEFAULT_COLORS.primary_blue} title="Cloud Synchronization" more={selectedCloud?.paused?"Inactive":'Active'} >
-                                    {
-                                        selectedCloud?.paused?(
-                                            <CloudOff sx={{ mb: 2, fontSize: 42, color: '#D9D9D9' }} />
-                                        ):(
-                                            <Cloud sx={{mb: 2, fontSize: 42, color: 'black' }} />
-                                        )
-                                    }
-                                </Item>
-                                {
-                                    (eth0 && eth0.IP4Config)?(
-                                        <Item path='/settings/networking' showInternet onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Ethernet Connection" more={`IP Address: ${(eth0 && eth0.IP4Config)?eth0.IP4Config.Addresses[0].Address:''}`} >
-                                            <Wifi sx={{ mb: 2, fontSize: 42, color: 'black' }} />
-                                        </Item>
-                                    ):(
-                                        <Item path='/settings/networking' showInternet onClick={onClick} color={DEFAULT_COLORS.secondary_black} title="Wifi Connection" more={`Wifi Name: ${apConn?.connection.id}`} >
-                                            <Wifi sx={{ mb: 2, fontSize: 42, color: 'black' }} />
-                                        </Item>
-                                    )
-                                }
-                            </Stack>
-                            <Grid mt={2} container spacing={2}>
-                                <Grid item py={6} sm={11} md={8} >
-                                    <DeviceStatus 
-                                        onDeviceClick={onClick}
-                                        totalDevices={devices?devices.length:0}
-                                        activeDevices={devices? allActiveDevices(devices):0}
-                                        devices={devices?orderByLastUpdated(devices.filter((_device, id) => id <= 4)).reverse(): []} 
-                                    />
-                                </Grid>
-                                <Grid py={6} item sm={12} md={4} >
-                                    <AppStatus apps={apps?apps.filter((_i,idx)=>idx<=4):[]} />
-                                </Grid>
+                        <Typography fontSize={24} color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
+                        <Stack direction={'row'} mt={2} spacing={2}>
+                            <Item icon={selectedCloud?.paused?(<CloudOff sx={{ mb: 2, fontSize: 42, color: '#D9D9D9' }} /> ):( <Cloud sx={{mb: 2, fontSize: 42, color: 'black' }} /> )} path='/settings/networking' onClick={onClick} title="Cloud Synchronization">
+                                <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
+                                    {!(selectedCloud?.paused)?'Synched with Waziup Cloud':'Not Synchronized'}
+                                </Typography>
+                                <Typography fontSize={14} color={selectedCloud?.paused?"#CCC400":DEFAULT_COLORS.primary_blue} fontWeight={300}>{selectedCloud?.paused?"Inactive":'Active'}</Typography>
+                            </Item>
+                            {
+                                (eth0 && eth0.IP4Config)?(
+                                    <Item icon={<Wifi sx={{ mb: 2, fontSize: 42, color: 'black' }} />} path='/settings/networking' onClick={onClick} title="Ethernet Connection" >
+                                        <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
+                                            {`IP Address: ${(eth0 && eth0.IP4Config)?eth0.IP4Config.Addresses[0].Address:''}`}
+                                        </Typography>
+                                        <RowContainerNormal additionStyles={{m:0}}>
+                                            <Typography fontSize={14} fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Internet: </Typography>
+                                            <InternetIndicator />
+                                        </RowContainerNormal>
+                                    </Item>
+                                ):(
+                                    <Item icon={<Wifi sx={{ mb: 2, fontSize: 42, color: 'black' }} />} path='/settings/networking'  onClick={onClick} title="Wifi Connection"  >
+                                        <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
+                                            {`Wifi Name: ${apConn?.connection.id}`}
+                                        </Typography>
+                                        <RowContainerNormal additionStyles={{m:0}}>
+                                            <Typography fontSize={14} fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Internet: </Typography>
+                                            <InternetIndicator />
+                                        </RowContainerNormal>
+                                    </Item>
+                                )
+                            }
+                        </Stack>
+                        <Grid mt={2} container spacing={2}>
+                            <Grid item py={6} sm={11} md={8} >
+                                <DeviceStatus 
+                                    onDeviceClick={onClick}
+                                    totalDevices={devices?devices.length:0}
+                                    activeDevices={devices? allActiveDevices(devices):0}
+                                    devices={devices?orderByLastUpdated(devices.slice(-5)): []} 
+                                />
                             </Grid>
-                        </Box>
+                            <Grid py={6} item sm={12} md={4} >
+                                <AppStatus apps={apps?apps.slice(-5):[]} />
+                            </Grid>
+                        </Grid>
                     </Box>
                 ):(
                     <Box sx={{ height: '100%', overflowY: 'auto' }}>
@@ -172,10 +167,10 @@ function Dashboard() {
                             apConn={apConn}
                             eth0={eth0}
                             selectedCloud={selectedCloud}
-                            apps={apps}
+                            apps={apps.slice(-5)}
                             totalDevices={devices?devices.length:0}
                             activeDevices={devices? allActiveDevices(devices):0}
-                            devices={devices?orderByLastUpdated(devices.filter((_device, id) => id <= 4)).reverse(): []}
+                            devices={devices?orderByLastUpdated(devices.slice(-5)): []} 
                         />
                     </Box>
                 )
