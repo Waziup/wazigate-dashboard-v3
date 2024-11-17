@@ -1,7 +1,8 @@
 import { createContext, useCallback, useEffect,useState } from "react";
 import { App, Cloud ,ID, Value, Device, Meta } from "waziup";
 import { Devices,getNetworkDevices } from "../utils/systemapi";
-import { cleanString } from "../utils";
+import { cleanString,  } from "../utils";
+import GlobalDialog from "../components/shared/GlobalDialog";
 export type SensorX =  {
     id: ID;
     name: string;
@@ -34,6 +35,8 @@ interface ContextValues{
     apps: App[],
     wazigateId: string
     profile: User | null
+    showDialog : ({ title, content,acceptBtnTitle, onAccept, onCancel }: { title: string, acceptBtnTitle:string,  content: string,   onAccept: ()=>void,onCancel: ()=>void,}) =>void,
+    closeDialog:()=>void,
     setProfile: (profile:User | null)=>void
     selectedCloud: Cloud | null
     setSelectedCloud:(cl: Cloud | null)=>void
@@ -41,6 +44,7 @@ interface ContextValues{
     setAppsFc:(apps:App[])=>void,
     getApps:()=>void,
     loadProfile: ()=>void,
+    sortDevices: (order:'1'|'2'|'3'|'4')=>void,
     codecsList?:{id:string,name:string}[] | null,
     addApp:(app:App)=>void
     token:string
@@ -62,6 +66,9 @@ export const DevicesContext = createContext<ContextValues>({
     wazigateId:'',
     selectedCloud:null,
     setSelectedCloud:()=>{},
+    showDialog:()=>{},
+    closeDialog:()=>{},
+    sortDevices:()=>{},
     profile: null,
     loadProfile: ()=>{},
     setProfile: ()=>{},
@@ -106,6 +113,25 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             const appFiltered = res.filter((a)=> !(a.id.includes("wazigate"))); // remove wazigate apps
             setApps(appFiltered);
         });
+    }
+    const sortDevices=(order:'1'|'2'|'3'|'4')=>{
+        if(order==="1"){
+            // sort devices by date created
+            const createdDevs = [...devices].sort((a,b)=>a.modified.getTime()-b.modified.getTime())
+            setDevices(createdDevs)
+        }else if(order==='2'){
+            // sorts devices by name
+            const namesDevs = [...devices].sort((a, b) => a.name.localeCompare(b.name));
+            console.log(namesDevs);
+            setDevices(namesDevs)
+        }else if(order==="3"){
+            const modifiedDevs = [...devices].sort((a,b)=>b.modified.getTime()-a.modified.getTime())
+            setDevices(modifiedDevs)
+        }else if(order==='4'){
+            // sort devices by latest
+            const filteredDevs = [...devices].sort((a,b)=>b.created.getTime()-a.created.getTime())
+            setDevices(filteredDevs)
+        }
     }
     const getDevices = useCallback(()=>{
         window.wazigate.getDevices().then((res)=>{
@@ -183,6 +209,31 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         fc();
     },[getDevices, setAccessToken, setNetWorkDevicesFc, token]);
 
+    const [dialogState, setDialogState] = useState({
+        open: false,
+        title: '',
+        content: '',
+        acceptBtnTitle:'',
+        onAccept: ()=>{},
+        onCancel: ()=>{},
+    });
+    const showDialog = ({ title, content, onAccept,acceptBtnTitle, onCancel }: {acceptBtnTitle:string,  title: string,   content: string, onAccept: ()=>void,onCancel: ()=>void,}) => {
+        setDialogState({
+            open: true,
+            title,
+            acceptBtnTitle,
+            content,
+            onAccept(){
+                onAccept()
+                closeDialog();
+            },
+            onCancel(){onCancel();closeDialog()},
+        });
+    };
+    
+    const closeDialog = () => {
+        setDialogState({ ...dialogState, open: false });
+    };
     useEffect(() => {
         if(token){
             loadCodecsList();
@@ -207,17 +258,21 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         networkDevices,
         setNetWorkDevices:setNetWorkDevicesFc,
         addApp,
+        sortDevices,
         loadProfile,
         setSelectedCloud,
         setProfile:setProfileFc,
         token,
         selectedCloud,
         setAccessToken,
-        codecsList
+        codecsList,
+        showDialog,
+        closeDialog
     }
     return(
         <DevicesContext.Provider value={value}>
             {children}
+            <GlobalDialog {...dialogState} />
         </DevicesContext.Provider>
     )
 };
