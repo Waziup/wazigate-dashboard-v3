@@ -66,11 +66,11 @@ function Layout() {
         <>
             {
                 matches ? (
-                    <Box sx={{display:'flex',flexWrap:'wrap',height:'100vh',width:matchesMd?'820px':matchesLg?'1000px':'1400px',bgcolor:'#F0F2F5',}}>
-                        <Box sx={{position:'fixed',top:0,left:0,width: (matchesMd || matchesLg)?'5%':'18%', bgcolor:'#292F3F',height:'100%',}}>
+                    <Box sx={{display:'flex',position:'relative',flexWrap:'wrap',height:'100vh',maxWidth:'1400px',bgcolor:'#F0F2F5',}}>
+                        <Box sx={{overflowY:'hidden',position:'fixed',top:0,left:0, width: matchesMd?40:matchesLg?200:220, bgcolor:'#292F3F',height:'100vh',}}>
                             <Sidebar matchesMd={matchesMd} />
                         </Box>
-                        <Box sx={{marginLeft:(matchesMd || matchesLg)?'5%': '20%',flexGrow:1,position:'relative',float:'left', bgcolor:'#F0F2F5',}}>
+                        <Box sx={{bgcolor:'#F0F2F5',px:4,py:2,ml: `${matchesMd?40:matchesLg ? 200 : 220}px`, width: { sm: `calc(100% - ${matchesMd?40:matchesLg?200:220}px)` } }}>
                             <Outlet context={[matches]} />
                         </Box>
                     </Box>
@@ -100,7 +100,7 @@ function Layout() {
                                 <Sidebar matchesMd={matchesMd} />
                             </Box>
                         </Box>
-                        <Box sx={{height:'100%',overflowY:'auto',mb:4,mt: 6}}>
+                        <Box sx={{height:'100%',overflowY:'auto',py:2,px:1.5,mt: 6}}>
                             <Outlet context={[matches]} />
                         </Box>
                     </Box>
