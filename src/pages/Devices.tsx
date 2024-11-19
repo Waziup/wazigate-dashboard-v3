@@ -1,4 +1,4 @@
-import { Box,  Grid, CardContent, Typography, SelectChangeEvent, SpeedDial, SpeedDialAction, SpeedDialIcon, CardHeader, } from '@mui/material';
+import { Box,  Grid, CardContent, Typography, SelectChangeEvent, SpeedDial, SpeedDialAction, SpeedDialIcon,  } from '@mui/material';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { Add,  Sensors, } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
@@ -8,7 +8,7 @@ import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
 import EditDeviceModal from '../components/ui/EditDeviceModal';
 import { DevicesContext, SensorX } from '../context/devices.context';
-import { capitalizeFirstLetter, cleanString, devEUIGenerateFc, differenceInMinutes,  } from '../utils';
+import { capitalizeFirstLetter, devEUIGenerateFc, differenceInMinutes, lineClamp,  } from '../utils';
 import PrimaryIconButton from '../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
 import MenuComponent from '../components/shared/MenuDropDown';
@@ -29,7 +29,7 @@ function Devices() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
-    const { devices, wazigateId, getDevicesFc } = useContext(DevicesContext);
+    const { devices, wazigateId, getDevicesFc,sortDevices,showDialog } = useContext(DevicesContext);
     const [selectedDevice, setSelectedDevice] = useState<null | Device>(null);
     const [newDevice, setNewDevice] = useState<Device>(initialNewDevice);
     const [matches] = useOutletContext<[matches: boolean,matchesMd: boolean]>();
@@ -98,7 +98,13 @@ function Devices() {
             getDevicesFc();
         }).catch(err => {
             setScreen('tab1');
-            alert('Error encountered: ' + err);
+            showDialog({
+                content:"Error Encountered: "+err,
+                onAccept:()=>{},
+                onCancel:()=>{},
+                title:"Error encountered",
+                acceptBtnTitle:"Close",
+            });
         });
     }
     const [selectedValue, setSelectedValue] = useState('');
@@ -138,7 +144,7 @@ function Devices() {
         })
     }
     
-    const handleChangeDeviceCodec = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleChangeDeviceCodec = (event: SelectChangeEvent<string>) => {
         if(selectedDevice){
             setSelectedDevice({
                 ...selectedDevice,
@@ -161,18 +167,28 @@ function Devices() {
         setScreen(screen);
     }
     function handleDeleteDevice(device: Device) {
-        const delEL = confirm(`Are you sure you want to remove ${device.name}?`)
-        if (!delEL) {
-            return;
-        } else {
-            window.wazigate.deleteDevice(device.id)
-            .then(() => {
-                getDevicesFc();
-            })
-            .catch(err => {
-                alert('Error encountered: ' + err);
-            })
-        }
+        showDialog({
+            title:"Remove "+device.name,
+            acceptBtnTitle:"OK!",
+            content: `Are you sure you want to remove ${device.name}?`,
+            onAccept() {
+                window.wazigate.deleteDevice(device.id)
+                .then(() => {
+                    getDevicesFc();
+                })
+                .catch(err => {
+                    showDialog({
+                        content:"Error Encountered: "+err,
+                        onAccept:()=>{},
+                        onCancel:()=>{},
+                        acceptBtnTitle:"Close",
+                        title:"Error encountered"
+                    });
+                })
+            },
+            onCancel() {},
+        })
+
     }
     function handleSelectDevice(device: Device) {
         setSelectedDevice(device);
@@ -229,21 +245,45 @@ function Devices() {
             if (devdev?.meta !== selectedDevice?.meta) {
                 window.wazigate.setDeviceMeta(selectedDevice?.id as string, selectedDevice?.meta as Device)
                     .then(() => {
-                        alert("Device meta updated");
+                        showDialog({
+                            content:"Device meta update updated successfully ",
+                            onAccept:()=>{},
+                            onCancel:()=>{},
+                            acceptBtnTitle:"Close",
+                            title:"Update successfully"
+                        });
                         getDevicesFc();
                         return;
                     }).catch(err => {
-                        alert("Error updating device meta"+err);
+                        showDialog({
+                            content:"Error updating device meta "+err,
+                            onAccept:()=>{},
+                            onCancel:()=>{},
+                            acceptBtnTitle:"Close",
+                            title:"Error encountered"
+                        });
                     });
             }
             if (devdev?.name !== selectedDevice?.name) {
                 // window.wazigate.setDeviceName(selectedDevice.id as string, selectedDevice.name)
                 window.wazigate.set(`devices/${selectedDevice?.id}/name`, selectedDevice?.name)
                 .then(() => {
-                    alert("Device name updated");
+                    showDialog({
+                        content:"Device name update updated successfully ",
+                        onAccept:()=>{},
+                        onCancel:()=>{},
+                        acceptBtnTitle:"Close",
+                        title:"Update successfully"
+                    });
                     return;
                 }).catch(err => {
-                    alert("Error updating device name"+err);
+                    showDialog({
+                        content:"Error updating device name "+err,
+                        onAccept:()=>{},
+                        onCancel:()=>{},
+                        acceptBtnTitle:"Close",
+                        title:"Error encountered"
+                    });
                 });
             }
         }
@@ -391,7 +431,7 @@ function Devices() {
                     changeEditMakeLoraWAN={changeEditMakeLoraWAN}
                     autoGenerateLoraWANOptionsHandler={autoGenerateLoraWANOptions}
                 />
-                <Box sx={{ px: 2, py: matches?3:2,width:'100%', bgcolor:'#F0F2F5',  height: '100%' }}>
+                <Box sx={{px:matches?4:2,py:matches?2:0, width:'100%', height: '100%' }}>
                     <RowContainerBetween >
                         <Typography fontSize={24} fontWeight={700} color={'black'}>Devices</Typography>
                         {
@@ -400,15 +440,30 @@ function Devices() {
                             ):null
                         }
                     </RowContainerBetween>
+                    <RowContainerBetween additionStyles={{my:2}}>
+                        <Typography></Typography>
+                        <Box sx={{ overflow: "hidden",position: "relative",display:'flex',zIndex: 1,  }}>
+                            <p style={{color:'#797979',fontSize:14}}>
+                                Sort by:&nbsp;
+                            </p>
+                            <select onChange={(e)=>sortDevices(e.target.value as '1'|'2'|'3'|'4')} style={{border:'none',color:'#797979', cursor:'pointer',  outline: "none",  background: "none" }} name="tanks"id="tanks">
+                                {[{id:'1',name:'Date Created '},{id:'2',name:'Name'},{id:'3',name:'Modified '},{id:'4',name:'Latest'},].map((it, idx) => (
+                                    <option key={idx} style={{padding:'10px 10px',color:'#797979'}} value={it.id}>
+                                        {it.name} &nbsp; &nbsp;
+                                    </option>
+                                ))}
+                            </select>
+                        </Box>
+                    </RowContainerBetween>
                     <Grid container my={matches?2:0} spacing={2}>
                         {
                             devices.map((device, id) => {
                                 return (
                                     <Grid item key={id}  md={6} lg={4} xl={4} sm={6} xs={12}  my={1} px={0} >
-                                        <Box sx={{ boxShadow: 0, cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
+                                        <Box sx={{ cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
                                             {
                                                 (device.meta && device.meta.type) ?(
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -8, my: -1, px: 1, py: .4, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -4.5, my: -1, px: 1, py: .4, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
                                                         <Sensors sx={{ fontSize: 15, color: '#fff' }} />
                                                         <Typography fontSize={13} mx={1} color={'white'} component={'span'}>{device.meta ? capitalizeFirstLetter(device.meta.type) : ''}</Typography>
                                                     </Box>
@@ -419,35 +474,45 @@ function Devices() {
                                                     </Box>
                                                 )
                                             }
-                                            <CardHeader
-                                                sx={{borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5,}}
-                                                title={<Typography color={'info'} fontWeight={700}>{(device.name && device.name.length > 10) ? cleanString(device.name).slice(0, 10) + '....' : cleanString(device.name?device.name:'')}</Typography>}
-                                                subheader={<Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}> Last updated {differenceInMinutes(new Date(device.modified).toISOString())} </Typography>  }
-                                                action={
-                                                    <MenuComponent
-                                                        open={open}
-                                                        menuItems={[
-                                                            {
-                                                                clickHandler() {
-                                                                    handleSelectDevice(device);
-                                                                    handleClose();
-                                                                },
-                                                                icon:'mode_outlined',
-                                                                text:'Edit'
+                                            <RowContainerBetween additionStyles={{p:2,borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5,}}>
+                                                <Box onClick={()=>{navigate(`/devices/${device.id}`, { state: {  } })}} >
+                                                    <Typography sx={{color:'info',fontWeight:700, ...lineClamp(1)}} >{(device.name && device.name.length > 10) ? device.name: device.name?device.name:''}</Typography>
+                                                    <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}> Last updated {differenceInMinutes(new Date(device.modified).toISOString())} </Typography>
+                                                </Box>
+                                                <MenuComponent
+                                                    open={open}
+                                                    menuItems={[
+                                                        {
+                                                            clickHandler() {
+                                                                handleSelectDevice(device);
+                                                                handleClose();
                                                             },
-                                                            {
-                                                                clickHandler() {
-                                                                    handleDeleteDevice(device);
-                                                                    handleClose();
-                                                                },
-                                                                icon:'delete_outline',
-                                                                text:'Uninstall'
-                                                            }
-                                                        ]}
-                                                    />
-                                                }
-                                            />
-                                            <CardContent sx={{ py: 0,px:0 }}>
+                                                            icon:'mode_outlined',
+                                                            text:'Edit'
+                                                        },
+                                                        {
+                                                            clickHandler() {
+                                                                handleDeleteDevice(device);
+                                                                handleClose();
+                                                            },
+                                                            icon:'delete',
+                                                            text:'Delete'
+                                                        }
+                                                    ]}
+                                                />
+                                            </RowContainerBetween>
+                                            
+                                            <CardContent 
+                                                sx={{ px:0, maxHeight:((device.sensors.length+device.actuators.length)>3)?195:null, overflowY:'auto', 
+                                                '&::-webkit-scrollbar': {
+                                                    width: '5px',
+                                                },
+                                                '&::-webkit-scrollbar-thumb': {
+                                                    backgroundColor: DEFAULT_COLORS.primary_blue,
+                                                    borderRadius: '8px',
+                                                    border: '2px solid transparent',
+                                                },
+                                                }}>
                                                 {device.sensors.length === 0 && device.actuators.length === 0 &&(
                                                     <Box m={5} position={'relative'} textAlign={'center'} top={'50%'}>
                                                         <Typography color={'#797979'}  fontSize={14} fontWeight={400}>No interfaces found</Typography>
