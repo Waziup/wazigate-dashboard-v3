@@ -124,7 +124,7 @@ function Device() {
     }, [getGraphValues, id, pathname, sensorId]);
     return (
         <Box sx={{ height: '100%', overflowY: 'auto' }}>
-            <RowContainerBetween additionStyles={{ p: 2 }}>
+            <RowContainerBetween additionStyles={{ px:4,py:2, }}>
                 <Box>
                     <Typography fontWeight={500} fontSize={24} color={'black'}>{device?.name}</Typography>
                     <div role="presentation" onClick={handleClick}>
@@ -134,20 +134,20 @@ function Device() {
                                     {device?.name}
                                 </Link>
                             </Typography>
-                            <Typography fontSize={14} fontWeight={300} color="inherit">{pathname.includes('actuators') ? 'actuators' : 'sensors'} <span style={{fontSize:14,color:'inherit',fontWeight:500}}>/</span>  {cleanString(sensOrActuator?.name.toLocaleLowerCase())}</Typography>
+                            <Typography fontSize={14} fontWeight={300} color="inherit">{pathname.includes('actuators') ? 'actuators' : 'sensors'} <span style={{fontSize:14,color:'inherit',fontWeight:500}}>/</span>  {cleanString(sensOrActuator?.name)}</Typography>
                         </Breadcrumbs>
                     </div>
                 </Box>
                 {
                     matches ? (
-                        <PrimaryIconButton title={'SETTINGS'} iconname={'settings_two_ton'} onClick={() => navigate(`/devices/${device?.id}/${pathname.includes('actuators') ? 'actuators' : 'sensors'}/${sensOrActuator?.id}/settings`)} />
+                        <PrimaryIconButton title={'SETTINGS'} iconname={'settings_two_ton'} onClick={() => navigate(`/devices/${device?.id}/${pathname.includes('actuators') ? 'actuators' : 'sensors'}/${sensOrActuator?.id}/setting`)} />
                     ) : null
                 }
             </RowContainerBetween>
-            <Box bgcolor={'#fff'} display={'flex'} width={'100%'} pt={matches ? 5 : 2} flexDirection={'column'} alignItems={'center'} justifyContent={'center'}>
-                <Box width={matches ? '85%' : '95%'} mb={3}>
+            <Box bgcolor='#fff' display='flex' borderRadius={2} width='100%' pt={matches ? 5 : 2} flexDirection='column' alignItems='center' justifyContent='center'>
+                <Box px={4} width={matches ? '100%' : '95%'} mb={3}>
                     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Typography color={'#1D2129'} fontSize={15} fontWeight={500}>Readings</Typography>
+                        <Typography color={'#1D2129'} fontSize={15} fontWeight={500}> {pathname.includes('sensors')?'Sensor ':'Actuator '}Readings</Typography>
                         
                     </Box>
                     <Chart
