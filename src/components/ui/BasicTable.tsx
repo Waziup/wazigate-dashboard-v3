@@ -1,24 +1,54 @@
-import {Table,TableBody,TableCell,TableContainer,TableRow,Paper, Typography, Box} from '@mui/material';
-import { DEFAULT_COLORS } from '../../constants';
-import { Sensors } from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 import { Device } from 'waziup';
-import { capitalizeFirstLetter, differenceInMinutes, isActiveDevice } from '../../utils';
-function createData(
-    devType: string,
-  name: string,
-  runtime: string,
-  status: boolean,
-) {
-  return {devType, name, runtime, status };
+import { capitalizeFirstLetter, differenceInMinutes, isActiveDevice, lineClamp } from '../../utils';
+import { Box, Typography } from '@mui/material';
+import { Sensors } from '@mui/icons-material';
+import { DEFAULT_COLORS } from '../../constants';
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.white,
+    color: theme.palette.common.black,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+//   flexGrow:1,
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  cursor:'pointer',
+  ":hover":{
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
+
+
+function createData( name: string,runtime: string,status: string,) {
+  return { name, runtime, status };
 }
 
 interface Props{
     onDeviceClick:(devId:string)=>void,
     devices: Device[]
 }
-export default function BasicTable({onDeviceClick, devices}:Props) {
-    const rowsData = devices.map((dev)=>{
-        return createData(dev.meta.type,dev.name+'*'+differenceInMinutes(dev.modified),differenceInMinutes(dev.modified) ??'',isActiveDevice(dev.modified))
+export default function CustomizedTables({devices,onDeviceClick}:Props) {
+    const rows = devices.map((dev)=>{
+        return createData(dev.name+'*'+differenceInMinutes(dev.modified),differenceInMinutes(dev.modified) ??'',isActiveDevice(dev.modified)+'*'+(dev.meta.type?dev.meta.type:'Generic'))
     });
     const devF =(devName:string)=>{
         const deviceF =  devices.find((d)=>d.name===devName);
@@ -29,56 +59,38 @@ export default function BasicTable({onDeviceClick, devices}:Props) {
     }
     return (
         <TableContainer component={Paper}>
-            <Table stickyHeader sx={{minWidth:440, maxWidth:'100%' }} aria-label="simple table">
-                {/* <TableHead>
+            <Table sx={{ minWidth: 700, tableLayout:'fixed' }} aria-label="customized table">
+                <TableHead>
                     <TableRow>
-                        <TableCell sx={{fontWeight:'bold'}}></TableCell>
-                        <TableCell sx={{fontWeight:'bold'}}>Name</TableCell>
-                        <TableCell align="left">
-                            <History sx={{fontSize:15,fontWeight:900, color:DEFAULT_COLORS.navbar_dark}}/>
-                        </TableCell>
-                        <TableCell sx={{fontWeight:'bold'}} align="left">Status</TableCell>
+                        <StyledTableCell> </StyledTableCell>
+                        <StyledTableCell>Name</StyledTableCell>
+                        <StyledTableCell>Last update</StyledTableCell>
+                        <StyledTableCell align="left">Status</StyledTableCell>
                     </TableRow>
-                </TableHead> */}
+                </TableHead>
                 <TableBody>
-                    {rowsData.map((row) => (
-                        <TableRow
-                        onClick={()=>devF(row.name.split('*')[0])}
-                        key={row.name}
-                        sx={{ 
-                            '&:last-child td, &:last-child th': { border: 0 },
-                            cursor:'pointer',
-                            py: 1,
-                            '&:hover':{
-                                bgcolor:'#f5f5f5'
-                            }
-                        }}
-                        >
-                            {
-                                (row && row.devType && row.devType.length>0) ?(
-                                    <TableCell>
-                                        <Box sx={{display:'flex',alignItems:'center',borderRadius:1,pl: 1,py: .5,bgcolor:DEFAULT_COLORS.primary_blue}}>
-                                            <Sensors sx={{fontSize:12,mr: .2, color:'#fff'}}/>
-                                            <Typography fontSize={12} color={'white'}>{capitalizeFirstLetter(row.devType)}</Typography>
-                                        </Box>
-                                    </TableCell>
-                                ):<Typography></Typography>
-                            }
-                            <TableCell>
+                    {rows.map((row) => (
+                        <StyledTableRow onClick={()=>devF(row.name.split('*')[0])} key={row.name}>
+                            <StyledTableCell align="left">
                                 <Box>
-                                    <Typography fontSize={[10,12,14,16,18]} color={DEFAULT_COLORS.primary_black}>
-                                        {row.name.split('*')[0]}
-                                    </Typography> 
-                                    {/* <Typography fontSize={[8,9,11,13,14]}  color='#797979'>Last updated {row.name.split('*')[1]} mins</Typography> */}
+                                    <Box sx={{display:'inline-flex',alignItems:'center',borderRadius:3,px: 1.5,py: .4,bgcolor:DEFAULT_COLORS.primary_blue}}>
+                                        <Sensors sx={{fontSize:12,mr: .2, color:'#fff'}}/>
+                                        <Typography sx={{...lineClamp(1),fontSize:12, color: 'white'}} >{capitalizeFirstLetter(row.status.split('*')[1])}</Typography>
+                                    </Box>
                                 </Box>
-                            </TableCell>
-                            <TableCell color='#797979' align="left">
-                                <Typography color={'#797979'} fontWeight={300}>{row.runtime}</Typography>
-                            </TableCell>
-                            <TableCell color={row.status?'#499DFF':'#797979'} align="left">
-                                <Typography color={row.status?'#499DFF':'#797979'} fontWeight={300}>{row.status?'Active':'Inactive'}</Typography>
-                            </TableCell>
-                        </TableRow>
+                            </StyledTableCell>
+                            <StyledTableCell  scope="row">
+                                <Typography sx={{...lineClamp(1),fontWeight:300}} >{row.name.split('*')[0]}</Typography>
+                            </StyledTableCell>
+                            <StyledTableCell align="left">
+                                <Typography color='#797979' fontWeight={300}>{row.runtime}</Typography>
+                            </StyledTableCell>
+                            <StyledTableCell align="left">
+                                <Typography color={(row.status.split('*')[0] === "true")?'#499DFF':'#797979'} fontWeight={300}>
+                                    {(row.status.split('*')[0] === "true")?'active':'offline'}
+                                </Typography>
+                            </StyledTableCell>
+                        </StyledTableRow>
                     ))}
                 </TableBody>
             </Table>
