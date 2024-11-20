@@ -35,6 +35,8 @@ const TextInput = ({ children, label }: TextInputProps) => (
 )
 import Logo from '../assets/wazilogo.svg';
 import { DevicesContext } from "../context/devices.context";
+import { Android12Switch } from "../components/shared/Switch";
+import RowContainerBetween from "../components/shared/RowContainerBetween";
 const textinputStyle = { width: '100%', fontSize: 18, border: 'none', background: 'none', color: DEFAULT_COLORS.third_dark, padding: 2, borderBottom: '1px solid #D5D6D8', outline: 'none' }
 function User() {
     const {handleSubmit,setValue} = useForm<Omit<User,'ID'>>({
@@ -42,10 +44,10 @@ function User() {
     });
     const theme = useTheme();
     const [isEdited,setIsEdited] = useState(false);
+    const [isEditPassword, setIsEditPassword] = useState<boolean>(false);
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const [loading, setLoading] = useState(false);
-    // const [profile, setProfile] = useState<User  | null>(null);
-    const {profile,setProfile,loadProfile} = useContext(DevicesContext);
+    const {profile,setProfile,loadProfile, showDialog, closeDialog} = useContext(DevicesContext);
     const [err, setErr] = useState(false);
     const [msg, setMsg] = useState("");
     const loadProfileFc = useCallback(() => {
@@ -94,7 +96,13 @@ function User() {
             setLoading(false);
             setErr(false);
             loadProfile();
-            alert("Profile updated successfully!");
+            showDialog({
+                content:"Profile updated Successfully.",
+                onAccept: ()=>{},
+                acceptBtnTitle:"Close",
+                onCancel: closeDialog,
+                title:"Profile Update",
+            });
         })
         .catch((error) => {
             setLoading(false);
@@ -120,17 +128,17 @@ function User() {
                     {msg}
                 </Alert>
             </Snackbar>
-            <Box sx={{ width: '100%',  p: 2, position: 'relative', bgcolor: '#F4F7F6', height: '100%', overflowY: 'scroll' }}>
-                <Box sx={{ mx:'auto', left: '50%',boxShadow: 3, borderRadius: 2, bgcolor: 'white', width: matches ? '50%' : '95%' }}>
+            <Box sx={{px:matches?4:1,py:2, width: '100%',  position: 'relative', bgcolor: '#F4F7F6', height: '100%', }}>
+                <Box sx={{ mx:'auto', left: '50%', borderRadius: 2, bgcolor: 'white', width: matches ? '50%' : '95%' }}>
                     <Box sx={{ display: 'flex', py: 2, width: '100%', borderBottom: '1px solid #D5D6D8', alignItems: 'center', }}>
                         <Box component={'img'} src={Logo} mx={2} />
                         <ListItemText
-                            primary={profile?.name}
+                            primary={'User Profile'}
                             secondary={`ID ${profile?.id}`}
                         />
                     </Box>
                     <form onSubmit={handleSubmit(saveProfile)}>
-                        <Typography  sx={{ fontWeight: 200, fontSize: 13,mx:1,my:.5, color: '#9CA4AB' }}>GENERAL</Typography>
+                        <Typography  sx={{ fontWeight: 200, fontSize: 13,mx:1,my:.5, color: '#9CA4AB' }}></Typography>
                         <Box p={2}>
                             <TextInput label='Name'>
                                 <input 
@@ -154,12 +162,17 @@ function User() {
                                     style={textinputStyle}
                                 />
                             </TextInput>
+                            <RowContainerBetween additionStyles={{ my: 1,  }}>
+                                <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>{'Change Password'}</Typography>
+                                <Android12Switch onChange={(_e,checked)=>{setIsEditPassword(checked)}} checked={isEditPassword} color='info' />
+                            </RowContainerBetween>
                             <TextInput label='Password'>
                                 <input 
                                     type={'text'}
                                     onChange={onTextInputChange}
                                     name="password"
-                                    placeholder={'****'} 
+                                    placeholder={'****'}
+                                    readOnly={!isEditPassword}
                                     style={textinputStyle}
                                     value={profile?.password}
                                 />
@@ -171,6 +184,7 @@ function User() {
                                     name="newPassword"
                                     placeholder={'****'} 
                                     style={textinputStyle}
+                                    readOnly={!isEditPassword}
                                     value={profile?.newPassword}
                                 />
                             </TextInput>
@@ -179,6 +193,7 @@ function User() {
                                     type={'text'} 
                                     onChange={onTextInputChange}
                                     name="newPasswordConfirm"
+                                    readOnly={!isEditPassword}
                                     value={profile?.newPasswordConfirm}
                                     placeholder={'****'}
                                     style={textinputStyle}
@@ -189,7 +204,7 @@ function User() {
                                     <Box display={'flex'} justifyContent={'center'} py={1}>
                                         <button type="submit" style={{cursor:'pointer', width: '50%', border: 'none', justifyContent: 'center', display: 'flex', alignItems: 'center', borderRadius: 5, outline: 'none', padding: 10, backgroundColor: '#499dff', color: 'white' }}>
                                             <Save sx={{ fontSize: 20 }} />
-                                            SAVE
+                                            SAVE CHANGES
                                         </button>
                                     </Box>
                                 ):null
