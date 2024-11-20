@@ -8,17 +8,20 @@ interface Props{
     hideText?:boolean
     disabled?:boolean
     additionStyles?:SxProps<Theme>,
-    color?: ButtonOwnProps["color"]
+    color?: ButtonOwnProps["color"],
+    textColor?: string,
+    variant?: "text" | "contained" | "outlined"
+
 }
-export default function PrimaryIconButton({title,color,disabled,iconname,fontSize,hideText,additionStyles, type, onClick}:Props) {
+export default function PrimaryIconButton({title,textColor,variant,color,disabled,iconname,fontSize,hideText,additionStyles, type, onClick}:Props) {
     return (
         <>
             {
                 hideText? (
-                    <Button sx={{mx:.4}} startIcon={<Icon onClick={onClick} sx={{ color: '#fff', }} >{iconname}</Icon>}/>
+                    <Button disableElevation sx={{mx:.4}} startIcon={<Icon onClick={onClick} sx={{ color: textColor??'#fff', }} >{iconname}</Icon>}/>
                 ):(
-                    <Button disabled={disabled?disabled:false} type={type} startIcon={<Icon sx={{fontSize: 16, color: '#fff' }} >{iconname}</Icon>} sx={{mx:1, ...additionStyles}} onClick={onClick} color={color?color:"info"} variant={'contained'} >
-                        <Typography color={'#fff'} fontSize={fontSize?fontSize:14}  fontWeight={300}>{title}</Typography>
+                    <Button disableElevation disabled={disabled?disabled:false} type={type} startIcon={<Icon sx={{fontSize: 16, color: textColor??'#fff' }} >{iconname}</Icon>} sx={{mx:1, ...additionStyles}} onClick={onClick} color={color?color:"info"} variant={variant??'contained'} >
+                        <Typography color={textColor??'#fff'} fontSize={fontSize?fontSize:14}  fontWeight={300}>{title}</Typography>
                     </Button>
                 )
             }

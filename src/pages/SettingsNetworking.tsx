@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs,ListItemText,  Grid,Icon, SxProps,  Theme, Typography, CircularProgress, Grow, LinearProgress, Modal } from "@mui/material";
+import { Box, Breadcrumbs,ListItemText,  Grid,Icon, SxProps,  Theme, Typography, CircularProgress, Grow, LinearProgress, Modal, DialogActions, Button } from "@mui/material";
 import { Link, useOutletContext } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
@@ -10,7 +10,7 @@ import { getWiFiScan,setConf as setConfFc, AccessPoint,getConf, setWiFiConnect, 
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import GridItemEl from "../components/shared/GridItemElement";
 const GridItem = ({ children,matches,lg,xl, xs,md,additionStyles }: {xs:number,md:number,xl:number,lg:number,spacing?:number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode,  }) => (
-    <Grid m={matches?1:0} lg={lg} sm={12} xl={xl} item xs={xs} md={md}  sx={additionStyles} borderRadius={2}  >
+    <Grid my={matches?1:0}  lg={lg} sm={12} xl={xl} item xs={xs} md={md}  sx={additionStyles} borderRadius={2}  >
         {children}
     </Grid>
 );
@@ -27,7 +27,6 @@ const style1 = {
     // overflowY: 'auto',
     
     bgcolor: 'background.paper',
-    boxShadow: 24,
     borderRadius: 2,
 };
 const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
@@ -38,17 +37,21 @@ import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 import { DevicesContext } from "../context/devices.context";
 import Backdrop from "../components/Backdrop";
 import WaziLogo from '../assets/wazilogo.svg';
+import { lineClamp } from "../utils";
+import SnackbarComponent from "../components/shared/Snackbar";
 export default function SettingsNetworking() {
     const [matches] = useOutletContext<[matches:boolean]>();
     const [scanLoading,setScanLoading]=useState<boolean>(false);
     const [wifiList,setWifiList]=useState<AccessPoint[]>([]);
     const [openModal, setOpenModal] = useState(false);
+    const [error, setError] = useState<{message: Error | null | string,severity: "error" | "warning" | "info" | "success"} | null>(null);
+    
     const [screen, setScreen] = useState<'tab1' | 'tab2'>('tab1');
     const handleScreenChange = (tab: 'tab1' | 'tab2') => {
         setScreen(tab);
     }
     const [selectedWifi,setSelectedWifi]=useState<AccessPoint & {password?:string}|undefined>(undefined);
-    const {networkDevices,selectedCloud,setNetWorkDevices,setSelectedCloud} = useContext(DevicesContext)
+    const {networkDevices,selectedCloud,setNetWorkDevices,setSelectedCloud, showDialog} = useContext(DevicesContext)
     const scan = () => {
         setScanLoading(true);
         getWiFiScan()
@@ -87,7 +90,10 @@ export default function SettingsNetworking() {
             window.wazigate.set(`clouds/${selectedCloud?.id}/name`, newCloudName).then(() => {
                 // OK
             }, (err) =>  {
-                alert("Can not change cloud name:\n"+err);
+                setError({
+                    message: "Cannot change cloud name:\n "+err,
+                    severity:'warning'
+                });
                 setSelectedCloud({
                     ...selectedCloud,
                     name:oldName
@@ -99,32 +105,82 @@ export default function SettingsNetworking() {
         if(hasUnsavedChanges){
             setLoading(true);
             await Promise.all([
-                await window.wazigate.set(`clouds/${selectedCloud?.id as string}/rest`, selectedCloud?.rest).catch((err: Error) => {alert("Error saving REST address:\n" + err);return}),
-                await window.wazigate.set(`clouds/${selectedCloud?.id}/mqtt`, selectedCloud?.mqtt).catch((err: Error) => {alert("Error saving MQTT address:\n" + err);return}),
-                await window.wazigate.setCloudCredentials(selectedCloud?.id as string, selectedCloud?.username as string, selectedCloud?.token as string).catch((err: Error) => {alert("Error saving credentials:\n" + err);return;}),
+                await window.wazigate.set(`clouds/${selectedCloud?.id as string}/rest`, selectedCloud?.rest)
+                .catch((err: Error) => { 
+                    setError({
+                        message: "Error saving REST address:\n "+err,
+                        severity:'error'
+                    });
+                    return
+                }),
+                await window.wazigate.set(`clouds/${selectedCloud?.id}/mqtt`, selectedCloud?.mqtt)
+                .catch((err: Error) => {
+                    setError({
+                        message: "Error saving MQTT address:\n "+err,
+                        severity:'error'
+                    });
+                    return
+                }),
+                await window.wazigate.setCloudCredentials(selectedCloud?.id as string, selectedCloud?.username as string, selectedCloud?.token as string).catch((err: Error) => {
+                    setError({
+                        message: "Error saving credentials:\n "+err,
+                        severity:'error'
+                    });
+                    return
+                }),
             ]).then(() => {
                 sethasUnsavedChanges(false);
                 setLoading(false);
-                alert("Changes saved!");
+                showDialog({
+                    title:"Success",
+                    content:"Changes saved successfully!",
+                    acceptBtnTitle:"OK!",
+                    onAccept:()=>{},
+                    onCancel:()=>{},
+                });
             })
             .catch((err: Error) => {
-                alert("There was an error saving the changes:\n" + err);
+                showDialog({
+                    title:"Error encountered",
+                    content:"There was an error saving the changes:\n" + err,
+                    acceptBtnTitle:"CLOSE",
+                    onAccept:()=>{},
+                    onCancel:()=>{},
+                });
                 setLoading(false);
             });
         }else{
-            alert('No changes');
+            showDialog({
+                title:"No change",
+                content:"No changes made",
+                acceptBtnTitle:"CLOSE",
+                onAccept:()=>{},
+                onCancel:()=>{},
+            });
         }
     }
     const handleEnabledChange =async (_event: React.ChangeEvent<HTMLInputElement>,checked: boolean) => {
         if (hasUnsavedChanges) {
-            alert("Save all changes before activating the synchronization!");
+            showDialog({
+                title:"Warning",
+                content:"Save all changes before activating the synchronization!",
+                acceptBtnTitle:"OK",
+                onAccept:()=>{},
+                onCancel:()=>{},
+            });
             return
         }
         setSaving(true);
         const timer = new Promise(resolve => setTimeout(resolve, 2000));
         await window.wazigate.setCloudPaused(selectedCloud?.id as string, !checked)
         .then(async() => {
-            alert("Sync activated!");
+            showDialog({
+                title:"Success",
+                content:"Sync activated!",
+                acceptBtnTitle:"OK",
+                onAccept:()=>{},
+                onCancel:()=>{},
+            });
             setNetWorkDevices()
             timer.then(() => {
                 setSaving(false);
@@ -132,7 +188,13 @@ export default function SettingsNetworking() {
         })
         .catch((err:Error)=>{
             setSaving(false);
-            alert("There was an error activating the sync!\n Check your credentials and try again.\n\nThe server said:\n" + err);
+            showDialog({
+                title:"Error encountered",
+                content:"There was an error activating the sync!\n Check your credentials and try again.\n\nThe server said:\n" + err,
+                acceptBtnTitle:"CLOSE",
+                onAccept:()=>{},
+                onCancel:()=>{},
+            });
         });
     }
     const submitConf = (event: React.FormEvent) => {
@@ -141,24 +203,46 @@ export default function SettingsNetworking() {
           fan_trigger_temp: parseInt(conf.fan_trigger_temp as string,10),
           oled_halt_timeout: parseInt(conf.oled_halt_timeout as string,10)
         };
-
-        setConfFc(data)
-        .then(()=>{
-            alert('Settings saved');
+        setConfFc(data).then(()=>{
+            showDialog({
+                title:"Success",
+                content:"Settings saved",
+                acceptBtnTitle:"OK!",
+                onAccept:()=>{},
+                onCancel:()=>{},
+            });
         })
         .catch((err) => {
-            alert('Error:'+err);
+            showDialog({
+                title:"Error encountered",
+                content:"Error encountered: "+err,
+                acceptBtnTitle:"OK!",
+                onAccept:()=>{},
+                onCancel:()=>{},
+            });
         });
     };
     const switchToAPMode = () => {
         // this.setState({ switchToAPModeLoading: true });
-        const resp = confirm('Are you sure you want to switch to AP Mode?');
-        if (!resp) return;
-        setAPMode().then(()=>{
-            alert('Switched to AP Mode');
-        })
-        .catch((error) => {
-            alert(error);
+        showDialog({
+            title:"Switch AP mode",
+            content: 'Are you sure you want to switch to AP Mode?',
+            acceptBtnTitle:"SWITCH",
+            onAccept:()=>{
+                setAPMode().then(()=>{
+                    setError({
+                        message: "Switched to AP Mode:\n ",
+                        severity:'success'
+                    });
+                })
+                .catch((error) => {
+                    setError({
+                        message: "Error encountered :\n "+error,
+                        severity:'error'
+                    });
+                });
+            },
+            onCancel:()=>{},
         });
     };
     const fcInit = ()=>{
@@ -186,11 +270,18 @@ export default function SettingsNetworking() {
         setWiFiConnect(data).then(() => {
             setScanLoading(false)
             setSelectedWifi(undefined);
-            alert('Loading....');
+            setLoading(true);
         })
         .catch((error) => {
+            setLoading(false)
             setScanLoading(false)
-            alert('Error:'+error);
+            showDialog({
+                title:"Error encountered",
+                content:"Error encountered: "+error,
+                acceptBtnTitle:"OK",
+                onAccept:()=>{},
+                onCancel:()=>{},
+            });
         });
     };
     const submitSSID = (event: React.FormEvent<HTMLFormElement>) => {
@@ -200,17 +291,26 @@ export default function SettingsNetworking() {
             SSID: formEl.SSID.value,
             password: formEl.password.value,
         }
-        const confirm = window.confirm('Are you sure you want to change the Access Point settings?');
-        if (!confirm) return;
-        setAPInfo(data)
-        .then(
-            (msg) => {
-                alert('Success'+msg);
-            })
-            .catch((error) => {
-                alert('Error encountered'+error);
-            }
-        );
+        showDialog({
+            title:"Access point settings",
+            content: 'Are you sure you want to change the Access Point settings?',
+            acceptBtnTitle:"OK",
+            onAccept:()=>{
+                setAPInfo(data)
+                .then((msg) => {
+                    setError({
+                        message: "Success: \n "+msg,
+                        severity:'success'
+                    });
+                }).catch((error) => {
+                    setError({
+                        message: "Error encountered: \n "+error,
+                        severity:'warning'
+                    });
+                });
+            },
+            onCancel:()=>{},
+        });
     };
     useEffect(() => {
         scan();
@@ -224,6 +324,16 @@ export default function SettingsNetworking() {
     const cancelHander = () => {setSelectedWifi(undefined); setOpenModal(false); handleScreenChange('tab1')};
     return (
         <>
+            {
+                error ? (
+                    <SnackbarComponent
+                        autoHideDuration={5000}
+                        severity={error.severity}
+                        message={(error.message as Error).message ? (error.message as Error).message : (error.message as string)}
+                        anchorOrigin={{vertical:'top',horizontal:'center'}}
+                    />
+                ):null
+            }
             {
                 loading?(
                     <Backdrop>
@@ -246,7 +356,6 @@ export default function SettingsNetworking() {
                                         <Typography color={'#000'} fontWeight={500} >Available Wifi Networks</Typography>
                                         <Typography fontSize={14} color={'#666'}>Please select a network to connect</Typography>
                                     </Box>
-                                    <Close onClick={cancelHander} sx={{ ...IconStyle,cursor: 'pointer', fontSize: 20 }} />
                                 </RowContainerBetween>
                                 <Box sx={{overflowY:'auto',height:380}}>
                                     {
@@ -267,10 +376,10 @@ export default function SettingsNetworking() {
                                         ))
                                     }
                                 </Box>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between',borderTop:'1px solid #ccc', alignItems: 'center', p: 2 }} >
-                                    <Box></Box>
-                                    <PrimaryButton title="NEXT" disabled={selectedWifi===undefined} onClick={() => { handleScreenChange('tab2') }} />
-                                </Box>
+                                <DialogActions>
+                                    <Button onClick={cancelHander} variant={'text'} sx={{ mx: 1,color:'#ff0000' }} color={'info'}>CLOSE</Button>
+                                    <PrimaryButton variant="text" textColor={DEFAULT_COLORS.primary_blue} color="info" title="NEXT" disabled={selectedWifi===undefined} onClick={() => { handleScreenChange('tab2') }} />
+                                </DialogActions>
                             </Box>
                         ):(
                             <SelectedNetwork cancelHander={cancelHander} backHandler={()=>{setSelectedWifi(undefined);handleScreenChange('tab1')}} submitHandler={submitHandler} selectedWifi={selectedWifi} setSelectedWifi={setSelectedWifi} />
@@ -278,7 +387,7 @@ export default function SettingsNetworking() {
                     }
                 </Box>
             </Modal>
-            <Box sx={{pl:matches?2.5:1,pt:2.5, position: 'relative', width: '100%', height: '100vh' }}>
+            <Box sx={{px: matches?4:2,py:2}} >
                 <Box>
                     <Typography fontWeight={600} fontSize={24} color={'black'}>Wifi</Typography>
                     <div role="presentation" >
@@ -294,7 +403,7 @@ export default function SettingsNetworking() {
                         </Breadcrumbs>
                     </div>
                 </Box>
-                <Grid container>
+                <Grid container spacing={2}>
                     <GridItem xl={4} lg={4} spacing={2} md={4.6} xs={12} matches={matches} additionStyles={{}}>
                         <GridItemEl text={selectedCloud?.name as string} icon={'cloud'}>
                             <Grow in={saving}>
@@ -424,7 +533,7 @@ export default function SettingsNetworking() {
                                 </Box>
                             </Box>
                         </GridItemEl>
-                        <Box bgcolor={'#fff'} boxShadow={3} borderRadius={1}>
+                        <Box bgcolor='#fff' borderRadius={1}>
                             <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5,border:'.5px solid #d8d8d8', bgcolor: '#f7f7f7', alignItems: 'center' }} p={1} >
                                 <WifiOutlined sx={IconStyle}/>
                                 <Typography color={'#212529'} fontWeight={500}>Available Wifi</Typography>
@@ -470,7 +579,7 @@ function SelectedNetwork({submitHandler,selectedWifi,backHandler,cancelHander,se
             <RowContainerBetween additionStyles={{p:2,borderBottom:'1px solid #ccc'}}>
                 <Box sx={{ display: 'flex',  alignItems: 'center' }} >
                     <ArrowBack onClick={backHandler} sx={{ fontSize: 20, mr: 1, color: DEFAULT_COLORS.primary_black, cursor:'pointer'}} />
-                    <Typography color={'#212529'} fontWeight={500}>Connect to {(selectedWifi && selectedWifi.ssid && selectedWifi.ssid.length > 10 ? selectedWifi.ssid.slice(0, 10) + '....' : selectedWifi?.ssid)}</Typography>
+                    <Typography sx={{...lineClamp(1),color:'#212529',fontWeight:500}}>Connect to {(selectedWifi && selectedWifi.ssid && selectedWifi?.ssid)}</Typography>
                 </Box>
                 <Close onClick={cancelHander} sx={{ ...IconStyle,cursor:'pointer', fontSize: 20 }} />
             </RowContainerBetween>
@@ -497,10 +606,10 @@ function SelectedNetwork({submitHandler,selectedWifi,backHandler,cancelHander,se
                         placeholder="Enter password" 
                         name="password"
                     />
-                    <RowContainerBetween>
-                        <PrimaryButton additionStyles={{backgroundColor:'#ff0000'}} color="error" title="Cancel" onClick={cancelHander} />
+                    <DialogActions>
+                        <Button onClick={cancelHander} variant='text' sx={{ mx: 1,color:'#ff0000' }} color='info'>CLOSE</Button>
                         <PrimaryButton title="Connect" type="submit" />
-                    </RowContainerBetween>
+                    </DialogActions>
                 </form>
             </Box>
         </Box>

@@ -1,8 +1,8 @@
-import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel,  MenuItem, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material';
+import { Box, Button, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel,  ListSubheader,  MenuItem, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material';
 import { NormalText, } from './Dashboard';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
-import {  Download, FiberNew, SearchOff,  } from '@mui/icons-material';
+import {  Download, FiberNew,  } from '@mui/icons-material';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import { StartAppConfig, type App } from 'waziup';
@@ -11,7 +11,7 @@ import { DevicesContext } from '../context/devices.context';
 import CustomApp from '../components/CustomApp';
 import { SelectElement } from './DeviceSettings';
 import { LoadingButton } from '@mui/lab';
-import { returnAppURL } from '../utils';
+import { lineClamp, returnAppURL } from '../utils';
 import TextInputField from '../components/shared/TextInputField';
 import MenuComponent from '../components/shared/MenuDropDown';
 type App1 = App & {
@@ -69,36 +69,38 @@ const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHand
             id="recommeded_apps _selecter"
             onClose={onCloseHandler}
             value={age} label="Install App" onChange={handleChange}>
-            {
-                recommendedApps.map((app,idx) => (
-                    <MenuItem key={app.id} value={app.image + "*" + app.id} sx={{ display: 'flex',bgcolor:idx%2?'#D4E3F5':'', width: '100%', justifyContent: 'space-between' }}>
-                        <Box display={'flex'} alignItems={'center'}>
-                            <Box component={'img'} sx={{ width: 20, mx: 1, height: 20 }} src={Logo} />
-                            <Tooltip color='black' followCursor title={app.description} placement="top-start">
-                                <Typography fontSize={14} color={'#325460'} >{app.description.slice(0, 30) + '...'}</Typography>
-                            </Tooltip>
-                        </Box>
-                        <Box display={'flex'} alignItems={'center'}>
-                            <Download sx={{ fontSize: 15, mx: 1, color: '#325460' }} />
-                            <Typography sx={{ textTransform: 'uppercase', color: '#325460', fontSize: 11 }}>
-                                Install
-                            </Typography>
-                        </Box>
-                    </MenuItem>
-                ))
-            }
-            <MenuItem onClick={customAppInstallHandler} value={20} sx={{ display: 'flex', py: 1, width: '100%', borderTop: '1px solid #D9D9D9', justifyContent: 'space-between' }}>
-                <Box display={'flex'} alignItems={'center'}>
-                    <FiberNew sx={{ fontSize: 20, mx: 1, color: '#F48652' }} />
-                    <Typography color={'#325460'} fontSize={15}>Install Custom App</Typography>
-                </Box>
-                <Box display={'flex'} alignItems={'center'}>
-                    <Download sx={{ fontSize: 20, mx: 1, color: '#325460' }} />
-                    <Typography sx={{ textTransform: 'uppercase', color: '#325460', fontSize: 15 }}>
-                        Install
-                    </Typography>
-                </Box>
-            </MenuItem>
+                <ListSubheader>Waziapps</ListSubheader>
+                {
+                    recommendedApps.map((app,idx) => (
+                        <MenuItem key={app.id} value={app.image + "*" + app.id} sx={{":hover":{bgcolor:'#D4E3F5'}, display: 'flex',bgcolor:idx%2?'#eaeaea':'', width: '100%', justifyContent: 'space-between' }}>
+                            <Box display={'flex'} alignItems={'center'}>
+                                <Box component={'img'} sx={{ width: 20, mx: 1, height: 20 }} src={Logo} />
+                                <Tooltip color='black' followCursor title={app.description} placement="top-start">
+                                    <Typography sx={{fontSize:14, color:'#325460', ...lineClamp(1)}} >{app.description.slice(0, 30) + '...'}</Typography>
+                                </Tooltip>
+                            </Box>
+                            <Box display={'flex'} alignItems={'center'}>
+                                <Download sx={{ fontSize: 15, mx: 1, color: '#325460' }} />
+                                <Typography sx={{ textTransform: 'uppercase', color: '#325460', fontSize: 11 }}>
+                                    Install
+                                </Typography>
+                            </Box>
+                        </MenuItem>
+                    ))
+                }
+                <ListSubheader>Custom App</ListSubheader>
+                <MenuItem onClick={customAppInstallHandler} value={20} sx={{ display: 'flex', py: 1, width: '100%', borderTop: '1px solid #D9D9D9', justifyContent: 'space-between' }}>
+                    <Box display={'flex'} alignItems={'center'}>
+                        <FiberNew sx={{ fontSize: 20, mx: 1, color: '#F48652' }} />
+                        <Typography color={'#325460'} fontSize={15}>Install Custom App</Typography>
+                    </Box>
+                    <Box display={'flex'} alignItems={'center'}>
+                        <Download sx={{ fontSize: 15, mx: 1, color: '#325460' }} />
+                        <Typography sx={{ textTransform: 'uppercase', color: '#325460', fontSize: 11 }}>
+                            Install
+                        </Typography>
+                    </Box>
+                </MenuItem>
 
         </Select>
 
@@ -108,10 +110,9 @@ interface AppProp{
     children: React.ReactNode
 }
 export const GridItem = ({ children, }:AppProp) => (
-    <Grid item md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={1} >
-        <Box minHeight={100} sx={{ px: 2, py: 1,boxShadow:3, position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
+    <Grid item md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={0} >
+        <Box minHeight={100} sx={{ py: 1, position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
             {children}
-            
         </Box>
     </Grid>
 );
@@ -120,9 +121,10 @@ type RecomendedApp = {
     id: string,
     image: string,
 }
+import Logo404 from '../assets/search.svg';
 export default function Apps() {
     const [customAppId, setCustomAppId] = useState<App2>(customAppProps);
-    const [matches, matchesMd] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
+    const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [loadingUninstall, setLoadingUninstall] = React.useState<boolean>(false);
     const [loading, setLoading] = React.useState<boolean>(false);
@@ -131,11 +133,11 @@ export default function Apps() {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const { apps,  getApps } = useContext(DevicesContext);
+    const { apps,  getApps,showDialog } = useContext(DevicesContext);
     const [recommendedApps, setRecommendedApps] = useState<RecomendedApp[]>([]);
     const [logs, setLogs] = useState<{ logs: string, done: boolean,error?:string }>({ logs: '', done: false,error: undefined });
     const logsRef = React.useRef<string>('');
-    const [error, setError] = useState<Error | null | string>(null);
+    const [error, setError] = useState<{message: Error | null | string,severity: "error" | "warning" | "info" | "success"} | null>(null);
     function installAppFunction(image: string, id: string) {
         setAppToInstallId(id);
         window.wazigate.installApp(image).then((res) => {
@@ -169,11 +171,15 @@ export default function Apps() {
         getRecApps()
     }, [apps, getApps]);
     const handleSubmitNewCustomApp = () => {
-        const yesNo = confirm('Are you sure you want to install this app?');
-        if (!yesNo) {
-            return;
-        }
-        handleLogsModal(customAppId.image, customAppId.image.replace("/", ".").split(":")[0]);
+        showDialog({
+            title:"Install app",
+            acceptBtnTitle:"INSTALL",
+            content:"Are you sure you want to install this app?",
+            onAccept:()=>{
+                handleLogsModal(customAppId.image, customAppId.image.replace("/", ".").split(":")[0]);
+            },
+            onCancel:()=>{}
+        })
     }
     const [appToInstallId, setAppToInstallId] = useState<string>('');
     const handleCustomAppIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -223,7 +229,13 @@ export default function Apps() {
     },[])
     const load = () => {
         window.wazigate.getApp(appToUninstall ? appToUninstall.id : '').then(setAppToUninstall, (error) => {
-            alert("There was an error loading the app info:\n" + error);
+            showDialog({
+                content: "There was an error loading the app info:\n" + error,
+                onAccept:()=>{},
+                onCancel:()=>{},
+                acceptBtnTitle:"Close",
+                title:"Error encountered"
+            });
         });
     };
     useEffect(() => {
@@ -265,12 +277,18 @@ export default function Apps() {
             setAppToUninstall(null);
             getApps();
         }).catch(() => {
-            alert('Could not uninstall ' + appToUninstall?.name);
-            setAppToUninstall(null);
-            setUninstLoader(false);
-            getApps();
-            getRecApps()
+            showDialog({
+                content:'Could not uninstall ' + appToUninstall?.name,
+                onAccept:()=>{ },
+                onCancel:()=>{},
+                acceptBtnTitle:"Close",
+                title:"Error encountered"
+            });
         })
+        setAppToUninstall(null);
+        setUninstLoader(false);
+        getApps();
+        getRecApps()
         setLoadingUninstall(false);
     };
     function closeModal() {
@@ -293,30 +311,49 @@ export default function Apps() {
         })
         .catch((err) => {
             setLoading(false);
-            alert('Error: ' + err);
+            showDialog({
+                content:"Error Encountered: "+err,
+                onAccept:()=>{
+
+                },
+                onCancel:()=>{},
+                acceptBtnTitle:"Close",
+                title:"Error encountered"
+            });
             setShowAppSettings(!showAppSettings);
         });
     }
     function startOrStopApp(appId: string, running: boolean) {
-        const yesNo = confirm('Are you sure you want to ' + (running ? 'stop' : 'start') + ' ' + appId + '?');
-        if (!yesNo) {
-            return;
-        }
-        const config: StartAppConfig = {
-            action: running ? "stop" : "start",
-            restart: "no"
-        }
-        setLoading(true);
-        window.wazigate.startStopApp(appId, config)
-        .then(() => {
-            alert('App ' + appId + ' ' + (running ? 'stopped' : 'started') + ' successfully');
-            getApps();
-            setLoading(false);
-        }).catch(() => {
-            // alert('Could not ' + (running ? 'stop' : 'start') + ' ' + appId);
-            setError('Could not ' + (running ? 'stop' : 'start') + ' ' + appId)
-            getApps();
-            setLoading(false);
+        showDialog({
+            title: (running ? 'Stopping' : 'Starting') + ' ' + appId + '?',
+            acceptBtnTitle: running ? 'STOP' : 'START',
+            content: 'Are you sure you want to ' + (running ? 'stop' : 'start') + ' ' + appId + '?',
+            onAccept() {
+                const config: StartAppConfig = {
+                    action: running ? "stop" : "start",
+                    restart: "no"
+                }
+                setLoading(true);
+                window.wazigate.startStopApp(appId, config)
+                .then(() => {
+                    setError({
+                        message: 'App ' + appId + ' ' + (running ? 'stopped' : 'started') + ' successfully',
+                        severity:'success'
+                    })
+                    getApps();
+                    setLoading(false);
+                }).catch(() => {
+                    setError({
+                        message: 'Could not ' + (running ? 'stop' : 'start') + ' ' + appId,
+                        severity:'error'
+                    })
+                    getApps();
+                    setLoading(false);
+                })
+            },
+            onCancel() {
+                
+            },
         })
     }
     return (
@@ -325,8 +362,8 @@ export default function Apps() {
                 error ? (
                     <SnackbarComponent
                         autoHideDuration={5000}
-                        severity='error'
-                        message={(error as Error).message ? (error as Error).message : (error as string)}
+                        severity={error.severity}
+                        message={error && (error).message ? (error.message as Error).message : ''}
                         anchorOrigin={{vertical:'top',horizontal:'center'}}
                     />
                 ):null
@@ -391,7 +428,7 @@ export default function Apps() {
                     </DialogContentText>
                     {
                         loadingUninstall && (
-                            <Box borderBottom={'1px solid black'} width={'100%'} my={1}>
+                            <Box alignItems={'center'} justifyContent={'center'} width={'100%'} my={1}>
                                 <CircularProgress color='info' />
                             </Box>
                         )
@@ -402,58 +439,51 @@ export default function Apps() {
                     <Button autoFocus onClick={uninstall} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >UNINSTALL</Button>
                 </DialogActions>
             </Dialog>
-            {
-                showAppSettings ? (
-                    <Backdrop>
-                        <Box zIndex={50} width={matches ? matchesMd ? '50%' : '30%' : '90%'} borderRadius={2} bgcolor={'#fff'}>
-                            <RowContainerBetween additionStyles={{ p:2, borderBottom: '.5px solid #ccc' }}>
-                                <Typography fontWeight={700} fontSize={15} color={'black'}>{selectedApp?.name} Settings</Typography>
-                            </RowContainerBetween>
-                            <form style={{ padding: '0 10px' }} onSubmit={(e) => { e.preventDefault(); }}>
-                                <FormControl sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
-                                    <Typography color={'primary'} mb={.4} fontSize={12}>Device name</Typography>
-                                    <input
-                                        autoFocus
-                                        name="name" placeholder='Enter device name'
-                                        value={selectedApp?.name}
-                                        required
-                                        readOnly
-                                        style={{ border: 'none', width: '100%', padding: '6px 0', outline: 'none' }}
-                                    />
-                                </FormControl>
-                                <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
-                                    <Typography color={'primary'} mb={.4} fontSize={12}>Author</Typography>
-                                    <Typography color={'primary'} mb={.4} fontSize={12}>{selectedApp?.author.name ? (selectedApp?.author.name) : (selectedApp?.author)}</Typography>
-                                </Box>
-                                {
-                                    selectedApp?.state ? (
-                                        <SelectElement
-                                            id="restartPolicy"
-                                            name='restartPolicy'
-                                            value={(selectedApp as App)?.state ? (selectedApp as App)?.state.restartPolicy : ''}
-                                            handleChange={updateSettings}
-                                            conditions={['no','unless-stopped', 'on-failure', 'always']}
-                                            title='Restart Policy'
-                                        />
-                                    ):null
-                                }
-                                <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
-                                    <Typography color={'primary'} mb={.4} fontSize={12}>Description</Typography>
-                                    <Typography color={'primary'} mb={.4} fontSize={12}>{(selectedApp as App1)?.description as string}</Typography>
-                                </Box>
-                                <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
-                                    <Typography color={'primary'} mb={.4} fontSize={12}>Version</Typography>
-                                    <Typography color={'primary'} mb={.4} fontSize={12}>{selectedApp?.version}</Typography>
-                                </Box>
-                            </form>
-                            <RowContainerBetween additionStyles={{ p: 1,my: 1, borderTop: '.5px solid #ccc' }}>
-                                <Box/>
-                                <Button onClick={() => { setShowAppSettings(!showAppSettings) }} sx={{ textTransform: 'initial', backgroundColor: '#ff0000' }} variant={'contained'} >CANCEL</Button>
-                            </RowContainerBetween>
+            <Dialog fullWidth open={showAppSettings} onClose={() => { setShowAppSettings(!showAppSettings) }}>
+                <Box   borderRadius={2} bgcolor={'#fff'}>
+                    <DialogContent>
+                        <DialogTitle> {selectedApp?.name} Settings</DialogTitle>
+                        <FormControl sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                            <Typography color={'primary'} mb={.4} fontSize={12}>Device name</Typography>
+                            <input
+                                autoFocus
+                                name="name" placeholder='Enter device name'
+                                value={selectedApp?.name}
+                                required
+                                readOnly
+                                style={{background:'none', border: 'none', width: '100%', padding: '6px 0', outline: 'none' }}
+                            />
+                        </FormControl>
+                        <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                            <Typography color={'primary'} mb={.4} fontSize={12}>Author</Typography>
+                            <Typography color={'primary'} mb={.4} fontSize={12}>{selectedApp?.author.name ? (selectedApp?.author.name) : (selectedApp?.author)}</Typography>
                         </Box>
-                    </Backdrop>
-                ) : null
-            }
+                        {
+                            selectedApp?.state ? (
+                                <SelectElement
+                                    id="restartPolicy"
+                                    name='restartPolicy'
+                                    value={(selectedApp as App)?.state ? (selectedApp as App)?.state.restartPolicy : ''}
+                                    handleChange={updateSettings}
+                                    conditions={['no','unless-stopped', 'on-failure', 'always']}
+                                    title='Restart Policy'
+                                />
+                            ):null
+                        }
+                        <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                            <Typography color={'primary'} mb={.4} fontSize={12}>Description</Typography>
+                            <Typography color={'primary'} mb={.4} fontSize={12}>{(selectedApp as App1)?.description as string}</Typography>
+                        </Box>
+                        <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                            <Typography color={'primary'} mb={.4} fontSize={12}>Version</Typography>
+                            <Typography color={'primary'} mb={.4} fontSize={12}>{selectedApp?.version}</Typography>
+                        </Box>
+                    </DialogContent>
+                    <DialogActions sx={{ p: 1,my: 1, borderTop: '.5px solid #ccc' }}>
+                        <Button onClick={() => { setShowAppSettings(!showAppSettings) }} sx={{ textTransform: 'initial', color: '#ff0000' }} color='warning' variant={'text'} >CANCEL</Button>
+                    </DialogActions>
+                </Box>
+            </Dialog>
             <Dialog open={modalProps.open && modalProps.title ==='Confirm Installation'} onClose={() => { setModalProps({ open: false, title: '', children: null,otherArgs:undefined }) }}>
                 <DialogTitle>{modalProps.title}</DialogTitle>
                 <DialogContent sx={{my:2,}} >
@@ -474,10 +504,10 @@ export default function Apps() {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Box px={2} onClick={() => { open ? handleClose() : null }} sx={{ overflowY: 'auto', my: 2, height: '100%' }}>
+            <Box  onClick={() => { open ? handleClose() : null }} sx={{px:matches?4:2,py:2, overflowY: 'auto',  height: '100%' }}>
                 <RowContainerBetween>
                     <Box >
-                        <Typography fontWeight={700} fontSize={20} color={'black'}>Apps</Typography>
+                        <Typography fontWeight={700} fontSize={24} color={'black'}>Apps</Typography>
                         {
                             matches?(
                                 <Typography fontSize={matches ? 15 : 13} sx={{ color: DEFAULT_COLORS.secondary_black }}>Setup your Wazigate Edge Apps</Typography>
@@ -518,43 +548,48 @@ export default function Apps() {
                                                     <Box component={'img'} src={LogoSig} />
                                                     <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author?app.author.name??'Generic':''}</Typography>
                                                 </Box>
-                                                <Box display={'flex'} py={2} justifyContent={'space-between'}>
-                                                    <Box>
-                                                        <NormalText title={app.name} />
-                                                        <Typography color={'#325460'} fontWeight={300}>{app.id}</Typography>
-                                                    </Box>
-                                                    <MenuComponent
-                                                        open={open}
-                                                        menuItems={[
-                                                            app.state && app.state.running?{
-                                                                icon: `stop-circle-outlined`,
-                                                                text: app.state ? app.state.running ? 'Stop' : 'Start' : 'Start',
-                                                                clickHandler: () => { startOrStopApp(app.id, app.state ? app.state.running : false) }
-                                                            }:null,
-                                                            {
-                                                                icon: 'settings',
-                                                                text: 'Settings',
-                                                                clickHandler: () => { setSelectedApp(app); setShowAppSettings(!showAppSettings) }
-                                                            },
-                                                            {
-                                                                icon: 'delete_forever',
-                                                                text: 'Uninstall',
-                                                                clickHandler: () => { setAppToUninstallFc(idx) }
-                                                            },
-                                                        ]}
-                                                    />
+                                                <CardHeader
+                                                    title={<NormalText title={app.name} />}
+                                                    subheader={<Typography color={'#325460'} fontWeight={300}><Typography component={'span'}fontWeight={200} fontSize={14}>App ID:</Typography> {app.id}</Typography>}
+                                                    action={
+                                                        <MenuComponent
+                                                            open={open}
+                                                            menuItems={[
+                                                                app.state && app.state.running?{
+                                                                    icon: `stop_circle`,
+                                                                    text: app.state ? app.state.running ? 'Stop' : 'Start' : 'Start',
+                                                                    clickHandler: () => { startOrStopApp(app.id, app.state ? app.state.running : false) }
+                                                                }:null,
+                                                                {
+                                                                    icon: 'settings',
+                                                                    text: 'Settings',
+                                                                    clickHandler: () => { setSelectedApp(app); setShowAppSettings(!showAppSettings) }
+                                                                },
+                                                                {
+                                                                    icon: 'delete_forever',
+                                                                    text: 'Uninstall',
+                                                                    menuItemAdditionalStyle:{borderTop:'0.1px solid #797979'},
+                                                                    clickHandler: () => { setAppToUninstallFc(idx) }
+                                                                },
+                                                            ]}
+                                                        />
+                                                    }
+                                                />
+                                                <Box sx={{px:2}}>
+                                                    <Typography fontSize={15} fontWeight={100} my={0} color={DEFAULT_COLORS.secondary_black}>Status: <Typography component={'span'} fontSize={15} color={app.state ? app.state.running ? DEFAULT_COLORS.primary_blue : DEFAULT_COLORS.navbar_dark : DEFAULT_COLORS.navbar_dark}>{app.state ? app.state.running ? 'Running' : 'Stopped' : 'Stopped'}</Typography></Typography>
+                                                    <Typography sx={{fontWeight:'100',fontSize:14, my:1,color: DEFAULT_COLORS.secondary_black, ...lineClamp(2)}}>{(app as App1).description.length > 40 ? (app as App1).description.slice(0, 39) + '...' : (app as App1).description}</Typography>
                                                 </Box>
-                                                <Typography fontSize={15} fontWeight={100} my={1} color={DEFAULT_COLORS.secondary_black}>Status: <Typography component={'span'} fontSize={15} color={app.state ? app.state.running ? DEFAULT_COLORS.primary_blue : DEFAULT_COLORS.navbar_dark : DEFAULT_COLORS.navbar_dark}>{app.state ? app.state.running ? 'Running' : 'Stopped' : 'Stopped'}</Typography></Typography>
-                                                <Typography fontWeight={100} fontSize={14} my={1} color={DEFAULT_COLORS.secondary_black}>{(app as App1).description.length > 40 ? (app as App1).description.slice(0, 39) + '...' : (app as App1).description}</Typography>
-                                                {
-                                                    app.state && app.state.running?(
-                                                        <Link to={returnAppURL(app)} >
-                                                            <Button disabled={app.state ?!app.state.running:true} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>OPEN</Button>
-                                                        </Link>
-                                                    ):(
-                                                        <Button onClick={() => { startOrStopApp(app.id, app.state ? app.state.running : false) }}  sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>START APP</Button>
-                                                    )
-                                                }
+                                                <Box sx={{px:2}}>
+                                                    {
+                                                        app.state && app.state.running?(
+                                                            <Link style={{width:'100%'}} to={returnAppURL(app)} >
+                                                                <Button disabled={app.state ?!app.state.running:true} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>OPEN</Button>
+                                                            </Link>
+                                                        ):(
+                                                            <Button onClick={() => { startOrStopApp(app.id, app.state ? app.state.running : false) }}  sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: 'info.main', width: '100%' }}>START APP</Button>
+                                                        )
+                                                    }
+                                                </Box>
                                             </GridItem>
                                         )
                                     }
@@ -562,7 +597,7 @@ export default function Apps() {
                             )
                         }):(
                             <Box sx={{width:'100%',height:'100%',display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-                                <SearchOff sx={{fontSize:100,color:'#325460'}}/>
+                                <img src={Logo404}  style={{ filter: 'invert(80%) sepia(0%) saturate(0%) brightness(85%)',width:140,height:140 }}  alt="Search Icon" />
                                 <Typography fontSize={20} color={'#325460'}>No Apps Installed</Typography>
                             </Box>
                         )
