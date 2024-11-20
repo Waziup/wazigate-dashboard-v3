@@ -67,7 +67,7 @@ export default function SettingsMaintenance() {
     const [matches] = useOutletContext<[matches: boolean]>();
     const TabComponent = tabs[activeTab].component;
     return (
-        <Box>
+        <Box sx={{px:matches?4:2,py:2,}}>
             <Box>
                 <Typography fontWeight={600} fontSize={24} color={'black'}>Maintenance</Typography>
                 <div role="presentation" >

@@ -26,7 +26,7 @@ const GridItem = ({bgcolor,additionStyles,md, children,}: {xs:number,md:number, 
     </Grid>
 );
 const RowContainer = ({ children, additionStyles }: { children: React.ReactNode, additionStyles?: SxProps<Theme> }) => (
-    <RowContainerBetween additionStyles={{ ...additionStyles, alignItems: 'center', bgcolor: '#D4E3F5', m: 1, borderRadius: 1, p: 1 }}>
+    <RowContainerBetween additionStyles={{ ...additionStyles, alignItems: 'center',  m: 1, borderRadius: 1, p: 1 }}>
         {children}
     </RowContainerBetween>
 );
@@ -51,18 +51,27 @@ function Settings() {
     } | null>(null);
 
     const [timezones, setTimezones] = useState<string[]>([]);
-    const {wazigateId,networkDevices} = useContext(DevicesContext);
+    const {wazigateId,networkDevices, showDialog} = useContext(DevicesContext);
     
     const submitTime = () => {
         const date_and_time = convTime(data?.time as Date);
-        setTime(date_and_time).then(
-            () => {
-                alert("Time set successfully");
-            },
-            (error) => {
-                alert("Error setting time: " + error);
-            }
-        );
+        setTime(date_and_time).then(() => {
+            showDialog({
+                title:"Time set",
+                content:"Time set successfully",
+                acceptBtnTitle:"OK!",
+                onAccept:()=>{},
+                onCancel:()=>{},
+            });
+        },(error) => {
+            showDialog({
+                title:"Error",
+                content:"Error setting time: " + error,
+                acceptBtnTitle:"CLOSE",
+                onAccept:()=>{},
+                onCancel:()=>{},
+            });
+        });
     }
     const onTimeChange = (date: dayjs.Dayjs) => {
         setData({
@@ -133,11 +142,16 @@ function Settings() {
         return [apCn, eth0,addR,connId]; 
     },[networkDevices]);
     const shutdownHandler = () => {
-        const res = window.confirm("Are you sure you want to shutdown?");
-        if (res) {
-            shutdown();
-            window.close();
-        }
+        showDialog({
+            title:"Shut down",
+            acceptBtnTitle:"SHUTDOWN",
+            content:"Are you sure you want to shutdown?",
+            onAccept() {
+                shutdown();
+                window.close();
+            },
+            onCancel() {},
+        })
     }
     const switchTimezoneAuto = (val:boolean) => {
         setIsSetTimezoneAuto(val);
@@ -162,11 +176,16 @@ function Settings() {
     },[isSetTimezoneAuto])
 
     const rebootHandler = () => {
-        const res = window.confirm("Are you sure you want to reboot?");
-        if (res) {
-            reboot();
-            window.close();
-        }
+        showDialog({
+            title:"Reboot",
+            acceptBtnTitle:"REBOOT",
+            content: "Are you sure you want to reboot?",
+            onAccept() {
+                reboot();
+                window.close();
+            },
+            onCancel() {},
+        });
     }
     function handleSetDateManually() {
         setIsSetDateManual(!isSetDateManual);
@@ -174,46 +193,44 @@ function Settings() {
     return (
         <>
             <SnackbarComponent anchorOrigin={{ vertical: 'top', horizontal: 'center' }} severity='success' autoHideDuration={6000} message={responseMessage} />
-            <Box sx={{ px: 2,pt:2.5,  overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
+            <Box sx={{px:matches? 4:2,py:2, overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
                 <Box>
-                    <Typography fontWeight={700} color={'black'}>Settings</Typography>
+                    <Typography fontWeight={700} fontSize={24} color={'black'}>Settings</Typography>
                     <Typography sx={{ fontSize:13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography>
                 </Box>
                 <Grid width={'100%'} container>
-                    <GridItem additionStyles={{m:matches?1:0}} md={12} xs={12} matches={matches} >
-                        <GridItemEl icon='cell_tower' text={(eth0 && eth0.IP4Config)?'Ethernet':'Network'}>
-                            <Box py={2}>
-                                <RowContainer>
-                                    <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
-                                        {
-                                            apConn?atob(apConn?.['802-11-wireless']?.ssid as unknown as string) || 'WAZIGATE-AP': connectedWifi? connectedWifi:''
-                                        }
-                                    </Typography>
-                                    <CheckCircle sx={{ color: DEFAULT_COLORS.primary_black, fontSize: 17 }} />
-                                </RowContainer>
-                                <RowContainer>
-                                    <Typography color={'primary.main'} fontWeight={300}>IP address</Typography>
-                                    <Typography color={DEFAULT_COLORS.primary_black} fontWeight={700}>
-                                        {
-                                            (eth0 && eth0.IP4Config) ? (
-                                                eth0.IP4Config.Addresses[0].Address
-                                            ):address? address: (
-                                                <CircularProgress size={10} sx={{fontSize:10 }} />
-                                            )
-                                        }
-                                    </Typography>
-                                </RowContainer>
-                                <RowContainer>
-                                    <Typography color={'primary.main'} fontWeight={300}>Internet</Typography>
-                                    <InternetIndicator/>
-                                </RowContainer>
-                            </Box>
+                    <GridItem additionStyles={{mr:2,}} md={12} xs={12} matches={matches} >
+                        <GridItemEl additionStyles={{pb:.2,}} icon='cell_tower' text={(eth0 && eth0.IP4Config)?'Ethernet':'Network'}>
+                            <RowContainer >
+                                <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
+                                    {
+                                        apConn?atob(apConn?.['802-11-wireless']?.ssid as unknown as string) || 'WAZIGATE-AP': connectedWifi? connectedWifi:''
+                                    }
+                                </Typography>
+                                <CheckCircle sx={{ color: DEFAULT_COLORS.primary_blue, fontSize: 17 }} />
+                            </RowContainer>
+                            <RowContainer>
+                                <Typography color='primary.main' fontWeight={300}>IP address</Typography>
+                                <Typography color={DEFAULT_COLORS.primary_black} >
+                                    {
+                                        (eth0 && eth0.IP4Config) ? (
+                                            eth0.IP4Config.Addresses[0].Address
+                                        ):address? address: (
+                                            <CircularProgress size={10} sx={{fontSize:10 }} />
+                                        )
+                                    }
+                                </Typography>
+                            </RowContainer>
+                            <RowContainer>
+                                <Typography color={'primary.main'} fontWeight={300}>Internet</Typography>
+                                <InternetIndicator/>
+                            </RowContainer>
                         </GridItemEl>
                         <GridItemEl text='Wazigate Identity' icon='fingerprint'>
-                            <Typography sx={{textAlign:'left',textTransform:'uppercase',p:1,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
+                            <Typography sx={{textAlign:'left',textTransform:'uppercase',m:1,p:1,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
                                 Wazigate ID: {wazigateId}
                             </Typography>
-                            <Typography sx={{textAlign:'left',p:1,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
+                            <Typography sx={{textAlign:'left',p:1,m:1,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
                                 Version: {buildNr}
                             </Typography>
                         </GridItemEl>
@@ -228,7 +245,7 @@ function Settings() {
                             </RowContainerNormal>
                         </GridItemEl>
                     </GridItem>
-                    <GridItem additionStyles={{boxShadow:2,borderRadius:2,}} bgcolor md={12} xs={12} matches={matches} >
+                    <GridItem additionStyles={{borderRadius:2}} bgcolor md={12} xs={12} matches={matches} >
                         <Box sx={{ display: 'flex', borderTopLeftRadius: 5,border:'.5px solid #d8d8d8', borderTopRightRadius: 5, bgcolor: '#F7F7F7', alignItems: 'center' }} p={1} >
                             <AccessTime sx={IconStyle} />
                             <Typography color={'#212529'} fontWeight={500}>Time Settings</Typography>
@@ -237,21 +254,13 @@ function Settings() {
                             <RowContainer>
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Local Time</Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Typography textTransform={'uppercase'} mr={1} color={DEFAULT_COLORS.primary_black} fontWeight={700}>{currentTime}</Typography>  
-                                    <Typography textTransform={'uppercase'} fontSize={14} color={DEFAULT_COLORS.primary_black} fontWeight={700}>
-                                        {
-                                            data?(
-                                                dayjs(data.time).format('DD/MM/YYYY')
-                                            ):(
-                                                <CircularProgress size={10} sx={{fontSize:10 }} />
-                                            )
-                                        }
-                                </Typography>
+                                    <Typography textTransform={'uppercase'} mr={1} color={DEFAULT_COLORS.primary_black}>{currentTime}</Typography>  
+                                    
                                 </Box>
                             </RowContainer>
                             <RowContainer>
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Time Zone</Typography>
-                                <Typography color={DEFAULT_COLORS.primary_black} fontSize={14} fontWeight={700}>
+                                <Typography color={DEFAULT_COLORS.primary_black} fontSize={14}>
                                     {
                                         data?(
                                             data.zone
@@ -261,8 +270,8 @@ function Settings() {
                                     }
                                 </Typography>
                             </RowContainer>
-                            <Box bgcolor={isSetTimezoneAuto?'#fff':'#D4E3F5'} borderRadius={1} p={1} m={1}>
-                                <RowContainerBetween additionStyles={{ m: 1, px: 1 }}>
+                            <Box borderRadius={1} p={1} m={1}>
+                                <RowContainerBetween additionStyles={{ my: 1,  }}>
                                     <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>{isSetTimezoneAuto?'--':'Set TimeZone Automatically'}</Typography>
                                     <Android12Switch onChange={(_e,checked)=>switchTimezoneAuto(checked)} checked={isSetTimezoneAuto} color='info' />
                                 </RowContainerBetween>
@@ -277,14 +286,14 @@ function Settings() {
                                     )
                                 }
                             </Box>
-                            <Box bgcolor={'#D4E3F5'} borderRadius={1} p={1} m={1}>
-                                <RowContainerBetween additionStyles={{ m: 1, }}>
-                                    <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>set time and date manually</Typography>
+                            <Box borderRadius={1} p={1} m={1}>
+                                <RowContainerBetween additionStyles={{ }}>
+                                    <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>Set time and date manually</Typography>
                                     <Android12Switch checked={isSetDateManual} onClick={handleSetDateManually} color='info' />
                                 </RowContainerBetween>
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer
-
+                            
                                         components={[
                                             'DatePicker',
                                         ]}
