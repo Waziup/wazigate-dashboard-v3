@@ -3,7 +3,7 @@ import RowContainerBetween from "../components/shared/RowContainerBetween";
 import ontologies from '../assets/ontologies.json';
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useLayoutEffect, useState } from "react";
 import { Sensor, Actuator, Device } from "waziup";
 import { DevicesContext, SensorX } from "../context/devices.context";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
@@ -56,8 +56,7 @@ const initialState = {
     icon: '',
     unitSymbol:''
 }
-import Logo404 from '../assets/preview.png';
-import { cleanString } from "../utils";
+import Logo404 from '../assets/search.svg';
 function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
@@ -69,28 +68,28 @@ function DeviceSettings() {
     const [isError, setIsError] = useState<boolean>(false);
     const [modalProps, setModalProps] = useState<{ title: string, placeholder: string }>({ title: '', placeholder: '' });
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
-    const { getDevicesFc } = useContext(DevicesContext)
+    const { getDevicesFc,showDialog } = useContext(DevicesContext)
     const { id } = useParams();
-    const getDevice = () => {
-        window.wazigate.getDevice(id)
-            .then((dev) => {
-                setDevice({
-                    ...dev,
-                    name: cleanString(dev.name),
-                });
-            })
-            .catch((err) => {
-                alert('Error encounted '+err);
-                setIsError(true);
-            })
-    }
-    useEffect(() => {
-        if (!id) {
-            navigate('/devices');
-        }
+    const getDevice = useCallback(async() => {
+        await window.wazigate.getDevice(id)
+        .then((dev) => {
+            setDevice(dev);
+        })
+        .catch((err) => {
+            showDialog({
+                content:"Error Encountered: "+err,
+                onAccept:()=>{},
+                onCancel:()=>{},
+                acceptBtnTitle:"CLOSE",
+                title:"Error encountered"
+            });
+            setIsError(true);
+        })
+    },[id, showDialog])
+    useLayoutEffect(() => {
         getDevice();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
+    }, []);
     const setModalEls = (title: string, placeholder: string) => {
         setModalProps({ title, placeholder });
     }
@@ -130,7 +129,13 @@ function DeviceSettings() {
                 setModalEls('', '');
             })
             .catch((err) => {
-                alert('Error encounted'+err);
+                showDialog({
+                    content:"Error Encountered: "+err,
+                    onAccept:()=>{},
+                    onCancel:()=>{},
+                    acceptBtnTitle:"Close",
+                    title:"Error encountered"
+                });
             })
     }
     const handleToggleModal = () => setOpenModal(!openModal);
@@ -162,7 +167,13 @@ function DeviceSettings() {
             setModalEls('', '');
         })
         .catch((err) => {
-            alert('Error encounted'+err);
+            showDialog({
+                content:"Error Encountered: "+err,
+                onAccept:()=>{},
+                onCancel:()=>{},
+                acceptBtnTitle:"Close",
+                title:"Error encountered"
+            });
             handleToggleModal();
         })
     }
@@ -201,8 +212,8 @@ function DeviceSettings() {
     }
     if (isError) {
         return (
-            <Box display={'flex'} flexDirection={'column'} justifyContent={'center'} height={'100%'} alignItems={'center'}>
-                <Box component={'img'} src={Logo404} width={200} height={200} />
+            <Box display='flex' flexDirection='column' justifyContent='center' height='100%' alignItems='center'>
+                <img src={Logo404}  style={{ filter: 'invert(80%) sepia(0%) saturate(0%) brightness(85%)',width:140,height:140 }}  alt="Search Icon" />
                 <Typography>Hi there</Typography>
                 <Typography>Error Encountered while fetching, refresh.</Typography>
             </Box>
@@ -211,11 +222,16 @@ function DeviceSettings() {
     const handleSwitchChange = (actuatorId:string,value:boolean | number) => {
         window.wazigate.addActuatorValue(id as string, actuatorId, !value)
         .then(() => {
-            alert('Success');
             getDevicesFc();
         })
         .catch((err) => {
-           alert('Error encounted'+err);
+            showDialog({
+                content:"Error Encountered: "+err,
+                onAccept:()=>{},
+                onCancel:()=>{},
+                acceptBtnTitle:"Close",
+                title:"Error encountered"
+            });
             getDevicesFc();
         })
     }
@@ -282,7 +298,7 @@ function DeviceSettings() {
                     </DialogActions>
                 </Box>
             </Dialog>
-            <Box p={matches?3:1} sx={{ position: 'relative', width: '100%',overflowY: device? (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0?'hidden':'auto':'hidden', height: '100%' }}>
+            <Box sx={{px:matches?4:2,py:2, position: 'relative', overflowY: device? (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0?'hidden':'auto':'hidden', height: '100%' }}>
                 <RowContainerBetween>
                     <Box>
                         <Typography fontWeight={600} fontSize={24} color={'black'}>{device?.name}</Typography>
@@ -294,7 +310,7 @@ function DeviceSettings() {
                                     </Link>
                                 </Typography>
                                 <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
-                                    {device && device.name.length > 10 ? device.name.slice(0, 10) + '....' : device?.name}
+                                    {device ? device.name.length > 10 ? device.name.slice(0, 10) + '....' : device?.name:''}
                                 </p>
                             </Breadcrumbs>
                         </div>
@@ -302,7 +318,7 @@ function DeviceSettings() {
                     {
                         matches ? (
                             <Box>
-                                <PrimaryIconButton hideText={!matches} title="Settings" iconname="settingstwotone" onClick={() => { navigate(`/devices/${device?.id}/setting`) }} />
+                                <PrimaryIconButton hideText={!matches} title="Device Settings" iconname="settingstwotone" onClick={() => { navigate(`/devices/${device?.id}/setting`) }} />
                                 <PrimaryIconButton hideText={!matches} title="New Interface" iconname="add" onClick={handleToggleModal} />
                             </Box>
                         ):null
@@ -311,7 +327,7 @@ function DeviceSettings() {
                 {
                     (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0 && (
                         <Box display={'flex'} flexDirection={'column'}  justifyContent={'center'} height={'100%'} alignItems={'center'}>
-                            <Box component={'img'} src={Logo404} width={150} height={150} bgcolor={'#f5f5f5'} />
+                            <img src={Logo404}  style={{ filter: 'invert(80%) sepia(0%) saturate(0%) brightness(85%)',width:140,height:140 }}  alt="Search Icon" />
                             <Typography>Hi there</Typography>
                             <Typography>No Sensors and Actuators for this device, create one.</Typography>
                         </Box>
@@ -322,7 +338,7 @@ function DeviceSettings() {
                         device && device?.sensors.length >0?(
                             <>
                                 <Typography fontWeight={700} color={'black'}>Sensors</Typography>
-                                <Grid container my={2} spacing={1}>
+                                <Grid container my={2} >
                                     {
                                         device?.sensors.length === 0 ? (
                                             <Box>
@@ -344,7 +360,7 @@ function DeviceSettings() {
                                                 >
                                                     {
                                                         (sens.value && typeof sens.value === 'object' )?(
-                                                            <Typography m={1} fontWeight={'900'} fontSize={matches?30:24} >
+                                                            <Typography m={1} fontSize={matches?30:24} >
                                                                 {
                                                                     Object.entries(sens.value)
                                                                     .map(([key, value]) => `${key}:${(value as number).toFixed(2)}`)
@@ -352,10 +368,10 @@ function DeviceSettings() {
                                                                 }
                                                             </Typography>
                                                         ):(
-                                                            <Typography m={1} fontWeight={'900'} fontSize={matches?38:28} >
+                                                            <Typography m={1} fontSize={matches?38:28} >
                                                                 {Math.round(sens.value * 100) / 100}
-                                                                <Typography component={'span'} fontSize={matches?35:20} fontWeight={900}> 
-                                                                    {sens.meta.unitSymbol? sens.meta.unitSymbol: ''}
+                                                                <Typography component={'span'} fontSize={matches?35:20}> 
+                                                                    {' ' +sens.meta.unitSymbol? sens.meta.unitSymbol: ''}
                                                                 </Typography>
                                                             </Typography>
                                                         )
@@ -371,7 +387,7 @@ function DeviceSettings() {
                         device && device?.actuators.length >0?(
                             <>
                                 <Typography fontWeight={700} color={'black'}>Actuators</Typography>
-                                <Grid container my={2} spacing={1}>
+                                <Grid container my={2}>
                                     {
                                         device?.actuators?.map((act) =>{ return(
                                             <SensorActuatorItem 
@@ -404,7 +420,7 @@ function DeviceSettings() {
                                                         act.meta.quantity==='Boolean' ? (
                                                             <Android12Switch checked={act.value} onChange={() => {handleSwitchChange(act.id,act.value) }} color='info' />
                                                         ): (
-                                                            <Typography mx={1} fontWeight={'900'} fontSize={matches?38:28}>
+                                                            <Typography mx={1} fontSize={matches?38:28}>
                                                                 {
                                                                     act.value && typeof act.value === 'object' ? (
                                                                         Object.entries(act.value)
@@ -413,7 +429,7 @@ function DeviceSettings() {
                                                                     ):null
                                                                 }
                                                                 {Math.round(act.value * 100) / 100}
-                                                                <Typography component={'span'} fontSize={matches?35:20} fontWeight={900}>
+                                                                <Typography component={'span'} fontSize={matches?35:20} >
                                                                     {' '+act.meta.unitSymbol? act.meta.unitSymbol: ''}
                                                                 </Typography> 
                                                             </Typography>
