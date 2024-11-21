@@ -475,7 +475,7 @@ function Devices() {
                                                 )
                                             }
                                             <RowContainerBetween additionStyles={{p:2,borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5,}}>
-                                                <Box onClick={()=>{navigate(`/devices/${device.id}`, { state: {  } })}} >
+                                                <Box onClick={()=>{navigate(`/devices/${device.id}`, { state: { title: device.name } })}} >
                                                     <Typography sx={{color:'info',fontWeight:700, ...lineClamp(1)}} >{(device.name && device.name.length > 10) ? device.name: device.name?device.name:''}</Typography>
                                                     <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}> Last updated {differenceInMinutes(new Date(device.modified).toISOString())} </Typography>
                                                 </Box>

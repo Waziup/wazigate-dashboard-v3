@@ -5,8 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import AddTextShow from "../components/shared/AddTextInput";
 import type { Device, } from "waziup";
 import { DevicesContext } from "../context/devices.context";
-import { cleanString, devEUIGenerateFc, toStringHelper } from "../utils";
-import { SelectElementString } from "./Automation";
+import { devEUIGenerateFc, lineClamp, toStringHelper } from "../utils";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { DEFAULT_COLORS } from "../constants";
 // import { Android12Switch } from "../components/shared/Switch";
@@ -51,7 +50,7 @@ export default function DeviceSettings() {
         event.preventDefault();
         console.info('You clicked a breadcrumb.');
     }
-    const { codecsList,devices,getDevicesFc } = useContext(DevicesContext);
+    const { codecsList,devices,getDevicesFc,showDialog } = useContext(DevicesContext);
     const { id } = useParams();
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const [thisDevice, setThisDevice] = useState<Device>({
@@ -81,20 +80,44 @@ export default function DeviceSettings() {
             if (device?.meta !== thisDevice?.meta) {
                 window.wazigate.setDeviceMeta(thisDevice?.id as string, thisDevice?.meta as Device)
                     .then(() => {
-                        alert("Device meta updated");
+                        showDialog({
+                            content:"Device meta updated ",
+                            onAccept:()=>{},
+                            onCancel:()=>{},
+                            acceptBtnTitle:"Close",
+                            title:"Update successfull."
+                        });
                         getDevicesFc();
                         return;
                     }).catch(err => {
-                        alert("Error updating device meta"+err);
+                        showDialog({
+                            content:"Error updating device meta: "+err,
+                            onAccept:()=>{},
+                            onCancel:()=>{},
+                            acceptBtnTitle:"Close",
+                            title:"Error encountered"
+                        });
                     });
             }
             if (device?.name !== thisDevice?.name) {
                 window.wazigate.setDeviceName(thisDevice.id as string, thisDevice.name.toString())
                     .then(() => {
-                        alert("Device name updated");
+                        showDialog({
+                            content:"Device name updated ",
+                            onAccept:()=>{},
+                            onCancel:()=>{},
+                            acceptBtnTitle:"Close",
+                            title:"Update successfull."
+                        });
                         return;
                     }).catch(err => {
-                        alert("Error updating device name"+err);
+                        showDialog({
+                            content:"Error updating device name "+err,
+                            onAccept:()=>{},
+                            onCancel:()=>{},
+                            acceptBtnTitle:"Close",
+                            title:"Error encountered"
+                        });
                     });
             }
         }
@@ -107,12 +130,12 @@ export default function DeviceSettings() {
             if(de.meta.lorawan){
                 setThisDevice({
                     ...de,
-                    name: cleanString(de.name),
+                    name: de.name,
                 });
             }else{
                 setThisDevice({
                     ...de,
-                    name: cleanString(de.name),
+                    name: de.name,
                     meta: {
                         ...de.meta,
                         lorawan: {
@@ -127,7 +150,7 @@ export default function DeviceSettings() {
             }
         });
     }, [id]);
-    const handleChangeDeviceCodec = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleChangeDeviceCodec = (event: SelectChangeEvent<string>) => {
         setThisDevice({
             ...thisDevice as Device,
             meta: {
@@ -253,37 +276,37 @@ export default function DeviceSettings() {
     };
     return (
         <>
-            <Box mx={2} sx={{ height: '100%', overflowY: 'auto', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' } }} m={2}>
-                <RowContainerBetween additionStyles={{ mx: 2 }}>
+            <Box sx={{px:matches?4:2,py:matches?2:0, height: '100%', overflowY: 'auto', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' } }}>
+                <RowContainerBetween>
                     <Box>
-                        <Typography fontSize={24} fontWeight={700} color={'black'}>{thisDevice?.name}</Typography>
+                        <Typography sx={{...lineClamp(1),fontSize:24,fontWeight:700,color:'black'}} >{thisDevice?.name}</Typography>
                         <div role="presentation" onClick={handleClick}>
                             <Breadcrumbs aria-label="breadcrumb">
-                                <Typography fontSize={15} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                <Typography fontSize={matches?15:12} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
                                     <Link style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }} state={{ title: 'Devices' }} color="inherit" to="/devices">
                                         Devices
                                     </Link>
                                 </Typography>
 
-                                <Typography fontSize={15} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                <Typography fontSize={matches?15:12} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
                                     <Link
                                         color="inherit"
                                         state={{ title: thisDevice?.name }}
                                         to={`/devices/${id}`}
                                         style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }}
                                     >
-                                        {thisDevice?.name ? thisDevice.name.slice(0, 10) + '...' : ''}
+                                        {thisDevice?.name ? thisDevice.name : ''}
                                     </Link>
                                 </Typography>
-                                <Typography fontSize={15} color="text.primary">
+                                <Typography fontSize={matches?15:12} color="text.primary">
                                     settings
                                 </Typography>
                             </Breadcrumbs>
                         </div>
                     </Box>
                 </RowContainerBetween>
-                <Box m={2} width={matches?'50%':'95%'}>
-                    <Box bgcolor={'#fff'} mx={2} my={1} px={2} py={2} borderRadius={2} >
+                <Box width={matches?'50%':'95%'}>
+                    <Box bgcolor={'#fff'} my={1} px={2} py={2} borderRadius={2} >
                         <RowContainerBetween>
                             <Box display={'flex'} my={1} alignItems={'center'}>
                                 <Router sx={{ fontSize: 20, color: '#292F3F' }} />
@@ -293,11 +316,10 @@ export default function DeviceSettings() {
                         </RowContainerBetween>
                         <Box my={2}>
                             <DropDownCreateDeviceTab1
-                                showNameOnly
                                 title="Application Type"
                                 value={thisDevice.meta.type}
                                 handleChangeSelect={handleChangeSelect}
-                                options={[{name:'Wazidev Board',id:'WaziDev', },{id:'GenericBoard',name:'Generic board',}]} 
+                                options={[{name:'Wazidev Board',id:'WaziDev', },{id:'generic',name:'Generic board',}]} 
                             />
                             <AddTextShow 
                                 name="devAddr"
@@ -333,15 +355,21 @@ export default function DeviceSettings() {
                         }
                     </Box>
                     
-                    <Box bgcolor={'#fff'} mx={2} my={2} px={2} py={2} borderRadius={2}>
+                    <Box bgcolor={'#fff'} my={2} px={2} py={2} borderRadius={2}>
                         <RowContainerBetween>
                             <Box display={'flex'} my={1} alignItems={'center'}>
                                 <Box component={'img'} src={BoxDownload} width={20} height={20} />
                                 <Typography fontWeight={500} mx={2} fontSize={16} color={DEFAULT_COLORS.navbar_dark}>Device Codec</Typography>
                             </Box>
                         </RowContainerBetween>
-                        <Box my={2}>
-                            <SelectElementString title={'Codec type.'} handleChange={handleChangeDeviceCodec} name="codec" conditions={codecsList ? codecsList : []} value={thisDevice?.meta.codec} />
+                        <Box my={0}>
+                            <DropDownCreateDeviceTab1
+                                title="Codec Type"
+                                name="codec"
+                                value={thisDevice?.meta.codec}
+                                handleChangeSelect={handleChangeDeviceCodec}
+                                options={codecsList ? codecsList : []} 
+                            />
                         </Box>
                         {
                             isEditedCodec ? (

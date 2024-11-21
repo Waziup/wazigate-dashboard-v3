@@ -37,8 +37,8 @@ export default function ContainersTabMaintenance() {
     };
     const startStopContainer =(containerId:string,action:string)=>{
         showDialog({
-            title:`${capitalizeFirstLetter(action)} container`,
-            acceptBtnTitle:"SURE!",
+            title:`${capitalizeFirstLetter(action)}ing container`,
+            acceptBtnTitle: action.toUpperCase(),
             content: 'Are you sure you want to '+action+' this container?',
             onAccept() {
                 setContainerAction(containerId, action)

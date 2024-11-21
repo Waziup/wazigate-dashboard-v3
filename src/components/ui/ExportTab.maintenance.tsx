@@ -9,7 +9,7 @@ interface Props{
     matches?:boolean
 }
 const GridItem = ({ children, xs,md,additionStyles }: {xs:number,md:number,spacing?:number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode,  }) => (
-    <Grid m={1} item xs={xs} md={md} spacing={3} sx={additionStyles} borderRadius={2}  >
+    <Grid item xs={xs} md={md} spacing={3} sx={{borderRadius:2,my:1,mr:2,...additionStyles}}  >
         {children}
     </Grid>
 );
@@ -22,7 +22,7 @@ const Item = styled(Paper)(({ theme }) => ({
 const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
 
 const GridItemEl=({ children, text, additionStyles, icon }: { additionStyles?: SxProps<Theme>, text: string, children: React.ReactNode, icon: string })=>(
-    <Item sx={additionStyles}>
+    <Item  sx={{boxShadow:0,...additionStyles}}>
         <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', alignItems: 'center' }} p={1} >
             <Icon sx={IconStyle}>{icon}</Icon>
             <Typography color={'#212529'} fontWeight={500}>{text}</Typography>
@@ -31,7 +31,6 @@ const GridItemEl=({ children, text, additionStyles, icon }: { additionStyles?: S
     </Item>
 )
 export default function ExportTabMaintenance({matches}:Props) {
-    console.log(matches);
     const [searchParams,setSearchParams]=useSearchParams()
     const today = new Date();
     const updateSearchParams=(key:string,value:string)=>{
@@ -41,37 +40,31 @@ export default function ExportTabMaintenance({matches}:Props) {
         })
     }
     return (
-        <Box p={2}>
-            <Typography fontWeight={900} fontSize={20}>Export Usage Data</Typography>
+        <Box >
+            <Typography fontSize={20}>Export Usage Data</Typography>
             <Grid container>
                 <GridItem  spacing={2} md={4.6} xs={12} matches={matches as boolean}>
                     <GridItemEl additionStyles={{pb: 2}}  icon={'sensors_outlined'} text={'Export Sensor Data'}>
-                        <Box m={1} borderRadius={1} bgcolor={'#D4E3F5'}>
+                        <Box m={1} borderRadius={1}>
                             <Box  borderRadius={1} p={1} >
-                                <Typography fontSize={12} color={'#666666'}>
-                                    Export as CSV files tree
-                                </Typography>
                                 <Button href='/exporttree' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
-                                    EXPORT
+                                    EXPORT AS CSV FILES TREE
                                 </Button>
                             </Box>
-                            <Box p={1} >
-                                <Typography  fontSize={12} color={'#666666'}>
-                                    Export as one CSV file
-                                </Typography>
+                            <Box p={1}>
                                 <Button href='/exportall' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
-                                    EXPORT
+                                    EXPORT AS ONE CSV FILE
                                 </Button>
                             </Box>
                         </Box>
                     </GridItemEl>
                 </GridItem>
                 <GridItem  spacing={2} md={7} xs={12} matches={matches as boolean} >
-                    <GridItemEl icon={'sensor'} text={'Export Actuator and Sensor Data'} >
-                        <Typography m={1} fontSize={12} color={'#666666'}>
+                    <GridItemEl  icon={'sensor'} text={'Export Actuator and Sensor Data'} >
+                        <Typography m={2} fontSize={12} color={'#666666'}>
                             You can export the data of all sensors and actuators to one CSV file. Additionally it also includes custom timespans and all data can be summarized in time bins. This is perfect for machine learning applications
                         </Typography>
-                        <Box bgcolor={'#D4E3F5'}  borderRadius={1} p={1} m={2}>
+                        <Box borderRadius={1} p={1} m={2}>
                             <Box display={'flex'} flexDirection={matches?'row':'column'} justifyContent={'space-between'}>
                                 <Box width={matches?'45%':'90%'}>
                                     <Typography>From:</Typography>
@@ -118,7 +111,7 @@ export default function ExportTabMaintenance({matches}:Props) {
                             <Box display={'flex'} justifyContent={'space-between'}>
                                 <Box m={1}>
                                     {/* <Typography  fontSize={12} color={'#666666'}>Bin Size in seconds: </Typography> */}
-                                    <FormControl sx={{width:'100%',bgcolor:'#D4E3F5', borderBottom:'1px solid #292F3F'}}>
+                                    <FormControl sx={{width:'100%', borderBottom:'1px solid #292F3F'}}>
                                         <Typography color={'#666666'} mb={.4} fontSize={12}>Bin Size in seconds</Typography>
                                         <input
                                             onChange={(ev) => {
@@ -134,7 +127,7 @@ export default function ExportTabMaintenance({matches}:Props) {
                                 </Box>
                                 <Box m={1}>
                                     <Typography fontSize={12} color={'#666666'}>Omit deviating values (20%) in between bins : </Typography>
-                                    <input type="checkbox" id="clear" name="clear"
+                                    <input style={{background:'none'}} type="checkbox" id="clear" name="clear"
                                         onChange={(ev) => {
                                             setSearchParams({
                                                 ...Object.fromEntries(searchParams),
@@ -145,7 +138,7 @@ export default function ExportTabMaintenance({matches}:Props) {
                                 </Box>
                             </Box>
                         </Box>
-                        <Button variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} href={'/exportbins?from='+searchParams.get('from')+'&to='+searchParams.get('to')+'&duration='+searchParams.get('duration')+'s'+'&check='+searchParams.get('check')} >
+                        <Button variant="text" sx={{ color: '#fff', m: 2, bgcolor: 'info.main' }} href={'/exportbins?from='+searchParams.get('from')+'&to='+searchParams.get('to')+'&duration='+searchParams.get('duration')+'s'+'&check='+searchParams.get('check')} >
                             EXPORT
                         </Button>
                     </GridItemEl>

@@ -1,5 +1,4 @@
-import { Box, Tooltip, Typography } from "@mui/material";
-import { SelectElementString } from "../../pages/Automation";
+import { Box, SelectChangeEvent, Tooltip, Typography } from "@mui/material";
 import RowContainerBetween from "../shared/RowContainerBetween";
 import { Android12Switch } from "../shared/Switch";
 import { AddCircleOutline, RouterOutlined } from "@mui/icons-material";
@@ -8,6 +7,7 @@ import { DEFAULT_COLORS } from "../../constants";
 import RowContainerNormal from "../shared/RowContainerNormal";
 import { useContext } from "react";
 import { DevicesContext } from "../../context/devices.context";
+import { DropDownCreateDeviceTab1 } from "./CreateDeviceTab1";
 interface AddTextProps {
     text: string
     isPlusHidden?: boolean
@@ -20,7 +20,7 @@ interface AddTextProps {
 }
 interface TabTwoProps {
     selectedValue: string,
-    handleChangeDeviceCodec: (event: React.ChangeEvent<HTMLSelectElement>) => void,
+    handleChangeDeviceCodec: (e: SelectChangeEvent<string>) => void,
     changeMakeLoraWAN: () => void,
     makeLoraWAN: boolean
     newDevice: Device
@@ -30,7 +30,7 @@ interface TabTwoProps {
 const AddTextShow = ({ text,isPlusHidden,isReadOnly, name, autoGenerateHandler, placeholder, onTextInputChange, textInputValue }: AddTextProps) => (
     <Box sx={{ my: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ccc' }}>
-            <input readOnly={isReadOnly} name={name} value={textInputValue} onInput={onTextInputChange} onChange={onTextInputChange} placeholder={text} style={{ border: 'none', color: DEFAULT_COLORS.navbar_dark, fontWeight: 200, outline: 'none', width: '100%', padding: '6px 0' }} />
+            <input readOnly={isReadOnly} name={name} value={textInputValue} onInput={onTextInputChange} onChange={onTextInputChange} placeholder={text} style={{background:'none', border: 'none', color: DEFAULT_COLORS.navbar_dark, fontWeight: 200, outline: 'none', width: '100%', padding: '6px 0' }} />
             {
                 isPlusHidden ? null : (
                     <Tooltip onClick={() => autoGenerateHandler(name as "devAddr" | "nwkSEncKey" | "appSKey")} title="AutoGenerate">
@@ -46,7 +46,13 @@ export default function CreateDeviceTabTwo({ onTextInputChange, newDevice, autoG
     const { codecsList } = useContext(DevicesContext);
     return (
         <Box>
-            <SelectElementString mx={0} title='Device Codec' value={newDevice.meta.codec} handleChange={handleChangeDeviceCodec} conditions={codecsList as { id: string, name: string }[]} />
+            <DropDownCreateDeviceTab1
+                title='Device Codec'
+                name="codec"
+                value={newDevice.meta.codec}
+                handleChangeSelect={handleChangeDeviceCodec} 
+                options={codecsList as { id: string, name: string }[]} 
+            />
             <RowContainerBetween additionStyles={{ my: 1 }}>
                 <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={13}>LoRaWAN Device</Typography>
                 <Android12Switch checked={makeLoraWAN} onChange={changeMakeLoraWAN} color='info' />

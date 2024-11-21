@@ -113,7 +113,7 @@ function Dashboard() {
         <>
             {
                 matches?(
-                    <Box sx={{ height: '100%', overflowY: 'hidden' }}>
+                    <Box sx={{px:4,py:2, height: '100%', overflowY: 'hidden' }}>
                         <Typography fontSize={24} color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
                         <Stack direction={'row'} mt={2} spacing={2}>
                             <Item icon={selectedCloud?.paused?(<CloudOff sx={{ mb: 2, fontSize: 42, color: '#D9D9D9' }} /> ):( <Cloud sx={{mb: 2, fontSize: 42, color: 'black' }} /> )} path='/settings/networking' onClick={onClick} title="Cloud Synchronization">

@@ -13,9 +13,10 @@ interface Props {
     submitCreateDevice: (e: React.FormEvent<HTMLFormElement>) => void
     handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
     handleChangeSelect: (event: SelectChangeEvent<string>) => void
-    handleChangeDeviceCodec: (event: React.ChangeEvent<HTMLSelectElement>) => void
+    handleChangeDeviceCodec: (e: SelectChangeEvent<string>) => void
     selectedValue: string
     screen: string
+    fullWidth: boolean,
     handleScreenChange: (tab: 'tab1' | 'tab2') => void
     blockOnClick: (va: string) => void,
     newDevice: Device,
@@ -24,7 +25,6 @@ interface Props {
     autoGenerateLoraWANOptionsHandler: (title: "devAddr" | "nwkSEncKey" | "appSKey") => void
 }
 const style = {
-    width: 400,
     bgcolor: 'background.paper',
     p: 0,
 };
@@ -32,10 +32,10 @@ const IconStyle = {
     cursor: 'pointer',
     color: 'black',
 }
-export default function CreateDeviceModalWindow({ openModal, autoGenerateLoraWANOptionsHandler, onTextInputChange, handleChangeDeviceCodec, handleToggleModal, submitCreateDevice, handleChange, handleChangeSelect, selectedValue, screen, handleScreenChange, blockOnClick, newDevice, changeMakeLoraWAN, }: Props) {
+export default function CreateDeviceModalWindow({fullWidth, openModal, autoGenerateLoraWANOptionsHandler, onTextInputChange, handleChangeDeviceCodec, handleToggleModal, submitCreateDevice, handleChange, handleChangeSelect, selectedValue, screen, handleScreenChange, blockOnClick, newDevice, changeMakeLoraWAN, }: Props) {
     return (
-        <Dialog  open={openModal} onClose={handleToggleModal}  PaperProps={{component:'form', onSubmit:(e: React.FormEvent<HTMLFormElement>)=>{e.preventDefault(); submitCreateDevice(e) } }}>
-            <Box sx={style}>
+        <Dialog fullWidth={fullWidth?undefined:true} open={openModal} onClose={handleToggleModal}  PaperProps={{component:'form', onSubmit:(e: React.FormEvent<HTMLFormElement>)=>{e.preventDefault(); submitCreateDevice(e) } }}>
+            <Box sx={{...style,width:fullWidth?400:undefined}}>
                 <RowContainerBetween additionStyles={{p:2}}>
                     {
                         screen === 'tab2' ? (

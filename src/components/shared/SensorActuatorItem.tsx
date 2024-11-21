@@ -6,7 +6,7 @@ import ontologiesicons from '../../assets/ontologies.svg';
 import { Sensor,Actuator } from 'waziup';
 import ontologies from '../../assets/ontologies.json';
 import MenuComponent from './MenuDropDown';
-import { removeSpecialChars, time_ago } from '../../utils';
+import { lineClamp, removeSpecialChars, time_ago } from '../../utils';
 import { DEFAULT_COLORS } from '../../constants';
 interface SensorActuatorItemProps {
     sensActuator: Sensor | Actuator;
@@ -29,7 +29,7 @@ export default function SensorActuatorItem({kind, icon, callbackFc,type, modifie
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const navigate = useNavigate();
     const handleDelete = () => {
-        const cf = confirm(`Are you sure you want to delete ${sens.name}?`);
+        const cf = confirm(`Are you sure you want to remove ${sens.name}?`);
         if (!cf) return;
         if(type === 'actuator'){
             window.wazigate.deleteActuator(deviceId, sens.id).then(() => {
@@ -51,11 +51,11 @@ export default function SensorActuatorItem({kind, icon, callbackFc,type, modifie
         ontologies.actingDevices[kind as keyof typeof ontologies.actingDevices]? ontologies.actingDevices[kind as keyof typeof ontologies.actingDevices].icon: 'motor'
         : ontologies.sensingDevices[kind as keyof typeof ontologies.sensingDevices]? ontologies.sensingDevices[kind as keyof typeof ontologies.sensingDevices].icon: 'temperature';
     return (
-        <Grid lg={3} my={1} xl={3} md={4} xs={5.5} sm={6}  item sx={{boxShadow:3, bgcolor: '#fff',cursor:'pointer', mx: matches?2:.8, borderRadius: 2 }}>
-            <RowContainerBetween additionStyles={{px:matches?1:0}}>
+        <Grid lg={2} my={1} xl={2.5} md={4} xs={5.3} sm={3.6}  item sx={{ bgcolor: '#fff',cursor:'pointer',mr:2,px:1.5, borderRadius: 2 }}>
+            <RowContainerBetween additionStyles={{pt:1}}>
                 <Box onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}`)}} >
-                    <Typography sx={{fontSize:15,fontWeight:'600'}}>{removeSpecialChars(sens? sens.name:'')}</Typography>
-                    <Typography color={DEFAULT_COLORS.secondary_black} fontSize={matches?12:10} fontWeight={300}>
+                    <Typography sx={{fontSize:15,fontWeight:'600',...lineClamp(1)}}>{removeSpecialChars(sens? sens.name:'')}</Typography>
+                    <Typography sx={{...lineClamp(1),color:DEFAULT_COLORS.secondary_black,fontSize:matches?12:10,fontWeight:300}}>
                         {time_ago(modified).toString()}
                     </Typography>
                 </Box>
@@ -63,14 +63,14 @@ export default function SensorActuatorItem({kind, icon, callbackFc,type, modifie
                     open={open}
                     menuItems={[
                         {
+                            icon: 'settings',
+                            text: 'Settings',
+                            clickHandler: ()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}/setting`);}
+                        },
+                        {
                             icon: 'delete',
                             text: 'Delete',
                             clickHandler: handleDelete
-                        },
-                        {
-                            icon: 'settings',
-                            text: 'Settings',
-                            clickHandler: ()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}/settings`);}
                         }
                     ]}
                 />
