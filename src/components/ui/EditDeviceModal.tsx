@@ -3,7 +3,6 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormCon
 import { Device } from "waziup";
 import RowContainerBetween from "../shared/RowContainerBetween";
 import { DropDownCreateDeviceTab1 } from "./CreateDeviceTab1";
-import { SelectElementString } from "../../pages/Automation";
 import AddTextShow from "../shared/AddTextInput";
 import { Android12Switch } from "../shared/Switch";
 import RowContainerNormal from "../shared/RowContainerNormal";
@@ -25,7 +24,7 @@ interface Props {
     submitEditDevice: (e: React.FormEvent<HTMLFormElement>) => void
     changeEditMakeLoraWAN: () => void,
     autoGenerateLoraWANOptionsHandler: (title: "devAddr" | "nwkSEncKey" | "appSKey") => void
-    handleChangeDeviceCodec: (event: React.ChangeEvent<HTMLSelectElement>) => void
+    handleChangeDeviceCodec: (event: SelectChangeEvent<string>) => void
 }
 import { toStringHelper } from "../../utils";
 import PrimaryButton from "../shared/PrimaryButton";
@@ -41,7 +40,7 @@ export default function EditDeviceModal({handleChangeDeviceCodec, isFirst,change
                 <DialogContent>
                     <FormControl sx={{ my: 0, width: '100%', borderBottom: '1px solid black' }}>
                         <Typography color={'primary'} mb={.4} fontSize={12}>Device name</Typography>
-                        <input required autoFocus onInput={handleNameChange} name="name" placeholder='Enter device name' value={device.name} style={{ border: 'none', width: '100%', padding: '6px 0', outline: 'none' }} />
+                        <input required autoFocus onInput={handleNameChange} name="name" placeholder='Enter device name' value={device.name} style={{background:'none', border: 'none', width: '100%', padding: '6px 0', outline: 'none' }} />
                     </FormControl>
                     {
                         isFirst?null:(
@@ -51,13 +50,12 @@ export default function EditDeviceModal({handleChangeDeviceCodec, isFirst,change
                                     value={device.meta.type}
                                     options={[{ name: 'Wazidev Board', id: 'WaziDev' }, { name: 'Generic board', id: 'generic' }]}
                                 />
-                                <SelectElementString 
-                                    mx={0} my={2} 
+                                <DropDownCreateDeviceTab1
                                     title='Device Codec'
                                     name="codec"
                                     value={device.meta.codec} 
-                                    handleChange={handleChangeDeviceCodec} 
-                                    conditions={codecsList as { id: string, name: string }[]} 
+                                    handleChangeSelect={handleChangeDeviceCodec} 
+                                    options={codecsList as { id: string, name: string }[]} 
                                 />
                                 <RowContainerBetween additionStyles={{ my: 1 }}>
                                     <RowContainerNormal>
