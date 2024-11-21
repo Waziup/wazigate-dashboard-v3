@@ -2,6 +2,7 @@ import { Box, } from '@mui/material';
 import { getContainerLogs,dlContainerLogs, getAllContainers, cInfo } from '../../utils/systemapi';
 import { useEffect, useState } from 'react';
 import PrimaryIconButton from '../shared/PrimaryIconButton';
+import SnackbarComponent from '../shared/Snackbar';
 interface Props{
     matches?:boolean
 }
@@ -9,6 +10,8 @@ export default function LogsTabMaintenance({matches}:Props) {
     console.log(matches);
     const [data, setData] = useState<string>('');
     const [sysContainer, setSysContainer] = useState<cInfo | undefined>(undefined);
+    const [error, setError] = useState<{message: Error | null | string,severity: "error" | "warning" | "info" | "success"} | null>(null);
+
     const loopLoad = async ()=> {
         if(sysContainer?.Id){
             try{
@@ -63,21 +66,38 @@ export default function LogsTabMaintenance({matches}:Props) {
                 a.download = fileName;
                 a.click();
               });
-              alert('Downloaded');
+                setError({
+                    message: "Downloaded successfully:\n ",
+                    severity:'success'
+                });
             },
             (error) => {
-                alert('Error Encountered, could not fetch logs '+error);
+                setError({
+                    message: 'Error Encountered, could not fetch logs '+error,
+                    severity:'warning'
+                });
             }
           );
     }
     return (
-        <Box>
-            <Box sx={{bgcolor:'white',boxShadow: 3,width:'90%',p:3,m:2,borderRadius:2,position:'relative',}}>
+
+        <>
+            {
+                error ? (
+                    <SnackbarComponent
+                        autoHideDuration={5000}
+                        severity={error.severity}
+                        message={(error.message as Error).message ? (error.message as Error).message : (error.message as string)}
+                        anchorOrigin={{vertical:'top',horizontal:'center'}}
+                    />
+                ):null
+            }
+            <Box sx={{bgcolor:'white',width:'90%',p:3,borderRadius:2,position:'relative',}}>
                 <pre style={{fontSize:13}}>
                     {data}
                 </pre>
             </Box>
             <PrimaryIconButton onClick={downloadLogs} iconname='download' title={'Download Logs'} />
-        </Box>
+        </>
     )
 }
