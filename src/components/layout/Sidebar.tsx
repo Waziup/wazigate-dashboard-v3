@@ -1,5 +1,5 @@
-import { Wifi, WifiLock, Logout, HelpCenter, ArrowDropDown, AccountCircle} from '@mui/icons-material';
-import { Box, Collapse, Icon, List,  ListItemIcon, ListItemText, SxProps, Theme, Typography} from '@mui/material';
+import { Wifi, WifiLock, Logout, HelpCenter, ArrowDropDown, AccountCircle, } from '@mui/icons-material';
+import { Box, Collapse, Icon, List,  ListItem, ListItemIcon, ListItemText, SxProps, Theme, Typography} from '@mui/material';
 import React, { CSSProperties, useContext } from 'react';
 import { Link, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { DEFAULT_COLORS } from '../../constants';
@@ -36,7 +36,6 @@ const itemStyles:SxProps<Theme> ={
         color:'#000',
     },
     display: 'flex',
-    width: '100%',
     py: 1,
     alignItems: 'center',
     alignSelf: 'center'
@@ -47,14 +46,6 @@ const commonstyle = {
     justifyContent: 'space-between',
     textDecoration:'none',
     width:'100%'
-}
-const styleFunc = ():CSSProperties=>{
-    return{
-        textDecoration:'none',
-        alignSelf:'center',
-        alignItems:'center',
-        width:'100%',
-    }
 }
 const styleFunc1 = ({isActive,}:{isActive:boolean}):CSSProperties=>{
     return{
@@ -89,15 +80,13 @@ interface NavigationItemProps{
 }
 const NavigationItem = ({path,otherItem,icon,onClick,location,iconColor, text}:NavigationItemProps) => {
     return(
-        <Box sx={{ display:'flex', alignItems:'center'}}>
-            <NavLink state={{title:text}} to={path} onClick={onClick} style={styleFunc}>
-                <Box sx={{...itemStyles,px:2,bgcolor:location.includes(path)?'#fff':'',}}>
-                    <Icon sx={{mr:2, color: iconColor}}>{icon}</Icon>
-                    <ListItemText sx={{color:iconColor}} primary={text} />
-                </Box>
-            </NavLink>
-            {otherItem}
-        </Box>
+        <Link state={{title:text}} to={path} onClick={onClick} style={{textDecoration:'none',}}>
+            <ListItem sx={{color:'#fff',px: 1, bgcolor:location.includes(path)?'#fff':'',":hover": {bgcolor:'#fff', color:'#000'},}}>
+                <Icon sx={{mr:1, color: iconColor}}>{icon}</Icon>
+                <ListItemText sx={{color:iconColor}} primary={text} />
+                {otherItem}
+            </ListItem>
+        </Link>
     )
 }
 const NavigationSmall = ({path,otherItem,icon,onClick,iconColor }:NavigationItemProps) => {
@@ -118,24 +107,30 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
     };
     const navigate = useNavigate();
     const location = useLocation().pathname;
-    const {profile,setProfile,setAccessToken} = useContext(DevicesContext);
+    const {profile,setProfile,setAccessToken,showDialog,closeDialog} = useContext(DevicesContext);
     const handleLogout = ()=>{
-        const cf = window.confirm('Are you sure you want to logout?');
-        if(!cf) return;
-        setProfile(null);
-        setAccessToken('');
-        navigate('/')
+        showDialog({
+            content:"Are you sure you want to logout? ",
+            onAccept: ()=>{
+                setProfile(null);
+                setAccessToken('');
+                navigate('/')
+            },
+            onCancel: closeDialog,
+            acceptBtnTitle:"Logout",
+            title:"Logout"
+        });
     }
     return (
-        <Box position={'relative'} height={'100%'} width={'100%'} display={'flex'}  flexDirection={'column'} alignItems={'center'}>
-            <Box my={1} width={'100%'} display={'flex'} justifyContent={'center'} alignSelf={'center'} mx={'auto'} py={1} borderBottom={'0.05px solid rgba(255, 255, 255, 0.4)'}>
-                <Box component={'img'} src={WaziGateSVG} width={'70%'} mb={1} height={50} />
+        <Box position={'relative'} width={'100%'} height={'100%'} display={'flex'}  flexDirection={'column'} alignItems={'center'}>
+            <Box my={1} width={'100%'} display={'flex'} alignItems={'center'} justifyContent={'center'} py={1} borderBottom={'0.05px solid rgba(255, 255, 255, 0.4)'}>
+                <Box component={'img'} width={'70%'} src={WaziGateSVG} mb={1} height={50} />
             </Box>
             {
                 !matchesMd?(
 
                     <>
-                        <List sx={{ width: '100%', maxWidth: 360, }} component="nav" aria-labelledby="nested-list-subheader">
+                        <List sx={{ width:'100%' }} component="nav" aria-labelledby="nested-list-subheader">
                             <NavigationItem 
                                 location={location} 
                                 path={'/dashboard'} 
@@ -201,17 +196,17 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                             
                         </List>
                         <Box sx={bottomStyle}>
-                            <NavLink onClick={()=>setOpen(false)} style={{display:'flex',justifyContent:'space-between', textDecoration:'none',alignSelf:'center',alignItems:'center',width:'100%'}} to={'/help'}>
+                            <Link onClick={()=>setOpen(false)} style={{textDecoration:'none',width:'100%'}} to={'/help'}>
                                 <Box sx={{...itemStyles,px: 2,bgcolor:location==='/help'?'#fff':''}}>
                                     <HelpCenter sx={{mr: 2,color:location==='/help'?'#000':''}} />
                                     <ListItemText sx={{color:location==='/help'?'#000':''}} primary={'Help and feedback'} />
                                 </Box>
-                            </NavLink>
+                            </Link>
                             <Link onClick={()=>setOpen(false)} style={{textDecoration:'none',alignSelf:'center',alignItems:'center',textDecorationColor:'none',width:'100%', color:'#fff', padding:'0px 0',}} to={'/user'}>
                                 <Box sx={{...itemStyles,px: 2,bgcolor:location==='/user'?'#fff':''}}>
                                     <AccountCircle sx={{mr: 2,color:location==='/user'?'#000':''}} />
                                     <Box>
-                                        <Typography sx={{color:location==='/user'?'#000':''}}>Account</Typography>
+                                        <Typography sx={{color:location==='/user'?'#000':''}}>Profile</Typography>
                                         <Typography sx={{color:location==='/user'?'#000':''}} fontSize={13}>{profile?.username}</Typography>
                                     </Box>
                                 </Box>
@@ -303,11 +298,8 @@ function Sidebar({matchesMd}:{matchesMd:boolean}) {
                                     <NoImageProfile/>
                                 </Box>
                             </Link>
-                            <button onClick={handleLogout} style={{cursor:'pointer', textDecoration:'none', backgroundColor: DEFAULT_COLORS.navbar_dark,margin: '5px 0'}}>
-                                <Box my={.5} display={'flex'} py={1} alignItems={'center'}>
-                                    <Logout sx={{color:'white',fontSize:18}} />
-                                </Box>
-                            </button>
+                            <Logout onClick={handleLogout} sx={{color:'white',my:1,fontSize:18}} />
+                            
                         </Box>
                     </Box>
                 )
