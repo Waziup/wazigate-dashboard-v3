@@ -2,9 +2,8 @@ import { Box, Breadcrumbs, Card, CardActions, CardContent, Stack, Tooltip, Typog
 import { DEFAULT_COLORS } from '../constants';
 import { DataObject, DescriptionOutlined, Language, MailOutline } from '@mui/icons-material';
 import React from 'react';
-import { Link, To, } from 'react-router-dom';
+import { Link, To, useOutletContext, } from 'react-router-dom';
 import { lineClamp } from '../utils';
-
 
 interface CardProps{
     title: string,
@@ -37,8 +36,9 @@ const CardComponent = ({description,path,title,icon}:CardProps)=>(
     </Card>
 )
 function Docspage() {
+    const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     return (
-        <Box p={2} sx={{ height:'100%'}}>
+        <Box sx={{px:matches?4:2,py:2, height:'100%'}}>
             <Box>
                 <Typography fontWeight={600} fontSize={24} color={'black'}>Help</Typography>
                 <div role="presentation" onClick={()=>{}}>
@@ -55,8 +55,6 @@ function Docspage() {
                 </div>
             </Box>
             <Box mt={2}>
-                {/* <Typography fontWeight={500} fontSize={20} color={'black'}>WaziGate Help</Typography> */}
-                {/* <Typography>Any problem using the WaziGate? </Typography> */}
                 <Stack mt={2} alignItems={'center'} flexWrap={'wrap'} direction={'row'}>
                     <CardComponent
                         title='Wazigate Documentation'
@@ -87,5 +85,4 @@ function Docspage() {
         </Box>
     );
 }
-
 export default Docspage;
