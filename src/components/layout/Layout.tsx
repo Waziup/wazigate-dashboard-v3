@@ -70,7 +70,7 @@ function Layout() {
                         <Box sx={{overflowY:'hidden',position:'fixed',top:0,left:0, width: matchesMd?40:matchesLg?200:220, bgcolor:'#292F3F',height:'100vh',}}>
                             <Sidebar matchesMd={matchesMd} />
                         </Box>
-                        <Box sx={{bgcolor:'#F0F2F5',px:4,py:2,ml: `${matchesMd?40:matchesLg ? 200 : 220}px`, width: { sm: `calc(100% - ${matchesMd?40:matchesLg?200:220}px)` } }}>
+                        <Box sx={{bgcolor:'#F0F2F5',ml: `${matchesMd?40:matchesLg ? 200 : 220}px`, width: { sm: `calc(100% - ${matchesMd?40:matchesLg?200:220}px)` } }}>
                             <Outlet context={[matches]} />
                         </Box>
                     </Box>
@@ -85,11 +85,11 @@ function Layout() {
                                 (pathname.endsWith('/settings')) ? (
                                     null
                                 ) : (pathname.includes('/sensors') || pathname.includes('/actuators'))?(
-                                    <Link to={pathname+'/settings'} state={{title:'Settings'}}>
+                                    <Link to={pathname+'/setting'} state={{title:'Settings'}}>
                                         <SettingsOutlined sx={{ color: 'white', mx: 1, }} />
                                     </Link>
                                 ):(pathname.includes('/devices/'))?(
-                                    <Link to={pathname+'/settings'} state={{title:'Settings'}}>
+                                    <Link to={pathname+'/setting'} state={{title:'Settings'}}>
                                         <SettingsOutlined sx={{ color: 'white', mx: 1, }} />
                                     </Link>
                                 ):null
@@ -100,7 +100,7 @@ function Layout() {
                                 <Sidebar matchesMd={matchesMd} />
                             </Box>
                         </Box>
-                        <Box sx={{height:'100%',overflowY:'auto',py:2,px:1.5,mt: 6}}>
+                        <Box sx={{height:'100%',overflowY:'auto',py:2,mt: 6}}>
                             <Outlet context={[matches]} />
                         </Box>
                     </Box>
