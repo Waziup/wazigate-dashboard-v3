@@ -66,12 +66,14 @@ function Layout() {
         <>
             {
                 matches ? (
-                    <Box sx={{display:'flex',position:'relative',flexWrap:'wrap',height:'100vh',maxWidth:'1400px',bgcolor:'#F0F2F5',}}>
-                        <Box sx={{overflowY:'hidden',position:'fixed',top:0,left:0, width: matchesMd?40:matchesLg?200:220, bgcolor:'#292F3F',height:'100vh',}}>
-                            <Sidebar matchesMd={matchesMd} />
-                        </Box>
-                        <Box sx={{bgcolor:'#F0F2F5',ml: `${matchesMd?40:matchesLg ? 200 : 220}px`, width: { sm: `calc(100% - ${matchesMd?40:matchesLg?200:220}px)` } }}>
-                            <Outlet context={[matches]} />
+                    <Box minWidth={'100vw'}bgcolor={'#F0F2F5'} sx={{overflowY:'auto',overflowX:'hidden'}}>
+                        <Box  sx={{display:'flex',position:'relative',flexWrap:'wrap',height:'100vh',maxWidth:'1400px',bgcolor:'#F0F2F5',}}>
+                            <Box sx={{overflowY:'hidden',position:'fixed',top:0,left:0, width: matchesMd?40:matchesLg?200:220, bgcolor:'#292F3F',height:'100%',}}>
+                                <Sidebar matchesMd={matchesMd} />
+                            </Box>
+                            <Box sx={{bgcolor:'#F0F2F5',ml: `${matchesMd?40:matchesLg ? 200 : 220}px`, width: { sm: `calc(100% - ${matchesMd?40:matchesLg?200:220}px)` } }}>
+                                <Outlet context={[matches]} />
+                            </Box>
                         </Box>
                     </Box>
                 ) : (
