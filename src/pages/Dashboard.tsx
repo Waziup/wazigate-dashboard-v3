@@ -147,8 +147,8 @@ function Dashboard() {
                             }
                         </Stack>
                         <Grid mt={2} container spacing={2}>
-                            <Grid item py={6} sm={11} md={8} >
-                                <DeviceStatus 
+                            <Grid item py={6} sm={12} md={8} >
+                                <DeviceStatus
                                     onDeviceClick={onClick}
                                     totalDevices={devices?devices.length:0}
                                     activeDevices={devices? allActiveDevices(devices):0}
