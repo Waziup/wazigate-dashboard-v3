@@ -16,10 +16,11 @@ export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectEl
     value: string
     isDisabled?: boolean
     matches?: boolean
+    my?:number,
     widthPassed?: string
 }
-export const SelectElement = ({ handleChange, title, conditions, isDisabled, widthPassed, name, value }: HTMLSelectProps) => (
-    <Box minWidth={120} width={widthPassed ? widthPassed : '100%'} my={.5}>
+export const SelectElement = ({ handleChange, title, conditions, isDisabled,my, widthPassed, name, value }: HTMLSelectProps) => (
+    <Box minWidth={120} width={widthPassed ? widthPassed : '100%'} my={my?my:.5}>
         <Typography fontSize={12} fontWeight={'300'} color={'#292F3F'}>{title}</Typography>
         <FormControl variant="standard" disabled={isDisabled} fullWidth>
             <Select

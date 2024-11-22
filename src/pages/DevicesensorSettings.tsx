@@ -369,8 +369,8 @@ function DeviceSensorSettings() {
                         </Breadcrumbs>
                     </div>
                 </Box>
-                <Box display={'flex'} bgcolor={'white'} flexDirection={matches?'row':'column'}px={4} height={'100%'} width={'100%'}  pt={matches ? 2 : .5}  >
-                    <Box width={matches?'45%':'95%'}>
+                <Box display={'flex'} bgcolor={'white'} flexDirection={matches?'row':'column'} px={matches?6:3} height={'100%'} width={'100%'}  pt={matches ? 2 : .5}  >
+                    <Box width={matches?'45%':'99%'}>
                         <Typography fontWeight={500} fontSize={20}  color={'#292F3F'}>Setup {sensOrActuator?.name} kind, quantity and unit</Typography>
                         <>
                             <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
@@ -388,7 +388,7 @@ function DeviceSensorSettings() {
                                     />
                                 </FormControl>
                                 <Box width={'100%'}>
-                                    <Box my={1}>
+                                    <Box my={2}>
                                         <OntologyKindInput
                                             title={`Measurement Kind`}
                                             value={sensOrActuator?.meta.kind? sensOrActuator.meta.kind: sensOrActuator?.kind}
@@ -399,23 +399,26 @@ function DeviceSensorSettings() {
                                     </Box>
                                     { ((quantitiesCondition.length>0))?
                                         <SelEl
+                                            my={3}
                                             handleChange={(event) => handleChange('quantity', event.target.value)}
                                             title={`Measurement Type`}
                                             conditions={quantitiesCondition}
                                             value={(sensOrActuator?.meta.quantity)? sensOrActuator.meta.quantity : sensOrActuator?.quantity}
                                             name="quantity"
                                             id="quantity"
-                                        />: null}
+                                        />: null
+                                    }
                                     {
                                         ((unitsCondition.length>0))?
                                         <SelEl
-                                        conditions={unitsCondition}
-                                        handleChange={(event) => handleChange('unit', event.target.value)}
-                                        title={`Measurement Unit`}
-                                        value={sensOrActuator?.meta.unit? sensOrActuator.meta.unit: sensOrActuator?.unit}
-                                        name="unit"
-                                        id="unit"
-                                    />:null}
+                                            conditions={unitsCondition}
+                                            handleChange={(event) => handleChange('unit', event.target.value)}
+                                            title={`Measurement Unit`}
+                                            value={sensOrActuator?.meta.unit? sensOrActuator.meta.unit: sensOrActuator?.unit}
+                                            name="unit"
+                                            id="unit"
+                                        />:null
+                                    }
                                 </Box>
                                 {/* <RowContainerBetween additionStyles={{ width: '100%' }}>
                                     <Box />
@@ -480,9 +483,7 @@ function DeviceSensorSettings() {
                                 null
                             )
                         }
-
-                        <PrimaryIconButton iconname="delete"  additionStyles={{mt:2, backgroundColor:'#ff0000'}} onClick={deleteSensorOrActuator} title="DELETE" />
-                        
+                        <Button sx={{mt:2}} color="error" onClick={deleteSensorOrActuator}  variant='outlined'>DELETE</Button> 
                     </Box>
                     
                     
