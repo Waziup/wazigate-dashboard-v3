@@ -251,7 +251,7 @@ function DeviceSettings() {
                     <RowContainerBetween additionStyles={{ p: 2, borderBottom: '.5px solid #ccc' }}>
                         {
                             modalProps.title ? (
-                                <Typography>Create  {modalProps.title === 'sensor' ? 'a Sensor' : 'an Actuator'} </Typography>
+                                <Typography>Adding a new interface</Typography>
                             ) : (
                                 <Typography>Select Interface Type</Typography>
                             )
@@ -286,7 +286,7 @@ function DeviceSettings() {
                             modalProps.title?(
                                 <>
                                     <Button onClick={handleCloseModal} sx={{color:'#ff0000' }} variant="text" color="warning" >CANCEL</Button>
-                                    <Button disabled={!newSensOrAct.name} autoFocus variant="text" color="info" type="submit">Save</Button>
+                                    <Button disabled={!newSensOrAct.name} autoFocus variant="text" color="info" type="submit">ADD</Button>
                                 </>
                             ):(
                                 <>
