@@ -69,7 +69,7 @@ const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHand
             id="recommeded_apps _selecter"
             onClose={onCloseHandler}
             value={age} label="Install App" onChange={handleChange}>
-                <ListSubheader>Waziapps</ListSubheader>
+                <ListSubheader>WaziApps</ListSubheader>
                 {
                     recommendedApps.map((app,idx) => (
                         <MenuItem key={app.id} value={app.image + "*" + app.id} sx={{":hover":{bgcolor:'#D4E3F5'}, display: 'flex',bgcolor:idx%2?'#eaeaea':'', width: '100%', justifyContent: 'space-between' }}>
@@ -88,19 +88,21 @@ const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHand
                         </MenuItem>
                     ))
                 }
-                <ListSubheader>Custom App</ListSubheader>
-                <MenuItem onClick={customAppInstallHandler} value={20} sx={{ display: 'flex', py: 1, width: '100%', borderTop: '1px solid #D9D9D9', justifyContent: 'space-between' }}>
-                    <Box display={'flex'} alignItems={'center'}>
-                        <FiberNew sx={{ fontSize: 20, mx: 1, color: '#F48652' }} />
-                        <Typography color={'#325460'} fontSize={15}>Install Custom App</Typography>
-                    </Box>
-                    <Box display={'flex'} alignItems={'center'}>
-                        <Download sx={{ fontSize: 15, mx: 1, color: '#325460' }} />
-                        <Typography sx={{ textTransform: 'uppercase', color: '#325460', fontSize: 11 }}>
-                            Install
-                        </Typography>
-                    </Box>
-                </MenuItem>
+                <Box borderTop={'1px solid #d9d9d9'} mt={1}>
+                    <ListSubheader >Custom App</ListSubheader>
+                    <MenuItem onClick={customAppInstallHandler} value={20} sx={{ display: 'flex',  width: '100%', justifyContent: 'space-between' }}>
+                        <Box display={'flex'} alignItems={'center'}>
+                            <FiberNew sx={{ fontSize: 20, mx: 1, color: '#F48652' }} />
+                            <Typography color={'#325460'} fontSize={15}>Install Custom App</Typography>
+                        </Box>
+                        <Box display={'flex'} alignItems={'center'}>
+                            <Download sx={{ fontSize: 15, mx: 1, color: '#325460' }} />
+                            <Typography sx={{ textTransform: 'uppercase', color: '#325460', fontSize: 11 }}>
+                                Install
+                            </Typography>
+                        </Box>
+                    </MenuItem>
+                </Box>
 
         </Select>
 
@@ -441,10 +443,10 @@ export default function Apps() {
             </Dialog>
             <Dialog fullWidth open={showAppSettings} onClose={() => { setShowAppSettings(!showAppSettings) }}>
                 <Box   borderRadius={2} bgcolor={'#fff'}>
+                    <DialogTitle> {selectedApp?.name} Settings</DialogTitle>
                     <DialogContent>
-                        <DialogTitle> {selectedApp?.name} Settings</DialogTitle>
-                        <FormControl sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
-                            <Typography color={'primary'} mb={.4} fontSize={12}>Device name</Typography>
+                        <FormControl sx={{  width: '100%', borderBottom: '1px solid #292F3F' }}>
+                            <Typography color={'primary'} mb={.4} fontSize={12}>App name</Typography>
                             <input
                                 autoFocus
                                 name="name" placeholder='Enter device name'
@@ -454,13 +456,14 @@ export default function Apps() {
                                 style={{background:'none', border: 'none', width: '100%', padding: '6px 0', outline: 'none' }}
                             />
                         </FormControl>
-                        <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
-                            <Typography color={'primary'} mb={.4} fontSize={12}>Author</Typography>
-                            <Typography color={'primary'} mb={.4} fontSize={12}>{selectedApp?.author.name ? (selectedApp?.author.name) : (selectedApp?.author)}</Typography>
+                        <Box sx={{ my: 2, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                            <Typography color={'primary'} my={1} fontSize={12}>Author</Typography>
+                            <Typography color={'primary'} my={1} fontSize={12}>{selectedApp?.author.name ? (selectedApp?.author.name) : (selectedApp?.author)}</Typography>
                         </Box>
                         {
                             selectedApp?.state ? (
                                 <SelectElement
+                                    my={2}
                                     id="restartPolicy"
                                     name='restartPolicy'
                                     value={(selectedApp as App)?.state ? (selectedApp as App)?.state.restartPolicy : ''}
@@ -470,16 +473,16 @@ export default function Apps() {
                                 />
                             ):null
                         }
-                        <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
-                            <Typography color={'primary'} mb={.4} fontSize={12}>Description</Typography>
-                            <Typography color={'primary'} mb={.4} fontSize={12}>{(selectedApp as App1)?.description as string}</Typography>
+                        <Box sx={{ my: 2, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                            <Typography color={'primary'} my={1} fontSize={12}>Description</Typography>
+                            <Typography color={'primary'} my={1} fontSize={12}>{(selectedApp as App1)?.description as string}</Typography>
                         </Box>
-                        <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
-                            <Typography color={'primary'} mb={.4} fontSize={12}>Version</Typography>
-                            <Typography color={'primary'} mb={.4} fontSize={12}>{selectedApp?.version}</Typography>
+                        <Box sx={{ my: 2, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                            <Typography color={'primary'} my={1} fontSize={12}>Version</Typography>
+                            <Typography color={'primary'} mb={1} fontSize={12}>{selectedApp?.version}</Typography>
                         </Box>
                     </DialogContent>
-                    <DialogActions sx={{ p: 1,my: 1, borderTop: '.5px solid #ccc' }}>
+                    <DialogActions sx={{ mx:1 }}>
                         <Button onClick={() => { setShowAppSettings(!showAppSettings) }} sx={{ textTransform: 'initial', color: '#ff0000' }} color='warning' variant={'text'} >CANCEL</Button>
                     </DialogActions>
                 </Box>
