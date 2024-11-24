@@ -144,8 +144,8 @@ function Device() {
                     ) : null
                 }
             </RowContainerBetween>
-            <Box bgcolor='#fff' display='flex' borderRadius={2} width='100%' pt={matches ? 5 : 2} flexDirection='column' alignItems='center' justifyContent='center'>
-                <Box px={4} width={matches ? '100%' : '95%'} mb={3}>
+            <Box bgcolor='#fff' display='flex' borderRadius={2} width='100%' pt={matches ? 4 : 2} flexDirection='column' alignItems='center' justifyContent='center'>
+                <Box px={matches?6:2} width={matches ? '100%' : '95%'} mb={3}>
                     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Typography color={'#1D2129'} fontSize={15} fontWeight={500}> {pathname.includes('sensors')?'Sensor ':'Actuator '}Readings</Typography>
                         
@@ -195,7 +195,7 @@ function Device() {
                         height={matches ? 350 : 290}
                     />
                 </Box>
-                <Box bgcolor={'#fff'} width={matches ? '80%' : '90%'}>
+                <Box width={matches ? '80%' : '90%'}>
                     {
                         values.length>0?(
                             <SensorTable
