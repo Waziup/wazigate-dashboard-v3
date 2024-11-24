@@ -17,7 +17,7 @@ interface InputFieldProps extends React.ComponentProps<typeof TextField> {
 export default function TextInputField({onChange,value,label,icon,placeholder,type,sx,bgcolor, name}:InputFieldProps) {
     return (
         <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #ccc',...sx}}>
-            <Typography textAlign={'left'} color={'primary'} mb={.4} fontSize={12}>{label}</Typography>
+            <Typography textAlign={'left'} mb={.4} fontSize={14}>{label}</Typography>
             <Box sx={{display:'flex',alignItems:'flex-end' }}>
                 {icon}
                 <input 
