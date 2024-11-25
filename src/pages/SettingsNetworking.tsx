@@ -19,7 +19,7 @@ const style1 = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 440,
+    // width: 440,
     // height: 500,
     display: 'flex',
     flexDirection: 'column',
@@ -347,7 +347,7 @@ export default function SettingsNetworking() {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={style1}>
+                <Box sx={{...style1,width:matches?440:'90%'}}>
                     {
                         screen ==='tab1'?(
                             <Box sx={{}}>
