@@ -344,7 +344,7 @@ export async function getVersion() {
 
 export async function getBuildNr() {
   const token = window.sessionStorage.getItem("token");
-    const resp = await fetch(URL + "buildnr", {headers: {Authorization: 'Bearer ' + token}});
+    const resp = await fetch("/buildnr", {headers: {Authorization: 'Bearer ' + token}});
 
     if (!resp.ok) await failResp(resp);
     return await resp.text();
