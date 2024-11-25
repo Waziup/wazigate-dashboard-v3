@@ -227,15 +227,21 @@ function Settings() {
                             </RowContainer>
                         </GridItemEl>
                         <GridItemEl text='Wazigate Identity' icon='fingerprint'>
-                            <Typography sx={{textAlign:'left',textTransform:'uppercase',m:1,p:1,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
-                                Wazigate ID: {wazigateId}
-                            </Typography>
-                            <Typography sx={{textAlign:'left',p:1,m:1,color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
-                                Version: {buildNr}
-                            </Typography>
+                            <RowContainer>
+                                <Typography sx={{textAlign:'left',color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
+                                    Wazigate ID
+                                </Typography>
+                                <Typography textTransform='uppercase' component={'span'}>{wazigateId}</Typography> 
+                            </RowContainer>
+                            <RowContainer>
+                                <Typography sx={{textAlign:'left',color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
+                                    Version
+                                </Typography>
+                                <Typography component='span'>3.0.0 (build number: {buildNr})</Typography> 
+                            </RowContainer>
                         </GridItemEl>
                         <GridItemEl text='Gateway Power' icon='power_settings_new'>
-                            <RowContainerNormal additionStyles={{ m: 1,py: 4, borderRadius: 1, p: 1 }}>
+                            <RowContainerNormal additionStyles={{ m: 1, borderRadius: 1, pb: matches?1:2 }}>
                                 <Button onClick={shutdownHandler} variant="contained" sx={{ mx: 1, fontWeight: 'bold', bgcolor: 'info.main' }} startIcon={<PowerSettingsNew />}>
                                     Shutdown
                                 </Button>
