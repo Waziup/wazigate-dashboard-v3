@@ -108,7 +108,7 @@ export default function ExportTabMaintenance({matches}:Props) {
                                     </LocalizationProvider>
                                 </Box>
                             </Box>
-                            <Box display={'flex'} justifyContent={'space-between'}>
+                            <Box display='flex' flexWrap='wrap' pt={1} justifyContent='space-between'>
                                 <Box m={1}>
                                     {/* <Typography  fontSize={12} color={'#666666'}>Bin Size in seconds: </Typography> */}
                                     <FormControl sx={{width:'100%', borderBottom:'1px solid #292F3F'}}>
