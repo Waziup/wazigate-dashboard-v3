@@ -92,8 +92,8 @@ export default function LogsTabMaintenance({matches}:Props) {
                     />
                 ):null
             }
-            <Box sx={{bgcolor:'white',width:'90%',p:3,borderRadius:2,position:'relative',}}>
-                <pre style={{fontSize:13}}>
+            <Box sx={{bgcolor:'white',width:'100%',p:3,borderRadius:2,position:'relative',}}>
+                <pre style={{fontSize:13,flexWrap:'wrap',textWrap:'wrap'}}>
                     {data}
                 </pre>
             </Box>
