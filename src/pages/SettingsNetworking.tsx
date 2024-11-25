@@ -409,7 +409,7 @@ export default function SettingsNetworking() {
                             <Grow in={saving}>
                                 <LinearProgress />
                             </Grow>
-                            <RowContainerBetween additionStyles={{borderBottom:'1px solid #ccc'}}>
+                            <RowContainerBetween additionStyles={{pr:1,borderBottom:'1px solid #ccc'}}>
                                 <RowContainerNormal>
                                     <Box component={'img'} src={WaziLogo} mx={2} />
                                     <Box>
@@ -432,12 +432,13 @@ export default function SettingsNetworking() {
                             </RowContainerBetween>
                             <Box px={2}>
                                 <RowContainerNormal additionStyles={{alignItems:'center'}}>
-                                    <Android12Switch 
+                                    <Android12Switch
+                                        sx={{m:0}} 
                                         checked={!selectedCloud?.paused}
                                         onChange={handleEnabledChange}
                                         color="info" 
                                     />
-                                    <Typography color={'#000'}>Active Sync</Typography>
+                                    <Typography>Active Sync</Typography>
                                 </RowContainerNormal>
                                 <TextInputField placeholder="REST Address" label="REST Address *" name="rest" onChange={handleInputChange} value={selectedCloud?.rest} />
                                 <TextInputField placeholder="MQTT Address" label="MQTT Address *" name="mqtt" onChange={handleInputChange} value={selectedCloud?.mqtt} />
@@ -496,33 +497,30 @@ export default function SettingsNetworking() {
                     <GridItem xl={7.5} lg={7.4} md={7} xs={12} matches={matches}  additionStyles={{overflowY:'auto',minHeight:'500px',height:'100%',width:'100%'}}>
                         <GridItemEl text={'Access Point Settings'} icon={'power_settings_new'}>
                             <Box sx={{display:'flex',flexDirection:matches?'row':'column', alignItems:'center'}}>
-                                <Box bgcolor={'#D4E3F5'} width={matches?'50%':'90%'} borderRadius={1} p={2} m={1}>
+                                <Box width={matches?'50%':'90%'} borderRadius={1} p={2} m={1}>
                                     <form id="submitform" onSubmit={submitSSID}>
                                         <TextInputField 
                                             icon={<CellTower sx={{fontSize:20,mx:1,}}/>} 
                                             label="Access Point SSID" 
                                             sx={{}}
-                                            bgcolor={'#d4e3f5'}
                                             value={accessName? atob(accessName["802-11-wireless"]?.ssid as string) : ""}
                                             name="SSID"
                                             id="SSID"
                                             placeholder="Enter SSID"
                                         />
                                         <TextInputField 
-                                            sx={{bgcolor:'#d4e3f5'}}
                                             icon={<LockOutlined 
                                             sx={{fontSize:20,mx:1,}}/>} 
                                             label="Access Point Pasword" 
                                             placeholder="Enter password"
                                             onChange={()=>{}} 
-                                            bgcolor={'#d4e3f5'}
                                             name="password"
                                             id="password"
                                         />
                                         <PrimaryButton title="Save" type="submit" />
                                     </form>
                                 </Box>
-                                <Box bgcolor={'#D4E3F5'} width={matches?'50%':'90%'} borderRadius={1} p={2} m={1}>
+                                <Box width={matches?'50%':'90%'} borderRadius={1} p={2} m={1}>
                                     <Box p={2}>
                                         <Typography  fontSize={13} color={'#FA9E0E'}>
                                             <WarningAmber component={'span'} sx={{color:'#FA9E0E',fontWeight:700,fontSize:15}} />
@@ -538,7 +536,7 @@ export default function SettingsNetworking() {
                                 <WifiOutlined sx={IconStyle}/>
                                 <Typography color={'#212529'} fontWeight={500}>Available Wifi</Typography>
                             </Box>
-                            <Box bgcolor={'#D4E3F5'} p={1}>
+                            <Box p={1}>
                                 <Typography>
                                     {
                                         (eth0 && eth0.IP4Config)?(
@@ -547,11 +545,17 @@ export default function SettingsNetworking() {
                                         (apConn && apConn.connection.id==='WAZIGATE_AP')?(
                                             <Typography>Access Point Mode</Typography>
                                         ):(
-                                            <Typography>Connected to {"  "}
+                                            <>
                                                 {
-                                                    apConn? atob(apConn["802-11-wireless"]?.ssid as string):"No network"
+                                                    apConn? (
+                                                        <Typography>Connected to {"  "}
+                                                            {
+                                                                apConn? atob(apConn["802-11-wireless"]?.ssid as string):"No network"
+                                                            }
+                                                        </Typography> 
+                                                    ):(<Typography>Not connected </Typography>)
                                                 }
-                                            </Typography>
+                                            </>
                                         )
                                     } 
                                 </Typography>
