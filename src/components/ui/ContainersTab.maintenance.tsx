@@ -10,6 +10,7 @@ import { capitalizeFirstLetter, lineClamp, removeFirstChar, removeSpecialChars }
 import DockerSVG from '../../assets/docker.svg';
 import SnackbarComponent from '../shared/Snackbar';
 import { DevicesContext } from '../../context/devices.context';
+import { DEFAULT_COLORS } from '../../constants';
 export default function ContainersTabMaintenance() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [containers, setContainers] = React.useState<cInfo[]>([]);
@@ -135,7 +136,7 @@ export default function ContainersTabMaintenance() {
                                 />
                                 <CardContent sx={{px:0}}>
                                     <Box>
-                                        <Typography fontWeight={100} fontSize={14} color={'#2BBBAD'}>
+                                        <Typography fontWeight={100} fontSize={14} color={DEFAULT_COLORS.primary_blue}>
                                             Status: {container.Status}
                                         </Typography>
                                     </Box>

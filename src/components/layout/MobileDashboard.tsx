@@ -78,7 +78,7 @@ export default function MobileDashboard({onClick,activeDevices,totalDevices, apC
                 <Box display={'flex'} flexDirection={'column'} mt={1} py={1} alignItems={'center'}>
                     {
                         devices.length>0?devices.filter((_dev,idx)=>idx<5).map((dev, id) => (
-                            <Box onClick={() => { handleNav(dev.id,dev.name) }} key={id} sx={{ cursor: 'pointer', my: 1, ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, width: '100%', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
+                            <Box onClick={() => { handleNav(dev.id,dev.name) }} key={id} sx={{ cursor: 'pointer', my: 1.5, ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, width: '100%', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
                                 <Box sx={{ position: 'absolute', top: -5, my: -1, borderRadius: 2, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
                                     <Typography fontSize={10} mx={1.2} color={'white'} component={'span'}>{(dev.meta && dev.meta.type)? capitalizeFirstLetter(dev.meta.type):'Generic'}</Typography>
                                 </Box>

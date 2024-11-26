@@ -20,12 +20,17 @@ export const Item = ({ path, onClick, children,icon, title, }: { path:string, on
 );
 const DeviceStatus = ({ devices,onDeviceClick,activeDevices,totalDevices }: {totalDevices: number,activeDevices:number, onDeviceClick:(devId:string)=>void, devices: Device[] }) => (
     <Box sx={{ height: '100%',width:'100%', borderRadius: 2, bgcolor: 'white', p: 0 }}>
-        <RowContainerBetween additionStyles={{width:'100%',my:0, p:2}}>
-            <NormalText title="Device Status" />
-            <Box sx={{display:'flex',alignItems:'center',}}>
-                <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>{activeDevices} of {totalDevices} devices {activeDevices===1?'are':'is'} active.</Typography>
+        <Box sx={{display:'flex',justifyContent:'space-between', width:'100%',my:0,alignItems:'flex-start', p:2}}>
+            <Box>
+                <NormalText title="Device Status" />
+                <Box sx={{display:'flex',alignItems:'center',}}>
+                    <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>{activeDevices} of {totalDevices} devices {activeDevices===1?'are':'is'} active.</Typography>
+                </Box>
             </Box>
-        </RowContainerBetween>
+            <Link style={{textDecoration:'none', color:DEFAULT_COLORS.primary_blue,}} to={'/devices'}>
+                <Typography fontSize={14} textAlign={'center'}>See all</Typography>
+            </Link>
+        </Box>
         <BasicTable onDeviceClick={onDeviceClick} devices={devices} />
     </Box>
 );
@@ -44,9 +49,12 @@ const MyScrollingElement = styled(Stack)(() => ({
 }));
 const AppStatus = ({ apps }: { apps: App[] }) => (
     <Box sx={{ height: '100%', bgcolor: 'white', borderRadius: 2,  }}>
-        <Box p={2}>
+        <RowContainerBetween additionStyles={{p:2}}>
             <NormalText title="App Status" />
-        </Box>
+            <Link style={{textDecoration:'none', color:DEFAULT_COLORS.primary_blue,}} to={'/apps'}>
+                <Typography fontSize={14} textAlign={'center'}>See all</Typography>
+            </Link>
+        </RowContainerBetween>
         <MyScrollingElement sx={{overflowY:'auto'}} width={'100%'} height={'100%'}>
             {
                 apps && apps.length >0?apps.map((app, index) => {
@@ -120,7 +128,10 @@ function Dashboard() {
                                 <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
                                     {!(selectedCloud?.paused)?'Synched with Waziup Cloud':'Not Synchronized'}
                                 </Typography>
-                                <Typography fontSize={14} color={selectedCloud?.paused?"#CCC400":DEFAULT_COLORS.primary_blue} fontWeight={300}>{selectedCloud?.paused?"Inactive":'Active'}</Typography>
+                                <RowContainerNormal additionStyles={{m:0}}>
+                                    <Typography fontSize={14} fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Status: </Typography>
+                                    <Typography fontSize={14} color={selectedCloud?.paused?"#CCC400":DEFAULT_COLORS.primary_blue} fontWeight={300}>{selectedCloud?.paused?"Inactive":'Active'}</Typography>
+                                </RowContainerNormal>
                             </Item>
                             {
                                 (eth0 && eth0.IP4Config)?(
