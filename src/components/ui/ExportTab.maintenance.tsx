@@ -23,7 +23,7 @@ const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.p
 
 const GridItemEl=({ children, text, additionStyles, icon }: { additionStyles?: SxProps<Theme>, text: string, children: React.ReactNode, icon: string })=>(
     <Item  sx={{boxShadow:0,...additionStyles}}>
-        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, bgcolor: '#D8D8D8', alignItems: 'center' }} p={1} >
+        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, border:'.5px solid #d8d8d8', bgcolor: '#F7F7F7',  alignItems: 'center' }} p={1} >
             <Icon sx={IconStyle}>{icon}</Icon>
             <Typography color={'#212529'} fontWeight={500}>{text}</Typography>
         </Box>
@@ -47,12 +47,12 @@ export default function ExportTabMaintenance({matches}:Props) {
                     <GridItemEl additionStyles={{pb: 2}}  icon={'sensors_outlined'} text={'Export Sensor Data'}>
                         <Box m={1} borderRadius={1}>
                             <Box  borderRadius={1} p={1} >
-                                <Button href='/exporttree' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
+                                <Button href='/exporttree' variant="text" sx={{ color: '#fff', m: 1,":hover":{bgcolor:'#007aff'}, bgcolor: 'info.main' }} >
                                     EXPORT AS CSV FILES TREE
                                 </Button>
                             </Box>
                             <Box p={1}>
-                                <Button href='/exportall' variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} >
+                                <Button href='/exportall' variant="text" sx={{ color: '#fff', m: 1,":hover":{bgcolor:'#007aff'}, bgcolor: 'info.main' }} >
                                     EXPORT AS ONE CSV FILE
                                 </Button>
                             </Box>
@@ -138,7 +138,7 @@ export default function ExportTabMaintenance({matches}:Props) {
                                 </Box>
                             </Box>
                         </Box>
-                        <Button variant="text" sx={{ color: '#fff', m: 2, bgcolor: 'info.main' }} href={'/exportbins?from='+searchParams.get('from')+'&to='+searchParams.get('to')+'&duration='+searchParams.get('duration')+'s'+'&check='+searchParams.get('check')} >
+                        <Button variant="text" sx={{ color: '#fff', m: 2,":hover":{bgcolor:'#007aff'}, bgcolor: 'info.main' }} href={'/exportbins?from='+searchParams.get('from')+'&to='+searchParams.get('to')+'&duration='+searchParams.get('duration')+'s'+'&check='+searchParams.get('check')} >
                             EXPORT
                         </Button>
                     </GridItemEl>
