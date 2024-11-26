@@ -81,6 +81,7 @@ function DeviceSettings() {
                 onAccept:()=>{},
                 onCancel:()=>{},
                 acceptBtnTitle:"CLOSE",
+                hideCloseButton: true,
                 title:"Error encountered"
             });
             setIsError(true);
@@ -133,6 +134,7 @@ function DeviceSettings() {
                     content:"Error Encountered: "+err,
                     onAccept:()=>{},
                     onCancel:()=>{},
+                    hideCloseButton: true,
                     acceptBtnTitle:"Close",
                     title:"Error encountered"
                 });
@@ -171,6 +173,7 @@ function DeviceSettings() {
                 content:"Error Encountered: "+err,
                 onAccept:()=>{},
                 onCancel:()=>{},
+                hideCloseButton: true,
                 acceptBtnTitle:"Close",
                 title:"Error encountered"
             });
@@ -229,6 +232,7 @@ function DeviceSettings() {
                 content:"Error Encountered: "+err,
                 onAccept:()=>{},
                 onCancel:()=>{},
+                hideCloseButton: true,
                 acceptBtnTitle:"Close",
                 title:"Error encountered"
             });
