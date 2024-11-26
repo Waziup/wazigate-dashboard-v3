@@ -18,6 +18,7 @@ interface User {
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
     isReadOnly?:boolean
+    disabled?: boolean,
     children: React.ReactNode;
 }
 const schema = yup.object({
@@ -27,9 +28,9 @@ const schema = yup.object({
     newPassword: yup.string().optional(),
     newPasswordConfirm: yup.string().optional(),
 });
-const TextInput = ({ children, label }: TextInputProps) => (
+const TextInput = ({disabled, children, label }: TextInputProps) => (
     <Box py={1} sx={{ width: '100%',  }}>
-        <p style={{ color: DEFAULT_COLORS.third_dark, fontWeight: '300' }}>{label} <span style={{ color: DEFAULT_COLORS.orange }}>*</span></p>
+        <p style={{ color: disabled?'#D5D6D8': DEFAULT_COLORS.third_dark, fontWeight: '300' }}>{label} <span style={{ color :disabled?'#D5D6D8': DEFAULT_COLORS.orange }}>*</span></p>
         {children}
     </Box>
 )
@@ -37,29 +38,27 @@ import Logo from '../assets/wazilogo.svg';
 import { DevicesContext } from "../context/devices.context";
 import { Android12Switch } from "../components/shared/Switch";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
-const textinputStyle = { width: '100%', fontSize: 18, border: 'none', background: 'none', color: DEFAULT_COLORS.third_dark, padding: 2, borderBottom: '1px solid #D5D6D8', outline: 'none' }
+const textinputStyle = { width: '100%', fontSize: 18, fontWeight:'lighter', border: 'none', background: 'none', color: DEFAULT_COLORS.third_dark, padding: 2, borderBottom: '1px solid #D5D6D8', outline: 'none' }
 function User() {
     const {handleSubmit,setValue} = useForm<Omit<User,'ID'>>({
         resolver: yupResolver(schema),
     });
     const theme = useTheme();
-    const [isEdited,setIsEdited] = useState(false);
     const [isEditPassword, setIsEditPassword] = useState<boolean>(false);
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const [loading, setLoading] = useState(false);
     const {profile,setProfile,loadProfile, showDialog, closeDialog} = useContext(DevicesContext);
+    const [rProfile,] = useState<User | null>(profile);
     const [err, setErr] = useState(false);
     const [msg, setMsg] = useState("");
     const loadProfileFc = useCallback(() => {
         setLoading(true);
-
         setValue('username',profile?profile.username:'');
         setValue('name',profile?profile?.name:'')
         setLoading(false);
     }, [profile, setValue]);
     const onTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.name as keyof Omit<User,'ID'>, e.target.value);
-        setIsEdited(true);
         setProfile({
             ...profile,
             name: profile?.name ?? '',
@@ -101,6 +100,7 @@ function User() {
                 onAccept: ()=>{},
                 acceptBtnTitle:"Close",
                 onCancel: closeDialog,
+                hideCloseButton: true,
                 title:"Profile Update",
             });
         })
@@ -110,7 +110,6 @@ function User() {
             setErr(true);
             setMsg(error as string);
         });
-        setIsEdited(false);
     };
     const handleClose = () => {setErr(false)}
 
@@ -128,7 +127,7 @@ function User() {
                     {msg}
                 </Alert>
             </Snackbar>
-            <Box sx={{px:matches?4:1,py:2, width: '100%',  position: 'relative', bgcolor: '#F4F7F6', height: '100%', }}>
+            <Box sx={{px:matches?4:1,py:2, width: '100%',  position: 'relative', height: '100%', }}>
                 <Box sx={{ mx:'auto', left: '50%', borderRadius: 2, bgcolor: 'white', width: matches ? '50%' : '95%' }}>
                     <Box sx={{ display: 'flex', py: 2, width: '100%', borderBottom: '1px solid #D5D6D8', alignItems: 'center', }}>
                         <Box component={'img'} src={Logo} mx={2} />
@@ -166,7 +165,7 @@ function User() {
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>{'Change Password'}</Typography>
                                 <Android12Switch onChange={(_e,checked)=>{setIsEditPassword(checked)}} checked={isEditPassword} color='info' />
                             </RowContainerBetween>
-                            <TextInput label='Password'>
+                            <TextInput disabled={!isEditPassword} label='Password'>
                                 <input 
                                     type={'text'}
                                     onChange={onTextInputChange}
@@ -177,7 +176,7 @@ function User() {
                                     value={profile?.password}
                                 />
                             </TextInput>
-                            <TextInput label='New Password'>
+                            <TextInput disabled={!isEditPassword} label='New Password'>
                                 <input
                                     type={'text'}
                                     onChange={onTextInputChange}
@@ -188,7 +187,7 @@ function User() {
                                     value={profile?.newPassword}
                                 />
                             </TextInput>
-                            <TextInput label='Confirm New Password' type="text" placeholder="admin">
+                            <TextInput disabled={!isEditPassword} label='Confirm New Password' type="text" placeholder="admin">
                                 <input
                                     type={'text'} 
                                     onChange={onTextInputChange}
@@ -200,7 +199,7 @@ function User() {
                                 />
                             </TextInput>
                             {
-                                isEdited?(
+                                ((profile?.name!=rProfile?.name) || (profile?.password!=rProfile?.password))?(
                                     <Box display={'flex'} justifyContent={'center'} py={1}>
                                         <button type="submit" style={{cursor:'pointer', width: '50%', border: 'none', justifyContent: 'center', display: 'flex', alignItems: 'center', borderRadius: 5, outline: 'none', padding: 10, backgroundColor: '#499dff', color: 'white' }}>
                                             <Save sx={{ fontSize: 20 }} />
