@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs,Button, FormControl,Typography,Icon, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { Box, Breadcrumbs,Button, FormControl,Typography,Icon, MenuItem, Select, SelectChangeEvent, Stack } from "@mui/material";
 import { useLocation, Link, useOutletContext, useParams, useNavigate, } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
@@ -333,7 +333,7 @@ function DeviceSensorSettings() {
                     />
                 ):null
             }
-            <Box sx={{ height: '100%',  }}>
+            <Box sx={{  }}>
                 <Box sx={{px:4,py:2,}}>
                     <Typography fontWeight={600} fontSize={24} color='black'>{device?.name}</Typography>
                     <div role="presentation" onClick={() => { }}>
@@ -370,8 +370,8 @@ function DeviceSensorSettings() {
                         </Breadcrumbs>
                     </div>
                 </Box>
-                <Box sx={{borderTopRightRadius:10,display:'flex',bgcolor:'#fff',flexDirection:matches?'row':'column',px:matches?6:3,height:'100%',width:'100%',pt:matches?2:.5}} >
-                    <Box width={matches?'45%':'99%'}>
+                <Box sx={{borderTopRightRadius:10,display:'flex',flexDirection:matches?'row':'column',px:matches?4:3,height:'auto', width:'100%',pt:matches?0:.5}} >
+                    <Box bgcolor={'white'} borderRadius={2} p={2}  width={matches?'50%':'99%'}>
                         <Typography fontWeight={500} fontSize={20}  color={'#292F3F'}>Setup {sensOrActuator?.name} kind, quantity and unit</Typography>
                         <>
                             <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
@@ -484,10 +484,17 @@ function DeviceSensorSettings() {
                                 null
                             )
                         }
-                        <Button sx={{mt:2}} color="error" onClick={deleteSensorOrActuator}  variant='outlined'>DELETE</Button> 
+                        <Box sx={{ minHeight: 150, mt:2, borderWidth: 1, borderRadius: 1, borderStyle: "solid", borderColor: 'red', p: 3, mb: 6 }}>
+                            <Typography variant="h4" sx={{ bgcolor: "#fff",fontSize:14, px: 2, mt: -4.0, mb: 3, color: "error.main", width: "fit-content" }}>Danger Zone</Typography>
+
+                            <Stack direction="row" alignItems="center" gap={3}>
+                                <Button variant="outlined" color="error" onClick={deleteSensorOrActuator}>Delete</Button>
+                                <Typography variant="body2">This can not be undone!</Typography>
+                            </Stack>
+
+                        </Box>
+                        {/* <Button sx={{mt:2}} color="error" onClick={deleteSensorOrActuator}  variant='outlined'>DELETE</Button>  */}
                     </Box>
-                    
-                    
                 </Box>
             </Box>
         </>
