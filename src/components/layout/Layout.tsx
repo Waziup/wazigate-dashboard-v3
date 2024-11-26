@@ -66,12 +66,12 @@ function Layout() {
         <>
             {
                 matches ? (
-                    <Box minWidth={'100vw'}bgcolor={'#F0F2F5'} sx={{overflowY:'auto',overflowX:'hidden'}}>
-                        <Box  sx={{display:'flex',position:'relative',flexWrap:'wrap',height:'100vh',maxWidth:'1400px',bgcolor:'#F0F2F5',}}>
+                    <Box minWidth={'100vw'}bgcolor={'#E7E7E7'} sx={{overflowY:'auto',overflowX:'hidden'}}>
+                        <Box  sx={{display:'flex',position:'relative',flexWrap:'wrap',height:'100vh',maxWidth:'1400px',}}>
                             <Box sx={{overflowY:'hidden',position:'fixed',top:0,left:0, width: matchesMd?40:matchesLg?200:220, bgcolor:'#292F3F',height:'100%',}}>
                                 <Sidebar matchesMd={matchesMd} />
                             </Box>
-                            <Box sx={{bgcolor:'#F0F2F5',ml: `${matchesMd?40:matchesLg ? 200 : 220}px`, width: { sm: `calc(100% - ${matchesMd?40:matchesLg?200:220}px)` } }}>
+                            <Box sx={{ml: `${matchesMd?40:matchesLg ? 200 : 220}px`, width: { sm: `calc(100% - ${matchesMd?40:matchesLg?200:220}px)` } }}>
                                 <Outlet context={[matches]} />
                             </Box>
                         </Box>
@@ -84,7 +84,7 @@ function Layout() {
                                 <Typography color={'white'} fontWeight={'600'}>{state ? state.title : 'Wazigate'}</Typography>
                             </Box>
                             {
-                                (pathname.endsWith('/settings')) ? (
+                                (pathname.endsWith('/setting')) ? (
                                     null
                                 ) : (pathname.includes('/sensors') || pathname.includes('/actuators'))?(
                                     <Link to={pathname+'/setting'} state={{title:'Settings'}}>
