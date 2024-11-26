@@ -17,6 +17,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     backgroundColor: theme.palette.common.white,
     color: theme.palette.common.black,
   },
+  padding:13,
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
   },
@@ -58,7 +59,7 @@ export default function CustomizedTables({devices,onDeviceClick}:Props) {
         }
     }
     return (
-        <TableContainer component={Paper}>
+        <TableContainer elevation={0} component={Paper}>
             <Table sx={{ minWidth: 700, tableLayout:'fixed' }} aria-label="customized table">
                 <TableHead>
                     <TableRow>
