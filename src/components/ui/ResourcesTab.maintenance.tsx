@@ -59,10 +59,10 @@ export default function ResourcesTabMaintenance({matches}:Props) {
             getUsageInfo().then((res) => {
                 setUsageInfo(res);
                 setUsageGraph((prev)=>({
-                    cpu_usage: prev.cpu_usage.length>50?[...prev.cpu_usage.slice(),parseInt(res.cpu_usage)]:[...prev.cpu_usage,parseInt(res.cpu_usage)],
-                    mem_usage: prev.mem_usage.length>50?[...prev.mem_usage.slice(),Math.round(parseInt(res.mem_usage.used)/1024)]:[...prev.mem_usage,Math.round(parseInt(res.mem_usage.used)/1024)],
-                    temp: prev.temp.length>50?[...prev.temp.slice(),parseInt(res.temp)]:[...prev.temp,parseInt(res.temp)],
-                    xaxis: prev.xaxis.length>50?[...prev.xaxis.slice(),returnDate(0)]:[...prev.xaxis,returnDate(0)]
+                    cpu_usage: prev.cpu_usage.length>50?[...prev.cpu_usage.slice(1),parseInt(res.cpu_usage)]:[...prev.cpu_usage,parseInt(res.cpu_usage)],
+                    mem_usage: prev.mem_usage.length>50?[...prev.mem_usage.slice(1),Math.round((100*parseInt(res.mem_usage.used))/parseInt(res.mem_usage.total))]:[...prev.mem_usage,Math.round((100*parseInt(res.mem_usage.used))/parseInt(res.mem_usage.total))],
+                    temp: prev.temp.length>50?[...prev.temp.slice(1),parseInt(res.temp)]:[...prev.temp,parseInt(res.temp)],
+                    xaxis: prev.xaxis.length>50?[...prev.xaxis.slice(1),returnDate(0)]:[...prev.xaxis,returnDate(0)]
                 }));
             });
         },2000);
@@ -70,8 +70,8 @@ export default function ResourcesTabMaintenance({matches}:Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
     return (
-        <Box  sx={{ height: '100vh' }}>
-            <Stack direction={matches?'row':'column'} justifyContent={'space-evenly'} spacing={2}>
+        <Box height='100vh' >
+            <Stack direction={matches?'row':'column'} justifyContent='space-evenly' spacing={2}>
                 <ReactSpeedometer
                     maxValue={100}
                     value={parseInt(usageInfo.cpu_usage)}
@@ -111,10 +111,10 @@ export default function ResourcesTabMaintenance({matches}:Props) {
                 />
 
             </Stack>
-            <Box mt={3} width={'80%'}>
+            <Box mt={3} width='100%'>
                 <Box mt={1}>
-                    <Typography>Disk:<span style={{color:'black',fontWeight:'bold'}}>{humanFileSize(parseFloat(usageInfo.mem_usage.used))}</span> of <span style={{color:'black',fontWeight:'bold'}}>{humanFileSize(parseFloat(usageInfo.mem_usage.total))}</span> used</Typography>
-                    <BorderLinearProgress variant="determinate" value={30} />
+                    <Typography>Disk:<span style={{color:'black',fontWeight:'bold'}}>{humanFileSize(parseFloat(usageInfo.disk.used))}</span> of <span style={{color:'black',fontWeight:'bold'}}>{humanFileSize(parseFloat(usageInfo.disk.size))}</span> used</Typography>
+                    <BorderLinearProgress variant="determinate" value={parseInt(usageInfo.disk.percent)} />
                 </Box>
             </Box>
             <Chart
