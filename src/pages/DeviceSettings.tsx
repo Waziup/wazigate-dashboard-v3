@@ -85,6 +85,7 @@ export default function DeviceSettings() {
                             content:"Device meta updated ",
                             onAccept:()=>{},
                             onCancel:()=>{},
+                            hideCloseButton: true,
                             acceptBtnTitle:"Close",
                             title:"Update successfull."
                         });
@@ -95,6 +96,7 @@ export default function DeviceSettings() {
                             content:"Error updating device meta: "+err,
                             onAccept:()=>{},
                             onCancel:()=>{},
+                            hideCloseButton: true,
                             acceptBtnTitle:"Close",
                             title:"Error encountered"
                         });
@@ -107,6 +109,7 @@ export default function DeviceSettings() {
                             content:"Device name updated ",
                             onAccept:()=>{},
                             onCancel:()=>{},
+                            hideCloseButton: true,
                             acceptBtnTitle:"Close",
                             title:"Update successfull."
                         });
@@ -117,6 +120,7 @@ export default function DeviceSettings() {
                             onAccept:()=>{},
                             onCancel:()=>{},
                             acceptBtnTitle:"Close",
+                            hideCloseButton: true,
                             title:"Error encountered"
                         });
                     });

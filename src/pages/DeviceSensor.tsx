@@ -124,7 +124,7 @@ function Device() {
     }, [getGraphValues, id, pathname, sensorId]);
     return (
         <Box sx={{ height: '100%', overflowY: 'auto' }}>
-            <RowContainerBetween additionStyles={{ px:4,py:2, }}>
+            <RowContainerBetween additionStyles={{ pl:4,py:2, }}>
                 <Box>
                     <Typography fontWeight={500} fontSize={24} color={'black'}>{device?.name}</Typography>
                     <div role="presentation" onClick={handleClick}>
@@ -144,7 +144,7 @@ function Device() {
                     ) : null
                 }
             </RowContainerBetween>
-            <Box bgcolor='#fff' display='flex' borderRadius={2} width='100%' pt={matches ? 4 : 2} flexDirection='column' alignItems='center' justifyContent='center'>
+            <Box sx={{borderTopRightRadius:matches?10:0,bgcolor:'#fff',display:'flex',width:'100%',pt:matches?4:2,flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
                 <Box px={matches?6:2} width={matches ? '100%' : '95%'} mb={3}>
                     <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Typography color={'#1D2129'} fontSize={15} fontWeight={500}> {pathname.includes('sensors')?'Sensor ':'Actuator '}Readings</Typography>

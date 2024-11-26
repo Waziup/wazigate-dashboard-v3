@@ -235,6 +235,7 @@ export default function Apps() {
                 content: "There was an error loading the app info:\n" + error,
                 onAccept:()=>{},
                 onCancel:()=>{},
+                hideCloseButton: true,
                 acceptBtnTitle:"Close",
                 title:"Error encountered"
             });
@@ -283,6 +284,7 @@ export default function Apps() {
                 content:'Could not uninstall ' + appToUninstall?.name,
                 onAccept:()=>{ },
                 onCancel:()=>{},
+                hideCloseButton: true,
                 acceptBtnTitle:"Close",
                 title:"Error encountered"
             });
@@ -318,6 +320,7 @@ export default function Apps() {
                 onAccept:()=>{
 
                 },
+                hideCloseButton: true,
                 onCancel:()=>{},
                 acceptBtnTitle:"Close",
                 title:"Error encountered"

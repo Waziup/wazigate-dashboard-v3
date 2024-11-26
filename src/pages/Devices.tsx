@@ -104,6 +104,7 @@ function Devices() {
                 onCancel:()=>{},
                 title:"Error encountered",
                 acceptBtnTitle:"Close",
+                hideCloseButton: true,
             });
         });
     }
@@ -182,6 +183,7 @@ function Devices() {
                         onAccept:()=>{},
                         onCancel:()=>{},
                         acceptBtnTitle:"Close",
+                        hideCloseButton: true,
                         title:"Error encountered"
                     });
                 })
@@ -249,6 +251,7 @@ function Devices() {
                             content:"Device meta update updated successfully ",
                             onAccept:()=>{},
                             onCancel:()=>{},
+                            hideCloseButton: true,
                             acceptBtnTitle:"Close",
                             title:"Update successfully"
                         });
@@ -260,7 +263,8 @@ function Devices() {
                             onAccept:()=>{},
                             onCancel:()=>{},
                             acceptBtnTitle:"Close",
-                            title:"Error encountered"
+                            title:"Error encountered",
+                            hideCloseButton: true,
                         });
                     });
             }
@@ -273,6 +277,7 @@ function Devices() {
                         onAccept:()=>{},
                         onCancel:()=>{},
                         acceptBtnTitle:"Close",
+                        hideCloseButton: true,
                         title:"Update successfully"
                     });
                     return;
@@ -281,6 +286,7 @@ function Devices() {
                         content:"Error updating device name "+err,
                         onAccept:()=>{},
                         onCancel:()=>{},
+                        hideCloseButton: true,
                         acceptBtnTitle:"Close",
                         title:"Error encountered"
                     });

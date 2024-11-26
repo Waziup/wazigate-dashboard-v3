@@ -134,7 +134,8 @@ export default function SettingsNetworking() {
                 showDialog({
                     title:"Success",
                     content:"Changes saved successfully!",
-                    acceptBtnTitle:"OK!",
+                    acceptBtnTitle:"CLOSE",
+                    hideCloseButton: true,
                     onAccept:()=>{},
                     onCancel:()=>{},
                 });
@@ -144,6 +145,7 @@ export default function SettingsNetworking() {
                     title:"Error encountered",
                     content:"There was an error saving the changes:\n" + err,
                     acceptBtnTitle:"CLOSE",
+                    hideCloseButton: true,
                     onAccept:()=>{},
                     onCancel:()=>{},
                 });
@@ -154,6 +156,7 @@ export default function SettingsNetworking() {
                 title:"No change",
                 content:"No changes made",
                 acceptBtnTitle:"CLOSE",
+                hideCloseButton: true,
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
@@ -165,6 +168,7 @@ export default function SettingsNetworking() {
                 title:"Warning",
                 content:"Save all changes before activating the synchronization!",
                 acceptBtnTitle:"OK",
+                hideCloseButton: true,
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
@@ -176,8 +180,9 @@ export default function SettingsNetworking() {
         .then(async() => {
             showDialog({
                 title:"Success",
-                content:"Sync activated!",
-                acceptBtnTitle:"OK",
+                content:`Sync ${checked?'activated':'deactivated'}.`,
+                acceptBtnTitle:"CLOSE",
+                hideCloseButton: true,
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
@@ -192,6 +197,7 @@ export default function SettingsNetworking() {
                 title:"Error encountered",
                 content:"There was an error activating the sync!\n Check your credentials and try again.\n\nThe server said:\n" + err,
                 acceptBtnTitle:"CLOSE",
+                hideCloseButton: true,
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
@@ -207,7 +213,8 @@ export default function SettingsNetworking() {
             showDialog({
                 title:"Success",
                 content:"Settings saved",
-                acceptBtnTitle:"OK!",
+                acceptBtnTitle:"CLOSE",
+                hideCloseButton: true,
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
@@ -216,14 +223,14 @@ export default function SettingsNetworking() {
             showDialog({
                 title:"Error encountered",
                 content:"Error encountered: "+err,
-                acceptBtnTitle:"OK!",
+                acceptBtnTitle:"CLOSE",
+                hideCloseButton: true,
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
         });
     };
     const switchToAPMode = () => {
-        // this.setState({ switchToAPModeLoading: true });
         showDialog({
             title:"Switch AP mode",
             content: 'Are you sure you want to switch to AP Mode?',
@@ -278,7 +285,8 @@ export default function SettingsNetworking() {
             showDialog({
                 title:"Error encountered",
                 content:"Error encountered: "+error,
-                acceptBtnTitle:"OK",
+                acceptBtnTitle:"CLOSE",
+                hideCloseButton: true,
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
@@ -347,7 +355,7 @@ export default function SettingsNetworking() {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={{...style1,width:matches?440:'90%'}}>
+                <Box sx={{...style1,width:matches?540:'90%'}}>
                     {
                         screen ==='tab1'?(
                             <Box sx={{}}>
@@ -430,7 +438,7 @@ export default function SettingsNetworking() {
                                     ]}
                                 />
                             </RowContainerBetween>
-                            <Box px={2}>
+                            <Box py={1.5} px={2}>
                                 <RowContainerNormal additionStyles={{alignItems:'center'}}>
                                     <Android12Switch
                                         sx={{m:0}} 

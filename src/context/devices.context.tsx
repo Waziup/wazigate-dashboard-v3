@@ -35,7 +35,7 @@ interface ContextValues{
     apps: App[],
     wazigateId: string
     profile: User | null
-    showDialog : ({ title, content,acceptBtnTitle, onAccept, onCancel }: { title: string, acceptBtnTitle:string,  content: string,   onAccept: ()=>void,onCancel: ()=>void,}) =>void,
+    showDialog : ({ title, content,acceptBtnTitle, onAccept, onCancel }: {hideCloseButton?:boolean, title: string, acceptBtnTitle:string,  content: string,   onAccept: ()=>void,onCancel: ()=>void,}) =>void,
     closeDialog:()=>void,
     setProfile: (profile:User | null)=>void
     selectedCloud: Cloud | null
@@ -213,14 +213,16 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         open: false,
         title: '',
         content: '',
+        hideCloseButton:false,
         acceptBtnTitle:'',
         onAccept: ()=>{},
         onCancel: ()=>{},
     });
-    const showDialog = ({ title, content, onAccept,acceptBtnTitle, onCancel }: {acceptBtnTitle:string,  title: string,   content: string, onAccept: ()=>void,onCancel: ()=>void,}) => {
+    const showDialog = ({ title, content,hideCloseButton, onAccept,acceptBtnTitle, onCancel }: {acceptBtnTitle:string,hideCloseButton?:boolean,  title: string,   content: string, onAccept: ()=>void,onCancel: ()=>void,}) => {
         setDialogState({
             open: true,
             title,
+            hideCloseButton: hideCloseButton?hideCloseButton:false,
             acceptBtnTitle,
             content,
             onAccept(){

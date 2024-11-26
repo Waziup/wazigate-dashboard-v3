@@ -125,6 +125,7 @@ function DeviceSensorSettings() {
                     content:"Error Encountered: "+err,
                     onAccept:()=>{},
                     onCancel:()=>{},
+                    hideCloseButton: true,
                     acceptBtnTitle:"Close",
                     title:"Error encountered"
                 });
@@ -283,9 +284,9 @@ function DeviceSensorSettings() {
     }
     const deleteSensorOrActuator = () => {
         showDialog({
-            title: `Delete ${sensOrActuator?.name}`,
+            title: `Deleting ${sensOrActuator?.name}`,
             acceptBtnTitle:"DELETE",
-            content: `Are you sure you want to delete ${sensOrActuator?.name}? All data will be lost`,
+            content: `Deleting ${sensOrActuator?.name} will lose all data. Are you sure you want to delete ? `,
             onAccept:()=>{
                 if (pathname.includes('sensors')) {
                     window.wazigate.deleteSensor(id as string, sensOrActuator?.id as string).then(() => {
@@ -369,7 +370,7 @@ function DeviceSensorSettings() {
                         </Breadcrumbs>
                     </div>
                 </Box>
-                <Box display={'flex'} bgcolor={'white'} flexDirection={matches?'row':'column'} px={matches?6:3} height={'100%'} width={'100%'}  pt={matches ? 2 : .5}  >
+                <Box sx={{borderTopRightRadius:10,display:'flex',bgcolor:'#fff',flexDirection:matches?'row':'column',px:matches?6:3,height:'100%',width:'100%',pt:matches?2:.5}} >
                     <Box width={matches?'45%':'99%'}>
                         <Typography fontWeight={500} fontSize={20}  color={'#292F3F'}>Setup {sensOrActuator?.name} kind, quantity and unit</Typography>
                         <>

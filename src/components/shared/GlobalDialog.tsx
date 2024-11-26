@@ -6,11 +6,12 @@ interface Props{
     open: boolean,
     title: string,
     acceptBtnTitle: string
+    hideCloseButton: boolean,
     content: string,
     onAccept:()=>void,
     onCancel:()=>void,
 }
-export default function GlobalDialog({open,title,acceptBtnTitle,content,onAccept,onCancel}:Props) {
+export default function GlobalDialog({open,title,acceptBtnTitle,hideCloseButton,content,onAccept,onCancel}:Props) {
     const handleAccept = () => {
         onAccept()
         onCancel()// Close dialog after accept
@@ -28,7 +29,11 @@ export default function GlobalDialog({open,title,acceptBtnTitle,content,onAccept
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleCancel} sx={{ mx: 2, color: '#ff0000', }} variant="text" color="warning">CANCEL</Button>
+                {
+                    hideCloseButton?null:(
+                        <Button onClick={handleCancel} sx={{ mx: 2, color: '#ff0000', }} variant="text" color="warning">CANCEL</Button>
+                    )
+                }
                 <Button autoFocus onClick={handleAccept} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >{acceptBtnTitle}</Button>
             </DialogActions>
         </Dialog>

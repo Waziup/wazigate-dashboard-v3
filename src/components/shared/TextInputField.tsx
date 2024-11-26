@@ -27,7 +27,7 @@ export default function TextInputField({onChange,value,label,icon,placeholder,ty
                     value={value}
                     required
                     type={type?type:'text'}
-                    style={{border:'none',width:'100%',fontSize:14,color:'#888',backgroundColor:bgcolor?bgcolor:'', margin:'0 3px', outline:'none'}}
+                    style={{border:'none',width:'100%',fontSize:16,color:'#888',backgroundColor:bgcolor?bgcolor:'', margin:'0 3px', outline:'none'}}
                 />
             </Box>
         </FormControl>

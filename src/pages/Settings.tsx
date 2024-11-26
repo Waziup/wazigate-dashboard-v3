@@ -21,7 +21,7 @@ import { DevicesContext } from '../context/devices.context';
 import InternetIndicator from '../components/ui/InternetIndicator';
 const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
 const GridItem = ({bgcolor,additionStyles,md, children,}: {xs:number,md:number, matches: boolean,bgcolor?:boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode }) => (
-    <Grid sx={{bgcolor: bgcolor?'#fff':'',...additionStyles}} bgcolor={bgcolor?'#fff':''} item md={md} lg={5.8} xl={5.8} sm={6} xs={12} my={1} >
+    <Grid sx={{bgcolor: bgcolor?'#fff':'',...additionStyles}} bgcolor={bgcolor?'#fff':''} item md={md} lg={5.8} xl={5.8} sm={5.8} xs={12} my={1} >
         {children}
     </Grid>
 );
@@ -59,7 +59,8 @@ function Settings() {
             showDialog({
                 title:"Time set",
                 content:"Time set successfully",
-                acceptBtnTitle:"OK!",
+                acceptBtnTitle:"CLOSE",
+                hideCloseButton: true,
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
@@ -68,6 +69,7 @@ function Settings() {
                 title:"Error",
                 content:"Error setting time: " + error,
                 acceptBtnTitle:"CLOSE",
+                hideCloseButton: true,
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
@@ -153,9 +155,6 @@ function Settings() {
             onCancel() {},
         })
     }
-    const switchTimezoneAuto = (val:boolean) => {
-        setIsSetTimezoneAuto(val);
-    }
     useEffect(() => {
         if(isSetTimezoneAuto){
             getTimezoneAuto()
@@ -199,7 +198,7 @@ function Settings() {
                     <Typography sx={{ fontSize:13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography>
                 </Box>
                 <Grid width={'100%'} container>
-                    <GridItem additionStyles={{mr:2,}} md={12} xs={12} matches={matches} >
+                    <GridItem additionStyles={{mr: matches?2:0,}} md={12} xs={12} matches={matches} >
                         <GridItemEl additionStyles={{pb:.2,}} icon='cell_tower' text={(eth0 && eth0.IP4Config)?'Ethernet':'Network'}>
                             <RowContainer >
                                 <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
@@ -259,10 +258,11 @@ function Settings() {
                         <Box my={2}>
                             <RowContainer>
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Local Time</Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Typography textTransform={'uppercase'} mr={1} color={DEFAULT_COLORS.primary_black}>{currentTime}</Typography>  
-                                    
-                                </Box>
+                                {
+                                    currentTime?(
+                                        <Typography textTransform='uppercase' mr={1} color={DEFAULT_COLORS.primary_black}>{currentTime}</Typography>    
+                                    ): <CircularProgress size={10} sx={{fontSize:10, }} />
+                                }
                             </RowContainer>
                             <RowContainer>
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Time Zone</Typography>
@@ -277,16 +277,13 @@ function Settings() {
                                 </Typography>
                             </RowContainer>
                             <Box borderRadius={1} p={1} m={1}>
-                                <RowContainerBetween additionStyles={{ my: 1,  }}>
-                                    <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>{isSetTimezoneAuto?'--':'Set TimeZone Automatically'}</Typography>
-                                    <Android12Switch onChange={(_e,checked)=>switchTimezoneAuto(checked)} checked={isSetTimezoneAuto} color='info' />
-                                </RowContainerBetween>
+                                
                                 {
                                     isSetTimezoneAuto?(null):(
                                         <SelectElementString
                                             conditions={timezones}
                                             handleChange={handleSaveTimezone}
-                                            title='Time Zone'
+                                            title='Set TimeZone'
                                             value={data? data.zone:''}
                                         />
                                     )

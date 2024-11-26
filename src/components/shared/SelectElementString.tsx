@@ -13,7 +13,7 @@ export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectEl
 export default function SelectElementString({handleChange,name,title,conditions,isDisabled,widthPassed,value}:HTMLSelectProps){
     return(
         <Box minWidth={120} width={widthPassed?widthPassed:'100%'} my={.5}>
-            <Typography  fontSize={12} fontWeight={'300'} color={'#292F3F'}>{title}</Typography>
+            <Typography  fontSize={14} fontWeight={'300'} color={'#292F3F'}>{title}</Typography>
             <FormControl variant="standard" disabled={isDisabled} fullWidth>
                 <Select
                     sx={{fontWeight:'bold'}}
