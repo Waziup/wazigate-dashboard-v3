@@ -82,21 +82,21 @@ export default function ContainersTabMaintenance() {
                     />
                 ):null
             }
-            <Dialog open={openModal} onClose={() =>{setOpenModal(false); setLogs({success:false,logs:''})}}>
+            <Dialog fullWidth open={openModal} onClose={() =>{setOpenModal(false); setLogs({success:false,logs:''})}}>
                 <DialogTitle>Container Logs</DialogTitle>
                 <DialogContent>
                     {
                         logs.success? (
                             <Box  p={1} overflow={'auto'}  height={200} bgcolor={'#000'}>
-                                <Typography fontSize={10} color={'#fff'}>
+                                <pre style={{fontSize:13,color:'#fff',flexWrap:'wrap',textWrap:'wrap'}}>
                                     {logs.logs}
-                                </Typography>
+                                </pre>
                             </Box>
                         ):(
                             <Box p={1} overflow={'auto'}  height={200} bgcolor={'#fff'}>
-                                <Typography fontSize={18} fontWeight={900} color={'#ff0000'}>
+                                <pre style={{fontSize:18,fontWeight:900,color:'#ff0000',flexWrap:'wrap',textWrap:'wrap'}}>
                                     {logs.logs}
-                                </Typography>
+                                </pre>
                             </Box>
                         )
                     }
