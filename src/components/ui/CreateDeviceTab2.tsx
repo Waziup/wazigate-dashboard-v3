@@ -54,7 +54,7 @@ export default function CreateDeviceTabTwo({ onTextInputChange, newDevice, autoG
                 options={codecsList as { id: string, name: string }[]} 
             />
             <RowContainerBetween additionStyles={{ my: 1 }}>
-                <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={13}>LoRaWAN Device</Typography>
+                <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14}>LoRaWAN Device</Typography>
                 <Android12Switch checked={makeLoraWAN} onChange={changeMakeLoraWAN} color='info' />
             </RowContainerBetween>
             {

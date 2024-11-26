@@ -29,14 +29,14 @@ export default function CreateDeviceTab1({handleChange,newDevice,handleChangeSel
     return(
         <Box>
             <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #292F3F'}}>
-                <Typography color={'primary'} mb={.4} fontSize={12}>Device name</Typography>
+                <Typography color={'#325460'} mb={.4} fontSize={14}>Device name</Typography>
                 <input 
                     autoFocus 
                     onInput={handleChange} 
                     name="name" placeholder='Enter device name' 
                     value={newDevice.name}
                     required
-                    style={{border:'none',width:'100%',padding:'6px 0', outline:'none'}}
+                    style={{border:'none',width:'100%',fontSize:14,padding:'6px 0',color:'#325460', outline:'none'}}
                 />
             </FormControl>
             <DropDownCreateDeviceTab1 
