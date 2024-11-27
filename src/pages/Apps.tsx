@@ -6,7 +6,6 @@ import {  Download, FiberNew,  } from '@mui/icons-material';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import { StartAppConfig, type App } from 'waziup';
-import Backdrop from '../components/Backdrop';
 import { DevicesContext } from '../context/devices.context';
 import CustomApp from '../components/CustomApp';
 import { SelectElement } from './DeviceSettings';
@@ -374,11 +373,11 @@ export default function Apps() {
                 ):null
             }
             {
-                loading?(
-                    <Backdrop>
-                        <CircularProgress color="info" size={70} />
-                    </Backdrop>
-                ):null
+                <Dialog open={loading} sx={{bgcolor:'none'}} onClose={()=>{}}>
+                    <DialogContent  sx={{bgcolor:'red',background:'none'}}>
+                        <CircularProgress sx={{}} color="info" size={70} />
+                    </DialogContent>
+                </Dialog>
             }
             <Dialog open={modalProps.open && modalProps.title === 'Installing New App'} onClose={closeModal}>
                 <DialogTitle>{modalProps.title}</DialogTitle>
