@@ -60,26 +60,18 @@ export default function ExportTabMaintenance({matches}:Props) {
                     </GridItemEl>
                 </GridItem>
                 <GridItem  spacing={2} md={7} xs={12} matches={matches as boolean} >
-                    <GridItemEl  icon={'sensor'} text={'Export Actuator and Sensor Data'} >
-                        <Typography m={2} fontSize={12} color={'#666666'}>
-                            You can export the data of all sensors and actuators to one CSV file. Additionally it also includes custom timespans and all data can be summarized in time bins. This is perfect for machine learning applications
-                        </Typography>
+                    <GridItemEl  icon='sensor' text='Export Actuator and Sensor Data' >
                         <Box borderRadius={1} p={1} m={2}>
-                            <Box display={'flex'} flexDirection={matches?'row':'column'} justifyContent={'space-between'}>
+                            <Box sx={{display:'flex',flexDirection:matches?'row':'column',justifyContent:'space-between'}}>
                                 <Box width={matches?'45%':'90%'}>
                                     <Typography>From:</Typography>
                                     <LocalizationProvider  dateAdapter={AdapterDayjs}>
-                                        <DemoContainer
-                                            components={[
-                                                'DatePicker',
-
-                                            ]}
-                                        >
+                                        <DemoContainer components={[ 'DatePicker', ]}>
                                             <DemoItem label="">
                                                 <DesktopDatePicker 
                                                     onChange={(newValue) => {
                                                         updateSearchParams('from',(newValue as dayjs.Dayjs).toISOString())
-                                                    } }
+                                                    }}
                                                     sx={{ p: 0 }} 
                                                     defaultValue={dayjs(searchParams.get('from')?searchParams.get('from'):today.toLocaleDateString().toString().replaceAll('/', '-' + " "))} 
                                                 />
@@ -114,12 +106,11 @@ export default function ExportTabMaintenance({matches}:Props) {
                                     <FormControl sx={{width:'100%', borderBottom:'1px solid #292F3F'}}>
                                         <Typography color={'#666666'} mb={.4} fontSize={12}>Bin Size in seconds</Typography>
                                         <input
-                                            onChange={(ev) => {
-                                                updateSearchParams('duration',ev.target.value)
-                                            }}
+                                            onChange={(ev) => { updateSearchParams('duration',ev.target.value) }}
                                             type='number'
                                             value={searchParams.get('duration') as string}    
-                                            name="name" placeholder='Enter device name' 
+                                            name="name" 
+                                            placeholder='Bit Size' 
                                             required
                                             style={{border:'none',width:'100%',background:'none', padding:'6px 0', outline:'none'}}
                                         />
