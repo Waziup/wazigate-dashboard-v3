@@ -372,7 +372,7 @@ function DeviceSensorSettings() {
                 </Box>
                 <Box sx={{borderTopRightRadius:10,display:'flex',flexDirection:matches?'row':'column',px:matches?4:3,height:'auto', width:'100%',pt:matches?0:.5}} >
                     <Box bgcolor={'white'} borderRadius={2} p={2}  width={matches?'50%':'99%'}>
-                        <Typography fontWeight={500} fontSize={20}  color={'#292F3F'}>Setup {sensOrActuator?.name} kind, quantity and unit</Typography>
+                        <Typography fontWeight={500} fontSize={20}  color={'#292F3F'}>{pathname.includes('sensors') ? 'Sensor' : 'Actuator'} settings</Typography>
                         <>
                             <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
                                 <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #292F3F'}}>
@@ -433,9 +433,8 @@ function DeviceSensorSettings() {
                                         <>
                                             <Box width={ '90%'}>
                                                 <Box>
-                                                    <Typography sx={{fontWeight:500,fontSize:matches?20:18,mb:2,color:'#292F3F'}}>Setup sync and sync-interface</Typography>
-                                                    <RowContainerBetween additionStyles={{ my: .5 }}>
-                                                        <Typography fontSize={15} color={'#292F3F'}>Sync Sensor</Typography>
+                                                    <Typography sx={{fontWeight:500,fontSize:matches?20:18,mb:2,color:'#292F3F'}}>Cloud Synchronization</Typography>                                                    <RowContainerBetween additionStyles={{ my: .5 }}>
+                                                        <Typography fontSize={15} color={'#292F3F'}>Sync {pathname.includes('sensors') ? 'Sensor' : 'Actuator'}</Typography>
                                                         <Icon 
                                                             onClick={handleToggleEnableSwitch}
                                                             sx={{cursor:'pointer', color: sensOrActuator?.meta.doNotSync ? DEFAULT_COLORS.secondary_gray : DEFAULT_COLORS.primary_blue, fontSize: 40, }} 
@@ -468,7 +467,7 @@ function DeviceSensorSettings() {
                                 <>
                                     <Box mt={1} width={'90%'}>
                                         <form onSubmit={addActuatorValueSubmit}>
-                                            <Typography color={'primary'} mb={.4} fontSize={18}>Add a value with the current time stamp</Typography>
+                                            <Typography color={'primary'} mb={.4} fontSize={18}>Add actuator value</Typography>
                                             <input
                                                 onInput={onInputChange}
                                                 name="name" 
