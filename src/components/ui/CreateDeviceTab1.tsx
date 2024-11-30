@@ -1,7 +1,7 @@
 import { Box, FormControl, Typography, InputLabel, MenuItem, Select, SelectChangeEvent, } from "@mui/material"
 import { Device } from "waziup";
-export const DropDownCreateDeviceTab1 = ({name,handleChangeSelect,title,options,value}:{name?:string, title?:string, handleChangeSelect:(e:SelectChangeEvent<string>)=>void,  options:{id:string,name:string}[], value: string})=>(
-    <FormControl variant="standard" sx={{p:0,mt:2, border:'none', width: '100%', }}>
+export const DropDownCreateDeviceTab1 = ({name,handleChangeSelect,title,options,mt,my,value}:{my?:number,mt?:number,name?:string, title?:string, handleChangeSelect:(e:SelectChangeEvent<string>)=>void,  options:{id:string,name:string}[], value: string})=>(
+    <FormControl variant="standard" sx={{p:0,mt:mt??2,my:my??0, border:'none', width: '100%', }}>
         <InputLabel id="demo-simple-select-helper-labe/l">{title?title:'Select board Type'}</InputLabel>
         <Select name={name} sx={{width:'100%',py:0,border:'none'}} labelId="demo-simple-select-helper-label"
             id="demo-simple-select-helper" onClose={()=>{
