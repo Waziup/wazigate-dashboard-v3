@@ -29,7 +29,7 @@ interface Props {
 import { toStringHelper } from "../../utils";
 import PrimaryButton from "../shared/PrimaryButton";
 import { DEFAULT_COLORS } from "../../constants";
-export default function EditDeviceModal({handleChangeDeviceCodec, isFirst,changeEditMakeLoraWAN, autoGenerateLoraWANOptionsHandler, device, openModal, handleTextInputEditCodec, submitEditDevice, handleNameChange, handleChangeSelectDeviceType, handleToggleModal }: Props) {
+export default function EditDeviceModal({handleChangeDeviceCodec, isFirst,changeEditMakeLoraWAN, autoGenerateLoraWANOptionsHandler, device, openModal, handleTextInputEditCodec, submitEditDevice, handleNameChange, handleToggleModal }: Props) {
     const { codecsList } = useContext(DevicesContext)
     if (!device)
         return;
@@ -46,20 +46,16 @@ export default function EditDeviceModal({handleChangeDeviceCodec, isFirst,change
                         isFirst?null:(
                             <>
                                 <DropDownCreateDeviceTab1
-                                    handleChangeSelect={handleChangeSelectDeviceType}
-                                    value={device.meta.type}
-                                    options={[{ name: 'Wazidev Board', id: 'WaziDev' }, { name: 'Generic board', id: 'generic' }]}
-                                />
-                                <DropDownCreateDeviceTab1
                                     title='Device Codec'
                                     name="codec"
+                                    my={2}
                                     value={device.meta.codec} 
                                     handleChangeSelect={handleChangeDeviceCodec} 
                                     options={codecsList as { id: string, name: string }[]} 
                                 />
                                 <RowContainerBetween additionStyles={{ my: 1 }}>
                                     <RowContainerNormal>
-                                        <Router sx={{ mx: 1, fontSize: 20, color: 'primary.main' }} />
+                                        <Router sx={{ mx: 0, fontSize: 20, color: 'primary.main' }} />
                                         <Typography color={'primary.main'} fontSize={13}>{device.meta.lorawan ? 'LoraWAN Settings' : 'Make LoraWAN'} </Typography>
                                     </RowContainerNormal>
                                     <Android12Switch checked={device.meta.lorawan} onChange={changeEditMakeLoraWAN} color='info' />
