@@ -7,15 +7,25 @@ import ExportTabMaintenance from "../components/ui/ExportTab.maintenance";
 import LogsTabMaintenance from "../components/ui/LogsTab.maintenance";
 import { Link, useOutletContext } from "react-router-dom";
 const BTN = ({title,icon,onClick,activeTab,children,idx}:{idx:string,title:string,activeTab:string,children?:React.ReactNode, icon?:string,onClick:(idx:string)=>void})=>(
-    <Box sx={{color:activeTab?'#000':'#535353',":hover":{bgcolor:'#ccc',borderBottom:'2px solid #499DFF'},bgcolor:activeTab===idx?'#ccc':'inherit',borderBottom:activeTab===idx?'2px solid #499DFF':'none'}}  bgcolor={activeTab===idx?'#ccc':'inherit'} >
-        <Button onClick={()=>onClick(idx)} sx={{display:'flex',alignItems:'center', color:activeTab===idx?'#000':'#535353',py:1,px:2}}  variant="text" startIcon={
-            icon?<Icon sx={{color:activeTab===idx?'#000':'#535353'}} >{icon}</Icon>:null
-        }>
+    <Box sx={{mr:2,color:activeTab===idx?'#000':'#fff',":hover":{bgcolor:'#499dff',color:'white'},border:`1px solid ${activeTab===idx?'#499dff':'#535353'}`,borderRadius:20,bgcolor:activeTab===idx?'#499dff':'inherit',}}  bgcolor={activeTab===idx?'#ccc':'inherit'} >
+        <Button onClick={()=>onClick(idx)} sx={{display:'flex',alignItems:'center',":hover":{color:'white'}, color:activeTab===idx?'#000':'#535353',py:0.5,px:3}} variant="text" startIcon={icon?<Icon sx={{":hover":{color:'white'}, color:activeTab===idx?'#fff':'inherit'}} >{icon}</Icon>:null }>
             {children}
-            {title}
+            <Typography  sx={{color:activeTab===idx?'#fff':'inherit'}} >
+                {title}
+            </Typography>
         </Button>
     </Box>
 );
+// const BTN = ({title,icon,onClick,activeTab,children,idx}:{idx:string,title:string,activeTab:string,children?:React.ReactNode, icon?:string,onClick:(idx:string)=>void})=>(
+//     <Box sx={{color:activeTab?'#000':'#535353',":hover":{bgcolor:'#ccc',borderBottom:'2px solid #499DFF'},bgcolor:activeTab===idx?'#ccc':'inherit',borderBottom:activeTab===idx?'2px solid #499DFF':'none'}}  bgcolor={activeTab===idx?'#ccc':'inherit'} >
+//         <Button onClick={()=>onClick(idx)} sx={{display:'flex',alignItems:'center', color:activeTab===idx?'#000':'#535353',py:1,px:2}}  variant="text" startIcon={
+//             icon?<Icon sx={{color:activeTab===idx?'#000':'#535353'}} >{icon}</Icon>:null
+//         }>
+//             {children}
+//             {title}
+//         </Button>
+//     </Box>
+// );
 
 const PendingTab =()=>(
     <Box sx={{position:'absolute',top:0,left:0,width:'100%',height:'100%',display:'flex',justifyContent:'center',alignItems:'center',bgcolor:'rgba(255,255,255,0.5)'}}>
@@ -84,7 +94,7 @@ export default function SettingsMaintenance() {
                 </div>
             </Box>
             
-            <RowContainerNormal additionStyles={{display:'flex',width:'100%', '&::-webkit-scrollbar': {display:'none',}, overflow:'auto',direction:'row',borderBottom:'2px solid #499DFF',mx:0}}>
+            <RowContainerNormal additionStyles={{display:'flex',width:'100%', '&::-webkit-scrollbar': {display:'none',}, overflow:'auto',direction:'row'}}>
                 <BTN activeTab={activeTab} idx='0' onClick={handleTabChange} title={'Resources'} icon={'folder_copy'}/>
                 <BTN activeTab={activeTab} idx='1' onClick={handleTabChange} title={'SSH'} icon={'terminal_outlined'}/>
                 <BTN activeTab={activeTab} idx='2'onClick={handleTabChange} title={'Containers'}>
@@ -92,7 +102,6 @@ export default function SettingsMaintenance() {
                 </BTN>
                 <BTN activeTab={activeTab} idx='3' onClick={handleTabChange} title={'Logs'} icon={'description'}/>
                 <BTN activeTab={activeTab} idx='4' onClick={handleTabChange} icon="article" title={'Export'}/>
-                
             </RowContainerNormal>
             {
                 isPending?(
