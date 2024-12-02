@@ -70,8 +70,8 @@ export default function ResourcesTabMaintenance({matches}:Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[]);
     return (
-        <Box height='100vh' >
-            <Stack direction={matches?'row':'column'} justifyContent='space-evenly' spacing={2}>
+        <Box>
+            <Stack direction={matches?'row':'column'} mt={4} justifyContent='space-evenly' spacing={0}>
                 <ReactSpeedometer
                     maxValue={100}
                     value={parseInt(usageInfo.cpu_usage)}
