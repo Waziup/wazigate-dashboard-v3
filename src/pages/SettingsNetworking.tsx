@@ -37,7 +37,7 @@ import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 import { DevicesContext } from "../context/devices.context";
 import Backdrop from "../components/Backdrop";
 import WaziLogo from '../assets/wazilogo.svg';
-import { lineClamp } from "../utils";
+import { lineClamp, nameForState } from "../utils";
 import SnackbarComponent from "../components/shared/Snackbar";
 export default function SettingsNetworking() {
     const [matches] = useOutletContext<[matches:boolean]>();
@@ -323,11 +323,12 @@ export default function SettingsNetworking() {
     useEffect(() => {
         scan();
     },[]);
-    const [apConn,eth0, accessName] = useMemo(() => {
+    const [apConn,eth0, accessName,stateName] = useMemo(() => {
         const accessName = networkDevices.wlan0? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP"): null
         const apCn = networkDevices?.wlan0? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === networkDevices.wlan0.ActiveConnectionId): null
         const eth0 = networkDevices?.eth0;
-        return [apCn, eth0,accessName]; 
+        const stateName = networkDevices.wlan0? nameForState(networkDevices.wlan0.State):''
+        return [apCn, eth0,accessName,stateName]; 
     },[networkDevices]);
     const cancelHander = () => {setSelectedWifi(undefined); setOpenModal(false); handleScreenChange('tab1')};
     return (
@@ -547,11 +548,11 @@ export default function SettingsNetworking() {
                             <Box p={1}>
                                 <Typography>
                                     {
-                                        (eth0 && eth0.IP4Config)?(
-                                            <Typography>Connected to Ethernet </Typography>
+                                        (apConn && apConn.connection.id==='WAZIGATE-AP')?(
+                                            <Typography>{stateName} - Access Point Mode</Typography>
                                         ):
-                                        (apConn && apConn.connection.id==='WAZIGATE_AP')?(
-                                            <Typography>Access Point Mode</Typography>
+                                        (eth0 && eth0.IP4Config)?(
+                                            <Typography>Connected to Ethernet</Typography>
                                         ):(
                                             <>
                                                 {
