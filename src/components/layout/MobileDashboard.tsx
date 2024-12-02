@@ -11,7 +11,7 @@ const Item = ({ path, onClick, children,icon, title, }: { path:string, onClick:(
         {children}
     </Box>
 );
-import { appChecker, capitalizeFirstLetter, isActiveDevice, returnAppURL, time_ago } from "../../utils";
+import { appChecker, isActiveDevice, returnAppURL, time_ago } from "../../utils";
 import { useNavigate, Link } from "react-router-dom";
 import { App, Cloud as Cl, Device as Dev } from "waziup";
 import type { Device, Connection } from "../../utils/systemapi";
@@ -79,11 +79,25 @@ export default function MobileDashboard({onClick,activeDevices,totalDevices, apC
                     {
                         devices.length>0?devices.filter((_dev,idx)=>idx<5).map((dev, id) => (
                             <Box onClick={() => { handleNav(dev.id,dev.name) }} key={id} sx={{ cursor: 'pointer', my: 1.5, ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, width: '100%', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
-                                <Box sx={{ position: 'absolute', top: -5, my: -1, borderRadius: 2, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
-                                    <Typography fontSize={10} mx={1.2} color={'white'} component={'span'}>{(dev.meta && dev.meta.type)? capitalizeFirstLetter(dev.meta.type):'Generic'}</Typography>
-                                </Box>
+                                
                                 <Box sx={{ py: 1.5, px: 2, }}>
-                                    <RowContainerBetween>
+                                    <Box sx={{display:'flex',}}>
+                                        <RowContainerNormal additionStyles={{my:0}}>
+                                            <Box>
+                                                <Typography color={'black'} fontSize={18} fontWeight={500}>{dev.name}</Typography>
+                                                <Typography fontSize={13} color={'#797979'}>
+                                                    {time_ago(dev.modified).toString()}
+                                                </Typography>
+                                            </Box>
+                                        </RowContainerNormal>
+                                        <Box>
+                                            <Typography color={isActiveDevice(dev.modified)? DEFAULT_COLORS.primary_blue:'#88888D'} fontSize={15}  fontWeight={300}>
+                                                {isActiveDevice(dev.modified) ? 'active' : 'offline'}
+                                            </Typography>
+                                            <Typography fontSize={10} color={'#797979'} lineHeight={.8} fontWeight={300}></Typography>
+                                        </Box>
+                                    </Box>
+                                    {/* <RowContainerBetween>
                                         <Typography color={'black'} fontSize={18} fontWeight={500}>{dev.name}</Typography>
                                         <Typography color={isActiveDevice(dev.modified)? DEFAULT_COLORS.primary_blue:'#88888D'} fontSize={15} lineHeight={.8} fontWeight={300}>
                                             {isActiveDevice(dev.modified) ? 'active' : 'offline'}
@@ -94,7 +108,7 @@ export default function MobileDashboard({onClick,activeDevices,totalDevices, apC
                                             {time_ago(dev.modified).toString()}
                                         </Typography>
                                         <Typography fontSize={10} color={'#797979'} my={1} lineHeight={.8} fontWeight={300}></Typography>
-                                    </RowContainerBetween>
+                                    </RowContainerBetween> */}
                                 </Box>
                             </Box>
                         )): <Box p={2} textAlign={'center'}><Typography>No devices found</Typography></Box>
