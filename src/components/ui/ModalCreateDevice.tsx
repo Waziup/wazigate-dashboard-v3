@@ -83,7 +83,7 @@ export default function CreateDeviceModalWindow({fullWidth, openModal, autoGener
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => { handleScreenChange('tab1'); handleToggleModal() }} variant={'text'} sx={{ mx: 1,color:'#ff0000' }} color={'info'}>CLOSE</Button>
-                    <PrimaryButton textColor={(!newDevice.name || !newDevice.meta.type)?'#d9d9d9':DEFAULT_COLORS.primary_blue} variant="text" disabled={!newDevice.name} title="CREATE" type="submit" />
+                    <PrimaryButton textColor={(!newDevice.name)?'#d9d9d9':DEFAULT_COLORS.primary_blue} variant="text" disabled={!newDevice.name} title="CREATE" type="submit" />
                 </DialogActions>
             </Box>
         </Dialog>
