@@ -31,15 +31,20 @@ export function differenceInMinutes(date:Date | string){
     } else if(diffInSecconds<3600){
         return Math.abs(Math.round(diffInSecconds/60))+' min';
     } else if(diffInSecconds<86400){
-        return Math.abs(Math.round(diffInSecconds/3600))+' hrs';
+        const hr = Math.abs(Math.round(diffInSecconds/3600))
+        return hr===1?hr+' hr': hr +' hrs';
     } else if(diffInSecconds<604800){
-        return Math.abs(Math.round(diffInSecconds/86400))+' days';
+        const dy = Math.abs(Math.round(diffInSecconds/86400))
+        return dy===1?dy+' day':dy+' days';
     } else if(diffInSecconds<2419200){
-        return Math.abs(Math.round(diffInSecconds/604800))+' weeks';
+        const weekValue = Math.abs(Math.round(diffInSecconds/604800))
+        return weekValue===1? weekValue+' week': weekValue+' weeks';
     } else if(diffInSecconds<29030400){
-        return Math.abs(Math.round(diffInSecconds/2419200))+' months';
+        const mth = Math.abs(Math.round(diffInSecconds/2419200))
+        return mth ===1?mth+' month': mth+' months';
     } else if(diffInSecconds<2903040000){
-        return Math.abs(Math.round(diffInSecconds/29030400))+' years';
+        const yr = Math.abs(Math.round(diffInSecconds/29030400))
+        return yr===1?yr+' year': yr+' years';
     }
 
 }
@@ -165,4 +170,23 @@ export function time_ago(time: string | number | Date | null) {
         }
     }
     return time;
+}
+const stateNames: Record<string, string> = {
+    "NmDeviceStateDisconnected": "Disconnecting old connection ...",
+    "NmDeviceStatePrepare": "Preparing connection ...",
+    "NmDeviceStateConfig": "Preparing connection configuration ...",
+    "NmDeviceStateIpConfig": "Preparing connection IP configuration ...",
+    "NmDeviceStateIpCheck": "Checking connection IP configuration ...",
+    "NmDeviceStateActivated": "Connection activated",
+    "NmDeviceStateDeactivating": "Deactivating connection ...",
+    "NmDeviceStateUnavailable": "Device unavailable",
+    "NmDeviceStateUnmanaged": "Device not managed",
+    "NmDeviceStateUnknown": "Device state unknown",
+    "NmDeviceStateSecondaries": "Waiting for connection ...",
+    "NmDeviceStateNeedAuth": "Connection requires authorization.",
   }
+  
+export function nameForState(state: string) {
+    if(!state) return "";
+    return stateNames[state] || ("State: "+state);
+}
