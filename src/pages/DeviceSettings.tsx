@@ -262,23 +262,6 @@ export default function DeviceSettings() {
     //     });
     //     setIsEdited(true);
     // }
-    const handleChangeSelect = (event: SelectChangeEvent<string>) => {
-        setThisDevice({
-            ...thisDevice,
-            meta: {
-                ...thisDevice.meta,
-                type: event.target.value,
-                lorawan: event.target.value === 'WaziDev' ? {
-                    devEUI: '',
-                    devAddr: '',
-                    nwkSEncKey: '',
-                    appSKey: '',
-                    profile: "WaziDev",
-                } : null
-            }
-        });
-        setIsEdited(true);
-    };
     return (
         <>
             <Box sx={{px:matches?4:2,py:matches?2:0, height: '100%', overflowY: 'auto', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' } }}>
@@ -320,12 +303,6 @@ export default function DeviceSettings() {
                             {/* <Android12Switch checked={thisDevice.meta.lorawan} onChange={changeMakeLoraWAN} color='info' /> */}
                         </RowContainerBetween>
                         <Box my={2}>
-                            <DropDownCreateDeviceTab1
-                                title="Application Type"
-                                value={thisDevice.meta.type}
-                                handleChangeSelect={handleChangeSelect}
-                                options={[{name:'Wazidev Board',id:'WaziDev', },{id:'generic',name:'Generic board',}]} 
-                            />
                             <AddTextShow 
                                 name="devAddr"
                                 onTextInputChange={handleTextInputChange}
