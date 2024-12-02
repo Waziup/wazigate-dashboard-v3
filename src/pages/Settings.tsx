@@ -1,6 +1,6 @@
-import { Box, Grid, Typography,  Button, CircularProgress, SelectChangeEvent } from '@mui/material';
+import { Box, Grid, Typography,  Button, CircularProgress, SelectChangeEvent,  Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { DEFAULT_COLORS } from '../constants';
-import { AccessTime, CheckCircle, PowerSettingsNew, RestartAlt, Save } from '@mui/icons-material';
+import { AccessTime, CheckCircle, PowerSettingsNew, RestartAlt } from '@mui/icons-material';
 import { SxProps, Theme } from '@mui/material';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import RowContainerNormal from '../components/shared/RowContainerNormal';
@@ -12,8 +12,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
 import { useState, useEffect, useMemo, useContext } from 'react';
 import {setTime, shutdown,reboot,getBuildNr,getTimezoneAuto, getTime, getTimezones, setTimezone, } from '../utils/systemapi';
-
-import { Android12Switch } from '../components/shared/Switch';
 import SelectElementString from '../components/shared/SelectElementString';
 import GridItemEl from '../components/shared/GridItemElement';
 import SnackbarComponent from '../components/shared/Snackbar';
@@ -42,7 +40,6 @@ function Settings() {
     const [currentTime, setCurrentTime] = useState<string>('');
     const [buildNr, setBuildNr] = useState<string>('');
     const [responseMessage , setReponseMessage] = useState<string>('');
-    const [isSetDateManual, setIsSetDateManual] = useState<boolean>(false);
     const [isSetTimezoneAuto, setIsSetTimezoneAuto] = useState<boolean>(false);
     const [data, setData] = useState<{
         time: Date | null,
@@ -50,6 +47,7 @@ function Settings() {
         zone: string
     } | null>(null);
 
+    const [modalProps, setModalProps] = useState<{ open: boolean, title: string,  }>({ open: false, title: '' });
     const [timezones, setTimezones] = useState<string[]>([]);
     const {wazigateId,networkDevices, showDialog} = useContext(DevicesContext);
     
@@ -64,6 +62,7 @@ function Settings() {
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
+            setModalProps({open:false,title:''})
         },(error) => {
             showDialog({
                 title:"Error",
@@ -73,6 +72,7 @@ function Settings() {
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
+            setModalProps({open:false,title:''})
         });
     }
     const onTimeChange = (date: dayjs.Dayjs) => {
@@ -186,11 +186,46 @@ function Settings() {
             onCancel() {},
         });
     }
-    function handleSetDateManually() {
-        setIsSetDateManual(!isSetDateManual);
+    function closeModal() {
+        setModalProps({ open: false, title: ''});
     }
     return (
         <>
+            <Dialog fullWidth open={modalProps.open && modalProps.title === 'Changing Timezone'} onClose={closeModal}>
+                <DialogTitle>{modalProps.title}</DialogTitle>
+                <DialogContent sx={{my:2,overflow:'auto'}}>
+                    <SelectElementString
+                        conditions={timezones}
+                        handleChange={handleSaveTimezone}
+                        title='Set TimeZone'
+                        value={data? data.zone:''}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button  onClick={closeModal} variant={'text'} sx={{ mx: 2,color:'#ff0000' }} color={'info'}>CLOSE</Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog fullWidth open={modalProps.open && modalProps.title === 'Changing Time and date'} onClose={closeModal}>
+                <DialogTitle>{modalProps.title}</DialogTitle>
+                <DialogContent sx={{overflow:'auto',my:2,}}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DemoContainer  components={[ 'DatePicker',]}>
+                            <DemoItem label="">
+                                <DesktopDateTimePicker 
+                                    onChange={(v)=>onTimeChange(v as dayjs.Dayjs)} 
+                                    sx={{ p: 0 }} 
+                                    value={dayjs(data?.time)} 
+                                    defaultValue={dayjs(data?.time)} 
+                                />
+                            </DemoItem>
+                        </DemoContainer>
+                    </LocalizationProvider>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeModal} variant={'text'} sx={{ mx: 2,color:'#ff0000' }} color={'info'}>CLOSE</Button>
+                    <Button autoFocus onClick={submitTime} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >SAVE</Button>
+                </DialogActions>
+            </Dialog>
             <SnackbarComponent anchorOrigin={{ vertical: 'top', horizontal: 'center' }} severity='success' autoHideDuration={6000} message={responseMessage} />
             <Box sx={{px:matches? 4:2,py:2, overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
                 <Box>
@@ -280,41 +315,18 @@ function Settings() {
                                 
                                 {
                                     isSetTimezoneAuto?(null):(
-                                        <SelectElementString
-                                            conditions={timezones}
-                                            handleChange={handleSaveTimezone}
-                                            title='Set TimeZone'
-                                            value={data? data.zone:''}
-                                        />
+                                        <Box minWidth={120} display={'flex'} justifyContent={'space-between'} alignItems={'center'} width={'100%'} my={.5}>
+                                            <Typography  fontSize={14} fontWeight={'300'} color={'#292F3F'}>Set TimeZone</Typography>
+                                            <Button disabled={(data && data.zone)?false:true} onClick={()=>{setModalProps({open:true,title:'Changing Timezone',})}} color='info'>CHANGE</Button>
+                                        </Box>
                                     )
                                 }
                             </Box>
                             <Box borderRadius={1} p={1} m={1}>
                                 <RowContainerBetween additionStyles={{ }}>
                                     <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>Set time and date manually</Typography>
-                                    <Android12Switch checked={isSetDateManual} onClick={handleSetDateManually} color='info' />
+                                    <Button disabled={(data && data.time)?false:true} onClick={()=>{setModalProps({open:true,title:'Changing Time and date'})}} color='info'>CHANGE</Button>
                                 </RowContainerBetween>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DemoContainer
-                            
-                                        components={[
-                                            'DatePicker',
-                                        ]}
-                                    >
-                                        <DemoItem label="">
-                                            <DesktopDateTimePicker 
-                                                onChange={(v)=>onTimeChange(v as dayjs.Dayjs)} 
-                                                disabled={!isSetDateManual} 
-                                                sx={{ p: 0 }} 
-                                                value={dayjs(data?.time)} 
-                                                defaultValue={dayjs(data?.time)} 
-                                            />
-                                        </DemoItem>
-                                    </DemoContainer>
-                                </LocalizationProvider>
-                                <Button onClick={submitTime} disabled={!isSetDateManual} variant="text" sx={{ color: '#fff', m: 1, bgcolor: 'info.main' }} startIcon={<Save />}>
-                                    Save
-                                </Button>
                             </Box>
                         </Box>
                     </GridItem>
