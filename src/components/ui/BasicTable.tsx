@@ -7,10 +7,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Device } from 'waziup';
-import { capitalizeFirstLetter, differenceInMinutes, isActiveDevice, lineClamp } from '../../utils';
-import { Box, Typography } from '@mui/material';
-import { Sensors } from '@mui/icons-material';
-import { DEFAULT_COLORS } from '../../constants';
+import { differenceInMinutes, isActiveDevice, lineClamp } from '../../utils';
+import { Typography } from '@mui/material';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -63,7 +61,6 @@ export default function CustomizedTables({devices,onDeviceClick}:Props) {
             <Table sx={{ minWidth: 700, tableLayout:'fixed' }} aria-label="customized table">
                 <TableHead>
                     <TableRow>
-                        <StyledTableCell> </StyledTableCell>
                         <StyledTableCell>Name</StyledTableCell>
                         <StyledTableCell>Last update</StyledTableCell>
                         <StyledTableCell align="left">Status</StyledTableCell>
@@ -72,14 +69,14 @@ export default function CustomizedTables({devices,onDeviceClick}:Props) {
                 <TableBody>
                     {rows.map((row) => (
                         <StyledTableRow onClick={()=>devF(row.name.split('*')[0])} key={row.name}>
-                            <StyledTableCell align="left">
+                            {/* <StyledTableCell align="left">
                                 <Box>
                                     <Box sx={{display:'inline-flex',alignItems:'center',borderRadius:3,px: 1.5,py: .4,bgcolor:DEFAULT_COLORS.primary_blue}}>
                                         <Sensors sx={{fontSize:12,mr: .2, color:'#fff'}}/>
                                         <Typography sx={{...lineClamp(1),fontSize:12, color: 'white'}} >{capitalizeFirstLetter(row.status.split('*')[1])}</Typography>
                                     </Box>
                                 </Box>
-                            </StyledTableCell>
+                            </StyledTableCell> */}
                             <StyledTableCell  scope="row">
                                 <Typography sx={{...lineClamp(1),fontWeight:300}} >{row.name.split('*')[0]}</Typography>
                             </StyledTableCell>
