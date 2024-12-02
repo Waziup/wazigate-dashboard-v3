@@ -1,6 +1,6 @@
 import { Box,  Grid, CardContent, Typography, SelectChangeEvent, SpeedDial, SpeedDialAction, SpeedDialIcon,  } from '@mui/material';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
-import { Add,  Sensors, } from '@mui/icons-material';
+import { Add } from '@mui/icons-material';
 import { DEFAULT_COLORS } from '../constants';
 import { Link, useNavigate, useOutletContext, } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
@@ -8,10 +8,11 @@ import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
 import EditDeviceModal from '../components/ui/EditDeviceModal';
 import { DevicesContext, SensorX } from '../context/devices.context';
-import { capitalizeFirstLetter, devEUIGenerateFc, differenceInMinutes, lineClamp,  } from '../utils';
+import { devEUIGenerateFc, differenceInMinutes, lineClamp,  } from '../utils';
 import PrimaryIconButton from '../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
 import MenuComponent from '../components/shared/MenuDropDown';
+import RowContainerNormal from '../components/shared/RowContainerNormal';
 const initialNewDevice: Device = {
     actuators: [],
     created: new Date(),
@@ -25,6 +26,7 @@ const initialNewDevice: Device = {
     name: '',
     sensors: [],
 }
+import DeviceImage from '../assets/device.png';
 function Devices() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -466,25 +468,16 @@ function Devices() {
                             devices.map((device, id) => {
                                 return (
                                     <Grid item key={id}  md={6} lg={4} xl={4} sm={6} xs={12}  my={1} px={0} >
-                                        <Box sx={{ cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
-                                            {
-                                                (device.meta && device.meta.type) ?(
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -4.5, my: -1, px: 1, py: .4, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
-                                                        <Sensors sx={{ fontSize: 15, color: '#fff' }} />
-                                                        <Typography fontSize={13} mx={1} color={'white'} component={'span'}>{device.meta ? capitalizeFirstLetter(device.meta.type) : ''}</Typography>
-                                                    </Box>
-                                                ):(
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', position: 'absolute', top: -8, my: -1, px: 1, py: .4, borderRadius: 1, mx: 1, bgcolor: DEFAULT_COLORS.primary_blue }}>
-                                                        <Sensors sx={{ fontSize: 15, color: '#fff' }} />
-                                                        <Typography fontSize={13} mx={1} color={'white'} component={'span'}>Generic</Typography>
-                                                    </Box>
-                                                )
-                                            }
+                                        <Box sx={{ cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 1, }}>
+                                            
                                             <RowContainerBetween additionStyles={{p:2,borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5,}}>
-                                                <Box onClick={()=>{navigate(`/devices/${device.id}`, { state: { title: device.name } })}} >
-                                                    <Typography sx={{color:'info',fontWeight:700, ...lineClamp(1)}} >{(device.name && device.name.length > 10) ? device.name: device.name?device.name:''}</Typography>
-                                                    <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}> Last updated {differenceInMinutes(new Date(device.modified).toISOString())} </Typography>
-                                                </Box>
+                                                <RowContainerNormal additionStyles={{my:1}}>
+                                                    <Box component={'img'} width={35} src={DeviceImage} mr={1} height={35} />
+                                                    <Box onClick={()=>{navigate(`/devices/${device.id}`, { state: { title: device.name } })}} >
+                                                        <Typography sx={{color:'info',fontWeight:700, ...lineClamp(1)}} >{(device.name && device.name.length > 10) ? device.name: device.name?device.name:''}</Typography>
+                                                        <Typography color={DEFAULT_COLORS.secondary_black} fontSize={12} fontWeight={300}> Last updated {differenceInMinutes(new Date(device.modified).toISOString())} </Typography>
+                                                    </Box>
+                                                </RowContainerNormal>
                                                 <MenuComponent
                                                     open={open}
                                                     menuItems={[
@@ -509,7 +502,7 @@ function Devices() {
                                             </RowContainerBetween>
                                             
                                             <CardContent 
-                                                sx={{ px:0, maxHeight:((device.sensors.length+device.actuators.length)>3)?195:null, overflowY:'auto', 
+                                                sx={{ px:0, maxHeight:((device.sensors.length+device.actuators.length)>3)?200:null, overflowY:'auto', 
                                                 '&::-webkit-scrollbar': {
                                                     width: '5px',
                                                 },
