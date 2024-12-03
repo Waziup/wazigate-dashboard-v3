@@ -592,7 +592,7 @@ function SelectedNetwork({submitHandler,selectedWifi,backHandler,cancelHander,se
             <RowContainerBetween additionStyles={{p:2,borderBottom:'1px solid #ccc'}}>
                 <Box sx={{ display: 'flex',  alignItems: 'center' }} >
                     <ArrowBack onClick={backHandler} sx={{ fontSize: 20, mr: 1, color: DEFAULT_COLORS.primary_black, cursor:'pointer'}} />
-                    <Typography sx={{...lineClamp(1),color:'#212529',fontWeight:500}}>Connect to {(selectedWifi && selectedWifi.ssid && selectedWifi?.ssid)}</Typography>
+                    <Typography sx={{...lineClamp(1),color:'#212529',fontWeight:500}}>Connecting to {(selectedWifi && selectedWifi.ssid && selectedWifi?.ssid)}</Typography>
                 </Box>
                 <Close onClick={cancelHander} sx={{ ...IconStyle,cursor:'pointer', fontSize: 20 }} />
             </RowContainerBetween>
@@ -621,7 +621,7 @@ function SelectedNetwork({submitHandler,selectedWifi,backHandler,cancelHander,se
                     />
                     <DialogActions>
                         <Button onClick={cancelHander} variant='text' sx={{ mx: 1,color:'#ff0000' }} color='info'>CLOSE</Button>
-                        <PrimaryButton title="Connect" type="submit" />
+                        <PrimaryButton variant="text" textColor={DEFAULT_COLORS.primary_blue} title="Connect" type="submit" />
                     </DialogActions>
                 </form>
             </Box>
