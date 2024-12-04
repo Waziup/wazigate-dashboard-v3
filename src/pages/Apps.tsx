@@ -2,7 +2,7 @@ import { Box, Button, CardHeader, CircularProgress, Dialog, DialogActions, Dialo
 import { NormalText, } from './Dashboard';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
-import {  Download, FiberNew,  } from '@mui/icons-material';
+import {  Download, FiberNew, Terminal,  } from '@mui/icons-material';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import { StartAppConfig, type App } from 'waziup';
@@ -549,10 +549,19 @@ export default function Apps() {
                                             />
                                         ) : (
                                             <GridItem key={app.id}>
-                                                <Box px={.4} display={'flex'} alignItems={'center'} sx={{ position: 'absolute', top: -5, my: -1, }} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
-                                                    <Box component={'img'} src={LogoSig} />
-                                                    <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author?app.author.name??'Generic':''}</Typography>
-                                                </Box>
+                                                {
+                                                    app.author?(
+                                                        <Box px={.4} display={'flex'} alignItems={'center'} sx={{ position: 'absolute', top: -5, my: -1, }} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
+                                                            <Box component={'img'} src={LogoSig} />
+                                                            <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author?typeof(app.author)==='string'?app.author:app.author.name??'Generic':''}</Typography>
+                                                        </Box>
+                                                    ):(
+                                                        <Box px={.4} display={'flex'} alignItems={'center'} sx={{position:'absolute',top:-5,my:-1,}} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.orange}>
+                                                            <Terminal sx={{color:'#fff'}} />
+                                                            <Typography  mx={1} color={'white'} component={'span'}>Custom App</Typography>
+                                                        </Box>
+                                                    )
+                                                }
                                                 <CardHeader
                                                     title={<NormalText title={app.name} />}
                                                     subheader={<Typography color={'#325460'} fontWeight={300}><Typography component={'span'}fontWeight={200} fontSize={14}>App ID:</Typography> {app.id}</Typography>}
