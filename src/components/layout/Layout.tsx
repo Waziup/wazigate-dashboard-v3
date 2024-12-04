@@ -47,7 +47,7 @@ function Layout() {
         });
     },[navigate, setProfile, setAccessToken]);
     useEffect(()=>{
-        const int = setInterval(reToken, 1000 * 60 * 8);
+        const int = setInterval(reToken, 1000 * 60 * 5);
         const timer = setInterval(isAuthorized, 1000 * 15);
         return ()=>{
             clearInterval(int);
