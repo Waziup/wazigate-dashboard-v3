@@ -12,7 +12,7 @@ interface CardProps{
     icon?:React.ReactNode
 }
 const CardComponent = ({description,path,title,icon}:CardProps)=>(
-    <Card elevation={0} sx={{width:[400,250,250,300,300], m:.5,bgcolor:'white'}} variant='elevation' >
+    <Card elevation={1} sx={{width:[400,250,250,300,300], m:.5,mr:1,bgcolor:'white'}} variant='elevation' >
         <Box px={2}>
             {icon}
             <Typography sx={{ fontWeight:'700',...lineClamp(1) }}>
