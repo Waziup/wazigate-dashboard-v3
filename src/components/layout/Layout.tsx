@@ -66,7 +66,7 @@ function Layout() {
         <>
             {
                 matches ? (
-                    <Box minWidth={'100vw'}bgcolor={'#E7E7E7'} sx={{overflowY:'auto',overflowX:'hidden'}}>
+                    <Box minWidth={'100vw'}bgcolor={'#FAFBFB'} sx={{overflowY:'auto',overflowX:'hidden'}}>
                         <Box  sx={{display:'flex',position:'relative',flexWrap:'wrap',height:'100vh',maxWidth:'1400px',}}>
                             <Box sx={{overflowY:'hidden',position:'fixed',top:0,left:0, width: matchesMd?40:matchesLg?200:220, bgcolor:'#292F3F',height:'100%',}}>
                                 <Sidebar matchesMd={matchesMd} />
@@ -77,7 +77,7 @@ function Layout() {
                         </Box>
                     </Box>
                 ) : (
-                    <Box sx={{height:'100vh',  bgcolor: '#F0F2F5', overflowY: 'auto' }}>
+                    <Box sx={{height:'100vh',  bgcolor: '#FAFBFB', overflowY: 'auto' }}>
                         <RowContainerBetween additionStyles={{position:'absolute',top:0,width:'100%',zIndex:50,height: 55, bgcolor: 'primary.main' }} >
                             <Box sx={{ display: 'flex', py: 2, alignItems: 'center' }} >
                                 <Menu onClick={handleToggle} sx={{ mx: 2, color: 'white', cursor: 'pointer' }} />
