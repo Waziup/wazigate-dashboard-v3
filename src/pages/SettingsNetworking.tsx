@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs,ListItemText,  Grid,Icon, SxProps,  Theme, Typography, CircularProgress, Grow, LinearProgress, Modal, DialogActions, Button } from "@mui/material";
+import { Box, Breadcrumbs,ListItemText,  Grid,Icon, SxProps,  Theme, Typography, CircularProgress, Grow, LinearProgress, Modal, DialogActions, Button, Paper } from "@mui/material";
 import { Link, useOutletContext } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
@@ -540,7 +540,7 @@ export default function SettingsNetworking() {
                                 </Box>
                             </Box>
                         </GridItemEl>
-                        <Box bgcolor='#fff' borderRadius={1}>
+                        <Paper sx={{bgcolor:'#fff'}} >
                             <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5,border:'.5px solid #d8d8d8', bgcolor: '#f7f7f7', alignItems: 'center' }} p={1} >
                                 <WifiOutlined sx={IconStyle}/>
                                 <Typography color={'#212529'} fontWeight={500}>Available Wifi</Typography>
@@ -572,7 +572,7 @@ export default function SettingsNetworking() {
                             <Box sx={{p:1,cursor:'pointer'}} onClick={() => setOpenModal(true)}>
                                 <Typography color={'#666'}>Click here to change network connection</Typography>
                             </Box>
-                        </Box>
+                        </Paper>
                     </GridItem>
                 </Grid>
             </Box>

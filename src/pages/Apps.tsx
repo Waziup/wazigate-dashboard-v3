@@ -112,7 +112,7 @@ interface AppProp{
 }
 export const GridItem = ({ children, }:AppProp) => (
     <Grid item md={6} lg={4} xl={4} sm={6} xs={12} minHeight={100} my={1} px={0} >
-        <Box minHeight={100} sx={{ py: 1, position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
+        <Box minHeight={100} sx={{boxShadow:1, py: 1, position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
             {children}
         </Box>
     </Grid>

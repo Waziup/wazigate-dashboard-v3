@@ -1,5 +1,5 @@
 import { Save } from "@mui/icons-material";
-import { Alert, Box, CircularProgress, ListItemText, Snackbar, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Alert, Box, CircularProgress, ListItemText, Paper, Snackbar, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DEFAULT_COLORS } from "../constants";
 import { useContext, useCallback, useEffect, useState } from "react";
 import * as yup from 'yup';
@@ -128,7 +128,7 @@ function User() {
                 </Alert>
             </Snackbar>
             <Box sx={{px:matches?4:1,py:2, width: '100%',  position: 'relative', height: '100%', }}>
-                <Box sx={{ mx:'auto', left: '50%', borderRadius: 2, bgcolor: 'white', width: matches ? '50%' : '95%' }}>
+                <Paper sx={{ mx:'auto', left: '50%', borderRadius: 2, bgcolor: 'white', width: matches ? '50%' : '95%' }}>
                     <Box sx={{ display: 'flex', py: 2, width: '100%', borderBottom: '1px solid #D5D6D8', alignItems: 'center', }}>
                         <Box component={'img'} src={Logo} mx={2} />
                         <ListItemText
@@ -210,7 +210,7 @@ function User() {
                             }
                         </Box>
                     </form>
-                </Box>
+                </Paper>
             </Box>
         </>
     );

@@ -1,4 +1,4 @@
-import { Box, Grid, Stack, Typography,styled } from "@mui/material";
+import { Box, Grid, Paper, Stack, Typography,styled } from "@mui/material";
 import {  CloudOff, Wifi,  Cloud, SearchOff, } from '@mui/icons-material';
 import BasicTable from "../components/ui/BasicTable";
 import React, { useContext, useMemo, } from "react";
@@ -12,14 +12,14 @@ import { App, Device } from "waziup";
 import { allActiveDevices, appChecker, capitalizeFirstLetter,orderByLastUpdated, returnAppURL } from "../utils";
 import InternetIndicator from "../components/ui/InternetIndicator";
 export const Item = ({ path, onClick, children,icon, title, }: { path:string, onClick:(path: string)=>void ,icon: React.ReactNode, children: React.ReactNode, title: string }) => (
-    <Box onClick={()=>onClick(path)} mx={2} sx={{cursor:'pointer', width: '33%', minWidth: 250, mx: 2, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
+    <Box onClick={()=>onClick(path)} mx={2} sx={{cursor:'pointer',boxShadow:1, width: '33%', minWidth: 250, mx: 2, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
         {icon}
         <NormalText title={title} />
         {children}
     </Box>
 );
 const DeviceStatus = ({ devices,onDeviceClick,activeDevices,totalDevices }: {totalDevices: number,activeDevices:number, onDeviceClick:(devId:string)=>void, devices: Device[] }) => (
-    <Box sx={{ height: '100%',width:'100%', borderRadius: 2, bgcolor: 'white', p: 0 }}>
+    <Paper sx={{height: '100%',width:'100%', borderRadius: 2, bgcolor: 'white', p: 0 }}>
         <Box sx={{display:'flex',justifyContent:'space-between', width:'100%',my:0,alignItems:'flex-start', p:2}}>
             <Box>
                 <NormalText title="Device Status" />
@@ -32,7 +32,7 @@ const DeviceStatus = ({ devices,onDeviceClick,activeDevices,totalDevices }: {tot
             </Link>
         </Box>
         <BasicTable onDeviceClick={onDeviceClick} devices={devices} />
-    </Box>
+    </Paper>
 );
 const TextItem = ({ text }: { text: string }) => <Typography sx={{ fontSize: [10, 10, 12, 13, 10], color: DEFAULT_COLORS.secondary_black, fontWeight: 300 }} >{text}</Typography>
 const MyScrollingElement = styled(Stack)(() => ({
@@ -48,7 +48,7 @@ const MyScrollingElement = styled(Stack)(() => ({
     },
 }));
 const AppStatus = ({ apps }: { apps: App[] }) => (
-    <Box sx={{ height: '100%', bgcolor: 'white', borderRadius: 2,  }}>
+    <Paper sx={{height: '100%', bgcolor: 'white', borderRadius: 2,  }}>
         <RowContainerBetween additionStyles={{p:2}}>
             <NormalText title="App Status" />
             <Link style={{textDecoration:'none', color:DEFAULT_COLORS.primary_blue,}} to={'/apps'}>
@@ -102,7 +102,7 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
                 )
             }
         </MyScrollingElement>
-    </Box>
+    </Paper>
 );
 export const NormalText = ({ title }: { title: string }) => (<Typography color={DEFAULT_COLORS.navbar_dark}>{title}</Typography>)
 function Dashboard() {
