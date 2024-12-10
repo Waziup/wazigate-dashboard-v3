@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Device } from 'waziup';
 import { differenceInMinutes, isActiveDevice, lineClamp } from '../../utils';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -45,6 +45,7 @@ interface Props{
     onDeviceClick:(devId:string)=>void,
     devices: Device[]
 }
+import DeviceImage from '../../assets/device.png'
 export default function CustomizedTables({devices,onDeviceClick}:Props) {
     const rows = devices.map((dev)=>{
         return createData(dev.name+'*'+differenceInMinutes(dev.modified),differenceInMinutes(dev.modified) ??'',isActiveDevice(dev.modified)+'*'+(dev.meta.type?dev.meta.type:'Generic'))
@@ -77,7 +78,8 @@ export default function CustomizedTables({devices,onDeviceClick}:Props) {
                                     </Box>
                                 </Box>
                             </StyledTableCell> */}
-                            <StyledTableCell  scope="row">
+                            <StyledTableCell sx={{display:'flex', alignItems:'center'}}  scope="row">
+                                <Box component={'img'} width={35} src={DeviceImage} mr={2} height={35} />
                                 <Typography sx={{...lineClamp(1),fontWeight:300}} >{row.name.split('*')[0]}</Typography>
                             </StyledTableCell>
                             <StyledTableCell align="left">
