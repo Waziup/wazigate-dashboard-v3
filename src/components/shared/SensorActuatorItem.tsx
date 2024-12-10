@@ -51,36 +51,38 @@ export default function SensorActuatorItem({kind, icon, callbackFc,type, modifie
         ontologies.actingDevices[kind as keyof typeof ontologies.actingDevices]? ontologies.actingDevices[kind as keyof typeof ontologies.actingDevices].icon: 'motor'
         : ontologies.sensingDevices[kind as keyof typeof ontologies.sensingDevices]? ontologies.sensingDevices[kind as keyof typeof ontologies.sensingDevices].icon: 'temperature';
     return (
-        <Grid lg={2} my={1} xl={2.5} md={4} xs={5.3} sm={3.6}  item sx={{ bgcolor: '#fff',cursor:'pointer',mr:2,px:1.5, borderRadius: 2 }}>
-            <RowContainerBetween additionStyles={{pt:1}}>
-                <Box onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}`)}} >
-                    <Typography sx={{fontSize:15,fontWeight:'600',...lineClamp(1)}}>{removeSpecialChars(sens? sens.name:'')}</Typography>
-                    <Typography sx={{...lineClamp(1),color:DEFAULT_COLORS.secondary_black,fontSize:matches?12:10,fontWeight:300}}>
-                        {time_ago(modified).toString()}
-                    </Typography>
+        <Grid lg={2} my={1} xl={2.5} md={4} xs={5.3} sm={3.6}  item >
+            <Box sx={{boxShadow:1, bgcolor: '#fff',cursor:'pointer',mr:2,px:1.5, borderRadius: 2 }}>
+                <RowContainerBetween additionStyles={{pt:1}}>
+                    <Box onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}`)}} >
+                        <Typography sx={{fontSize:15,fontWeight:'600',...lineClamp(1)}}>{removeSpecialChars(sens? sens.name:'')}</Typography>
+                        <Typography sx={{...lineClamp(1),color:DEFAULT_COLORS.secondary_black,fontSize:matches?12:10,fontWeight:300}}>
+                            {time_ago(modified).toString()}
+                        </Typography>
+                    </Box>
+                    <MenuComponent
+                        open={open}
+                        menuItems={[
+                            {
+                                icon: 'settings',
+                                text: 'Settings',
+                                clickHandler: ()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}/setting`);}
+                            },
+                            {
+                                icon: 'delete',
+                                text: 'Delete',
+                                clickHandler: handleDelete
+                            }
+                        ]}
+                    />
+                </RowContainerBetween>
+                <Box sx={{display:'flex',alignItems:'center',mb:.5}} onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}`)}}>
+                    <SVGIcon
+                        style={{ width: 35, height: 35, marginRight: 5 }}
+                        src={`${ontologiesicons}#${icon ? icon: iconPath}`}
+                    />
+                    {children}
                 </Box>
-                <MenuComponent
-                    open={open}
-                    menuItems={[
-                        {
-                            icon: 'settings',
-                            text: 'Settings',
-                            clickHandler: ()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}/setting`);}
-                        },
-                        {
-                            icon: 'delete',
-                            text: 'Delete',
-                            clickHandler: handleDelete
-                        }
-                    ]}
-                />
-            </RowContainerBetween>
-            <Box sx={{display:'flex',alignItems:'center',mb:.5}} onClick={()=>{navigate(`/devices/${deviceId}/${isActuator(kind)?'actuators':'sensors'}/${sens.id}`)}}>
-                <SVGIcon
-                    style={{ width: 35, height: 35, marginRight: 5 }}
-                    src={`${ontologiesicons}#${icon ? icon: iconPath}`}
-                />
-                {children}
             </Box>
         </Grid>
     )

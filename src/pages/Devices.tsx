@@ -468,7 +468,7 @@ function Devices() {
                             devices.map((device, id) => {
                                 return (
                                     <Grid item key={id}  md={6} lg={4} xl={4} sm={6} xs={12}  my={1} px={0} >
-                                        <Box sx={{ cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 1, }}>
+                                        <Box sx={{boxShadow:1, cursor: 'pointer', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 1, }}>
                                             
                                             <RowContainerBetween additionStyles={{p:2,borderBottom: '1px solid rgba(0,0,0,.1)', py: 1.5,}}>
                                                 <RowContainerNormal additionStyles={{my:1}}>

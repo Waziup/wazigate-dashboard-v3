@@ -371,7 +371,7 @@ function DeviceSensorSettings() {
                     </div>
                 </Box>
                 <Box sx={{borderTopRightRadius:10,display:'flex',flexDirection:matches?'row':'column',px:matches?4:3,height:'auto', width:'100%',pt:matches?0:.5}} >
-                    <Box bgcolor={'white'} borderRadius={2} p={2}  width={matches?'50%':'99%'}>
+                    <Box bgcolor={'white'} boxShadow={1} borderRadius={2} p={2}  width={matches?'50%':'99%'}>
                         <Typography fontWeight={500} fontSize={20}  color={'#292F3F'}>{pathname.includes('sensors') ? 'Sensor' : 'Actuator'} settings</Typography>
                         <>
                             <form onSubmit={handleChangeSensorOrActuatorSubmittion}>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Cloud, CloudOff, Wifi } from "@mui/icons-material";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Paper, Stack, Typography } from "@mui/material";
 import { DEFAULT_COLORS } from "../../constants";
 import RowContainerBetween from "../shared/RowContainerBetween";
 import RowContainerNormal from "../shared/RowContainerNormal";
@@ -26,6 +26,7 @@ interface Props{
     totalDevices: number
     selectedCloud: Cl | null
 }
+import DeviceImage from '../../assets/device.png'
 export default function MobileDashboard({onClick,activeDevices,totalDevices, apConn,apps,devices,selectedCloud, eth0 }: Props) {
     const navigate = useNavigate();
     const handleNav = (devId: string,devName:string) => {
@@ -78,10 +79,11 @@ export default function MobileDashboard({onClick,activeDevices,totalDevices, apC
                 <Box display={'flex'} flexDirection={'column'} mt={1} py={1} alignItems={'center'}>
                     {
                         devices.length>0?devices.filter((_dev,idx)=>idx<5).map((dev, id) => (
-                            <Box onClick={() => { handleNav(dev.id,dev.name) }} key={id} sx={{ cursor: 'pointer', my: 1.5, ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, width: '100%', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
+                            <Box onClick={() => { handleNav(dev.id,dev.name) }} key={id} sx={{boxShadow:1, cursor: 'pointer', my: 1.5, ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, width: '100%', height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 2, }}>
                                 
                                 <Box sx={{ py: 1.5, px: 2, }}>
                                     <Box sx={{display:'flex',}}>
+                                        <Box component={'img'}  width={35} src={DeviceImage} mr={2} height={35} />
                                         <RowContainerNormal additionStyles={{my:0}}>
                                             <Box>
                                                 <Typography color={'black'} fontSize={18} fontWeight={500}>{dev.name}</Typography>
@@ -122,7 +124,7 @@ export default function MobileDashboard({onClick,activeDevices,totalDevices, apC
                         <Typography fontSize={10} textAlign={'center'}>See all</Typography>
                     </Link>
                 </RowContainerBetween>
-                <Box display={'flex'} flexDirection={'column'} mt={1} overflow={'auto'} borderRadius={2} bgcolor={'#fff'} alignItems={'center'}>
+                <Paper sx={{display:'flex',flexDirection:'column',mt:1,overflow:'auto',borderRadius:2,bgcolor:'#fff',alignItems:'center'}}>
                     {
                         apps.length>0?apps.map((app, id) => {
                             return(
@@ -155,7 +157,7 @@ export default function MobileDashboard({onClick,activeDevices,totalDevices, apC
                             </Box>
                         )}): <Box p={2} textAlign={'center'}><Typography>No apps installed</Typography></Box>
                     }
-                </Box>
+                </Paper>
             </Box>
         </Box>
     );

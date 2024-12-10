@@ -44,7 +44,7 @@ export default function ExportTabMaintenance({matches}:Props) {
             <Typography fontSize={20}>Export Usage Data</Typography>
             <Grid container>
                 <GridItem  spacing={2} md={4.6} xs={12} matches={matches as boolean}>
-                    <GridItemEl additionStyles={{pb: 2}}  icon={'sensors_outlined'} text={'Export Sensor Data'}>
+                    <GridItemEl additionStyles={{pb: 2,boxShadow:1}}  icon={'sensors_outlined'} text={'Export Sensor Data'}>
                         <Box m={1} borderRadius={1}>
                             <Box  borderRadius={1} p={1} >
                                 <Button href='/exporttree' variant="text" sx={{ color: '#fff', m: 1,":hover":{bgcolor:'#007aff'}, bgcolor: 'info.main' }} >
@@ -60,7 +60,7 @@ export default function ExportTabMaintenance({matches}:Props) {
                     </GridItemEl>
                 </GridItem>
                 <GridItem  spacing={2} md={7} xs={12} matches={matches as boolean} >
-                    <GridItemEl  icon='sensor' text='Export Actuator and Sensor Data' >
+                    <GridItemEl additionStyles={{boxShadow:1}} icon='sensor' text='Export Actuator and Sensor Data' >
                         <Box borderRadius={1} p={1} m={2}>
                             <Box sx={{display:'flex',flexDirection:matches?'row':'column',justifyContent:'space-between'}}>
                                 <Box width={matches?'45%':'90%'}>

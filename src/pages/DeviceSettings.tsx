@@ -294,7 +294,7 @@ export default function DeviceSettings() {
                     </Box>
                 </RowContainerBetween>
                 <Box width={matches?'50%':'95%'}>
-                    <Box bgcolor={'#fff'} my={1} px={2} py={2} borderRadius={2} >
+                    <Box boxShadow={1} bgcolor={'#fff'} my={1} px={2} py={4} borderRadius={2} >
                         <RowContainerBetween>
                             <Box display={'flex'} my={1} alignItems={'center'}>
                                 <Router sx={{ fontSize: 20, color: '#292F3F' }} />
@@ -337,7 +337,7 @@ export default function DeviceSettings() {
                         }
                     </Box>
                     
-                    <Box bgcolor={'#fff'} my={2} px={2} py={2} borderRadius={2}>
+                    <Box boxShadow={1} bgcolor={'#fff'} my={2} px={2} py={2} borderRadius={2}>
                         <RowContainerBetween>
                             <Box display={'flex'} my={1} alignItems={'center'}>
                                 <Box component={'img'} src={BoxDownload} width={20} height={20} />

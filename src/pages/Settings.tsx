@@ -285,7 +285,7 @@ function Settings() {
                             </RowContainerNormal>
                         </GridItemEl>
                     </GridItem>
-                    <GridItem additionStyles={{borderRadius:2}} bgcolor md={12} xs={12} matches={matches} >
+                    <GridItem additionStyles={{borderRadius:2,boxShadow:1}} bgcolor md={12} xs={12} matches={matches} >
                         <Box sx={{ display: 'flex', borderTopLeftRadius: 5,border:'.5px solid #d8d8d8', borderTopRightRadius: 5, bgcolor: '#F7F7F7', alignItems: 'center' }} p={1} >
                             <AccessTime sx={IconStyle} />
                             <Typography color={'#212529'} fontWeight={500}>Time Settings</Typography>
