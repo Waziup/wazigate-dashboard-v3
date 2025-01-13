@@ -238,10 +238,14 @@ function Settings() {
                             <RowContainer >
                                 <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
                                     {
-                                        apConn?atob(apConn?.['802-11-wireless']?.ssid as unknown as string) || 'WAZIGATE-AP': connectedWifi? connectedWifi:''
+                                        apConn? atob(apConn?.['802-11-wireless']?.ssid as unknown as string) || 'WAZIGATE-AP': connectedWifi? connectedWifi:''
                                     }
                                 </Typography>
-                                <CheckCircle sx={{ color: DEFAULT_COLORS.primary_blue, fontSize: 17 }} />
+                                {
+                                    (apConn && apConn?.['802-11-wireless']?.ssid) || connectedWifi?(
+                                        <CheckCircle sx={{ color: DEFAULT_COLORS.primary_blue, fontSize: 17 }} />
+                                    ):<CircularProgress size={10} sx={{fontSize:10, }} />
+                                }
                             </RowContainer>
                             <RowContainer>
                                 <Typography color='primary.main' fontWeight={300}>IP address</Typography>
