@@ -50,6 +50,15 @@ function Devices() {
         if (devices.length===0) {
             getDevicesFc();
         }
+        window.wazigate.subscribe('devices', (dt,tpc)=>{
+            console.log('devices',dt,tpc);
+            getDevicesFc()
+        });
+        return () => window.wazigate.unsubscribe('devices', (dt,tpc)=>{
+            console.log('devices',dt,'topic: '+tpc);
+            getDevicesFc()
+        });
+        
     },[devices, getDevicesFc])
     const handleToggleEditModalClose = () => {
         setSelectedDevice(null);
@@ -127,7 +136,10 @@ function Devices() {
     const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let devEUI = newDevice?.meta.lorawan?.devEUI;
         let devAddr = newDevice?.meta.lorawan?.devAddr;
-        const sharedKey= e.target.name==='nwkSEncKey' ? newDevice?.meta.lorawan?.nwkSEncKey: e.target.name==='appSKey'? newDevice?.meta.lorawan?.appSKey:'';
+        let sharedKey= (newDevice.meta.lorawan.nwkSEncKey === newDevice.meta.lorawan.appSKey)? newDevice.meta.lorawan.nwkSEncKey:'';
+        if(e.target.name==='nwkSEncKey' || e.target.name==='appSKey'){
+            sharedKey = e.target.value;
+        }
         if(e.target.name === 'devAddr'){
             devAddr = e.target.value;
             devEUI = devEUIGenerateFc(e.target.value);
@@ -138,7 +150,7 @@ function Devices() {
                 ...newDevice.meta,
                 lorawan: {
                     ...newDevice.meta.lorawan,
-                    nwksEncKey: sharedKey,
+                    nwkSEncKey: sharedKey,
                     appSKey: sharedKey,
                     devEUI,
                     devAddr,
@@ -463,6 +475,13 @@ function Devices() {
                             </select>
                         </Box>
                     </RowContainerBetween>
+                    {
+                        devices.length===0?(
+                            <Box sx={{height:'100%',display:'flex',justifyContent:'center',alignItems:'center'}}>
+                                <Typography fontSize={20} fontWeight={500} color={'#000'}>No devices found</Typography>
+                            </Box>
+                        ):null
+                    }
                     <Grid container my={matches?2:0} spacing={2}>
                         {
                             devices.map((device, id) => {
@@ -527,7 +546,7 @@ function Devices() {
                                                                 onClick={() => {
                                                                     navigate(`/devices/${device.id}/sensors/${sensor.id}`, { state: { devicename: device.name, sensorId: sensor.id, deviceId: device.id, sensorname: sensor.name } })
                                                                 }}
-                                                                lastUpdated={sensor?differenceInMinutes(new Date(sensor.modified).toISOString())??'':''}
+                                                                lastUpdated={sensor?differenceInMinutes(new Date(sensor.time).toISOString())??'':''}
                                                                 kind={(sensor.meta && sensor.meta.kind)? sensor.meta.kind : (sensor as SensorX).kind? (sensor as SensorX).kind : 'AirThermometer'}
                                                                 iconname={(sensor.meta && sensor.meta.icon)? sensor.meta.icon : ''}
                                                                 name={sensor.name}
@@ -546,7 +565,7 @@ function Devices() {
                                                                 onClick={() => {
                                                                     navigate(`/devices/${device.id}/actuators/${act.id}`, { state: { deviceId: device.id, actuatordId: act.id, actuatorname: act.name } })
                                                                 }}
-                                                                lastUpdated={act ?differenceInMinutes(new Date(act.modified).toISOString())??'':''}
+                                                                lastUpdated={act ? differenceInMinutes(new Date(act.time as Date).toISOString())??'':''}
                                                                 key={act.id}
                                                                 type='actuator'
                                                                 iconname={(act.meta && act.meta.icon) ? act.meta.icon : ''}
