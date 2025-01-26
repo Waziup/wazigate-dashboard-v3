@@ -119,6 +119,10 @@ function DeviceSensorSettings() {
         e.preventDefault();
         window.wazigate.addActuatorValue(id as string, sensorId as string, actuatorValue)
             .then(() => {
+                setError({
+                    message:'Actuator value added successfully',
+                    severity:'success'
+                })
                 getDevicesFc();
             }).catch((err) => {
                 showDialog({
@@ -227,6 +231,10 @@ function DeviceSensorSettings() {
                     onAccept:()=>{
                         window.wazigate.setSensorMeta(id as string, sensOrActuator?.id as string, sensOrActuator?.meta as Sensor['meta']).then(() => {
                             init();
+                            setError({
+                                message: "Meta fields changed successfully",
+                                severity:'success'
+                            })
                             getDevicesFc();
                         }).catch((err) => {
                             setError({
@@ -469,6 +477,7 @@ function DeviceSensorSettings() {
                                         <form onSubmit={addActuatorValueSubmit}>
                                             <Typography color={'primary'} mb={.4} fontSize={18}>Add actuator value</Typography>
                                             <input
+                                                type="number"
                                                 onInput={onInputChange}
                                                 name="name" 
                                                 placeholder='Actuator value'
