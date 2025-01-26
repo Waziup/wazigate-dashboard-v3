@@ -355,7 +355,7 @@ function DeviceSettings() {
                                                     deviceId={device.id} 
                                                     sensActuator={sens} 
                                                     open={open}
-                                                    modified={sens.modified}
+                                                    modified={sens.time}
                                                     anchorEl={anchorEl}
                                                     icon={(sens.meta && sens.meta.icon)? sens.meta.icon: ''}
                                                     kind={(sens.meta && sens.meta.kind)? sens.meta.kind : (sens as SensorX).kind? (sens as SensorX).kind : 'AirThermometer'}
@@ -400,7 +400,7 @@ function DeviceSettings() {
                                                 deviceId={device.id} 
                                                 sensActuator={act} 
                                                 open={open} 
-                                                modified={act.modified as Date}
+                                                modified={act.time as Date}
                                                 anchorEl={anchorEl} 
                                                 icon={(act.meta && act.meta.icon)? act.meta.icon: ''}
                                                 kind={(act.meta && act.meta.kind)? act.meta.kind : 'Motor'}
