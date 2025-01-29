@@ -336,7 +336,7 @@ export async function getUpdateStatus() {
 
 export async function getVersion() {
   const token = window.sessionStorage.getItem("token");
-  const resp = await fetch(URL + "version", {headers: {Authorization: 'Bearer ' + token}});
+  const resp = await fetch("version", {headers: {Authorization: 'Bearer ' + token}});
 
   if (!resp.ok) await failResp(resp);
   return await resp.text();
