@@ -11,7 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
 import { useState, useEffect, useMemo, useContext } from 'react';
-import {setTime, shutdown,reboot,getBuildNr,getTimezoneAuto, getTime, getTimezones, setTimezone, } from '../utils/systemapi';
+import {setTime, shutdown,reboot,getBuildNr,getTimezoneAuto, getTime, getTimezones, setTimezone, getBlackout, getVersion, } from '../utils/systemapi';
 import SelectElementString from '../components/shared/SelectElementString';
 import GridItemEl from '../components/shared/GridItemElement';
 import SnackbarComponent from '../components/shared/Snackbar';
@@ -38,7 +38,7 @@ const convTime = (date: Date) => (
 function Settings() {
     const [matches] = useOutletContext<[matches: boolean]>();
     const [currentTime, setCurrentTime] = useState<string>('');
-    const [buildNr, setBuildNr] = useState<string>('');
+    const [infoConfig, setInfoConfig] = useState<{buildNr: string, version:string,blackout: string|null}>({blackout:null,buildNr:'',version:''});
     const [responseMessage , setReponseMessage] = useState<string>('');
     const [isSetTimezoneAuto, setIsSetTimezoneAuto] = useState<boolean>(false);
     const [data, setData] = useState<{
@@ -91,6 +91,16 @@ function Settings() {
             setReponseMessage("Error setting time zone");
         });
     };
+    const infoConfigFc = async()=>{
+        const buildNr = await getBuildNr()
+        const blackout = await getBlackout()
+        const version = await getVersion()
+        setInfoConfig({
+            version,
+            buildNr,
+            blackout
+        })
+    }
     useEffect(() => {
         const isAuto = window.localStorage.getItem('timezoneAuto') === 'true';
         setIsSetTimezoneAuto(isAuto);
@@ -112,10 +122,7 @@ function Settings() {
         },() => {
             setTimezones([]);
         });
-        getBuildNr()
-        .then((res) => {
-            setBuildNr(res);
-        });
+        infoConfigFc()
         const getTimeInterval = setInterval(() => {
             getTime().then(
                 (res) => {
@@ -263,6 +270,14 @@ function Settings() {
                                 <Typography color={'primary.main'} fontWeight={300}>Internet</Typography>
                                 <InternetIndicator/>
                             </RowContainer>
+                            <RowContainer>
+                                <Typography color={'primary.main'} fontWeight={300}>Blackout Protection</Typography>
+                                {
+                                    infoConfig.blackout !==null?(
+                                        infoConfig.blackout?<Typography color={DEFAULT_COLORS.primary_blue} component='span'>Activated</Typography>:<Typography color={'#FA9E0E'} component='span'>Not available</Typography>
+                                    ):<CircularProgress size={10} sx={{fontSize:10}} />
+                                }
+                            </RowContainer>
                         </GridItemEl>
                         <GridItemEl text='Wazigate Identity' icon='fingerprint'>
                             <RowContainer>
@@ -275,7 +290,7 @@ function Settings() {
                                 <Typography sx={{textAlign:'left',color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
                                     Version
                                 </Typography>
-                                <Typography component='span'>3.0.0 (build number: {buildNr})</Typography> 
+                                <Typography component='span'>{infoConfig.version} (build number: {infoConfig.buildNr})</Typography> 
                             </RowContainer>
                         </GridItemEl>
                         <GridItemEl text='Gateway Power' icon='power_settings_new'>
