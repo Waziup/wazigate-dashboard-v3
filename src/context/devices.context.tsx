@@ -1,7 +1,6 @@
 import { createContext, useCallback, useEffect,useState } from "react";
 import { App, Cloud ,ID, Value, Device, Meta } from "waziup";
 import { Devices,getNetworkDevices } from "../utils/systemapi";
-import { cleanString,  } from "../utils";
 import GlobalDialog from "../components/shared/GlobalDialog";
 export type SensorX =  {
     id: ID;
@@ -134,32 +133,8 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         }
     }
     const getDevices = useCallback(()=>{
-        window.wazigate.getDevices().then((res)=>{
-            // remove duplicate device with the same id
-            const devFilter = res.filter((dev,id)=>res.findIndex((d)=>d.id===dev.id)===id).map((dev)=>{
-                // subscribe to device changes
-                window.wazigate.subscribe<DeviceX>(`devices/${dev.id}/meta/#`, ()=>{
-                    getDevices();
-                })
-                window.wazigate.subscribe<DeviceX>(`devices/${dev.id}/sensors/#`, ()=>{
-                    getDevices();
-                })
-                window.wazigate.subscribe<DeviceX>(`devices/${dev.id}/actuators/#`, ()=>{
-                    getDevices();
-                });
-                return {
-                    ...dev,
-                    name: cleanString(dev.name),
-                    sensors: dev.sensors.map((sensor)=>({
-                        ...sensor,
-                        name: cleanString(sensor.name)
-                    })),
-                    actuators: dev.actuators.map((actuator)=>({
-                        ...actuator,
-                        name: cleanString(actuator.name)
-                    })),
-                };
-            });
+        window.wazigate.getDevices().then(res=>{
+            const devFilter = res.filter((dev,id)=>res.findIndex((d)=>d.id===dev.id)===id).map((dev)=>dev)
             setDevices(devFilter as DeviceX[]);
         });
     },[]);
@@ -198,15 +173,16 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
                 setAccessToken(token);
                 await window.wazigate.setToken(token);
                 await window.wazigate.getID().then(setWazigateId);
+                window.wazigate.reconnectMQTT();
                 getApps();
                 getDevices();
                 setNetWorkDevicesFc();
                 loadProfile();
-                window.wazigate.subscribe<DeviceX[]>("devices", getDevices);
-                return async () => window.wazigate.unsubscribe("devices", getDevices);
             }
         }
         fc();
+        window.wazigate.subscribe<DeviceX[]>("devices/#", getDevices);
+        return  () => window.wazigate.unsubscribe("devices/#", getDevices);
     },[getDevices, setAccessToken, setNetWorkDevicesFc, token]);
 
     const [dialogState, setDialogState] = useState({
