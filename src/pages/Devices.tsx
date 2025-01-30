@@ -233,7 +233,7 @@ function Devices() {
     const handleTextInputEditCodec = (e: React.ChangeEvent<HTMLInputElement>) => {
         let devEUI = selectedDevice?.meta.lorawan?.devEUI;
         let devAddr = selectedDevice?.meta.lorawan?.devAddr;
-        const sharedKey= e.target.name==='nwkSEncKey' ? selectedDevice?.meta.lorawan?.nwkSEncKey: e.target.name==='appSKey'? selectedDevice?.meta.lorawan?.appSKey:'';
+        const sharedKey= e.target.name==='nwkSEncKey' ? selectedDevice?.meta.lorawan?.nwkSEncKey: e.target.name==='appSKey'? selectedDevice?.meta.lorawan?.appSKey: selectedDevice?.meta.lorawan?.nwkSEncKey;
         if(e.target.name === 'devAddr'){
             devAddr = e.target.value;
             devEUI = devEUIGenerateFc(e.target.value);
