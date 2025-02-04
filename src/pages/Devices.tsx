@@ -8,7 +8,7 @@ import { type Device } from 'waziup';
 import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
 import EditDeviceModal from '../components/ui/EditDeviceModal';
 import { DevicesContext, SensorX } from '../context/devices.context';
-import { devEUIGenerateFc, differenceInMinutes, lineClamp,  } from '../utils';
+import { devEUIGenerateFc, differenceInMinutes, lineClamp } from '../utils';
 import PrimaryIconButton from '../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
 import MenuComponent from '../components/shared/MenuDropDown';
@@ -50,15 +50,8 @@ function Devices() {
         if (devices.length===0) {
             getDevicesFc();
         }
-        window.wazigate.subscribe('devices', (dt,tpc)=>{
-            console.log('devices',dt,tpc);
-            getDevicesFc()
-        });
-        return () => window.wazigate.unsubscribe('devices', (dt,tpc)=>{
-            console.log('devices',dt,'topic: '+tpc);
-            getDevicesFc()
-        });
-        
+        window.wazigate.subscribe<Device[]>("devices/#", getDevicesFc);
+        return  () => window.wazigate.unsubscribe("devices/#", getDevicesFc);
     },[devices, getDevicesFc])
     const handleToggleEditModalClose = () => {
         setSelectedDevice(null);
