@@ -129,10 +129,6 @@ function Devices() {
     const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let devEUI = newDevice?.meta.lorawan?.devEUI;
         let devAddr = newDevice?.meta.lorawan?.devAddr;
-        let sharedKey= (newDevice.meta.lorawan.nwkSEncKey === newDevice.meta.lorawan.appSKey)? newDevice.meta.lorawan.nwkSEncKey:'';
-        if(e.target.name==='nwkSEncKey' || e.target.name==='appSKey'){
-            sharedKey = e.target.value;
-        }
         if(e.target.name === 'devAddr'){
             devAddr = e.target.value;
             devEUI = devEUIGenerateFc(e.target.value);
@@ -143,8 +139,8 @@ function Devices() {
                 ...newDevice.meta,
                 lorawan: {
                     ...newDevice.meta.lorawan,
-                    nwkSEncKey: sharedKey,
-                    appSKey: sharedKey,
+                    nwkSEncKey: e.target.name==='nwkSEncKey'? e.target.value: newDevice.meta.lorawan.nwkSEncKey,
+                    appSKey: e.target.name==='appSKey'? e.target.value: newDevice.meta.lorawan.appSKey,
                     devEUI,
                     devAddr,
                 },
@@ -226,7 +222,6 @@ function Devices() {
     const handleTextInputEditCodec = (e: React.ChangeEvent<HTMLInputElement>) => {
         let devEUI = selectedDevice?.meta.lorawan?.devEUI;
         let devAddr = selectedDevice?.meta.lorawan?.devAddr;
-        const sharedKey= e.target.name==='nwkSEncKey' ? selectedDevice?.meta.lorawan?.nwkSEncKey: e.target.name==='appSKey'? selectedDevice?.meta.lorawan?.appSKey: selectedDevice?.meta.lorawan?.nwkSEncKey;
         if(e.target.name === 'devAddr'){
             devAddr = e.target.value;
             devEUI = devEUIGenerateFc(e.target.value);
@@ -238,8 +233,8 @@ function Devices() {
                     ...(selectedDevice as Device).meta,
                     lorawan :{
                         ...selectedDevice.meta.lorawan,
-                        nwkSEncKey:  (e.target.name === 'nwkSEncKey' || e.target.name === 'appSKey') ? e.target.value : sharedKey,
-                        appSKey: (e.target.name==='appSKey' || e.target.name==='nwkSEncKey') ? e.target.value : sharedKey,
+                        nwkSEncKey:  (e.target.name === 'nwkSEncKey') ? e.target.value : selectedDevice?.meta.lorawan?.nwkSEncKey,
+                        appSKey: (e.target.name==='appSKey') ? e.target.value : selectedDevice?.meta.lorawan?.appSKey,
                         devAddr,
                         devEUI,
                     }
@@ -349,29 +344,25 @@ function Devices() {
                 break;
             case 'nwkSEncKey':
                 if (selectedDevice) {
-                    const sharedKey = [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase();
                     setSelectedDevice({
                         ...selectedDevice,
                         meta: {
                             ...selectedDevice.meta,
                             lorawan: {
                                 ...selectedDevice.meta.lorawan,
-                                nwkSEncKey: sharedKey,
-                                appSKey: sharedKey,
+                                nwkSEncKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
                             }
                         }
                     }) as unknown as Device
                 }
                 else {
-                    const sharedKey = [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
                     setNewDevice({
                         ...newDevice,
                         meta: {
                             ...newDevice.meta,
                             lorawan: {
                                 ...newDevice.meta.lorawan,
-                                nwkSEncKey: sharedKey,
-                                appSKey: sharedKey,
+                                nwkSEncKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
                             }
                         }
                     });
@@ -379,29 +370,25 @@ function Devices() {
                 break;
             case 'appSKey':
                 if (selectedDevice) {
-                    const sharedKey = [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase();
                     setSelectedDevice({
                         ...selectedDevice,
                         meta: {
                             ...selectedDevice.meta,
                             lorawan: {
                                 ...selectedDevice.meta.lorawan,
-                                nwkSEncKey: sharedKey,
-                                appSKey: sharedKey,
+                                appSKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
                             }
                         }
                     }) as unknown as Device
                 }
                 else {
-                    const sharedKey = [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
                     setNewDevice({
                         ...newDevice,
                         meta: {
                             ...newDevice.meta,
                             lorawan: {
                                 ...newDevice.meta.lorawan,
-                                nwkSEncKey: sharedKey,
-                                appSKey: sharedKey,
+                                appSKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
                             }
                         }
                     });
