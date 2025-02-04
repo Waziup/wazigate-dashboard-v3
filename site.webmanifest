@@ -1,0 +1,13 @@
+{
+  "name": "Wazigate Dashboard",
+  "short_name": "Wazigate Dashboard",
+  "display": "standalone",
+  "icons": [{
+    "src": "wazigate.png",
+    "type": "image/png",
+    "sizes": "130x100"
+  }],
+  "start_url": "/?utm_source=homescreen",
+  "background_color": "#f1f1f1",
+  "theme_color": "#f1f1f1"
+}

@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.zip
+*.sh
+changes.txt
+src/app
+/system_apps/*
