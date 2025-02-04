@@ -159,8 +159,8 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             const waziupCloud = Object.values(clouds)? clouds['waziup']: null;
             setSelectedCloud(waziupCloud);
         });
-        const netWorkDevices = await getNetworkDevices();
-        setNetWorkDevices(netWorkDevices);
+        const netWorkDevs = await getNetworkDevices();
+        setNetWorkDevices(netWorkDevs);
     },[]);
     const setAccessToken = useCallback(async (accessToken:string)=>{
         window.sessionStorage.setItem('token',accessToken as unknown as string);
@@ -181,8 +181,6 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             }
         }
         fc();
-        window.wazigate.subscribe<DeviceX[]>("devices/#", getDevices);
-        return  () => window.wazigate.unsubscribe("devices/#", getDevices);
     },[getDevices, setAccessToken, setNetWorkDevicesFc, token]);
 
     const [dialogState, setDialogState] = useState({
