@@ -36,15 +36,12 @@ const TextInput = ({disabled, children, label }: TextInputProps) => (
 )
 import Logo from '../assets/wazilogo.svg';
 import { DevicesContext } from "../context/devices.context";
-import { Android12Switch } from "../components/shared/Switch";
-import RowContainerBetween from "../components/shared/RowContainerBetween";
 const textinputStyle = { width: '100%', fontSize: 18, fontWeight:'lighter', border: 'none', background: 'none', color: DEFAULT_COLORS.third_dark, padding: 2, borderBottom: '1px solid #D5D6D8', outline: 'none' }
 function User() {
     const {handleSubmit,setValue} = useForm<Omit<User,'ID'>>({
         resolver: yupResolver(schema),
     });
     const theme = useTheme();
-    const [isEditPassword, setIsEditPassword] = useState<boolean>(false);
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const [loading, setLoading] = useState(false);
     const {profile,setProfile,loadProfile, showDialog, closeDialog} = useContext(DevicesContext);
@@ -161,38 +158,31 @@ function User() {
                                     style={textinputStyle}
                                 />
                             </TextInput>
-                            <RowContainerBetween additionStyles={{ my: 1,  }}>
-                                <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>{'Change Password'}</Typography>
-                                <Android12Switch onChange={(_e,checked)=>{setIsEditPassword(checked)}} checked={isEditPassword} color='info' />
-                            </RowContainerBetween>
-                            <TextInput disabled={!isEditPassword} label='Password'>
+                            <TextInput  label='Password'>
                                 <input 
                                     type={'text'}
                                     onChange={onTextInputChange}
                                     name="password"
                                     placeholder={'****'}
-                                    readOnly={!isEditPassword}
                                     style={textinputStyle}
                                     value={profile?.password}
                                 />
                             </TextInput>
-                            <TextInput disabled={!isEditPassword} label='New Password'>
+                            <TextInput  label='New Password'>
                                 <input
                                     type={'text'}
                                     onChange={onTextInputChange}
                                     name="newPassword"
                                     placeholder={'****'} 
                                     style={textinputStyle}
-                                    readOnly={!isEditPassword}
                                     value={profile?.newPassword}
                                 />
                             </TextInput>
-                            <TextInput disabled={!isEditPassword} label='Confirm New Password' type="text" placeholder="admin">
+                            <TextInput label='Confirm New Password' type="text" placeholder="admin">
                                 <input
                                     type={'text'} 
                                     onChange={onTextInputChange}
                                     name="newPasswordConfirm"
-                                    readOnly={!isEditPassword}
                                     value={profile?.newPasswordConfirm}
                                     placeholder={'****'}
                                     style={textinputStyle}
