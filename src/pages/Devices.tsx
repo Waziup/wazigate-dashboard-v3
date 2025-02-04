@@ -526,7 +526,7 @@ function Devices() {
                                                                 onClick={() => {
                                                                     navigate(`/devices/${device.id}/sensors/${sensor.id}`, { state: { devicename: device.name, sensorId: sensor.id, deviceId: device.id, sensorname: sensor.name } })
                                                                 }}
-                                                                lastUpdated={sensor?differenceInMinutes(new Date(sensor.time).toISOString())??'':''}
+                                                                lastUpdated={sensor?differenceInMinutes(new Date(sensor.time?sensor.time: sensor.modified).toISOString())??'':''}
                                                                 kind={(sensor.meta && sensor.meta.kind)? sensor.meta.kind : (sensor as SensorX).kind? (sensor as SensorX).kind : 'AirThermometer'}
                                                                 iconname={(sensor.meta && sensor.meta.icon)? sensor.meta.icon : ''}
                                                                 name={sensor.name}
@@ -545,7 +545,7 @@ function Devices() {
                                                                 onClick={() => {
                                                                     navigate(`/devices/${device.id}/actuators/${act.id}`, { state: { deviceId: device.id, actuatordId: act.id, actuatorname: act.name } })
                                                                 }}
-                                                                lastUpdated={act ? differenceInMinutes(new Date(act.time as Date).toISOString())??'':''}
+                                                                lastUpdated={act ? differenceInMinutes(new Date(act.time?act.time as Date: act.modified).toISOString())??'':''}
                                                                 key={act.id}
                                                                 type='actuator'
                                                                 iconname={(act.meta && act.meta.icon) ? act.meta.icon : ''}
