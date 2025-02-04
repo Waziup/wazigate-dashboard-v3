@@ -103,7 +103,7 @@ function Devices() {
         }).catch(err => {
             setScreen('tab1');
             showDialog({
-                content:"Error Encountered: "+err,
+                content:err,
                 onAccept:()=>{},
                 onCancel:()=>{},
                 title:"Error encountered",
@@ -186,7 +186,7 @@ function Devices() {
                 })
                 .catch(err => {
                     showDialog({
-                        content:"Error Encountered: "+err,
+                        content:err,
                         onAccept:()=>{},
                         onCancel:()=>{},
                         acceptBtnTitle:"Close",
@@ -266,7 +266,7 @@ function Devices() {
                         return;
                     }).catch(err => {
                         showDialog({
-                            content:"Error updating device meta "+err,
+                            content: err,
                             onAccept:()=>{},
                             onCancel:()=>{},
                             acceptBtnTitle:"Close",
@@ -290,7 +290,7 @@ function Devices() {
                     return;
                 }).catch(err => {
                     showDialog({
-                        content:"Error updating device name "+err,
+                        content: err,
                         onAccept:()=>{},
                         onCancel:()=>{},
                         hideCloseButton: true,
@@ -501,7 +501,7 @@ function Devices() {
                                                             icon:'mode_outlined',
                                                             text:'Edit'
                                                         },
-                                                        {
+                                                        device.id === wazigateId?null:{
                                                             clickHandler() {
                                                                 handleDeleteDevice(device);
                                                                 handleClose();
