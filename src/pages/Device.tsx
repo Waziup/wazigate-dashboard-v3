@@ -77,7 +77,7 @@ function DeviceSettings() {
         })
         .catch((err) => {
             showDialog({
-                content:"Error Encountered: "+err,
+                content:err,
                 onAccept:()=>{},
                 onCancel:()=>{},
                 acceptBtnTitle:"CLOSE",
@@ -131,7 +131,7 @@ function DeviceSettings() {
             })
             .catch((err) => {
                 showDialog({
-                    content:"Error Encountered: "+err,
+                    content: err,
                     onAccept:()=>{},
                     onCancel:()=>{},
                     hideCloseButton: true,
@@ -164,13 +164,12 @@ function DeviceSettings() {
         .then(() => {
             handleToggleModal();
             getDevice();
-            getDevicesFc();
             setNewSensOrAct(initialState);
             setModalEls('', '');
         })
         .catch((err) => {
             showDialog({
-                content:"Error Encountered: "+err,
+                content: err,
                 onAccept:()=>{},
                 onCancel:()=>{},
                 hideCloseButton: true,
@@ -225,11 +224,12 @@ function DeviceSettings() {
     const handleSwitchChange = (actuatorId:string,value:boolean | number) => {
         window.wazigate.addActuatorValue(id as string, actuatorId, !value)
         .then(() => {
+            getDevice();
             getDevicesFc();
         })
         .catch((err) => {
             showDialog({
-                content:"Error Encountered: "+err,
+                content:err,
                 onAccept:()=>{},
                 onCancel:()=>{},
                 hideCloseButton: true,
@@ -349,13 +349,14 @@ function DeviceSettings() {
                                                 <Typography>No Sensors found</Typography>
                                             </Box>
                                         ) : (device?.sensors.map((sens) =>(
-                                            <SensorActuatorItem 
+                                            <SensorActuatorItem
+                                                    errorCallback={(msg)=>{showDialog({acceptBtnTitle:"CLOSE",hideCloseButton: true,content:msg,onAccept:()=>{},onCancel:()=>{},title:'Error Encountered'})}} 
                                                     type="sensor" 
                                                     callbackFc={()=>{getDevice(); getDevicesFc();}} 
                                                     deviceId={device.id} 
                                                     sensActuator={sens} 
                                                     open={open}
-                                                    modified={sens.time}
+                                                    modified={sens.time? sens.time: sens.modified}
                                                     anchorEl={anchorEl}
                                                     icon={(sens.meta && sens.meta.icon)? sens.meta.icon: ''}
                                                     kind={(sens.meta && sens.meta.kind)? sens.meta.kind : (sens as SensorX).kind? (sens as SensorX).kind : 'AirThermometer'}
@@ -394,13 +395,14 @@ function DeviceSettings() {
                                 <Grid container my={2}>
                                     {
                                         device?.actuators?.map((act) =>{ return(
-                                            <SensorActuatorItem 
+                                            <SensorActuatorItem
+                                                errorCallback={(msg)=>{showDialog({acceptBtnTitle:"CLOSE",hideCloseButton: true,content:msg,onAccept:()=>{},onCancel:()=>{},title:'Error Encountered'})}} 
                                                 type={"actuator"} 
                                                 callbackFc={()=>{getDevice(); getDevicesFc(); }} 
                                                 deviceId={device.id} 
                                                 sensActuator={act} 
                                                 open={open} 
-                                                modified={act.time as Date}
+                                                modified={act.time? act.time: act.modified}
                                                 anchorEl={anchorEl} 
                                                 icon={(act.meta && act.meta.icon)? act.meta.icon: ''}
                                                 kind={(act.meta && act.meta.kind)? act.meta.kind : 'Motor'}
