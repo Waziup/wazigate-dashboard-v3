@@ -1,6 +1,6 @@
 import { Router } from "@mui/icons-material";
-import { Box, Breadcrumbs, FormControl, Typography, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import { Link, useOutletContext, useParams } from "react-router-dom";
+import { Box, Breadcrumbs, FormControl, Typography, MenuItem, Select, SelectChangeEvent, Button } from "@mui/material";
+import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import AddTextShow from "../components/shared/AddTextInput";
 import type { Device, } from "waziup";
@@ -8,7 +8,9 @@ import { DevicesContext } from "../context/devices.context";
 import { devEUIGenerateFc, lineClamp, toStringHelper } from "../utils";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { DEFAULT_COLORS } from "../constants";
-// import { Android12Switch } from "../components/shared/Switch";
+import BoxDownload from '../assets/box_download.svg';
+import PrimaryButton from "../components/shared/PrimaryButton";
+import { DropDownCreateDeviceTab1 } from "../components/ui/CreateDeviceTab1";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: SelectChangeEvent<string>) => void,
     title: string,
@@ -42,9 +44,6 @@ export const SelectElement = ({ handleChange, title, conditions, isDisabled,my, 
         </FormControl>
     </Box>
 );
-import BoxDownload from '../assets/box_download.svg';
-import PrimaryButton from "../components/shared/PrimaryButton";
-import { DropDownCreateDeviceTab1 } from "../components/ui/CreateDeviceTab1";
 
 export default function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
@@ -93,7 +92,7 @@ export default function DeviceSettings() {
                         return;
                     }).catch(err => {
                         showDialog({
-                            content:"Error updating device meta: "+err,
+                            content: err,
                             onAccept:()=>{},
                             onCancel:()=>{},
                             hideCloseButton: true,
@@ -104,26 +103,26 @@ export default function DeviceSettings() {
             }
             if (device?.name !== thisDevice?.name) {
                 window.wazigate.setDeviceName(thisDevice.id as string, thisDevice.name.toString())
-                    .then(() => {
-                        showDialog({
-                            content:"Device name updated ",
-                            onAccept:()=>{},
-                            onCancel:()=>{},
-                            hideCloseButton: true,
-                            acceptBtnTitle:"Close",
-                            title:"Update successfull."
-                        });
-                        return;
-                    }).catch(err => {
-                        showDialog({
-                            content:"Error updating device name "+err,
-                            onAccept:()=>{},
-                            onCancel:()=>{},
-                            acceptBtnTitle:"Close",
-                            hideCloseButton: true,
-                            title:"Error encountered"
-                        });
+                .then(() => {
+                    showDialog({
+                        content:"Device name updated ",
+                        onAccept:()=>{},
+                        onCancel:()=>{},
+                        hideCloseButton: true,
+                        acceptBtnTitle:"Close",
+                        title:"Update successfull."
                     });
+                    return;
+                }).catch(err => {
+                    showDialog({
+                        content: err,
+                        onAccept:()=>{},
+                        onCancel:()=>{},
+                        acceptBtnTitle:"Close",
+                        hideCloseButton: true,
+                        title:"Error encountered"
+                    });
+                });
             }
         }
         setIsEdited(false);
@@ -165,15 +164,13 @@ export default function DeviceSettings() {
         });
         setIsEditedCodec(true);
     };
+    // Autogenerate LoraWAN keys
     const autoGenerateLoraWANOptions = (title: "devAddr" | "nwkSEncKey" | "appSKey") => {
         let devEUI= thisDevice.meta.lorawan.devEUI;
         let devAddr= thisDevice.meta.lorawan.devAddr;
-        let sharedKey= thisDevice.meta.lorawan.nwkSEncKey || thisDevice.meta.lorawan.appSKey;
         if(title==='devAddr'){
             devAddr = [...Array(8)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
             devEUI = devEUIGenerateFc(devAddr.toString())
-        }else if(title==='nwkSEncKey' || title==='appSKey'){
-            sharedKey = [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
         }
         switch (title) {
             case 'devAddr':
@@ -198,8 +195,7 @@ export default function DeviceSettings() {
                         ...thisDevice.meta,
                         lorawan: {
                             ...thisDevice.meta.lorawan,
-                            nwkSEncKey: sharedKey,
-                            appSKey: sharedKey,
+                            nwkSEncKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
                             profile: "WaziDev",
                         }
                     }
@@ -213,8 +209,7 @@ export default function DeviceSettings() {
                         ...thisDevice.meta,
                         lorawan: {
                             ...thisDevice.meta.lorawan,
-                            nwkSEncKey: sharedKey,
-                            appSKey: sharedKey,
+                            appSKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
                             profile: "WaziDev",
                         }
                     }
@@ -225,29 +220,59 @@ export default function DeviceSettings() {
                 break;
         }
     }
+    const navigate = useNavigate();
     const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let devEUI = thisDevice?.meta.lorawan?.devEUI;
         let devAddr = thisDevice?.meta.lorawan?.devAddr;
-        const sharedKey= e.target.name==='nwkSEncKey' ? thisDevice?.meta.lorawan?.nwkSEncKey: e.target.name==='appSKey'? thisDevice?.meta.lorawan?.appSKey:'';
         if(e.target.name === 'devAddr'){
             devAddr = e.target.value;
             devEUI = devEUIGenerateFc(e.target.value);
         }
-        setThisDevice({
-            ...thisDevice,
-            meta: {
-                ...thisDevice.meta,
-                lorawan: {
-                    ...thisDevice.meta.lorawan,
-                    devAddr,
-                    devEUI,
-                    nwkSEncKey:  (e.target.name === 'nwkSEncKey' || e.target.name === 'appSKey') ? e.target.value : sharedKey,
-                    appSKey: (e.target.name==='appSKey' || e.target.name==='nwkSEncKey') ? e.target.value : sharedKey,
-                    profile: "WaziDev",
-                },
-            }
-        });
+        if(e.target.name ==='name'){
+            setThisDevice({...thisDevice, name: e.target.value})
+        }else{
+            setThisDevice({
+                ...thisDevice,
+                meta: {
+                    ...thisDevice.meta,
+                    lorawan: {
+                        ...thisDevice.meta.lorawan,
+                        devAddr,
+                        devEUI,
+                        nwkSEncKey:  (e.target.name === 'nwkSEncKey') ? e.target.value : thisDevice?.meta.lorawan?.nwkSEncKey,
+                        appSKey: (e.target.name==='appSKey') ? e.target.value : thisDevice?.meta.lorawan?.appSKey,
+                        profile: "WaziDev",
+                    },
+                }
+            });
+        }
         setIsEdited(true);
+    }
+    function handleDeleteDevice() {
+        showDialog({
+            title:"Remove "+thisDevice.name,
+            acceptBtnTitle:"OK!",
+            content: `Are you sure you want to remove ${thisDevice.name}?`,
+            onAccept() {
+                window.wazigate.deleteDevice(thisDevice.id)
+                .then(() => {
+                    navigate('/devices');
+                    getDevicesFc();
+                })
+                .catch(err => {
+                    showDialog({
+                        content: err,
+                        onAccept:()=>{},
+                        onCancel:()=>{},
+                        acceptBtnTitle:"Close",
+                        hideCloseButton: true,
+                        title:"Error encountered"
+                    });
+                })
+            },
+            onCancel() {},
+        })
+
     }
     // const changeMakeLoraWAN = () => {
     //     setThisDevice({
@@ -267,7 +292,7 @@ export default function DeviceSettings() {
             <Box sx={{px:matches?4:2,py:matches?2:0, height: '100%', overflowY: 'auto', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' } }}>
                 <RowContainerBetween>
                     <Box>
-                        <Typography sx={{...lineClamp(1),fontSize:24,fontWeight:700,color:'black'}} >{thisDevice?.name}</Typography>
+                        <Typography sx={{...lineClamp(1),fontSize:24,fontWeight:700,color:'black'}} >{thisDevice?.name} Settings</Typography>
                         <div role="presentation" onClick={handleClick}>
                             <Breadcrumbs aria-label="breadcrumb">
                                 <Typography fontSize={matches?15:12} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
@@ -295,6 +320,19 @@ export default function DeviceSettings() {
                 </RowContainerBetween>
                 <Box width={matches?'50%':'95%'}>
                     <Box boxShadow={1} bgcolor={'#fff'} my={1} px={2} py={4} borderRadius={2} >
+                        <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #292F3F'}}>
+                            <Typography color={'primary'} mb={.4} fontSize={12}>Device Name</Typography>
+                            <input 
+                                autoFocus 
+                                onInput={handleTextInputChange} 
+                                name="name"
+                                placeholder='Enter device name' 
+                                value={(thisDevice)?.name}
+                                required
+                                id="name"
+                                style={{border:'none',background:'none',width:'100%',padding:'6px 0', outline:'none'}}
+                            />
+                        </FormControl>
                         <RowContainerBetween>
                             <Box display={'flex'} my={1} alignItems={'center'}>
                                 <Router sx={{ fontSize: 20, color: '#292F3F' }} />
@@ -360,6 +398,18 @@ export default function DeviceSettings() {
                                 </Box>
                             ) : null
                         }
+                    </Box>
+                    <Box boxShadow={1} sx={{borderRadius:2, bgcolor:'#fff', minHeight: 150, mt:0,  py: 2,px:3, mb: 6 }}>
+                        <RowContainerBetween additionStyles={{my:1}}>
+                            <Typography fontWeight={500}  fontSize={16} variant="h4" color={'error.main'}>Danger Zone</Typography>
+                        </RowContainerBetween>
+                        <RowContainerBetween>
+                            <Box maxWidth={'70%'}>
+                                <Typography fontSize={14} variant="body2">Delete this device</Typography>
+                                <Typography variant="body2" color={'#797979'}  fontSize={12} fontWeight={400}>All information on this device will be lost, this action cannot be undone</Typography>
+                            </Box>
+                            <Button variant="outlined" color="error" onClick={handleDeleteDevice}>Delete</Button>
+                        </RowContainerBetween>
                     </Box>
                 </Box>
             </Box>
