@@ -177,6 +177,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 }
 
 interface EnhancedTableToolbarProps {
+  title: string
   numSelected: number;
   handleRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
 }
@@ -212,7 +213,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           id="tableTitle"
           component="div"
         >
-          Sensor Data
+          {props.title}
         </Typography>
       )}
       {numSelected > 0 ? (
@@ -238,13 +239,14 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   );
 }
 interface Props{
+    title: string
     fetchMoreData:()=>void,
     values:{
       value:number | string,
       modified:string
     }[]
 }
-export default function SensorTable({values,fetchMoreData}:Props) {
+export default function SensorTable({values,fetchMoreData,title}:Props) {
     const rows = useMemo(() => values.map((v,idx,arr)=>{
         const nextItem = arr[idx+1]?arr[idx+1]:arr[idx];
         return createData(idx+1,v.modified,v.value,v.value>nextItem.value?'trending_up':v.value=== nextItem.value?'trending_flat':'trending_down')
@@ -328,6 +330,7 @@ export default function SensorTable({values,fetchMoreData}:Props) {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar
+          title={title}
           handleRequestSort={handleRequestSort}
           numSelected={selected.length} 
         />

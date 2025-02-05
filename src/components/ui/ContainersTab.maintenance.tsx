@@ -29,10 +29,9 @@ export default function ContainersTabMaintenance() {
             });
             setOpenModal(true)
         }).catch((err)=>{
-            console.log(err); 
             setLogs({
                 success:false,
-                logs:'Error Encountered, could not fetch logs'
+                logs:'Could not fetch logs '+err
             });
         })
     };
@@ -54,7 +53,7 @@ export default function ContainersTabMaintenance() {
                 })
                 .catch((error) => {
                     setError({
-                        message: "Error Encountered:\n "+error,
+                        message: error,
                         severity:'error'
                     });
                 });
