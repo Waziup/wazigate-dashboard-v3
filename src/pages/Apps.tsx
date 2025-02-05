@@ -122,6 +122,13 @@ type RecomendedApp = {
     id: string,
     image: string,
 }
+type UpdateStatus = {
+    logs: string | null;
+    isChecking: boolean;
+    hasCheckedUpdates: boolean;
+    hasUpdate: boolean;
+    newVersion: string | null;
+};
 import Logo404 from '../assets/search.svg';
 export default function Apps() {
     const [customAppId, setCustomAppId] = useState<App2>(customAppProps);
@@ -151,7 +158,7 @@ export default function Apps() {
         }).catch((err) => {
             setLogs({
                 done: true,
-                logs: 'Error encountered while installing app: ' + err,
+                logs: err,
                 error: err as string
             });
             setAppToInstallId('');
@@ -169,8 +176,11 @@ export default function Apps() {
         if(apps.length ===0){
             getApps()
         }
-        getRecApps()
-    }, [apps, getApps]);
+        if(recommendedApps.length===0){
+            getRecApps()
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const handleSubmitNewCustomApp = () => {
         showDialog({
             title:"Install app",
@@ -208,6 +218,7 @@ export default function Apps() {
     }
     const [uninstLoader, setUninstLoader] = useState<boolean>(false);
     const [showAppSettings, setShowAppSettings] = useState<boolean>(false);
+    const [updateStatus, setUpdateStatus] = useState<UpdateStatus |null>(null);
     const [selectedApp, setSelectedApp] = useState<App | null>(null);
     const [appToUninstall, setAppToUninstall] = useState<App | null>(null);
     const fetchInstallLogs = useCallback(async (id: string)=>{
@@ -223,7 +234,7 @@ export default function Apps() {
             setLogs({
                 done: true,
                 logs: '',
-                error: 'Error encountered while fetching logs: ' + err
+                error: err
             });
         })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -231,7 +242,7 @@ export default function Apps() {
     const load = () => {
         window.wazigate.getApp(appToUninstall ? appToUninstall.id : '').then(setAppToUninstall, (error) => {
             showDialog({
-                content: "There was an error loading the app info:\n" + error,
+                content: error,
                 onAccept:()=>{},
                 onCancel:()=>{},
                 hideCloseButton: true,
@@ -263,6 +274,26 @@ export default function Apps() {
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [appToInstallId, fetchInstallLogs, getApps, logs.done, modalProps.open, modalProps.title]);
+    useEffect(()=>{
+        if(modalProps.open && modalProps.title.startsWith('Updating')){
+            fetchInstallLogs(selectedApp?.id??'')
+            const intervalId = setInterval(async () => {
+                await fetchInstallLogs(selectedApp?.id??'');
+            }, 1500);
+            if (logs.done) {
+                clearInterval(intervalId);
+                setLogs({
+                    ...logs,
+                    done: false,
+                });
+                setSelectedApp(null)
+                setModalProps({ open: false, title: '', children: null,otherArgs:'' });
+                getApps();
+                return;
+            }
+            return () => clearInterval(intervalId);
+        }
+    },[fetchInstallLogs, modalProps.open, selectedApp?.id, modalProps.title, logs, getApps])
     const setAppToUninstallFc = (id: number) => {
         const appToUninstallFind = apps[id];
         setAppToUninstall(appToUninstallFind);
@@ -278,9 +309,9 @@ export default function Apps() {
             getRecApps()
             setAppToUninstall(null);
             getApps();
-        }).catch(() => {
+        }).catch((err) => {
             showDialog({
-                content:'Could not uninstall ' + appToUninstall?.name,
+                content:'Could not uninstall ' + appToUninstall?.name+'. '+err,
                 onAccept:()=>{ },
                 onCancel:()=>{},
                 hideCloseButton: true,
@@ -294,12 +325,72 @@ export default function Apps() {
         getRecApps()
         setLoadingUninstall(false);
     };
+    const checkUpdates = (app: App|null) => {
+        type AppUpdate = {
+          newUpdate: string;
+        };
+        setSelectedApp(app)
+        setUpdateStatus({
+            logs: null,
+            isChecking: true,
+            hasCheckedUpdates: false,
+            hasUpdate: false,
+            newVersion: null,
+        });
+        window.wazigate.get<AppUpdate>(`update/${selectedApp?.id}`)
+        .then((res) => {
+            if (res.newUpdate) {
+                setUpdateStatus((status) => ({
+                    logs: status?status.logs:'',
+                    isChecking: false,
+                    hasCheckedUpdates: true,
+                    hasUpdate: true,
+                    newVersion: res.newUpdate,
+                }));
+            } else {
+                setUpdateStatus((status) => ({
+                    logs: status?status.logs:'',
+                    isChecking: false,
+                    hasCheckedUpdates: true,
+                    hasUpdate: false,
+                    newVersion: null,
+                }));
+                setError({message:'The latest version is already installed',severity:'success'})
+            }
+        },(error) => {
+            setError({message:'Error checking for update:\n '+ error,severity:'error'});
+          }
+        );
+    };
     function closeModal() {
         setLogs({
             done: false,
             logs: ''
         });
         setModalProps({ open: false, title: '', children: null, otherArgs:'' });
+    }
+    const handleUpdateApp = ()=>{
+        setModalProps({
+            open: true, 
+            title: 'Updating '+selectedApp?.name, 
+            children: <>
+                <Box width={'100%'} bgcolor={'#fff'}>
+                    
+                </Box>
+            </>
+        });
+        window.wazigate.set("update/" + selectedApp?.id, {})
+        .then(()=>{
+            setUpdateStatus({
+                ...updateStatus,
+                isChecking: false,
+                hasUpdate: false,
+                logs: updateStatus?.logs ?? null,
+                hasCheckedUpdates: updateStatus?.hasCheckedUpdates ?? false,
+                newVersion: updateStatus?.newVersion ?? null,
+            });
+            return;
+        })
     }
     const updateSettings = (event: SelectChangeEvent<string>) => {
         setLoading(true);
@@ -315,7 +406,7 @@ export default function Apps() {
         .catch((err) => {
             setLoading(false);
             showDialog({
-                content:"Error Encountered: "+err,
+                content: err,
                 onAccept:()=>{
 
                 },
@@ -379,6 +470,33 @@ export default function Apps() {
                     </DialogContent>
                 </Dialog>
             }
+            <Dialog open={modalProps.open && modalProps.title.startsWith('Updating')} onClose={closeModal}>
+                <DialogTitle>{modalProps.title}</DialogTitle>
+                <DialogContent sx={{borderTop:'1px solid black',bgcolor:'#000',overflow:'auto',height:250}}>
+                    {
+                        logs && (
+                            <Box p={2} maxWidth={'100%'} overflow={'auto'} width={'100%'} bgcolor={'#000'}>
+                                <pre style={{fontSize:13,color:'#fff'}}>
+                                    {logs.logs}
+                                </pre>
+                            </Box>
+                        )
+                    }
+                    {
+                        logs.error &&(
+                            <Box px={2} py={1} bgcolor={'#fec61f'}>
+                                <Typography color={'error'}>{logs.error}</Typography>
+                            </Box>
+                        )
+                    }
+                </DialogContent>
+                
+                <DialogActions>
+                    <Button disabled={!logs.done} onClick={()=>{setUpdateStatus(null);setSelectedApp(null);setLogs({done:false,logs:''})}} variant={'text'} sx={{ mx: 2,color:'#ff0000' }} color={'info'}>CLOSE</Button>
+                    <LoadingButton disabled loading={true} onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CLOSE</LoadingButton>
+                    
+                </DialogActions>
+            </Dialog>
             <Dialog open={modalProps.open && modalProps.title === 'Installing New App'} onClose={closeModal}>
                 <DialogTitle>{modalProps.title}</DialogTitle>
                 <DialogContent sx={{borderTop:'1px solid black',bgcolor:'#000',overflow:'auto',height:250}}>
@@ -428,7 +546,7 @@ export default function Apps() {
                 <DialogTitle>Do you wish to uninstall {appToUninstall?.name}</DialogTitle>
                 <DialogContent sx={{my:2,}} >
                     <DialogContentText>
-                        This app will be removed and uninstalled from the gateway, you can still reinstall it for have it running in the gateway.
+                        This app will be uninstalled and removed from the gateway.
                     </DialogContentText>
                     {
                         loadingUninstall && (
@@ -451,7 +569,8 @@ export default function Apps() {
                             <Typography color={'primary'} mb={.4} fontSize={12}>App name</Typography>
                             <input
                                 autoFocus
-                                name="name" placeholder='Enter device name'
+                                name="name"
+                                placeholder='Application name'
                                 value={selectedApp?.name}
                                 required
                                 readOnly
@@ -462,17 +581,30 @@ export default function Apps() {
                             <Typography color={'primary'} my={1} fontSize={12}>Author</Typography>
                             <Typography color={'primary'} my={1} fontSize={12}>{selectedApp?.author.name ? (selectedApp?.author.name) : (selectedApp?.author)}</Typography>
                         </Box>
+                        <Box sx={{ my: 2, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                            <Typography color={'primary'} my={1} fontSize={12}>Current version</Typography>
+                            <Typography color={'primary'} my={1} fontSize={12}>
+                                {selectedApp?.version}
+                                {updateStatus?.hasUpdate ? " (New update available)" : (updateStatus?.hasCheckedUpdates ? " (Latest)" : "")}
+                            </Typography>
+                        </Box>
                         {
                             selectedApp?.state ? (
-                                <SelectElement
-                                    my={2}
-                                    id="restartPolicy"
-                                    name='restartPolicy'
-                                    value={(selectedApp as App)?.state ? (selectedApp as App)?.state.restartPolicy : ''}
-                                    handleChange={updateSettings}
-                                    conditions={['no','unless-stopped', 'on-failure', 'always']}
-                                    title='Restart Policy'
-                                />
+                                <>
+                                    <Box sx={{ my: 2, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                                        <Typography color={'primary'} my={1} fontSize={12}>Health</Typography>
+                                        <Typography color={'primary'} my={1} fontSize={12}>{selectedApp?.state.health ??'Unknow'}</Typography>
+                                    </Box>
+                                    <SelectElement
+                                        my={2}
+                                        id="restartPolicy"
+                                        name='restartPolicy'
+                                        value={(selectedApp as App)?.state ? (selectedApp as App)?.state.restartPolicy : ''}
+                                        handleChange={updateSettings}
+                                        conditions={['no','unless-stopped', 'on-failure', 'always']}
+                                        title='Restart Policy'
+                                    />
+                                </>
                             ):null
                         }
                         <Box sx={{ my: 2, width: '100%', borderBottom: '1px solid #292F3F' }}>
@@ -485,7 +617,16 @@ export default function Apps() {
                         </Box>
                     </DialogContent>
                     <DialogActions sx={{ mx:1 }}>
-                        <Button onClick={() => { setShowAppSettings(!showAppSettings) }} sx={{ textTransform: 'initial', color: '#ff0000' }} color='warning' variant={'text'} >CANCEL</Button>
+                        <Button onClick={() => {setUpdateStatus(null); setShowAppSettings(!showAppSettings) }} sx={{ textTransform: 'initial', color: '#ff0000' }} color='warning' variant={'text'} >CANCEL</Button>
+                        {
+                            updateStatus?.hasUpdate?(
+                                <Button autoFocus onClick={handleUpdateApp} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >Update</Button>
+                            ):updateStatus?.isChecking?(
+                                <LoadingButton disabled loading={true} onClick={closeModal} variant={'contained'} sx={{ mx: 2 }} color={'primary'}>CHECK FOR UPDATES</LoadingButton>
+                            ): (
+                                <Button autoFocus onClick={()=>checkUpdates(selectedApp)} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >Check for updates</Button>
+                            )
+                        }
                     </DialogActions>
                 </Box>
             </Dialog>
