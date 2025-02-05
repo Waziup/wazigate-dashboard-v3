@@ -1269,7 +1269,7 @@ paths:
         '404':
           description: No device with that ID found.
 
-  '/devices/{deviceID}/sensors/{actuatorID}/value':
+  '/devices/{deviceID}/actuators/{actuatorID}/value':
     get:
       tags:
         - Actuators
