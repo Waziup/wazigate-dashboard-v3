@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs,ListItemText,  Grid,Icon, SxProps,  Theme, Typography, CircularProgress, Grow, LinearProgress, Modal, DialogActions, Button, Paper } from "@mui/material";
+import { Box, Breadcrumbs,ListItemText,  Grid,Icon, SxProps,  Theme, Typography, CircularProgress, Grow, LinearProgress, Modal, DialogActions, Button, Paper, Tooltip } from "@mui/material";
 import { Link, useOutletContext } from "react-router-dom";
 import { DEFAULT_COLORS } from "../constants";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
@@ -37,7 +37,7 @@ import PrimaryIconButton from "../components/shared/PrimaryIconButton";
 import { DevicesContext } from "../context/devices.context";
 import Backdrop from "../components/Backdrop";
 import WaziLogo from '../assets/wazilogo.svg';
-import { lineClamp, nameForState } from "../utils";
+import { lineClamp, nameForState, orderAccessPointsByStrength } from "../utils";
 import SnackbarComponent from "../components/shared/Snackbar";
 export default function SettingsNetworking() {
     const [matches] = useOutletContext<[matches:boolean]>();
@@ -57,9 +57,13 @@ export default function SettingsNetworking() {
         getWiFiScan()
         .then((res) => {
             setScanLoading(false);
-            setWifiList(res);
+            const orderedAccessPoints = orderAccessPointsByStrength(res);
+            setWifiList(orderedAccessPoints);
         }).catch((err) => {
-            console.log(err);
+            setError({
+                message: err,
+                severity:'error'
+            });
             setScanLoading(false);
         });
     }
@@ -140,10 +144,10 @@ export default function SettingsNetworking() {
                     onCancel:()=>{},
                 });
             })
-            .catch((err: Error) => {
+            .catch((err) => {
                 showDialog({
                     title:"Error encountered",
-                    content:"There was an error saving the changes:\n" + err,
+                    content:err && err.message?err.message:err as string,
                     acceptBtnTitle:"CLOSE",
                     hideCloseButton: true,
                     onAccept:()=>{},
@@ -191,11 +195,11 @@ export default function SettingsNetworking() {
                 setSaving(false);
             })
         })
-        .catch((err:Error)=>{
+        .catch((err)=>{
             setSaving(false);
             showDialog({
                 title:"Error encountered",
-                content:"There was an error activating the sync!\n Check your credentials and try again.\n\nThe server said:\n" + err,
+                content: err,
                 acceptBtnTitle:"CLOSE",
                 hideCloseButton: true,
                 onAccept:()=>{},
@@ -222,7 +226,7 @@ export default function SettingsNetworking() {
         .catch((err) => {
             showDialog({
                 title:"Error encountered",
-                content:"Error encountered: "+err,
+                content:err,
                 acceptBtnTitle:"CLOSE",
                 hideCloseButton: true,
                 onAccept:()=>{},
@@ -244,7 +248,7 @@ export default function SettingsNetworking() {
                 })
                 .catch((error) => {
                     setError({
-                        message: "Error encountered :\n "+error,
+                        message: error,
                         severity:'error'
                     });
                 });
@@ -256,11 +260,14 @@ export default function SettingsNetworking() {
         getConf().then((conf) => {
             setConf(conf);
         }).catch((err) => {
+            setError({
+                message: err,
+                severity:'error'
+            });
             setConf({
                 fan_trigger_temp:'',
                 oled_halt_timeout:''
             });
-            console.log(err);
         });
     }
     useEffect(() => {
@@ -284,7 +291,7 @@ export default function SettingsNetworking() {
             setScanLoading(false)
             showDialog({
                 title:"Error encountered",
-                content:"Error encountered: "+error,
+                content:error,
                 acceptBtnTitle:"CLOSE",
                 hideCloseButton: true,
                 onAccept:()=>{},
@@ -312,7 +319,7 @@ export default function SettingsNetworking() {
                     });
                 }).catch((error) => {
                     setError({
-                        message: "Error encountered: \n "+error,
+                        message:error,
                         severity:'warning'
                     });
                 });
@@ -375,19 +382,45 @@ export default function SettingsNetworking() {
                                             </Box>
                                         :(
                                             wifiList.map((wifi) => (
-                                                <Box key={wifi.ssid} onClick={()=>setSelectedWifi(wifi)}>
-                                                    <RowContainerBetween additionStyles={{bgcolor:selectedWifi?.ssid===wifi.ssid?'#ccc':'', cursor:'pointer',":hover":{bgcolor:'#ccc'},borderBottom:'1px solid #ccc',p:1}}>
-                                                        <Typography>{wifi.ssid}</Typography>
-                                                        <Icon sx={IconStyle}>wifi_outlined</Icon>
-                                                    </RowContainerBetween>
-                                                </Box>
+                                                <Tooltip color='black' followCursor title={`Name: ${wifi.ssid}. Strength: ${wifi.strength}%; Max. Bitrate: ${wifi.maxBitrate}`} placement="top-start">
+                                                    <Box key={wifi.hwAddress} onClick={()=>setSelectedWifi(wifi)}>
+                                                        <RowContainerBetween additionStyles={{bgcolor:selectedWifi?.hwAddress===wifi.hwAddress?'#ccc':'', cursor:'pointer',":hover":{bgcolor:'#ccc'},borderBottom:'1px solid #ccc',p:1}}>
+                                                            <Box sx={{display:'flex',alignItems:'center'}}>
+                                                                <Typography>{wifi.ssid}</Typography>
+                                                                {
+                                                                    wifi.freq >= 6000? 
+                                                                        <Typography  sx={{fontWeight:'600', mx:2, color: DEFAULT_COLORS.primary_blue}}>6Ghz</Typography>:
+                                                                    wifi.freq >= 5000 && wifi.freq < 6000?
+                                                                        <Typography  sx={{fontWeight:'600', mx:2, color: DEFAULT_COLORS.primary_blue}}>5Ghz</Typography>:
+                                                                    null
+                                                                }
+                                                            </Box>
+                                                            <Icon sx={{...IconStyle,opacity: wifi.strength/100}}>
+                                                                {
+                                                                    wifi.strength >80?
+                                                                        'signal_wifi_4_bar_outlined': 
+                                                                    wifi.strength >60 && wifi.strength<=80 ? 
+                                                                        'network_wifi_outlined': 
+                                                                    wifi.strength > 40 && wifi.strength <=60 ?
+                                                                        'network_wifi_3_bar_outlined':
+                                                                    wifi.strength > 20 && wifi.strength<=40 ?
+                                                                        'network_wifi_2_bar_outlined':
+                                                                    wifi.strength > 0 && wifi.strength <= 20?
+                                                                        'network_wifi_1_bar_outlined':
+                                                                    'signal_wifi_0_bar_utlined'
+                                                                }
+                                                                wifi_outlined
+                                                            </Icon>
+                                                        </RowContainerBetween>
+                                                    </Box>
+                                                </Tooltip>
                                             )
                                         ))
                                     }
                                 </Box>
                                 <DialogActions>
                                     <Button onClick={cancelHander} variant={'text'} sx={{ mx: 1,color:'#ff0000' }} color={'info'}>CLOSE</Button>
-                                    <PrimaryButton variant="text" textColor={DEFAULT_COLORS.primary_blue} color="info" title="NEXT" disabled={selectedWifi===undefined} onClick={() => { handleScreenChange('tab2') }} />
+                                    <PrimaryButton variant="text" textColor={selectedWifi===undefined?'#ccc':DEFAULT_COLORS.primary_blue} color={"error"} title="NEXT" disabled={selectedWifi===undefined} onClick={() => { handleScreenChange('tab2') }} />
                                 </DialogActions>
                             </Box>
                         ):(
@@ -407,7 +440,7 @@ export default function SettingsNetworking() {
                                 </Link>
                             </Typography>
                             <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
-                                wifi
+                                Networking
                             </p>
                         </Breadcrumbs>
                     </div>
@@ -550,27 +583,20 @@ export default function SettingsNetworking() {
                                     {
                                         (apConn && apConn.connection.id==='WAZIGATE-AP')?(
                                             <Typography>{stateName} - Access Point Mode</Typography>
-                                        ):
-                                        (eth0 && eth0.IP4Config)?(
-                                            <Typography>Connected to Ethernet</Typography>
-                                        ):(
-                                            <>
+                                        ):(apConn)?(
+                                            <Typography>Connected to {"  "}
                                                 {
-                                                    apConn? (
-                                                        <Typography>Connected to {"  "}
-                                                            {
-                                                                apConn? atob(apConn["802-11-wireless"]?.ssid as string):"No network"
-                                                            }
-                                                        </Typography> 
-                                                    ):(<Typography>Not connected </Typography>)
+                                                    apConn? atob(apConn["802-11-wireless"]?.ssid as string):"No network"
                                                 }
-                                            </>
-                                        )
+                                            </Typography> 
+                                        ):(eth0 && eth0.IP4Config)?(
+                                            <Typography>Connected to Ethernet</Typography>
+                                        ):(<Typography>Not connected </Typography>)
                                     } 
                                 </Typography>
                             </Box>
                             <Box sx={{p:1,cursor:'pointer'}} onClick={() => setOpenModal(true)}>
-                                <Typography color={'#666'}>Click here to change network connection</Typography>
+                                <Typography color={'#666'}>Click here to change wifi connection</Typography>
                             </Box>
                         </Paper>
                     </GridItem>
@@ -597,18 +623,9 @@ function SelectedNetwork({submitHandler,selectedWifi,backHandler,cancelHander,se
                 <Close onClick={cancelHander} sx={{ ...IconStyle,cursor:'pointer', fontSize: 20 }} />
             </RowContainerBetween>
             <Box sx={{p:2}}>
-                <form  onSubmit={submitHandler}>
+                <form onSubmit={submitHandler}>
                     <TextInputField 
-                        icon={<CellTower sx={{fontSize:20,mx:1}}/>} 
-                        label="Access Point SSID"
-                        value={selectedWifi?.ssid}
-                        name="SSID"
-                        id="SSID"
-                        placeholder="Enter SSID"
-                    />
-                    <TextInputField 
-                        icon={<LockOutlined 
-                        sx={{fontSize:20,mx:1}}/>} 
+                        icon={<LockOutlined sx={{fontSize:20,mx:1}}/>} 
                         onChange={(e)=>{
                             setSelectedWifi({
                                 ...selectedWifi as AccessPoint,
