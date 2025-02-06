@@ -3,11 +3,8 @@ import { getContainerLogs,dlContainerLogs, getAllContainers, cInfo } from '../..
 import { useEffect, useState } from 'react';
 import PrimaryIconButton from '../shared/PrimaryIconButton';
 import SnackbarComponent from '../shared/Snackbar';
-interface Props{
-    matches?:boolean
-}
-export default function LogsTabMaintenance({matches}:Props) {
-    console.log(matches);
+
+export default function LogsTabMaintenance() {
     const [data, setData] = useState<string>('');
     const [sysContainer, setSysContainer] = useState<cInfo | undefined>(undefined);
     const [error, setError] = useState<{message: Error | null | string,severity: "error" | "warning" | "info" | "success"} | null>(null);
@@ -18,7 +15,7 @@ export default function LogsTabMaintenance({matches}:Props) {
                 const res = await getContainerLogs(sysContainer?.Id as string, 50);
                 setData(res);
             }catch(err){
-                setData('Error Encountered, could not fetch logs '+err);
+                setData('Could not fetch logs '+err);
             }
         }
     }
@@ -73,7 +70,7 @@ export default function LogsTabMaintenance({matches}:Props) {
             },
             (error) => {
                 setError({
-                    message: 'Error Encountered, could not fetch logs '+error,
+                    message: 'Could not fetch logs '+error,
                     severity:'warning'
                 });
             }

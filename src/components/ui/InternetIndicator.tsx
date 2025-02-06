@@ -29,7 +29,6 @@ export default function InternetIndicator(){
                 return () => clearTimeout(tmId);
 			},
 			error => {
-				console.log(error);
 				setState({
 					status: null,
 					error: error

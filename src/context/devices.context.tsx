@@ -71,23 +71,13 @@ export const DevicesContext = createContext<ContextValues>({
     profile: null,
     loadProfile: ()=>{},
     setProfile: ()=>{},
-    getDevicesFc() {
-        console.log("get devices");
-    },
-    setAppsFc(apps) {
-        console.log(apps);
-    },
-    getApps() {
-        console.log("get apps");
-    },
-    addApp(app) {
-        console.log(app);
-    },
+    getDevicesFc:()=> {},
+    setAppsFc: ()=> {},
+    getApps:()=> {},
+    addApp:()=> {},
     codecsList:[],
     token:'',
-    setAccessToken(userData) {
-        console.log(userData);
-    },
+    setAccessToken:()=> {},
     networkDevices: {},
     setNetWorkDevices:()=>{},
 });
@@ -121,7 +111,6 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         }else if(order==='2'){
             // sorts devices by name
             const namesDevs = [...devices].sort((a, b) => a.name.localeCompare(b.name));
-            console.log(namesDevs);
             setDevices(namesDevs)
         }else if(order==="3"){
             const modifiedDevs = [...devices].sort((a,b)=>b.modified.getTime()-a.modified.getTime())
