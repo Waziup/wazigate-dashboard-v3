@@ -113,7 +113,7 @@ function DeviceSensorSettings() {
     useEffect(() => {
         init();
     }, [init]);
-    const [actuatorValue, setActuatorValue] = useState<number>(0);
+    const [actuatorValue, setActuatorValue] = useState<number | undefined>(undefined);
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => { setActuatorValue(Number(e.target.value)) }
     const addActuatorValueSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -122,16 +122,13 @@ function DeviceSensorSettings() {
                 setError({
                     message:'Actuator value added successfully',
                     severity:'success'
-                })
+                });
+                setActuatorValue(undefined);
                 getDevicesFc();
             }).catch((err) => {
-                showDialog({
-                    content:"Error Encountered: "+err,
-                    onAccept:()=>{},
-                    onCancel:()=>{},
-                    hideCloseButton: true,
-                    acceptBtnTitle:"Close",
-                    title:"Error encountered"
+                setError({
+                    message: "Error: "+err,
+                    severity:'error'
                 });
             });
     }
@@ -343,7 +340,7 @@ function DeviceSensorSettings() {
             }
             <Box sx={{  }}>
                 <Box sx={{px:4,py:2,}}>
-                    <Typography fontWeight={600} fontSize={24} color='black'>{device?.name}</Typography>
+                    <Typography fontWeight={600} fontSize={24} color='black'>{sensOrActuator?.name} Settings</Typography>
                     <div role="presentation" onClick={() => { }}>
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
@@ -479,7 +476,8 @@ function DeviceSensorSettings() {
                                             <input
                                                 type="number"
                                                 onInput={onInputChange}
-                                                name="name" 
+                                                name="name"
+                                                value={actuatorValue}
                                                 placeholder='Actuator value'
                                                 required
                                                 style={{background:'none', border: 'none', width: '100%',backgroundColor:'none', padding: '6px 0', borderBottom: '1px solid #292F3F', outline: 'none' }}
