@@ -47,11 +47,13 @@ function Layout() {
         });
     },[navigate, setProfile, setAccessToken]);
     useEffect(()=>{
-        const int = setInterval(reToken, 1000 * 60 * 5);
+        //delay 30 seconds to check if the user is authorized
+        setTimeout(isAuthorized, 1000 * 30);
         const timer = setInterval(isAuthorized, 1000 * 15);
+        const int = setInterval(reToken, 1000 * 60 * 8);
         return ()=>{
-            clearInterval(int);
             clearInterval(timer);
+            clearInterval(int);
         }
     },[reToken,isAuthorized])
     const theme = useTheme();
