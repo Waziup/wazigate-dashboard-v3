@@ -9,6 +9,7 @@ import MenuComponent from './MenuDropDown';
 import { lineClamp, removeSpecialChars, time_ago } from '../../utils';
 import { DEFAULT_COLORS } from '../../constants';
 interface SensorActuatorItemProps {
+    errorCallback:(msg: string)=>void
     sensActuator: Sensor | Actuator;
     open:boolean,
     anchorEl:HTMLElement | null,
@@ -25,7 +26,7 @@ interface SensorActuatorItemProps {
 const isActuator = (kind:string): boolean => {
     return Object.keys(ontologies.actingDevices).includes(kind);
 }
-export default function SensorActuatorItem({kind, icon, callbackFc,type, modified, sensActuator: sens,handleClose,open,children,deviceId}: SensorActuatorItemProps) {
+export default function SensorActuatorItem({kind, icon,errorCallback, callbackFc,type, modified, sensActuator: sens,handleClose,open,children,deviceId}: SensorActuatorItemProps) {
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const navigate = useNavigate();
     const handleDelete = () => {
@@ -36,7 +37,7 @@ export default function SensorActuatorItem({kind, icon, callbackFc,type, modifie
                 handleClose();
                 callbackFc &&callbackFc();
             }).catch((err) => {
-                console.log(err);
+                errorCallback(err);
             })
             return;
         }
@@ -44,7 +45,7 @@ export default function SensorActuatorItem({kind, icon, callbackFc,type, modifie
             handleClose();
             callbackFc &&callbackFc();
         }).catch((err) => {
-            console.log(err);
+            errorCallback(err);
         })
     }
     const iconPath = type === 'actuator' ? 
