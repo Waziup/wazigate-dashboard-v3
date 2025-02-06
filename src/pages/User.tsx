@@ -6,7 +6,8 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {useForm, SubmitHandler } from 'react-hook-form';
 import Backdrop from "../components/Backdrop";
-
+import Logo from '../assets/wazilogo.svg';
+import { DevicesContext } from "../context/devices.context";
 interface User {
     id?: string
     name?: string;
@@ -34,8 +35,6 @@ const TextInput = ({disabled, children, label }: TextInputProps) => (
         {children}
     </Box>
 )
-import Logo from '../assets/wazilogo.svg';
-import { DevicesContext } from "../context/devices.context";
 const textinputStyle = { width: '100%', fontSize: 18, fontWeight:'lighter', border: 'none', background: 'none', color: DEFAULT_COLORS.third_dark, padding: 2, borderBottom: '1px solid #D5D6D8', outline: 'none' }
 function User() {
     const {handleSubmit,setValue} = useForm<Omit<User,'ID'>>({
@@ -103,7 +102,6 @@ function User() {
         })
         .catch((error) => {
             setLoading(false);
-            console.log(error);
             setErr(true);
             setMsg(error as string);
         });
