@@ -1,5 +1,6 @@
 import { CSSProperties } from "react";
 import { App, AppState, Device } from "waziup";
+import { AccessPoint } from "./systemapi";
 const time_formats = [
     [60, 'seconds', 1], // 60
     [120, '1 minute ago', '1 minute from now'], // 60*2
@@ -189,4 +190,23 @@ const stateNames: Record<string, string> = {
 export function nameForState(state: string) {
     if(!state) return "";
     return stateNames[state] || ("State: "+state);
+}
+export function orderAccessPointsByStrength(wifiList:AccessPoint[]): AccessPoint[]{
+    const groupedWifiList = Object.values(
+        wifiList.reduce<Record<string, AccessPoint[]>>((acc, wifi) => {
+            if (!acc[wifi.ssid]) acc[wifi.ssid] = [];
+            acc[wifi.ssid].push(wifi);
+            return acc;
+        }, {})
+    );
+    // Step 2: Sort each group by strength (descending)
+    groupedWifiList.forEach(group => group.sort((a, b) => b.strength - a.strength));
+
+    // Step 3: Select the student with the highest strength from each group
+    const strongestWifiList = groupedWifiList.map(group => group[0]);
+    
+    // Step 4: Sort the final list by strength (descending)
+    strongestWifiList.sort((a, b) => b.strength - a.strength);
+    
+    return  strongestWifiList;
 }
