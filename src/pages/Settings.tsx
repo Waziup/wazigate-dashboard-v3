@@ -1,6 +1,6 @@
 import { Box, Grid, Typography,  Button, CircularProgress, SelectChangeEvent,  Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { DEFAULT_COLORS } from '../constants';
-import { AccessTime, CheckCircle, PowerSettingsNew, RestartAlt } from '@mui/icons-material';
+import { AccessTime, PowerSettingsNew, RestartAlt } from '@mui/icons-material';
 import { SxProps, Theme } from '@mui/material';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import RowContainerNormal from '../components/shared/RowContainerNormal';
@@ -17,6 +17,7 @@ import GridItemEl from '../components/shared/GridItemElement';
 import SnackbarComponent from '../components/shared/Snackbar';
 import { DevicesContext } from '../context/devices.context';
 import InternetIndicator from '../components/ui/InternetIndicator';
+import Backdrop from '../components/Backdrop';
 const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
 const GridItem = ({bgcolor,additionStyles,md, children,}: {xs:number,md:number, matches: boolean,bgcolor?:boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode }) => (
     <Grid sx={{bgcolor: bgcolor?'#fff':'',...additionStyles}} bgcolor={bgcolor?'#fff':''} item md={md} lg={5.8} xl={5.8} sm={5.8} xs={12} my={1} >
@@ -52,8 +53,11 @@ function Settings() {
     const {wazigateId,networkDevices, showDialog} = useContext(DevicesContext);
     
     const submitTime = () => {
+        setLoading(true)
         const date_and_time = convTime(data?.time as Date);
         setTime(date_and_time).then(() => {
+            setLoading(false)
+            setModalProps({open:false,title:''})
             showDialog({
                 title:"Time set",
                 content:"Time set successfully",
@@ -62,8 +66,9 @@ function Settings() {
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
-            setModalProps({open:false,title:''})
         },(error) => {
+            setLoading(false)
+            setModalProps({open:false,title:''});
             showDialog({
                 title:"Error",
                 content:"Error setting time: " + error,
@@ -72,7 +77,6 @@ function Settings() {
                 onAccept:()=>{},
                 onCancel:()=>{},
             });
-            setModalProps({open:false,title:''})
         });
     }
     const onTimeChange = (date: dayjs.Dayjs) => {
@@ -82,13 +86,18 @@ function Settings() {
             zone: data? data.zone: ''
         });
     }
+    const [loading, setLoading] = useState(false)
     const handleSaveTimezone = (e: SelectChangeEvent<string>) => {
+        setLoading(true);
+        closeModal();
         setTimezone(e.target.value)
         .then(()=>{
             setReponseMessage("The time zone set");
+            setLoading(false);
         })
         .catch(()=>{
             setReponseMessage("Error setting time zone");
+            setLoading(false);
         });
     };
     const infoConfigFc = async()=>{
@@ -135,7 +144,7 @@ function Settings() {
             );
         }, 6000);
         const timer = setInterval(() => {
-            setCurrentTime(dayjs().format('HH:mm:ss'));
+            setCurrentTime(dayjs(data?.time).format('HH:mm:ss'));
         }, 5000);
         return () => { 
             clearInterval(timer); 
@@ -198,6 +207,18 @@ function Settings() {
     }
     return (
         <>
+            {
+                loading?(
+                    <Backdrop>
+                        <CircularProgress color="info" size={70} />
+                    </Backdrop>
+                ):null
+            }
+            {
+                responseMessage?(
+                    <SnackbarComponent anchorOrigin={{ vertical: 'top', horizontal: 'center' }} severity='success' autoHideDuration={6000} message={responseMessage} />
+                ):null
+            }
             <Dialog fullWidth open={modalProps.open && modalProps.title === 'Changing Timezone'} onClose={closeModal}>
                 <DialogTitle>{modalProps.title}</DialogTitle>
                 <DialogContent sx={{my:2,overflow:'auto'}}>
@@ -233,7 +254,6 @@ function Settings() {
                     <Button autoFocus onClick={submitTime} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >SAVE</Button>
                 </DialogActions>
             </Dialog>
-            <SnackbarComponent anchorOrigin={{ vertical: 'top', horizontal: 'center' }} severity='success' autoHideDuration={6000} message={responseMessage} />
             <Box sx={{px:matches? 4:2,py:2, overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
                 <Box>
                     <Typography fontWeight={700} fontSize={24} color={'black'}>Settings</Typography>
@@ -241,28 +261,24 @@ function Settings() {
                 </Box>
                 <Grid width={'100%'} container>
                     <GridItem additionStyles={{mr: matches?2:0,}} md={12} xs={12} matches={matches} >
-                        <GridItemEl additionStyles={{pb:.2,}} icon='cell_tower' text={(eth0 && eth0.IP4Config)?'Ethernet':'Network'}>
+                        <GridItemEl additionStyles={{pb:.2,}} icon='cell_tower' text={apConn? 'Wifi info':'Ethernet'}> {/* text={(eth0 && eth0.IP4Config)?'Ethernet':'Network'}*/ }
                             <RowContainer >
-                                <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
+                                <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
                                     {
-                                        apConn? atob(apConn?.['802-11-wireless']?.ssid as unknown as string) || 'WAZIGATE-AP': connectedWifi? connectedWifi:''
+                                        address? 'Wifi name': (eth0 && eth0.IP4Config && eth0.IP4Config.Addresses[0].Address)?'Ethernet': <CircularProgress size={10} sx={{fontSize:10, }} />
                                     }
                                 </Typography>
-                                {
-                                    (apConn && apConn?.['802-11-wireless']?.ssid) || connectedWifi?(
-                                        <CheckCircle sx={{ color: DEFAULT_COLORS.primary_blue, fontSize: 17 }} />
-                                    ):<CircularProgress size={10} sx={{fontSize:10, }} />
-                                }
+                                <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
+                                    {
+                                        apConn? atob(apConn?.['802-11-wireless']?.ssid as unknown as string) || 'WAZIGATE-AP' : connectedWifi? connectedWifi:''
+                                    }
+                                </Typography>
                             </RowContainer>
                             <RowContainer>
                                 <Typography color='primary.main' fontWeight={300}>IP address</Typography>
                                 <Typography color={DEFAULT_COLORS.primary_black} >
                                     {
-                                        (eth0 && eth0.IP4Config) ? (
-                                            eth0.IP4Config.Addresses[0].Address
-                                        ):address? address: (
-                                            <CircularProgress size={10} sx={{fontSize:10 }} />
-                                        )
+                                        address? address: (eth0 && eth0.IP4Config)? (eth0.IP4Config.Addresses[0].Address):(<CircularProgress size={10} sx={{fontSize:10 }} />)
                                     }
                                 </Typography>
                             </RowContainer>
@@ -317,6 +333,16 @@ function Settings() {
                                         <Typography textTransform='uppercase' mr={1} color={DEFAULT_COLORS.primary_black}>{currentTime}</Typography>    
                                     ): <CircularProgress size={10} sx={{fontSize:10, }} />
                                 }
+                            </RowContainer>
+                            <RowContainer>
+                                <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Gateway Time</Typography>
+                                <Typography color={DEFAULT_COLORS.primary_black} fontSize={14}>
+                                    {
+                                        data?(
+                                            dayjs(data.time).format('HH:mm:ss')
+                                        ):(<CircularProgress size={10} sx={{fontSize:10, }} />)
+                                    }
+                                </Typography>
                             </RowContainer>
                             <RowContainer>
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Time Zone</Typography>
