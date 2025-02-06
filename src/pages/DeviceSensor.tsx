@@ -2,7 +2,7 @@ import { Box, Typography, Breadcrumbs } from "@mui/material";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Chart from 'react-apexcharts';
-import { useCallback, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import type { Actuator, Device, Sensor } from "waziup";
 import { Link } from "react-router-dom";
 import PrimaryIconButton from "../components/shared/PrimaryIconButton";
@@ -49,6 +49,51 @@ function Device() {
                 setValues(valuesTable);
             })
     }, []);
+    const getActuatorValues = useCallback(function (act: Actuator,deviceId: string, actuatorId: string) {
+        window.wazigate.getActuatorValues(deviceId, actuatorId)
+            .then((res) => {
+                const values = (res as { time: string, value: number }[]).map((value) => {
+                    const date = new Date(value.time);
+                    const hours = String(date.getUTCHours()).padStart(2, '0');
+
+                    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                    return { 
+                        y: (typeof value.value==='boolean') ? (value.value ? 1 : 0) :  Math.round(value.value * 100) / 100, 
+                        x: `${hours}:${minutes}`
+                    }
+                });
+                setGraphValues(values);
+                const valuesTable = (res as { time: string, value: number }[]).map((value) => {
+                    const date = new Date(value.time);
+                    const hours = String(date.getUTCHours()).padStart(2, '0');
+
+                    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                    return {
+                        value: act.meta.quantity === 'Boolean' ? (value.value ? 'Running' : 'Stopped') : Math.round(value.value * 100) / 100,
+                        modified: `${date.getFullYear()}-${(date.getMonth()+1)}-${date.getDate()} ${hours}:${minutes}`
+                    }
+                });
+                setValues(valuesTable);
+            })
+    }, []);
+    useEffect(() => {
+        if(pathname.includes('actuators')){
+            window.wazigate.subscribe(`devices/${id}/actuators/${sensorId}/#`, () => {
+                getActuatorValues(sensOrActuator as Actuator,id as string, sensorId as string);
+            });
+        }else{
+            window.wazigate.subscribe(`devices/${id}/sensors/${sensorId}/#`, () => {
+                getGraphValues(id as string, sensorId as string);
+            })
+        }
+        return () => {
+            if(pathname.includes('actuators')){
+                window.wazigate.unsubscribe(`devices/${id}/actuators/${sensorId}/#`,()=>{});
+            }else{
+                window.wazigate.unsubscribe(`devices/${id}/sensors/${sensorId}/#`,()=>{});
+            }
+        }
+    }, [graphValues, id, pathname,  sensorId, values, getActuatorValues, sensOrActuator, getGraphValues]);
     async function fetchMoreData() {
         let newValsx:{time:string,value: number}[]=[];
         if(pathname.includes('actuators')){
@@ -90,38 +135,14 @@ function Device() {
             const actuator = de.actuators.find((actuator) => actuator.id === sensorId);
             if (actuator) {
                 setSensOrActuator({...actuator,name: cleanString(actuator.name)});
-                window.wazigate.getActuatorValues(id as string, sensorId as string)
-                .then((res) => {
-                    const values = (res as { time: string, value: number }[]).map((value) => {
-                        const date = new Date(value.time);
-                        const hours = String(date.getUTCHours()).padStart(2, '0');
-
-                        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-                        return { 
-                            y: (typeof value.value==='boolean') ? (value.value ? 1 : 0) :  Math.round(value.value * 100) / 100, 
-                            x: `${hours}:${minutes}`
-                        }
-                    });
-                    setGraphValues(values);
-                    const valuesTable = (res as { time: string, value: number }[]).map((value) => {
-                        const date = new Date(value.time);
-                        const hours = String(date.getUTCHours()).padStart(2, '0');
-
-                        const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-                        return {
-                            value: actuator.meta.quantity === 'Boolean' ? (value.value ? 'Running' : 'Stopped') : Math.round(value.value * 100) / 100,
-                            modified: `${date.getFullYear()}-${(date.getMonth()+1)}-${date.getDate()} ${hours}:${minutes}`
-                        }
-                    });
-                    setValues(valuesTable);
-                })
+                getActuatorValues(actuator,id as string, sensorId as string);
             }
             setDevice({
                 ...de,
                 name: cleanString(de.name)
             })
         });
-    }, [getGraphValues, id, pathname, sensorId]);
+    }, [getActuatorValues, getGraphValues, id, pathname, sensorId]);
     return (
         <Box sx={{ height: '100%', overflowY: 'auto' }}>
             <RowContainerBetween additionStyles={{ pl:4,py:2, }}>
@@ -131,7 +152,7 @@ function Device() {
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
                                 <Link  style={{fontSize:14,textDecoration:'none',color:'inherit'}} to={`/devices/${device?.id}`}>
-                                    {device?.name}
+                                    {sensOrActuator?.name}
                                 </Link>
                             </Typography>
                             <Typography fontSize={14} fontWeight={300} color="inherit">{pathname.includes('actuators') ? 'actuators' : 'sensors'} <span style={{fontSize:14,color:'inherit',fontWeight:500}}>/</span>  {cleanString(sensOrActuator?.name)}</Typography>
@@ -199,6 +220,7 @@ function Device() {
                     {
                         values.length>0?(
                             <SensorTable
+                                title={pathname.includes('sensors')?'Sensor Data':'Actuator Data'}
                                 fetchMoreData={fetchMoreData}
                                 values={values}
                             />
