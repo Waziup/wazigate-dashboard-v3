@@ -147,7 +147,7 @@ function Device() {
         <Box sx={{ height: '100%', overflowY: 'auto' }}>
             <RowContainerBetween additionStyles={{ pl:4,py:2, }}>
                 <Box>
-                    <Typography fontWeight={500} fontSize={24} color={'black'}>{device?.name}</Typography>
+                    <Typography fontWeight={500} fontSize={24} color={'black'}>{sensOrActuator?.name}</Typography>
                     <div role="presentation" onClick={handleClick}>
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
