@@ -300,13 +300,13 @@ function Settings() {
                                 <Typography sx={{textAlign:'left',color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
                                     Wazigate ID
                                 </Typography>
-                                <Typography textTransform='uppercase' component={'span'}>{wazigateId}</Typography> 
+                                <Typography textTransform='uppercase' color={DEFAULT_COLORS.navbar_dark} component={'span'}>{wazigateId}</Typography> 
                             </RowContainer>
                             <RowContainer>
                                 <Typography sx={{textAlign:'left',color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
                                     Version
                                 </Typography>
-                                <Typography component='span'>{infoConfig.version} (build number: {infoConfig.buildNr})</Typography> 
+                                <Typography color={DEFAULT_COLORS.navbar_dark} component='span'>{infoConfig.version} (build number: {infoConfig.buildNr})</Typography> 
                             </RowContainer>
                         </GridItemEl>
                         <GridItemEl text='Gateway Power' icon='power_settings_new'>
