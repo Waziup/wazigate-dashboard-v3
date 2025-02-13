@@ -47,12 +47,12 @@ export default function InternetIndicator(){
             {
                 (state.error)?(
                     <Box style={{color:'#fff', margin: 0 }}>
-                        <Typography sx={{ margin: 0,color:'#FA9E0E'}}>
+                        <Typography sx={{fontSize:14, margin: 0,color:'#FA9E0E'}}>
                             Error Encounted
                         </Typography>
                     </Box>
                 ): state.status===null?(
-                    <Typography sx={{ margin: 0,color:'#fff' }}>
+                    <Typography sx={{fontSize:14, margin: 0,color:'#fff' }}>
                         <CircularProgress size={14} sx={{color:DEFAULT_COLORS.primary_blue,mx:1.5,fontSize:14}} />
                     </Typography>
                 ):(
@@ -60,11 +60,11 @@ export default function InternetIndicator(){
                         onClick={() => checkTheStatus(true)}
                     >
                         {state.status ? (
-                            <Typography sx={{  margin: 0,color: DEFAULT_COLORS.primary_blue}}>
+                            <Typography sx={{fontSize:14,  margin: 0,color: DEFAULT_COLORS.primary_blue}}>
                                 Connected
                             </Typography>
                         ) : (
-                            <Typography sx={{  margin: 0,color:'#FA9E0E'}}>
+                            <Typography sx={{fontSize:14,  margin: 0,color:'#FA9E0E'}}>
                                 Disconnected
                             </Typography>
                         )}
