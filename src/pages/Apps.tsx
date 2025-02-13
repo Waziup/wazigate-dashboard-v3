@@ -577,11 +577,15 @@ export default function Apps() {
                                 style={{background:'none', border: 'none', width: '100%', padding: '6px 0', outline: 'none' }}
                             />
                         </FormControl>
-                        <Box sx={{ my: 2, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                        <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
                             <Typography color={'primary'} my={1} fontSize={12}>Author</Typography>
                             <Typography color={'primary'} my={1} fontSize={12}>{selectedApp?.author.name ? (selectedApp?.author.name) : (selectedApp?.author)}</Typography>
                         </Box>
-                        <Box sx={{ my: 2, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                        <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                            <Typography color={'primary'} my={1} fontSize={12}>App ID</Typography>
+                            <Typography color={'primary'} my={1} fontSize={12}>{selectedApp?.id}</Typography>
+                        </Box>
+                        <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
                             <Typography color={'primary'} my={1} fontSize={12}>Current version</Typography>
                             <Typography color={'primary'} my={1} fontSize={12}>
                                 {selectedApp?.version}
@@ -591,12 +595,12 @@ export default function Apps() {
                         {
                             selectedApp?.state ? (
                                 <>
-                                    <Box sx={{ my: 2, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                                    <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
                                         <Typography color={'primary'} my={1} fontSize={12}>Health</Typography>
                                         <Typography color={'primary'} my={1} fontSize={12}>{selectedApp?.state.health ??'Unknow'}</Typography>
                                     </Box>
                                     <SelectElement
-                                        my={2}
+                                        my={1}
                                         id="restartPolicy"
                                         name='restartPolicy'
                                         value={(selectedApp as App)?.state ? (selectedApp as App)?.state.restartPolicy : ''}
@@ -607,11 +611,11 @@ export default function Apps() {
                                 </>
                             ):null
                         }
-                        <Box sx={{ my: 2, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                        <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
                             <Typography color={'primary'} my={1} fontSize={12}>Description</Typography>
                             <Typography color={'primary'} my={1} fontSize={12}>{(selectedApp as App1)?.description as string}</Typography>
                         </Box>
-                        <Box sx={{ my: 2, width: '100%', borderBottom: '1px solid #292F3F' }}>
+                        <Box sx={{ my: 1, width: '100%', borderBottom: '1px solid #292F3F' }}>
                             <Typography color={'primary'} my={1} fontSize={12}>Version</Typography>
                             <Typography color={'primary'} mb={1} fontSize={12}>{selectedApp?.version}</Typography>
                         </Box>
@@ -705,7 +709,7 @@ export default function Apps() {
                                                 }
                                                 <CardHeader
                                                     title={<NormalText title={app.name} />}
-                                                    subheader={<Typography color={'#325460'} fontWeight={300}><Typography component={'span'}fontWeight={200} fontSize={14}>App ID:</Typography> {app.id}</Typography>}
+                                                    subheader={<Typography color={'#325460'} fontWeight={300}><Typography color={DEFAULT_COLORS.navbar_dark} component={'span'}fontWeight={200} fontSize={14}>Version:</Typography > {app.version}</Typography>}
                                                     action={
                                                         <MenuComponent
                                                             open={open}
@@ -731,8 +735,8 @@ export default function Apps() {
                                                     }
                                                 />
                                                 <Box sx={{px:2}}>
-                                                    <Typography fontSize={15} fontWeight={100} my={0} color={DEFAULT_COLORS.secondary_black}>Status: <Typography component={'span'} fontSize={15} color={app.state ? app.state.running ? DEFAULT_COLORS.primary_blue : DEFAULT_COLORS.navbar_dark : DEFAULT_COLORS.navbar_dark}>{app.state ? app.state.running ? 'Running' : 'Stopped' : 'Stopped'}</Typography></Typography>
-                                                    <Typography sx={{fontWeight:'100',fontSize:14, my:1,color: DEFAULT_COLORS.secondary_black, ...lineClamp(2)}}>{(app as App1).description.length > 40 ? (app as App1).description.slice(0, 39) + '...' : (app as App1).description}</Typography>
+                                                    <Typography fontSize={15} fontWeight={100} my={0} color={DEFAULT_COLORS.navbar_dark}>Status: <Typography component={'span'} fontSize={15} color={app.state ? app.state.running ? DEFAULT_COLORS.primary_blue : DEFAULT_COLORS.navbar_dark : DEFAULT_COLORS.navbar_dark}>{app.state ? app.state.running ? 'Running' : 'Stopped' : 'Stopped'}</Typography></Typography>
+                                                    <Typography sx={{fontWeight:'100',fontSize:14, my:1,color: DEFAULT_COLORS.navbar_dark, ...lineClamp(2)}}>{(app as App1).description.length > 40 ? (app as App1).description.slice(0, 39) + '...' : (app as App1).description}</Typography>
                                                 </Box>
                                                 <Box sx={{px:2}}>
                                                     {
