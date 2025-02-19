@@ -1,5 +1,5 @@
-import { SyntheticEvent } from 'react';
-import ontologies, { actingDevices,sensingDevices } from "../../assets/ontologies.json";
+import { SyntheticEvent, useMemo } from 'react';
+import ontologies from "../../assets/ontologies.json";
 import ontologiesicons from '../../assets/ontologies.svg';
 import { Box,Autocomplete, InputAdornment, TextField, createFilterOptions } from '@mui/material';
 import SVGIcon from './SVGIcon';
@@ -10,21 +10,22 @@ interface Props{
     name: string
     title?: string;
 }
-type ActingDevice = typeof actingDevices[keyof typeof actingDevices];
-type SensingDevice = typeof sensingDevices[keyof typeof sensingDevices];
 const filter = createFilterOptions<string>();
 export default function OntologyKindInput({deviceType,onChange,title,value,name}:Props) {
-    let ontology: { [x: string]: ActingDevice | SensingDevice } | null = null
-    switch (deviceType) {
-        case "actuator": ontology = ontologies.actingDevices; break;
-        default:
-        case "sensor": ontology = ontologies.sensingDevices; break;
-    }
+    const {ontology,options} = useMemo<{
+        ontology: { [key: string]: { label: string; icon: string } },
+        options: string[]
+    }>(()=>{
+        return {
+            ontology: deviceType=='actuator'? ontologies.actingDevices: ontologies.sensingDevices,
+            options: deviceType==='actuator'? Object.keys(ontologies.actingDevices): Object.keys(ontologies.sensingDevices)
+        }
+    },[deviceType])
     
     return (
         <Autocomplete
             value={value}
-            options={ontology ? Object.keys(ontology) as string[]: []}
+            options={options}
             id='kind-select'
             onChange={(_event: SyntheticEvent<Element, Event>, newValue: string | null) => {
                 if(typeof newValue === "string" && newValue?.startsWith('use ')){
