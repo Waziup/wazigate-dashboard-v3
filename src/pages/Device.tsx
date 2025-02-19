@@ -365,7 +365,7 @@ function DeviceSettings() {
                                                 >
                                                     {
                                                         (sens.value && typeof sens.value === 'object' )?(
-                                                            <Typography m={1} fontSize={matches?30:24} >
+                                                            <Typography m={1} fontSize={matches?24:18} >
                                                                 {
                                                                     Object.entries(sens.value)
                                                                     .map(([key, value]) => `${key}:${(value as number).toFixed(2)}`)
@@ -373,9 +373,9 @@ function DeviceSettings() {
                                                                 }
                                                             </Typography>
                                                         ):(
-                                                            <Typography m={1} fontSize={matches?38:28} >
+                                                            <Typography m={1} fontSize={matches?24:20} >
                                                                 {Math.round(sens.value * 100) / 100}
-                                                                <Typography component={'span'} fontSize={matches?35:20}> 
+                                                                <Typography component={'span'} fontSize={matches?24:20}> 
                                                                     {' ' +sens.meta.unitSymbol? sens.meta.unitSymbol: ''}
                                                                 </Typography>
                                                             </Typography>
@@ -426,7 +426,7 @@ function DeviceSettings() {
                                                         act.meta.quantity==='Boolean' ? (
                                                             <Android12Switch checked={act.value} onChange={() => {handleSwitchChange(act.id,act.value) }} color='info' />
                                                         ): (
-                                                            <Typography mx={1} fontSize={matches?38:28}>
+                                                            <Typography mx={1} fontSize={matches?20:18}>
                                                                 {
                                                                     act.value && typeof act.value === 'object' ? (
                                                                         Object.entries(act.value)
@@ -435,7 +435,7 @@ function DeviceSettings() {
                                                                     ):null
                                                                 }
                                                                 {Math.round(act.value * 100) / 100}
-                                                                <Typography component={'span'} fontSize={matches?35:20} >
+                                                                <Typography component={'span'} fontSize={matches?24:20} >
                                                                     {' '+act.meta.unitSymbol? act.meta.unitSymbol: ''}
                                                                 </Typography> 
                                                             </Typography>
