@@ -12,10 +12,12 @@ import { App, Device } from "waziup";
 import { allActiveDevices, appChecker, capitalizeFirstLetter,orderByLastUpdated, returnAppURL } from "../utils";
 import InternetIndicator from "../components/ui/InternetIndicator";
 export const Item = ({ path, onClick, children,icon, title, }: { path:string, onClick:(path: string)=>void ,icon: React.ReactNode, children: React.ReactNode, title: string }) => (
-    <Box onClick={()=>onClick(path)} mx={2} sx={{cursor:'pointer',boxShadow:1, width: '33%', minWidth: 250, mx: 2, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
+    <Box onClick={()=>onClick(path)} mx={2} sx={{ cursor:'pointer',boxShadow:1,display:'flex', width: '30%', minWidth: 200, mx: 2, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
         {icon}
-        <NormalText title={title} />
-        {children}
+        <Box ml={2}>
+            <NormalText title={title} />
+            {children}
+        </Box>
     </Box>
 );
 const DeviceStatus = ({ devices,onDeviceClick,activeDevices,totalDevices }: {totalDevices: number,activeDevices:number, onDeviceClick:(devId:string)=>void, devices: Device[] }) => (
