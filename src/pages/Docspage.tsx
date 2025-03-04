@@ -9,9 +9,10 @@ interface CardProps{
     title: string,
     description: string,
     path: To,
+    newTab?:boolean
     icon?:React.ReactNode
 }
-const CardComponent = ({description,path,title,icon}:CardProps)=>(
+const CardComponent = ({description,path,title,newTab,icon}:CardProps)=>(
     <Card elevation={1} sx={{width:[400,250,250,300,300], m:.5,mr:1,bgcolor:'white'}} variant='elevation' >
         <Box px={2}>
             {icon}
@@ -27,7 +28,7 @@ const CardComponent = ({description,path,title,icon}:CardProps)=>(
             </Tooltip>
         </CardContent>
         <CardActions sx={{px:2}}>
-            <Link to={path} style={{textDecoration:'none',margin:'0px 0',cursor:'pointer'}}>
+            <Link to={path} target={newTab?'_blank':undefined} style={{textDecoration:'none',margin:'0px 0',cursor:'pointer'}}>
                 <Typography sx={{fontWeight:500,mt:.5,cursor:'pointer',display:'flex',alignItems:'center',fontSize:15,color:DEFAULT_COLORS.primary_blue}}>
                     LEARN MORE
                 </Typography>
@@ -61,6 +62,7 @@ function Docspage() {
                         description='Checkout the wazigate Documentation on Wazilab and learn more about the gateway'
                         path="https://lab.waziup.io/resources/waziup-e-v/wazigate"
                         icon={<Language sx={{my:1}} />}
+                        newTab
                     />
                     <CardComponent
                         title='Wazigate Edge Documentation'
