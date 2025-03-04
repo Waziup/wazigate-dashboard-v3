@@ -312,7 +312,7 @@ export default function DeviceSettings() {
                                     </Link>
                                 </Typography>
                                 <Typography fontSize={matches?15:12} color="text.primary">
-                                    settings
+                                    Settings
                                 </Typography>
                             </Breadcrumbs>
                         </div>
