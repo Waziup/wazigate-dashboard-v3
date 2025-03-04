@@ -19,6 +19,7 @@ interface Props {
     device: Device,
     openModal: boolean
     isFirst?: boolean
+    matchesWidth?:boolean
     handleChangeSelectDeviceType: (e: SelectChangeEvent<string>) => void
     handleTextInputEditCodec: (e: React.ChangeEvent<HTMLInputElement>) => void
     submitEditDevice: (e: React.FormEvent<HTMLFormElement>) => void
@@ -29,7 +30,7 @@ interface Props {
 import { toStringHelper } from "../../utils";
 import PrimaryButton from "../shared/PrimaryButton";
 import { DEFAULT_COLORS } from "../../constants";
-export default function EditDeviceModal({handleChangeDeviceCodec, isFirst,changeEditMakeLoraWAN, autoGenerateLoraWANOptionsHandler, device, openModal, handleTextInputEditCodec, submitEditDevice, handleNameChange, handleToggleModal }: Props) {
+export default function EditDeviceModal({handleChangeDeviceCodec,matchesWidth, isFirst,changeEditMakeLoraWAN, autoGenerateLoraWANOptionsHandler, device, openModal, handleTextInputEditCodec, submitEditDevice, handleNameChange, handleToggleModal }: Props) {
     const { codecsList } = useContext(DevicesContext)
     if (!device)
         return;
@@ -49,6 +50,7 @@ export default function EditDeviceModal({handleChangeDeviceCodec, isFirst,change
                                     title='Device Codec'
                                     name="codec"
                                     my={2}
+                                    matchesWidth={matchesWidth}
                                     value={device.meta.codec} 
                                     handleChangeSelect={handleChangeDeviceCodec} 
                                     options={codecsList as { id: string, name: string }[]} 
@@ -64,9 +66,9 @@ export default function EditDeviceModal({handleChangeDeviceCodec, isFirst,change
                                     device.meta.lorawan ? (
                                         <>
                                             <Box my={2}>
-                                                <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="devAddr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devAddr} text={'Device Addr (Device Address)'} placeholder={'Device Address, 8 digits required, got ' + toStringHelper(device.meta.lorawan.devAddr)} />
-                                                <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="nwkSEncKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'} placeholder={'Network Session key 32 digits required, got ' + toStringHelper(device.meta.lorawan.nwkSEncKey)} />
-                                                <AddTextShow autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="appSKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.appSKey} text={'AppKey (App Key)'} placeholder={'App Key 32 digits required, got ' + toStringHelper(device.meta.lorawan.appSKey)} />
+                                                <AddTextShow matchesWidth={matchesWidth} autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="devAddr" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.devAddr} text={'Device Addr (Device Address)'} placeholder={'Device Address, 8 digits required, got ' + toStringHelper(device.meta.lorawan.devAddr)} />
+                                                <AddTextShow matchesWidth={matchesWidth} autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="nwkSEncKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.nwkSEncKey} text={'NwkSKey(Network Session Key)'} placeholder={'Network Session key 32 digits required, got ' + toStringHelper(device.meta.lorawan.nwkSEncKey)} />
+                                                <AddTextShow matchesWidth={matchesWidth} autoGenerateHandler={autoGenerateLoraWANOptionsHandler} name="appSKey" onTextInputChange={handleTextInputEditCodec} textInputValue={device.meta.lorawan.appSKey} text={'AppKey (App Key)'} placeholder={'App Key 32 digits required, got ' + toStringHelper(device.meta.lorawan.appSKey)} />
                                             </Box>
                                         </>
                                     ) : null

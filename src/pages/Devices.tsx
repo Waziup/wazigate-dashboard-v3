@@ -419,6 +419,7 @@ function Devices() {
                     autoGenerateLoraWANOptionsHandler={autoGenerateLoraWANOptions}
                 />
                 <EditDeviceModal
+                    matchesWidth={matches}
                     device={selectedDevice as Device}
                     openModal={openEditModal}
                     isFirst={wazigateId === selectedDevice?.id}

@@ -16,11 +16,12 @@ interface AddTextProps{
     textInputValue?:string
     onTextInputChange?:(e:React.ChangeEvent<HTMLInputElement>)=>void
     name?:string
+    matchesWidth?: boolean
     autoGenerateHandler?:(title:"devAddr"|"nwkSEncKey"|"appSKey")=>void
 }
-export default function AddTextShow({text,isReadOnly,name,isPlusHidden,autoGenerateHandler, placeholder,onTextInputChange,textInputValue}:AddTextProps){
+export default function AddTextShow({text,isReadOnly,name,matchesWidth,isPlusHidden,autoGenerateHandler, placeholder,onTextInputChange,textInputValue}:AddTextProps){
     return (
-        <Box sx={{my:2}}>
+        <Box sx={{my:2, width:'100%',minWidth:matchesWidth?400:300}}>
             <Box sx={{display:'flex',justifyContent:'space-between',alignItems:'center', borderBottom:'1px solid #ccc'}}>
                 <input readOnly={isReadOnly} onInput={onTextInputChange} required name={name} value={textInputValue} onChange={onTextInputChange} placeholder={text} style={{border:'none',background:'none',color: DEFAULT_COLORS.navbar_dark,fontWeight:200, outline:'none',width:'100%',padding:'6px 0'}} />
                 {
