@@ -553,7 +553,7 @@ export default function SettingsNetworking() {
                                         <TextInputField 
                                             icon={<LockOutlined 
                                             sx={{fontSize:20,mx:1,}}/>} 
-                                            label="Access Point Pasword" 
+                                            label="Access Point Password" 
                                             placeholder="Enter password"
                                             onChange={()=>{}} 
                                             name="password"
@@ -632,7 +632,7 @@ function SelectedNetwork({submitHandler,selectedWifi,backHandler,cancelHander,se
                                 password:e.target.value
                             }) as unknown as AccessPoint;
                         }}
-                        label="Access Point Pasword" 
+                        label="Access Point Password" 
                         placeholder="Enter password" 
                         name="password"
                     />
