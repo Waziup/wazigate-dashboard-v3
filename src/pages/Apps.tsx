@@ -1,4 +1,4 @@
-import { Box, Button, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel,  ListSubheader,  MenuItem, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material';
+import { Box, Breadcrumbs, Button, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel,  ListSubheader,  MenuItem, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material';
 import { NormalText, } from './Dashboard';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
@@ -8,7 +8,7 @@ import { Link, useOutletContext } from 'react-router-dom';
 import { StartAppConfig, type App } from 'waziup';
 import { DevicesContext } from '../context/devices.context';
 import CustomApp from '../components/CustomApp';
-import { SelectElement } from './DeviceSettings';
+import { SelectElement } from './devices/DeviceSettings';
 import { LoadingButton } from '@mui/lab';
 import { lineClamp, returnAppURL } from '../utils';
 import TextInputField from '../components/shared/TextInputField';
@@ -70,8 +70,8 @@ const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHand
             value={age} label="Install App" onChange={handleChange}>
                 <ListSubheader>WaziApps</ListSubheader>
                 {
-                    recommendedApps.map((app,idx) => (
-                        <MenuItem key={app.id} value={app.image + "*" + app.id} sx={{":hover":{bgcolor:'#D4E3F5'}, display: 'flex',bgcolor:idx%2?'#eaeaea':'', width: '100%', justifyContent: 'space-between' }}>
+                    recommendedApps.map((app) => (
+                        <MenuItem key={app.id} value={app.image + "*" + app.id} sx={{":hover":{bgcolor:'#D4E3F5'}, display: 'flex', width: '100%', justifyContent: 'space-between' }}>
                             <Box display={'flex'} alignItems={'center'}>
                                 <Box component={'img'} sx={{ width: 20, mx: 1, height: 20 }} src={Logo} />
                                 <Tooltip color='black' followCursor title={app.description} placement="top-start">
@@ -543,7 +543,7 @@ export default function Apps() {
                 </DialogActions>
             </Dialog>
             <Dialog open={uninstLoader} onClose={() => { setAppToUninstall(null); setUninstLoader(!uninstLoader) }}>
-                <DialogTitle>Do you wish to uninstall {appToUninstall?.name}</DialogTitle>
+                <DialogTitle>Do you wish to uninstall {appToUninstall?.name}?</DialogTitle>
                 <DialogContent sx={{my:2,}} >
                     <DialogContentText>
                         This app will be uninstalled and removed from the gateway.
@@ -658,11 +658,18 @@ export default function Apps() {
                 <RowContainerBetween>
                     <Box >
                         <Typography fontWeight={700} fontSize={24} color={'black'}>Apps</Typography>
-                        {
-                            matches?(
-                                <Typography fontSize={matches ? 15 : 13} sx={{ color: DEFAULT_COLORS.secondary_black }}>Setup your Wazigate Edge Apps</Typography>
-                            ):null
-                        }
+                        <div role="presentation" onClick={()=>{}}>
+                            <Breadcrumbs aria-label="breadcrumb">
+                                <Typography fontSize={16} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                    <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                        Home
+                                    </Link>
+                                </Typography>
+                                <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
+                                    Apps
+                                </p>
+                            </Breadcrumbs>
+                        </div> 
                     </Box>
                     <DropDown
                         customAppInstallHandler={()=>{ setModalProps({ open: true, title: 'Confirm Installation', children: <></>,otherArgs: undefined }) }}
@@ -681,6 +688,11 @@ export default function Apps() {
                         age={''}
                     />
                 </RowContainerBetween>
+                {
+                    matches?(
+                        <Typography fontSize={matches ? 15 : 13} sx={{fontSize:matches ? 15 : 13,my:2, color: DEFAULT_COLORS.secondary_black }}>Setup your Wazigate Edge Apps</Typography>
+                    ):null
+                }
                 <Grid container spacing={2} py={2}>
                     {
                         apps.length >0?apps.map((app, idx) => {

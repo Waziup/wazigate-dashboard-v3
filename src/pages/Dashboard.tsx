@@ -1,4 +1,4 @@
-import { Box, Grid, Paper, Stack, Typography,styled } from "@mui/material";
+import { Box, Breadcrumbs, Grid, Paper, Stack, Typography,styled } from "@mui/material";
 import {  CloudOff, Wifi,  Cloud, SearchOff, } from '@mui/icons-material';
 import BasicTable from "../components/ui/BasicTable";
 import React, { useContext, useMemo, } from "react";
@@ -124,7 +124,18 @@ function Dashboard() {
             {
                 matches?(
                     <Box sx={{px:4,py:2, height: '100%', overflowY: 'hidden' }}>
-                        <Typography fontSize={24} color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
+                        <Box>
+                            <Typography fontSize={24} color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
+                            <div role="presentation" onClick={()=>{}}>
+                                <Breadcrumbs aria-label="breadcrumb">
+                                    <Typography fontSize={16} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                        <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                            Home
+                                        </Link>
+                                    </Typography> 
+                                </Breadcrumbs>
+                            </div>
+                        </Box>
                         <Stack direction={'row'} mt={2} spacing={2}>
                             <Item icon={selectedCloud?.paused?(<CloudOff sx={{ mb: 2, fontSize: 42, color: '#D9D9D9' }} /> ):( <Cloud sx={{mb: 2, fontSize: 42, color: 'black' }} /> )} path='/settings/networking' onClick={onClick} title="Cloud Synchronization">
                                 <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
