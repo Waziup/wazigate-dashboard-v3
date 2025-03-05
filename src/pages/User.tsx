@@ -1,13 +1,15 @@
 import { Save } from "@mui/icons-material";
-import { Alert, Box, CircularProgress, ListItemText, Paper, Snackbar, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Alert, Box, Breadcrumbs, CircularProgress,  ListItemText, Paper, Snackbar, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DEFAULT_COLORS } from "../constants";
 import { useContext, useCallback, useEffect, useState } from "react";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {useForm, SubmitHandler } from 'react-hook-form';
 import Backdrop from "../components/Backdrop";
-import Logo from '../assets/wazilogo.svg';
+import {AccountCircle} from '@mui/icons-material'
+// import Logo from '../assets/wazilogo.svg';
 import { DevicesContext } from "../context/devices.context";
+import { Link } from "react-router-dom";
 interface User {
     id?: string
     name?: string;
@@ -123,11 +125,27 @@ function User() {
                 </Alert>
             </Snackbar>
             <Box sx={{px:matches?4:1,py:2, width: '100%',  position: 'relative', height: '100%', }}>
+            <Box>
+                <Typography fontWeight={600} fontSize={24} color={'black'}>Profile</Typography>
+                <div role="presentation" onClick={()=>{}}>
+                    <Breadcrumbs aria-label="breadcrumb">
+                        <Typography fontSize={16} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                            <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                Home
+                            </Link>
+                        </Typography>
+                        <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
+                            Profile
+                        </p>
+                    </Breadcrumbs>
+                </div>
+            </Box>
                 <Paper sx={{ mx:'auto', left: '50%', borderRadius: 2, bgcolor: 'white', width: matches ? '50%' : '95%' }}>
                     <Box sx={{ display: 'flex', py: 2, width: '100%', borderBottom: '1px solid #D5D6D8', alignItems: 'center', }}>
-                        <Box component={'img'} src={Logo} mx={2} />
+                        {/* <Box component={'img'} src={Logo} mx={2} /> */}
+                        <AccountCircle sx={{mx: 2,color:'#000',fontSize:50}} />
                         <ListItemText
-                            primary={'User Profile'}
+                            primary={'User Profile:'+profile?.username}
                             secondary={`ID ${profile?.id}`}
                         />
                     </Box>
@@ -141,18 +159,6 @@ function User() {
                                     name="name"
                                     placeholder={'admin'} 
                                     value={profile?.name}
-                                    style={textinputStyle}
-                                />
-                            </TextInput>
-
-                            <TextInput isReadOnly label='Username'>
-                                <input
-                                    type={'text'} 
-                                    onChange={onTextInputChange}
-                                    name="username"
-                                    placeholder={'name'}
-                                    readOnly
-                                    value={profile?.username}
                                     style={textinputStyle}
                                 />
                             </TextInput>
