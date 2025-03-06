@@ -2,15 +2,15 @@ import { Router } from "@mui/icons-material";
 import { Box, Breadcrumbs, FormControl, Typography, MenuItem, Select, SelectChangeEvent, Button } from "@mui/material";
 import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import AddTextShow from "../components/shared/AddTextInput";
+import AddTextShow from "../../components/shared/AddTextInput";
 import type { Device, } from "waziup";
-import { DevicesContext } from "../context/devices.context";
-import { devEUIGenerateFc, lineClamp, toStringHelper } from "../utils";
-import RowContainerBetween from "../components/shared/RowContainerBetween";
-import { DEFAULT_COLORS } from "../constants";
-import BoxDownload from '../assets/box_download.svg';
-import PrimaryButton from "../components/shared/PrimaryButton";
-import { DropDownCreateDeviceTab1 } from "../components/ui/CreateDeviceTab1";
+import { DevicesContext } from "../../context/devices.context";
+import { devEUIGenerateFc, lineClamp, toStringHelper } from "../../utils";
+import RowContainerBetween from "../../components/shared/RowContainerBetween";
+import { DEFAULT_COLORS } from "../../constants";
+import BoxDownload from '../../assets/box_download.svg';
+import PrimaryButton from "../../components/shared/PrimaryButton";
+import { DropDownCreateDeviceTab1 } from "../../components/ui/CreateDeviceTab1";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: SelectChangeEvent<string>) => void,
     title: string,
@@ -45,6 +45,9 @@ export const SelectElement = ({ handleChange, title, conditions, isDisabled,my, 
     </Box>
 );
 
+/**
+ * dialog on changing timezone also have option for saving it, don't save on select
+ */
 export default function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();
@@ -112,6 +115,8 @@ export default function DeviceSettings() {
                         acceptBtnTitle:"Close",
                         title:"Update successfull."
                     });
+                    getDevicesFc();
+                    return;
                     return;
                 }).catch(err => {
                     showDialog({
@@ -122,6 +127,8 @@ export default function DeviceSettings() {
                         hideCloseButton: true,
                         title:"Error encountered"
                     });
+                    getDevicesFc();
+                    return;
                 });
             }
         }
@@ -251,7 +258,7 @@ export default function DeviceSettings() {
     function handleDeleteDevice() {
         showDialog({
             title:"Remove "+thisDevice.name,
-            acceptBtnTitle:"OK!",
+            acceptBtnTitle:"OK",
             content: `Are you sure you want to remove ${thisDevice.name}?`,
             onAccept() {
                 window.wazigate.deleteDevice(thisDevice.id)

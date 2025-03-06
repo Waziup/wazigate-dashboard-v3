@@ -1,18 +1,19 @@
-import { Box,  Grid, CardContent, Typography, SelectChangeEvent, SpeedDial, SpeedDialAction, SpeedDialIcon,  } from '@mui/material';
-import RowContainerBetween from '../components/shared/RowContainerBetween';
+import { Box,  Grid, CardContent, Typography, SelectChangeEvent, SpeedDial, SpeedDialAction, SpeedDialIcon, Breadcrumbs,  } from '@mui/material';
+import RowContainerBetween from '../../components/shared/RowContainerBetween';
 import { Add } from '@mui/icons-material';
-import { DEFAULT_COLORS } from '../constants';
+import { DEFAULT_COLORS } from '../../constants';
 import { Link, useNavigate, useOutletContext, } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
 import { type Device } from 'waziup';
-import CreateDeviceModalWindow from '../components/ui/ModalCreateDevice';
-import EditDeviceModal from '../components/ui/EditDeviceModal';
-import { DevicesContext, SensorX } from '../context/devices.context';
-import { devEUIGenerateFc, differenceInMinutes, lineClamp } from '../utils';
-import PrimaryIconButton from '../components/shared/PrimaryIconButton';
-import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
-import MenuComponent from '../components/shared/MenuDropDown';
-import RowContainerNormal from '../components/shared/RowContainerNormal';
+import CreateDeviceModalWindow from '../../components/ui/ModalCreateDevice';
+import EditDeviceModal from '../../components/ui/EditDeviceModal';
+import { DevicesContext, SensorX } from '../../context/devices.context';
+import { devEUIGenerateFc, differenceInMinutes, lineClamp } from '../../utils';
+import PrimaryIconButton from '../../components/shared/PrimaryIconButton';
+import SensorActuatorInfo from '../../components/shared/SensorActuatorInfo';
+import MenuComponent from '../../components/shared/MenuDropDown';
+import RowContainerNormal from '../../components/shared/RowContainerNormal';
+import DeviceImage from '../../assets/device.png';
 const initialNewDevice: Device = {
     actuators: [],
     created: new Date(),
@@ -26,7 +27,6 @@ const initialNewDevice: Device = {
     name: '',
     sensors: [],
 }
-import DeviceImage from '../assets/device.png';
 function Devices() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -434,7 +434,21 @@ function Devices() {
                 />
                 <Box sx={{px:matches?4:2,py:matches?2:0, width:'100%', height: '100%' }}>
                     <RowContainerBetween >
-                        <Typography fontSize={24} fontWeight={700} color={'black'}>Devices</Typography>
+                        <Box>
+                            <Typography fontSize={24} fontWeight={700} color={'black'}>Devices</Typography>
+                            <div role="presentation" onClick={()=>{}}>
+                                <Breadcrumbs aria-label="breadcrumb">
+                                    <Typography fontSize={16} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                        <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                            Home
+                                        </Link>
+                                    </Typography>
+                                    <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
+                                        Devices
+                                    </p>
+                                </Breadcrumbs>
+                            </div>
+                        </Box>
                         {
                             matches?(
                                 <PrimaryIconButton fontSize={16} title={'New Device'} iconname={'add'} onClick={handleToggleModal} />
