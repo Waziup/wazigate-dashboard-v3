@@ -2,23 +2,25 @@
 import { HashRouter, Navigate, Route,  Routes, } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import Dashboard from './pages/Dashboard'
-import Devices from './pages/Devices'
+import Devices from './pages/devices/Devices'
 // import Automation from './pages/Automation'
 import Apps from './pages/Apps'
-import Settings from './pages/Settings'
+import Settings from './pages/settings/Settings'
 import Login from './pages/Login';
-import DeviceSensor from './pages/DeviceSensor'
+import DeviceSensor from './pages/devices/Sensor'
 import User from './pages/User'
-import Device from './pages/Device'
+import Device from './pages/devices/Device'
 import Docspage from './pages/Docspage'
-import DeviceSensorSettings from './pages/DevicesensorSettings';
+import DeviceSensorSettings from './pages/devices/SensorSettings';
 import { Box, createTheme, ThemeProvider } from '@mui/material'
-import DeviceSettings from './pages/DeviceSettings';
-import SettingsNetworking from './pages/SettingsNetworking'
-import SettingsMaintenance from './pages/SettingsMaintenance';
+import DeviceSettings from './pages/devices/DeviceSettings';
+import SettingsNetworking from './pages/settings/SettingsNetworking'
+import SettingsMaintenance from './pages/settings/SettingsMaintenance';
 import AppUI from './pages/App';
 import { useContext } from 'react'
 import { DevicesContext } from './context/devices.context'
+import Actuator from './pages/devices/Actuator'
+import ActuatorSettings from './pages/devices/ActuatorSettings'
 function App() {
     const theme = createTheme({
         palette: {
@@ -54,8 +56,8 @@ function App() {
                                         <Route path='/devices/:id/setting' element={<DeviceSettings/>}/>
                                         <Route path='/devices/:id/sensors/:sensorId' element={<DeviceSensor/>}/>
                                         <Route path='/devices/:id/sensors/:sensorId/setting' element={<DeviceSensorSettings/>}/>
-                                        <Route path='/devices/:id/actuators/:sensorId' element={<DeviceSensor/>}/>
-                                        <Route path='/devices/:id/actuators/:sensorId/setting' element={<DeviceSensorSettings/>}/>
+                                        <Route path='/devices/:id/actuators/:actuatorId' element={<Actuator/>}/>
+                                        <Route path='/devices/:id/actuators/:actuatorId/setting' element={<ActuatorSettings/>}/>
                                         <Route path='/apps' element={<Apps/>}/>
                                         <Route path='/apps/:id/:id2/' element={<AppUI/>}/>
                                         <Route path='/settings' element={<Settings/>}/>
