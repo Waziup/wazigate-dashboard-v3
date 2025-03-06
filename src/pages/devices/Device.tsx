@@ -1,17 +1,18 @@
 import { Box, Breadcrumbs, Button, Typography, Grid, SelectChangeEvent, TextField, FormControl, MenuItem, Select, SpeedDial, SpeedDialAction, SpeedDialIcon, Dialog, DialogActions, DialogContent, } from "@mui/material";
-import RowContainerBetween from "../components/shared/RowContainerBetween";
-import ontologies from '../assets/ontologies.json';
+import RowContainerBetween from "../../components/shared/RowContainerBetween";
+import ontologies from '../../assets/ontologies.json';
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import React, { useCallback, useContext, useLayoutEffect, useState } from "react";
 import { Sensor, Actuator, Device } from "waziup";
-import { DevicesContext, SensorX } from "../context/devices.context";
-import PrimaryIconButton from "../components/shared/PrimaryIconButton";
-import CreateSensorModal from "../components/ui/CreateSensorModal";
-import CreateActuatorModal from "../components/ui/CreateActuatorModal";
-import { Android12Switch } from "../components/shared/Switch";
-import SensorActuatorItem from "../components/shared/SensorActuatorItem";
+import { DevicesContext, SensorX } from "../../context/devices.context";
+import PrimaryIconButton from "../../components/shared/PrimaryIconButton";
+import CreateSensorModal from "../../components/ui/CreateSensorModal";
+import CreateActuatorModal from "../../components/ui/CreateActuatorModal";
+import { Android12Switch } from "../../components/shared/Switch";
+import SensorActuatorItem from "../../components/shared/SensorActuatorItem";
 import { Add } from "@mui/icons-material";
+import Logo404 from '../../assets/search.svg';
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: SelectChangeEvent<string>) => void,
     title: string,
@@ -56,7 +57,6 @@ const initialState = {
     icon: '',
     unitSymbol:''
 }
-import Logo404 from '../assets/search.svg';
 function DeviceSettings() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
         event.preventDefault();

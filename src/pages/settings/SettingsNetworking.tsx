@@ -1,14 +1,23 @@
 import { Box, Breadcrumbs,ListItemText,  Grid,Icon, SxProps,  Theme, Typography, CircularProgress, Grow, LinearProgress, Modal, DialogActions, Button, Paper, Tooltip } from "@mui/material";
 import { Link, useOutletContext } from "react-router-dom";
-import { DEFAULT_COLORS } from "../constants";
-import RowContainerBetween from "../components/shared/RowContainerBetween";
-import RowContainerNormal from "../components/shared/RowContainerNormal";
+import { DEFAULT_COLORS } from "../../constants";
+import RowContainerBetween from "../../components/shared/RowContainerBetween";
+import RowContainerNormal from "../../components/shared/RowContainerNormal";
 import { ArrowBack, CellTower, Close, DesktopWindowsOutlined, LockOutlined, ModeFanOffOutlined, WarningAmber, WifiOutlined } from "@mui/icons-material";
-import { Android12Switch } from "../components/shared/Switch";
-import PrimaryButton from "../components/shared/PrimaryButton";
-import { getWiFiScan,setConf as setConfFc, AccessPoint,getConf, setWiFiConnect, WifiReq, setAPMode, setAPInfo } from "../utils/systemapi";
+import { Android12Switch } from "../../components/shared/Switch";
+import PrimaryButton from "../../components/shared/PrimaryButton";
+import { getWiFiScan,setConf as setConfFc, AccessPoint,getConf, setWiFiConnect, WifiReq, setAPMode, setAPInfo } from "../../utils/systemapi";
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import GridItemEl from "../components/shared/GridItemElement";
+import GridItemEl from "../../components/shared/GridItemElement";
+import TextInputField from "../../components/shared/TextInputField";
+import { Cloud } from "waziup";
+import MenuComponent from "../../components/shared/MenuDropDown";
+import PrimaryIconButton from "../../components/shared/PrimaryIconButton";
+import { DevicesContext } from "../../context/devices.context";
+import Backdrop from "../../components/Backdrop";
+import WaziLogo from '../../assets/wazilogo.svg';
+import { lineClamp, nameForState, orderAccessPointsByStrength } from "../../utils";
+import SnackbarComponent from "../../components/shared/Snackbar";
 const GridItem = ({ children,matches,lg,xl, xs,md,additionStyles }: {xs:number,md:number,xl:number,lg:number,spacing?:number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode,  }) => (
     <Grid my={matches?1:0}  lg={lg} sm={12} xl={xl} item xs={xs} md={md}  sx={additionStyles} borderRadius={2}  >
         {children}
@@ -30,15 +39,6 @@ const style1 = {
     borderRadius: 2,
 };
 const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
-import TextInputField from "../components/shared/TextInputField";
-import { Cloud } from "waziup";
-import MenuComponent from "../components/shared/MenuDropDown";
-import PrimaryIconButton from "../components/shared/PrimaryIconButton";
-import { DevicesContext } from "../context/devices.context";
-import Backdrop from "../components/Backdrop";
-import WaziLogo from '../assets/wazilogo.svg';
-import { lineClamp, nameForState, orderAccessPointsByStrength } from "../utils";
-import SnackbarComponent from "../components/shared/Snackbar";
 export default function SettingsNetworking() {
     const [matches] = useOutletContext<[matches:boolean]>();
     const [scanLoading,setScanLoading]=useState<boolean>(false);
@@ -242,7 +242,7 @@ export default function SettingsNetworking() {
             onAccept:()=>{
                 setAPMode().then(()=>{
                     setError({
-                        message: "Switched to AP Mode:\n ",
+                        message: "Switched to AP Mode\n ",
                         severity:'success'
                     });
                 })
@@ -431,7 +431,7 @@ export default function SettingsNetworking() {
             </Modal>
             <Box sx={{px: matches?4:2,py:2}} >
                 <Box>
-                    <Typography fontWeight={600} fontSize={24} color={'black'}>Wifi</Typography>
+                    <Typography fontWeight={600} fontSize={24} color={'black'}>Networking</Typography>
                     <div role="presentation" >
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
