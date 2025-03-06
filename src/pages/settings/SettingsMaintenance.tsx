@@ -1,11 +1,13 @@
 import { Box, Breadcrumbs, Button,CircularProgress,Icon, Typography } from "@mui/material";
 import React, { useTransition } from "react";
-import ResourcesTabMaintenance from "../components/ui/ResourcesTab.maintenance";
-import SSHTabMaintenance from "../components/ui/SSHTab.maintenance";
-import ContainersTabMaintenance from "../components/ui/ContainersTab.maintenance";
-import ExportTabMaintenance from "../components/ui/ExportTab.maintenance";
-import LogsTabMaintenance from "../components/ui/LogsTab.maintenance";
+import ResourcesTabMaintenance from "../../components/ui/ResourcesTab.maintenance";
+import SSHTabMaintenance from "../../components/ui/SSHTab.maintenance";
+import ContainersTabMaintenance from "../../components/ui/ContainersTab.maintenance";
+import ExportTabMaintenance from "../../components/ui/ExportTab.maintenance";
+import LogsTabMaintenance from "../../components/ui/LogsTab.maintenance";
 import { Link, useOutletContext } from "react-router-dom";
+import DockerSVG from '../../assets/docker.svg';
+import RowContainerNormal from "../../components/shared/RowContainerNormal";
 const BTN = ({title,icon,onClick,activeTab,children,idx}:{idx:string,title:string,activeTab:string,children?:React.ReactNode, icon?:string,onClick:(idx:string)=>void})=>(
     <Box sx={{mr:2,color:activeTab===idx?'#000':'#fff',":hover":{bgcolor:'#499dff',color:'white'},border:`1px solid ${activeTab===idx?'#499dff':'#535353'}`,borderRadius:20,bgcolor:activeTab===idx?'#499dff':'inherit',}}  bgcolor={activeTab===idx?'#ccc':'inherit'} >
         <Button onClick={()=>onClick(idx)} sx={{display:'flex',alignItems:'center',":hover":{color:'white'}, color:activeTab===idx?'#000':'#535353',py:0.5,px:3}} variant="text" startIcon={icon?<Icon sx={{":hover":{color:'white'}, color:activeTab===idx?'#fff':'inherit'}} >{icon}</Icon>:null }>
@@ -64,8 +66,7 @@ const tabs:Tabs = {
         component:ExportTabMaintenance
     }
 }
-import DockerSVG from '../assets/docker.svg';
-import RowContainerNormal from "../components/shared/RowContainerNormal";
+
 export default function SettingsMaintenance() {
     const [activeTab, setActiveTab] = React.useState<string>('0');
     const [isPending, startTransition] = useTransition();

@@ -1,29 +1,35 @@
-import { Box, Grid, Typography,  Button, CircularProgress, SelectChangeEvent,  Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-import { DEFAULT_COLORS } from '../constants';
-import { AccessTime, PowerSettingsNew, RestartAlt } from '@mui/icons-material';
+import { Box, Grid, Typography,  Button, CircularProgress, SelectChangeEvent,  Dialog, DialogActions, DialogContent, DialogTitle, Breadcrumbs } from '@mui/material';
+import { DEFAULT_COLORS } from '../../constants';
+import { Mode, PowerSettingsNew, RestartAlt } from '@mui/icons-material';
 import { SxProps, Theme } from '@mui/material';
-import RowContainerBetween from '../components/shared/RowContainerBetween';
-import RowContainerNormal from '../components/shared/RowContainerNormal';
-import { useOutletContext } from 'react-router-dom';
+import RowContainerBetween from '../../components/shared/RowContainerBetween';
+import RowContainerNormal from '../../components/shared/RowContainerNormal';
+import { Link, useOutletContext } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
 import { useState, useEffect, useMemo, useContext } from 'react';
-import {setTime, shutdown,reboot,getBuildNr,getTimezoneAuto, getTime, getTimezones, setTimezone, getBlackout, getVersion, } from '../utils/systemapi';
-import SelectElementString from '../components/shared/SelectElementString';
-import GridItemEl from '../components/shared/GridItemElement';
-import SnackbarComponent from '../components/shared/Snackbar';
-import { DevicesContext } from '../context/devices.context';
-import InternetIndicator from '../components/ui/InternetIndicator';
-import Backdrop from '../components/Backdrop';
-const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
+import {setTime, shutdown,reboot,getBuildNr,getTimezoneAuto, getTime, getTimezones, setTimezone, getVersion, } from '../../utils/systemapi';
+import SelectElementString from '../../components/shared/SelectElementString';
+import GridItemEl from '../../components/shared/GridItemElement';
+import SnackbarComponent from '../../components/shared/Snackbar';
+import { DevicesContext } from '../../context/devices.context';
+import InternetIndicator from '../../components/ui/InternetIndicator';
+import Backdrop from '../../components/Backdrop';
+// const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
 const GridItem = ({bgcolor,additionStyles,md, children,}: {xs:number,md:number, matches: boolean,bgcolor?:boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode }) => (
     <Grid sx={{bgcolor: bgcolor?'#fff':'',...additionStyles}} bgcolor={bgcolor?'#fff':''} item md={md} lg={5.8} xl={5.8} sm={5.8} xs={12} my={1} >
         {children}
     </Grid>
 );
+/**
+ * 
+ * remove local time
+ * spacing
+ * put breadcrumbs on all pages.
+ */
 const RowContainer = ({ children, additionStyles }: { children: React.ReactNode, additionStyles?: SxProps<Theme> }) => (
     <RowContainerBetween additionStyles={{ ...additionStyles, alignItems: 'center',  m: 1, borderRadius: 1, p: 1 }}>
         {children}
@@ -38,14 +44,14 @@ const convTime = (date: Date) => (
 );
 function Settings() {
     const [matches] = useOutletContext<[matches: boolean]>();
-    const [currentTime, setCurrentTime] = useState<string>('');
-    const [infoConfig, setInfoConfig] = useState<{buildNr: string, version:string,blackout: string|null}>({blackout:null,buildNr:'',version:''});
+    const [infoConfig, setInfoConfig] = useState<{buildNr: string, version:string,}>({buildNr:'',version:''});
     const [responseMessage , setReponseMessage] = useState<string>('');
     const [isSetTimezoneAuto, setIsSetTimezoneAuto] = useState<boolean>(false);
     const [data, setData] = useState<{
         time: Date | null,
         utc: Date | null,
-        zone: string
+        zone: string,
+        rZone: string,
     } | null>(null);
 
     const [modalProps, setModalProps] = useState<{ open: boolean, title: string,  }>({ open: false, title: '' });
@@ -83,14 +89,20 @@ function Settings() {
         setData({
             time: date.toDate(),
             utc: data? data.utc: null,
-            zone: data? data.zone: ''
+            zone: data? data.zone: '',
+            rZone: data? data.zone: ''
         });
     }
     const [loading, setLoading] = useState(false)
-    const handleSaveTimezone = (e: SelectChangeEvent<string>) => {
+    const handleChangeTimeZone = (e: SelectChangeEvent<string>) => {
+        if(data){
+            setData({...data, rZone: e.target.value});
+        }
+    }
+    const handleSaveTimezone = () => {
         setLoading(true);
         closeModal();
-        setTimezone(e.target.value)
+        setTimezone(data?data.rZone:'')
         .then(()=>{
             setReponseMessage("The time zone set");
             setLoading(false);
@@ -102,12 +114,10 @@ function Settings() {
     };
     const infoConfigFc = async()=>{
         const buildNr = await getBuildNr()
-        const blackout = await getBlackout()
         const version = await getVersion()
         setInfoConfig({
             version,
             buildNr,
-            blackout
         })
     }
     useEffect(() => {
@@ -119,7 +129,8 @@ function Settings() {
                 setData({
                     time: null,
                     utc: null,
-                    zone: res
+                    zone: res,
+                    rZone: res
                 });
             }).catch(()=>{
                 setIsSetTimezoneAuto(false);
@@ -138,16 +149,17 @@ function Settings() {
                     setData({
                         time: isNaN(Date.parse(res.time)) ? null : new Date(res.time),
                         utc: isNaN(Date.parse(res.utc)) ? null : new Date(res.utc),
-                        zone: isSetTimezoneAuto? data? data.zone: '': res.zone
+                        zone: isSetTimezoneAuto? data? data.zone: '': res.zone,
+                        rZone: isSetTimezoneAuto? data? data.zone: '': res.zone
                     });
                 }
             );
         }, 6000);
-        const timer = setInterval(() => {
-            setCurrentTime(dayjs(data?.time).format('HH:mm:ss'));
-        }, 5000);
+        // const timer = setInterval(() => {
+        //     setCurrentTime(dayjs(data?.time).format('HH:mm:ss'));
+        // }, 5000);
         return () => { 
-            clearInterval(timer); 
+            // clearInterval(timer); 
             clearInterval(getTimeInterval);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -178,6 +190,7 @@ function Settings() {
                 setData({
                     time: data?.time || null,
                     utc: data?.utc || null,
+                    rZone: res,
                     zone: res
                 })
                 window.localStorage.setItem('timezoneAuto', 'true');
@@ -224,13 +237,14 @@ function Settings() {
                 <DialogContent sx={{my:2,overflow:'auto'}}>
                     <SelectElementString
                         conditions={timezones}
-                        handleChange={handleSaveTimezone}
+                        handleChange={handleChangeTimeZone}
                         title='Set TimeZone'
-                        value={data? data.zone:''}
+                        value={data? data.rZone:''}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button  onClick={closeModal} variant={'text'} sx={{ mx: 2,color:'#ff0000' }} color={'info'}>CLOSE</Button>
+                    <Button autoFocus onClick={handleSaveTimezone} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >SAVE</Button>
                 </DialogActions>
             </Dialog>
             <Dialog fullWidth open={modalProps.open && modalProps.title === 'Changing Time and date'} onClose={closeModal}>
@@ -256,8 +270,24 @@ function Settings() {
             </Dialog>
             <Box sx={{px:matches? 4:2,py:2, overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
                 <Box>
-                    <Typography fontWeight={700} fontSize={24} color={'black'}>Settings</Typography>
-                    <Typography sx={{ fontSize:13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography>
+                    <Box>
+                        <Typography fontWeight={700} fontSize={24} color={'black'}>Settings</Typography>
+                        <div role="presentation" onClick={()=>{}}>
+                            <Breadcrumbs aria-label="breadcrumb">
+                                <Typography fontSize={16} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                    <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                        Home
+                                    </Link>
+                                </Typography>
+                                <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
+                                    Settings
+                                </p>
+                            </Breadcrumbs>
+                        </div>
+                    </Box>
+                    {
+                        matches?  <Typography sx={{my:2, fontSize:13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography>:null
+                    }
                 </Box>
                 <Grid width={'100%'} container>
                     <GridItem additionStyles={{mr: matches?2:0,}} md={12} xs={12} matches={matches} >
@@ -286,14 +316,14 @@ function Settings() {
                                 <Typography color={'primary.main'} fontWeight={300}>Internet</Typography>
                                 <InternetIndicator/>
                             </RowContainer>
-                            <RowContainer>
+                            {/* <RowContainer>
                                 <Typography color={'primary.main'} fontWeight={300}>Blackout Protection</Typography>
                                 {
                                     infoConfig.blackout !==null?(
                                         infoConfig.blackout?<Typography color={DEFAULT_COLORS.primary_blue} component='span'>Activated</Typography>:<Typography color={'#FA9E0E'} component='span'>Not available</Typography>
                                     ):<CircularProgress size={10} sx={{fontSize:10}} />
                                 }
-                            </RowContainer>
+                            </RowContainer> */}
                         </GridItemEl>
                         <GridItemEl text='Wazigate Identity' icon='fingerprint'>
                             <RowContainer>
@@ -320,60 +350,58 @@ function Settings() {
                             </RowContainerNormal>
                         </GridItemEl>
                     </GridItem>
-                    <GridItem additionStyles={{borderRadius:2,boxShadow:1}} bgcolor md={12} xs={12} matches={matches} >
-                        <Box sx={{ display: 'flex', borderTopLeftRadius: 5,border:'.5px solid #d8d8d8', borderTopRightRadius: 5, bgcolor: '#F7F7F7', alignItems: 'center' }} p={1} >
-                            <AccessTime sx={IconStyle} />
-                            <Typography color={'#212529'} fontWeight={500}>Time Settings</Typography>
-                        </Box>
-                        <Box my={2}>
-                            <RowContainer>
-                                <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Local Time</Typography>
-                                {
-                                    currentTime?(
-                                        <Typography textTransform='uppercase' mr={1} color={DEFAULT_COLORS.primary_black}>{currentTime}</Typography>    
-                                    ): <CircularProgress size={10} sx={{fontSize:10, }} />
-                                }
-                            </RowContainer>
-                            <RowContainer>
-                                <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Gateway Time</Typography>
-                                <Typography color={DEFAULT_COLORS.primary_black} fontSize={14}>
+                    <GridItem additionStyles={{borderRadius:2,boxShadow:0}}  md={12} xs={12} matches={matches} >
+                        <GridItemEl additionStyles={{pb:.2,}} icon='access_time' text={'Time Settings'}>
+                            <Box my={2}>
+                                
+                                <RowContainer>
+                                    <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Gateway Time</Typography>
+                                    <Box sx={{display:'flex', alignItems:'center'}}>
+                                        <Typography color={DEFAULT_COLORS.primary_black} fontSize={14}>
+                                            {
+                                                data?(
+                                                    dayjs(data.time).format('HH:mm:ss')
+                                                ):(<CircularProgress size={10} sx={{fontSize:10, }} />)
+                                            }
+                                        </Typography>
+                                        <Mode onClick={()=>{setModalProps({open:true,title:'Changing Timezone',})}} sx={{fontSize:16, cursor:'pointer', mx:1}}/>
+                                    </Box>
+                                </RowContainer>
+                                <RowContainer>
+                                    <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Time Zone</Typography>
+                                    <Box sx={{display:'flex',alignItems:'center'}}>
+                                        <Typography color={DEFAULT_COLORS.primary_black} fontSize={14}>
+                                            {
+                                                data?(
+                                                    data.zone
+                                                ):(
+                                                    <CircularProgress size={10} sx={{fontSize:10, }} />
+                                                )
+                                            }
+                                        </Typography>
+                                        <Mode onClick={()=>{setModalProps({open:true,title:'Changing Time and date'})}} sx={{fontSize:16, cursor:'pointer', mx:1}}/>
+                                    </Box>
+                                </RowContainer>
+                                {/* <Box borderRadius={1} p={1} m={1}>
+                                    
                                     {
-                                        data?(
-                                            dayjs(data.time).format('HH:mm:ss')
-                                        ):(<CircularProgress size={10} sx={{fontSize:10, }} />)
-                                    }
-                                </Typography>
-                            </RowContainer>
-                            <RowContainer>
-                                <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Time Zone</Typography>
-                                <Typography color={DEFAULT_COLORS.primary_black} fontSize={14}>
-                                    {
-                                        data?(
-                                            data.zone
-                                        ):(
-                                            <CircularProgress size={10} sx={{fontSize:10, }} />
+                                        isSetTimezoneAuto?(null):(
+                                            <Box minWidth={120} display={'flex'} justifyContent={'space-between'} alignItems={'center'} width={'100%'} my={.5}>
+                                                <Typography  fontSize={14} fontWeight={'300'} color={'#292F3F'}>Set TimeZone</Typography>
+                                                <Button disabled={(data && data.zone)?false:true} onClick={()=>{setModalProps({open:true,title:'Changing Timezone',})}} color='info'>CHANGE</Button>
+                                            </Box>
                                         )
                                     }
-                                </Typography>
-                            </RowContainer>
-                            <Box borderRadius={1} p={1} m={1}>
-                                
-                                {
-                                    isSetTimezoneAuto?(null):(
-                                        <Box minWidth={120} display={'flex'} justifyContent={'space-between'} alignItems={'center'} width={'100%'} my={.5}>
-                                            <Typography  fontSize={14} fontWeight={'300'} color={'#292F3F'}>Set TimeZone</Typography>
-                                            <Button disabled={(data && data.zone)?false:true} onClick={()=>{setModalProps({open:true,title:'Changing Timezone',})}} color='info'>CHANGE</Button>
-                                        </Box>
-                                    )
-                                }
+                                </Box>
+                                <Box borderRadius={1} p={1} m={1}>
+                                    <RowContainerBetween additionStyles={{ }}>
+                                        <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>Set time and date manually</Typography>
+                                        <Button disabled={(data && data.time)?false:true} onClick={()=>{setModalProps({open:true,title:'Changing Time and date'})}} color='info'>CHANGE</Button>
+                                    </RowContainerBetween>
+                                </Box> */}
                             </Box>
-                            <Box borderRadius={1} p={1} m={1}>
-                                <RowContainerBetween additionStyles={{ }}>
-                                    <Typography color={DEFAULT_COLORS.navbar_dark} fontSize={14} fontWeight={300}>Set time and date manually</Typography>
-                                    <Button disabled={(data && data.time)?false:true} onClick={()=>{setModalProps({open:true,title:'Changing Time and date'})}} color='info'>CHANGE</Button>
-                                </RowContainerBetween>
-                            </Box>
-                        </Box>
+                        </GridItemEl>
+                        
                     </GridItem>
                 </Grid>
             </Box>
