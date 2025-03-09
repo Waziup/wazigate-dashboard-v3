@@ -162,7 +162,7 @@ export default function DeviceSensorSettings() {
             }
         })
     }
-    const handleChangeSensorOrActuatorSubmittion = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleChangeSensorSubmission = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if(sensor?.name !== rSensor?.name){
             showDialog({
@@ -207,7 +207,7 @@ export default function DeviceSensorSettings() {
             });
         }
     }
-    const deleteSensorOrActuator = () => {
+    const deleteSensor = () => {
         showDialog({
             title: `Deleting ${sensor?.name}`,
             acceptBtnTitle:"DELETE",
@@ -285,7 +285,7 @@ export default function DeviceSensorSettings() {
                     <Box bgcolor={'white'} boxShadow={1} borderRadius={2} p={2}  width={matches?'50%':'99%'}>
                         <Typography fontWeight={500} fontSize={20}  color={'#292F3F'}>Actuator settings</Typography>
                         <>
-                            <form onSubmit={handleChangeSensorOrActuatorSubmittion}>
+                            <form onSubmit={handleChangeSensorSubmission}>
                                 <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #292F3F'}}>
                                     <Typography color={'primary'} mb={.4} fontSize={12}>Name</Typography>
                                     <input 
@@ -373,12 +373,12 @@ export default function DeviceSensorSettings() {
                             <Typography variant="h4" sx={{ bgcolor: "#fff",fontSize:14, px: 2, mt: -4.0, mb: 3, color: "error.main", width: "fit-content" }}>Danger Zone</Typography>
 
                             <Stack direction="row" alignItems="center" gap={3}>
-                                <Button variant="outlined" color="error" onClick={deleteSensorOrActuator}>Delete</Button>
+                                <Button variant="outlined" color="error" onClick={deleteSensor}>Delete</Button>
                                 <Typography variant="body2">This can not be undone!</Typography>
                             </Stack>
 
                         </Box>
-                        {/* <Button sx={{mt:2}} color="error" onClick={deleteSensorOrActuator}  variant='outlined'>DELETE</Button>  */}
+                        {/* <Button sx={{mt:2}} color="error" onClick={deleteSensor}  variant='outlined'>DELETE</Button>  */}
                     </Box>
                 </Box>
             </Box>
