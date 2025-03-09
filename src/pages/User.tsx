@@ -145,7 +145,7 @@ function User() {
                         {/* <Box component={'img'} src={Logo} mx={2} /> */}
                         <AccountCircle sx={{mx: 2,color:'#000',fontSize:50}} />
                         <ListItemText
-                            primary={'User Profile:'+profile?.username}
+                            primary={'User Profile: '+profile?.username}
                             secondary={`ID ${profile?.id}`}
                         />
                     </Box>

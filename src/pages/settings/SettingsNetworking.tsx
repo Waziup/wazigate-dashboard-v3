@@ -382,7 +382,7 @@ export default function SettingsNetworking() {
                                             </Box>
                                         :(
                                             wifiList.map((wifi) => (
-                                                <Tooltip color='black' followCursor title={`Name: ${wifi.ssid}. Strength: ${wifi.strength}%; Max. Bitrate: ${wifi.maxBitrate}`} placement="top-start">
+                                                <Tooltip color='black' followCursor title={`Name: ${wifi.ssid}, Strength: ${wifi.strength}%, Max. Bitrate: ${wifi.maxBitrate}`} placement="top-start">
                                                     <Box key={wifi.hwAddress} onClick={()=>setSelectedWifi(wifi)}>
                                                         <RowContainerBetween additionStyles={{bgcolor:selectedWifi?.hwAddress===wifi.hwAddress?'#ccc':'', cursor:'pointer',":hover":{bgcolor:'#ccc'},borderBottom:'1px solid #ccc',p:1}}>
                                                             <Box sx={{display:'flex',alignItems:'center'}}>

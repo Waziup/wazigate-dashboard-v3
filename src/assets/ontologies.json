@@ -830,7 +830,7 @@
       "label": "Motor",
       "quantities": [
         "Boolean",
-        "AnalogeValue"
+        "AnalogValue"
       ],
       "icon": "motor"
     },
@@ -853,7 +853,7 @@
       "label": "Generic Actuator",
       "quantities": [
         "Acceleration",
-        "AnalogeValue",
+        "AnalogValue",
         "Array",
         "AtmosphericPressure",
         "Binary",
@@ -964,8 +964,8 @@
         "MillimetreMercure"
       ]
     },
-    "AnalogeValue": {
-      "label": "Analoge Value",
+    "AnalogValue": {
+      "label": "Analog Value",
       "units": [
         "Volt",
         "Millivolt",
