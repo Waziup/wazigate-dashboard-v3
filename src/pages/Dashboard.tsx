@@ -1,7 +1,7 @@
-import { Box, Breadcrumbs, Grid, Paper, Stack, Typography, styled } from "@mui/material";
+import { Box, Breadcrumbs, Card, CardContent, Grid, Paper, Stack, Typography, styled } from "@mui/material";
 import { CloudOff, Wifi, Cloud, SearchOff, } from '@mui/icons-material';
 import BasicTable from "../components/ui/BasicTable";
-import React, { useContext, useMemo, } from "react";
+import React, { useContext, useMemo, FC, useCallback } from "react";
 import { DEFAULT_COLORS } from "../constants";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import MobileDashboard from "../components/layout/MobileDashboard";
@@ -11,17 +11,30 @@ import { DevicesContext } from "../context/devices.context";
 import { App, Device } from "waziup";
 import { allActiveDevices, appChecker, capitalizeFirstLetter, orderByLastUpdated, returnAppURL } from "../utils";
 import InternetIndicator from "../components/ui/InternetIndicator";
-export const Item = ({ path, onClick, children, icon, title, }: { path: string, onClick: (path: string) => void, icon: React.ReactNode, children: React.ReactNode, title: string }) => (
-    <Box onClick={() => onClick(path)} mx={2} sx={{ cursor: 'pointer', boxShadow: 1, display: 'flex', width: '30%', minWidth: 200, mx: 2, height: '100%', borderRadius: 2, bgcolor: 'white', p: 2 }}>
-        {icon}
-        <Box ml={2}>
-            <NormalText title={title} />
-            {children}
-        </Box>
-    </Box>
-);
-const DeviceStatus = ({ devices, onDeviceClick, activeDevices, totalDevices }: { totalDevices: number, activeDevices: number, onDeviceClick: (devId: string) => void, devices: Device[] }) => (
-    <Paper sx={{ height: '100%', width: '100%', borderRadius: 2, bgcolor: 'white', p: 0 }}>
+
+interface ItemProps {
+    title: string;
+    children: React.ReactNode;
+    icon: React.ReactNode;
+    path: string;
+    onClick: (path: string) => void;
+}
+export const Item: FC<ItemProps> = ({ path, onClick, children, icon, title }) => {
+    const handleClick = useCallback(() => onClick(path), [onClick, path]);
+
+    return (
+        <Card onClick={handleClick} sx={{ minWidth: 300, cursor: 'pointer' }}>
+            <CardContent>
+                {icon}
+                <NormalText title={title} />
+                {children}
+            </CardContent>
+        </Card>
+    );
+};
+const DeviceStatus = ({ devices, onDeviceClick, activeDevices, totalDevices }: { totalDevices: number, activeDevices: number, onDeviceClick: (devId: string) => void, devices: Device[] }) => {
+    const navigate = useNavigate();
+    return <Paper sx={{ height: '100%', width: '100%', borderRadius: 2, bgcolor: 'white', p: 0 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', my: 0, alignItems: 'flex-start', p: 2 }}>
             <Box>
                 <NormalText title="Device Status" />
@@ -29,13 +42,14 @@ const DeviceStatus = ({ devices, onDeviceClick, activeDevices, totalDevices }: {
                     <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>{activeDevices} of {totalDevices} devices {activeDevices === 1 ? 'are' : 'is'} active.</Typography>
                 </Box>
             </Box>
-            <Link style={{ textDecoration: 'none', color: DEFAULT_COLORS.primary_blue, }} to={'/devices'}>
-                <Typography fontSize={14} textAlign={'center'}>See all</Typography>
+            <Link style={{ textDecoration: 'underline', color: DEFAULT_COLORS.orange, }} to={'/devices'}>
+                <Typography fontSize={14}>See all</Typography>
             </Link>
         </Box>
         <BasicTable onDeviceClick={onDeviceClick} devices={devices} />
     </Paper>
-);
+}
+    ;
 const TextItem = ({ text }: { text: string }) => <Typography sx={{ fontSize: [10, 10, 12, 13, 10], color: DEFAULT_COLORS.secondary_black, fontWeight: 300 }} >{text}</Typography>
 const MyScrollingElement = styled(Stack)(() => ({
     overflow: "auto",
@@ -53,8 +67,8 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
     <Paper sx={{ height: '100%', bgcolor: 'white', borderRadius: 2, }}>
         <RowContainerBetween additionStyles={{ p: 2 }}>
             <NormalText title="App Status" />
-            <Link style={{ textDecoration: 'none', color: DEFAULT_COLORS.primary_blue, }} to={'/apps'}>
-                <Typography fontSize={14} textAlign={'center'}>See all</Typography>
+            <Link style={{ textDecoration: 'underline', color: DEFAULT_COLORS.orange, }} to={'/apps'}>
+                <Typography fontSize={14}>See all</Typography>
             </Link>
         </RowContainerBetween>
         <MyScrollingElement sx={{ overflowY: 'auto' }} width={'100%'} height={'100%'}>
@@ -64,7 +78,7 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
                     const [imageError, setImageError] = React.useState(false);
                     const handleImageError = () => { setImageError(true) }
                     return (
-                        <Link to={returnAppURL(app)} style={{ textDecoration: 'none', cursor: 'pointer' }} key={index}>
+                        <Link to={returnAppURL(app)} style={{ textDecoration: 'none', color:'black', cursor: 'pointer' }} key={index}>
                             <RowContainerBetween additionStyles={{ px: 2, ":hover": { bgcolor: '#f5f5f5', cursor: 'pointer', } }} key={index}>
                                 <RowContainerNormal>
                                     {
@@ -83,13 +97,14 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
                                         )
                                     }
                                     <Box ml={1}>
-                                        <Typography color={'black'} fontSize={[10, 12, 10, 12, 14]} fontWeight={300}>{app.name}</Typography>
-                                        <TextItem
+                                        <Typography variant="body1" >{app.name}</Typography>
+                                        <Typography variant="caption" >{((app.state !== null || app.state) ? appChecker(app.state) : '')}</Typography>
+                                        {/* <TextItem
                                             text={((app.state !== null || app.state) ? appChecker(app.state) : '')}
-                                        />
+                                        /> */}
                                     </Box>
                                 </RowContainerNormal>
-                                <Typography sx={{ color: app.state ? app.state.running ? 'info.main' : '#CCC400' : 'info.main', fontWeight: 300, fontSize: [10, 12, 12, 12, 14] }}>
+                                <Typography variant="body2" sx={{ color: app.state ? app.state.running ? 'info.main' : '#CCC400' : 'info.main', fontWeight: 600 }}>
                                     {
                                         app.state ? capitalizeFirstLetter(app.state.status) : ''
                                     }
@@ -139,32 +154,32 @@ function Dashboard() {
                         </Box>
                         <Stack direction={'row'} mt={2} spacing={2}>
                             <Item icon={selectedCloud?.paused ? (<CloudOff sx={{ mb: 2, fontSize: 42, color: '#D9D9D9' }} />) : (<Cloud sx={{ mb: 2, fontSize: 42, color: 'black' }} />)} path='/settings/networking' onClick={onClick} title="Cloud Synchronization">
-                                <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
+                                <Typography variant="body2" color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
                                     {!(selectedCloud?.paused) ? 'Synched with Waziup Cloud' : 'Not Synchronized'}
                                 </Typography>
                                 <RowContainerNormal additionStyles={{ m: 0 }}>
-                                    <Typography fontSize={14} fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Status: </Typography>
-                                    <Typography fontSize={14} color={selectedCloud?.paused ? "#CCC400" : DEFAULT_COLORS.primary_blue} fontWeight={300}>{selectedCloud?.paused ? "Inactive" : 'Active'}</Typography>
+                                    <Typography variant="body2" fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Status: </Typography>
+                                    <Typography variant="body2" color={selectedCloud?.paused ? "#CCC400" : DEFAULT_COLORS.primary_blue} fontWeight={600}>{selectedCloud?.paused ? "Inactive" : 'Active'}</Typography>
                                 </RowContainerNormal>
                             </Item>
                             {
                                 (eth0 && eth0.IP4Config) ? (
                                     <Item icon={<Wifi sx={{ mb: 2, fontSize: 42, color: 'black' }} />} path='/settings/networking' onClick={onClick} title="Ethernet Connection" >
-                                        <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
+                                        <Typography variant="body2" color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
                                             {`IP Address: ${(eth0 && eth0.IP4Config) ? eth0.IP4Config.Addresses[0].Address : ''}`}
                                         </Typography>
                                         <RowContainerNormal additionStyles={{ m: 0 }}>
-                                            <Typography fontSize={14} fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Internet: </Typography>
+                                            <Typography variant="body2" fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Internet: </Typography>
                                             <InternetIndicator />
                                         </RowContainerNormal>
                                     </Item>
                                 ) : (
                                     <Item icon={<Wifi sx={{ mb: 2, fontSize: 42, color: 'black' }} />} path='/settings/networking' onClick={onClick} title="Wifi Connection"  >
-                                        <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
+                                        <Typography variant="body2" color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
                                             {`Wifi Name: ${apConn?.connection.id}`}
                                         </Typography>
                                         <RowContainerNormal additionStyles={{ m: 0 }}>
-                                            <Typography fontSize={14} fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Internet: </Typography>
+                                            <Typography variant="body2" fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Internet: </Typography>
                                             <InternetIndicator />
                                         </RowContainerNormal>
                                     </Item>

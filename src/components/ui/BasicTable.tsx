@@ -16,9 +16,9 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     color: theme.palette.common.black,
   },
   padding:13,
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
+//   [`&.${tableCellClasses.body}`]: {
+//     fontSize: 14,
+//   },
 //   flexGrow:1,
 }));
 
@@ -80,13 +80,13 @@ export default function CustomizedTables({devices,onDeviceClick}:Props) {
                             </StyledTableCell> */}
                             <StyledTableCell sx={{display:'flex', alignItems:'center'}}  scope="row">
                                 <Box component={'img'} width={35} src={DeviceImage} mr={2} height={35} />
-                                <Typography sx={{...lineClamp(1),fontWeight:300}} >{row.name.split('*')[0]}</Typography>
+                                <Typography variant='body2' sx={{...lineClamp(1)}} >{row.name.split('*')[0]}</Typography>
                             </StyledTableCell>
                             <StyledTableCell align="left">
-                                <Typography color='#797979' fontWeight={300}>{row.runtime}</Typography>
+                                <Typography variant='body2' color='#797979' fontWeight={300}>{row.runtime}</Typography>
                             </StyledTableCell>
                             <StyledTableCell align="left">
-                                <Typography color={(row.status.split('*')[0] === "true")?'#499DFF':'#797979'} fontWeight={300}>
+                                <Typography variant='body2' color={(row.status.split('*')[0] === "true")?'#499DFF':'#797979'} fontWeight={300}>
                                     {(row.status.split('*')[0] === "true")?'active':'offline'}
                                 </Typography>
                             </StyledTableCell>
