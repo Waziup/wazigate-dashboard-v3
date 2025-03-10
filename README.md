@@ -26,7 +26,7 @@ Development
 You can develop on the dashboard locally on your PC, linking it to a remote WaziGate.
 Run it like this:
 ```
-export VITE_WAZIGATE_API_URL=http://wazigate-dashboard-stable.staging.waziup.io
+export VITE_WAZIGATE_API_URL=http://wazigate-dashboard.staging.waziup.io
 npm run dev
 ```
 
