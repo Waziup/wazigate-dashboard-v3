@@ -1,0 +1,140 @@
+import { Box,Grid, Typography,Icon,Button, styled,Paper,SxProps,Theme, FormControl, } from '@mui/material';
+import { DEFAULT_COLORS } from '../../constants';
+import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import dayjs from 'dayjs';
+import { useSearchParams } from 'react-router-dom';
+interface Props{
+    matches?:boolean
+}
+const GridItem = ({ children, xs,md,additionStyles }: {xs:number,md:number,spacing?:number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode,  }) => (
+    <Grid item xs={xs} md={md} spacing={3} sx={{borderRadius:2,my:1,mr:2,...additionStyles}}  >
+        {children}
+    </Grid>
+);
+const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    marginBottom: theme.spacing(2),
+    color: theme.palette.text.secondary,
+}));
+const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
+
+const GridItemEl=({ children, text, additionStyles, icon }: { additionStyles?: SxProps<Theme>, text: string, children: React.ReactNode, icon: string })=>(
+    <Item  sx={{boxShadow:0,...additionStyles}}>
+        <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, border:'.5px solid #d8d8d8', bgcolor: '#F7F7F7',  alignItems: 'center' }} p={1} >
+            <Icon sx={IconStyle}>{icon}</Icon>
+            <Typography color={'#212529'} fontWeight={500}>{text}</Typography>
+        </Box>
+        {children}
+    </Item>
+)
+export default function ExportTabMaintenance({matches}:Props) {
+    const [searchParams,setSearchParams]=useSearchParams()
+    const today = new Date();
+    const updateSearchParams=(key:string,value:string)=>{
+        setSearchParams({
+            ...Object.fromEntries(searchParams),
+            [key]:value
+        })
+    }
+    return (
+        <Box >
+            <Typography fontSize={20}>Export Usage Data</Typography>
+            <Grid container>
+                <GridItem  spacing={2} md={4.6} xs={12} matches={matches as boolean}>
+                    <GridItemEl additionStyles={{pb: 2,boxShadow:1}}  icon={'sensors_outlined'} text={'Export Sensor Data'}>
+                        <Box m={1} borderRadius={1}>
+                            <Box  borderRadius={1} p={1} >
+                                <Button href='/exporttree' variant="text" sx={{ color: '#fff', m: 1,":hover":{bgcolor:'#007aff'}, bgcolor: 'info.main' }} >
+                                    EXPORT AS CSV FILES TREE
+                                </Button>
+                            </Box>
+                            <Box p={1}>
+                                <Button href='/exportall' variant="text" sx={{ color: '#fff', m: 1,":hover":{bgcolor:'#007aff'}, bgcolor: 'info.main' }} >
+                                    EXPORT AS ONE CSV FILE
+                                </Button>
+                            </Box>
+                        </Box>
+                    </GridItemEl>
+                </GridItem>
+                <GridItem  spacing={2} md={7} xs={12} matches={matches as boolean} >
+                    <GridItemEl additionStyles={{boxShadow:1}} icon='sensor' text='Export Actuator and Sensor Data' >
+                        <Box borderRadius={1} p={1} m={2}>
+                            <Box sx={{display:'flex',flexDirection:matches?'row':'column',justifyContent:'space-between'}}>
+                                <Box width={matches?'45%':'90%'}>
+                                    <Typography>From:</Typography>
+                                    <LocalizationProvider  dateAdapter={AdapterDayjs}>
+                                        <DemoContainer components={[ 'DatePicker', ]}>
+                                            <DemoItem label="">
+                                                <DesktopDatePicker 
+                                                    onChange={(newValue) => {
+                                                        updateSearchParams('from',(newValue as dayjs.Dayjs).toISOString())
+                                                    }}
+                                                    sx={{ p: 0 }} 
+                                                    defaultValue={dayjs(searchParams.get('from')?searchParams.get('from'):today.toLocaleDateString().toString().replaceAll('/', '-' + " "))} 
+                                                />
+                                            </DemoItem>
+                                        </DemoContainer>
+                                    </LocalizationProvider>
+                                </Box>
+                                <Box width={matches?'45%':'90%'}>
+                                    <Typography>To:</Typography>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DemoContainer
+                                            components={[
+                                                'DatePicker',
+                                            ]}
+                                        >
+                                            <DemoItem label="">
+                                                <DesktopDatePicker  
+                                                    sx={{ p: 0 }} 
+                                                    onChange={(newValue) => {
+                                                        updateSearchParams('to',(newValue as dayjs.Dayjs).toISOString())
+                                                    } }
+                                                    defaultValue={dayjs(searchParams.get('to')?searchParams.get('to'):today.toLocaleDateString().toString().replaceAll('/', '-' + " "))} 
+                                                />
+                                            </DemoItem>
+                                        </DemoContainer>
+                                    </LocalizationProvider>
+                                </Box>
+                            </Box>
+                            <Box display='flex' flexWrap='wrap' pt={1} justifyContent='space-between'>
+                                <Box m={1}>
+                                    {/* <Typography  fontSize={12} color={'#666666'}>Bin Size in seconds: </Typography> */}
+                                    <FormControl sx={{width:'100%', borderBottom:'1px solid #292F3F'}}>
+                                        <Typography color={'#666666'} mb={.4} fontSize={12}>Bin Size in seconds</Typography>
+                                        <input
+                                            onChange={(ev) => { updateSearchParams('duration',ev.target.value) }}
+                                            type='number'
+                                            value={searchParams.get('duration') as string}    
+                                            name="name" 
+                                            placeholder='Bit Size' 
+                                            required
+                                            style={{border:'none',width:'100%',background:'none', padding:'6px 0', outline:'none'}}
+                                        />
+                                    </FormControl>
+                                </Box>
+                                <Box m={1}>
+                                    <Typography fontSize={12} color={'#666666'}>Omit deviating values (20%) in between bins : </Typography>
+                                    <input style={{background:'none'}} type="checkbox" id="clear" name="clear"
+                                        onChange={(ev) => {
+                                            setSearchParams({
+                                                ...Object.fromEntries(searchParams),
+                                                'check':ev.currentTarget.checked?'true':'false'
+                                            })
+                                        }}>
+                                    </input>
+                                </Box>
+                            </Box>
+                        </Box>
+                        <Button variant="text" sx={{ color: '#fff', m: 2,":hover":{bgcolor:'#007aff'}, bgcolor: 'info.main' }} href={'/exportbins?from='+searchParams.get('from')+'&to='+searchParams.get('to')+'&duration='+searchParams.get('duration')+'s'+'&check='+searchParams.get('check')} >
+                            EXPORT
+                        </Button>
+                    </GridItemEl>
+                </GridItem>
+            </Grid>
+        </Box>
+    )
+}
