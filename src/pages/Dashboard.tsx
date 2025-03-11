@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Card, CardContent, Grid, Paper, Stack, Typography, styled } from "@mui/material";
+import { Avatar, Box, Breadcrumbs, Card, CardContent, Grid, Paper, Stack, Typography, styled } from "@mui/material";
 import { CloudOff, Wifi, Cloud, SearchOff, } from '@mui/icons-material';
 import BasicTable from "../components/ui/BasicTable";
 import React, { useContext, useMemo, FC, useCallback } from "react";
@@ -33,7 +33,7 @@ export const Item: FC<ItemProps> = ({ path, onClick, children, icon, title }) =>
     );
 };
 const DeviceStatus = ({ devices, onDeviceClick, activeDevices, totalDevices }: { totalDevices: number, activeDevices: number, onDeviceClick: (devId: string) => void, devices: Device[] }) => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     return <Paper sx={{ height: '100%', width: '100%', borderRadius: 2, bgcolor: 'white', p: 0 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', my: 0, alignItems: 'flex-start', p: 2 }}>
             <Box>
@@ -50,7 +50,8 @@ const DeviceStatus = ({ devices, onDeviceClick, activeDevices, totalDevices }: {
     </Paper>
 }
     ;
-const TextItem = ({ text }: { text: string }) => <Typography sx={{ fontSize: [10, 10, 12, 13, 10], color: DEFAULT_COLORS.secondary_black, fontWeight: 300 }} >{text}</Typography>
+// const TextItem = ({ text }: { text: string }) => <Typography sx={{ fontSize: [10, 10, 12, 13, 10], color: DEFAULT_COLORS.secondary_black, fontWeight: 300 }} >{text}</Typography>
+
 const MyScrollingElement = styled(Stack)(() => ({
     overflow: "auto",
     width: '100%',
@@ -78,33 +79,30 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
                     const [imageError, setImageError] = React.useState(false);
                     const handleImageError = () => { setImageError(true) }
                     return (
-                        <Link to={returnAppURL(app)} style={{ textDecoration: 'none', color:'black', cursor: 'pointer' }} key={index}>
+                        <Link to={returnAppURL(app)} style={{ textDecoration: 'none', color: 'black', cursor: 'pointer' }} key={index}>
                             <RowContainerBetween additionStyles={{ px: 2, ":hover": { bgcolor: '#f5f5f5', cursor: 'pointer', } }} key={index}>
                                 <RowContainerNormal>
                                     {
                                         imageError ? (
-                                            <Box sx={{ width: 32, height: 32, borderRadius: 16, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <Typography sx={{ fontSize: 15, color: 'white' }}>W</Typography>
-                                            </Box>
+                                            <Avatar sx={{ bgcolor: DEFAULT_COLORS.primary_blue }}>W</Avatar>
                                         ) : (app.waziapp && (app.waziapp as App['waziapp'] & { icon: string }).icon) ? (
-                                            <Box sx={{ width: 32, height: 32, alignItems: 'center', display: 'flex', justifyContent: 'center', borderRadius: 16, overflow: 'hidden' }}>
-                                                <img onError={handleImageError} src={`/apps/${app.id}/` + (app.waziapp as App['waziapp'] & { icon: string }).icon} alt={app.name} style={{ width: 20, height: 20 }} />
-                                            </Box>
+                                            <Avatar src={`/apps/${app.id}/` + (app.waziapp as App['waziapp'] & { icon: string }).icon} alt={app.name} onError={handleImageError} />
+                                            // <Box sx={{ width: 32, height: 32, alignItems: 'center', display: 'flex', justifyContent: 'center', borderRadius: 16, overflow: 'hidden' }}>
+                                            //     <img onError={handleImageError} src={`/apps/${app.id}/` + (app.waziapp as App['waziapp'] & { icon: string }).icon} alt={app.name} style={{ width: 20, height: 20 }} />
+                                            // </Box>
                                         ) : (
-                                            <Box sx={{ width: 32, height: 32, borderRadius: 16, bgcolor: 'info.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <Typography sx={{ fontSize: 15, color: 'white' }}>W</Typography>
-                                            </Box>
+                                            <Avatar sx={{ bgcolor: 'info.main' }}>W</Avatar>
                                         )
                                     }
                                     <Box ml={1}>
-                                        <Typography variant="body1" >{app.name}</Typography>
+                                        <Typography variant="body2" >{app.name}</Typography>
                                         <Typography variant="caption" >{((app.state !== null || app.state) ? appChecker(app.state) : '')}</Typography>
                                         {/* <TextItem
                                             text={((app.state !== null || app.state) ? appChecker(app.state) : '')}
                                         /> */}
                                     </Box>
                                 </RowContainerNormal>
-                                <Typography variant="body2" sx={{ color: app.state ? app.state.running ? 'info.main' : '#CCC400' : 'info.main', fontWeight: 600 }}>
+                                <Typography variant="body2" sx={{ color: app.state ? app.state.running ? DEFAULT_COLORS.primary_blue : '#CCC400' : DEFAULT_COLORS.primary_blue, fontWeight: 600 }}>
                                     {
                                         app.state ? capitalizeFirstLetter(app.state.status) : ''
                                     }
@@ -145,7 +143,7 @@ function Dashboard() {
                             <div role="presentation" onClick={() => { }}>
                                 <Breadcrumbs aria-label="breadcrumb">
                                     <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
-                                        <Link style={{ color: 'black', textDecoration: 'none', fontWeight: '300', fontSize: 16 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                        <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color="inherit" to="/">
                                             Home
                                         </Link>
                                     </Typography>
