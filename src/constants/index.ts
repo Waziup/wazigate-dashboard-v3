@@ -1,5 +1,6 @@
 export const DEFAULT_COLORS={
     primary_blue:'#3693c4',
+    primary_blue_light:'#e5f6fd',
     orange: '#F35E19',
     primary_black:'#000',
     secondary_black:'rgba(0,0,0,.6)',
