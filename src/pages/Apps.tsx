@@ -661,11 +661,11 @@ export default function Apps() {
                         <div role="presentation" onClick={()=>{}}>
                             <Breadcrumbs aria-label="breadcrumb">
                                 <Typography fontSize={16} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
-                                    <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                    <Link style={{ color: 'black',textDecoration:'none',fontWeight:300}} state={{ title: 'Devices' }} color="inherit" to="/">
                                         Home
                                     </Link>
                                 </Typography>
-                                <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
+                                <p style={{color: 'black',textDecoration:'none',fontWeight:300}} color="text.primary">
                                     Apps
                                 </p>
                             </Breadcrumbs>
