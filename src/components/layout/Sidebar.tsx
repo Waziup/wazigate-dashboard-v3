@@ -1,5 +1,5 @@
-import { Wifi, WifiLock, Logout, HelpCenter, ArrowDropDown, AccountCircle, ArrowDropUp, } from '@mui/icons-material';
-import { Box, Collapse, Icon, List, ListItem, ListItemIcon, ListItemText, SxProps, Theme, Typography, Divider, Button } from '@mui/material';
+import { Wifi, WifiLock, Logout, HelpCenter, ArrowDropDown, ArrowDropUp, } from '@mui/icons-material';
+import { Box, Collapse, Icon, List, ListItem, ListItemIcon, ListItemText, SxProps, Theme, Button } from '@mui/material';
 import React, { CSSProperties, useContext } from 'react';
 import { Link, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { DEFAULT_COLORS } from '../../constants';
@@ -29,17 +29,17 @@ export const ListItemButtonStyle: SxProps<Theme> = {
         color: '#000',
     },
 }
-const itemStyles: SxProps<Theme> = {
-    color: '#fff',
-    ":hover": {
-        bgcolor: '#fff',
-        color: '#000',
-    },
-    display: 'flex',
-    py: 1,
-    alignItems: 'center',
-    alignSelf: 'center'
-}
+// const itemStyles: SxProps<Theme> = {
+//     color: '#fff',
+//     ":hover": {
+//         bgcolor: '#fff',
+//         color: '#000',
+//     },
+//     display: 'flex',
+//     py: 1,
+//     alignItems: 'center',
+//     alignSelf: 'center'
+// }
 const commonstyle = {
     display: 'flex',
     alignItems: 'center',
@@ -107,7 +107,7 @@ function Sidebar({ matchesMd }: { matchesMd: boolean }) {
     };
     const navigate = useNavigate();
     const location = useLocation().pathname;
-    const { profile, setProfile, setAccessToken, showDialog, closeDialog } = useContext(DevicesContext);
+    const { setProfile, setAccessToken, showDialog, closeDialog } = useContext(DevicesContext);
     const handleLogout = () => {
         showDialog({
             content: "Are you sure you want to logout? ",

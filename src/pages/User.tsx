@@ -10,6 +10,7 @@ import {AccountCircle} from '@mui/icons-material'
 // import Logo from '../assets/wazilogo.svg';
 import { DevicesContext } from "../context/devices.context";
 import { Link } from "react-router-dom";
+
 interface User {
     id?: string
     name?: string;
