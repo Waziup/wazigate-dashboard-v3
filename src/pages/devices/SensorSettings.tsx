@@ -364,7 +364,7 @@ export default function DeviceSensorSettings() {
                                     <Box/>
                                     <RowContainerBetween additionStyles={{  }} >
                                         <Button onClick={resetHandler} sx={{ mx: 1, color: DEFAULT_COLORS.navbar_dark }} variant={'text'}>RESET</Button>
-                                        <PrimaryIconButton  type="submit" iconname="save" title="SAVE" />
+                                        <PrimaryIconButton  type="submit" iconName="save" title="SAVE" />
                                     </RowContainerBetween>
                                 </RowContainerBetween>
                             </form>

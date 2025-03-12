@@ -119,7 +119,7 @@ export default function DeviceSensor() {
                 </Box>
                 {
                     matches ? (
-                        <PrimaryIconButton title={'SETTINGS'} iconname={'settings_two_ton'} onClick={() => navigate(`/devices/${device?.id}/sensors/${sensor?.id}/setting`)} />
+                        <PrimaryIconButton title={'SETTINGS'} iconName={'settings_two_ton'} onClick={() => navigate(`/devices/${device?.id}/sensors/${sensor?.id}/setting`)} />
                     ) : null
                 }
             </RowContainerBetween>

@@ -322,8 +322,8 @@ function DeviceSettings() {
                     {
                         matches ? (
                             <Box>
-                                <PrimaryIconButton hideText={!matches} title="Device Settings" iconname="settingstwotone" onClick={() => { navigate(`/devices/${device?.id}/setting`) }} />
-                                <PrimaryIconButton hideText={!matches} title="New Interface" iconname="add" onClick={handleToggleModal} />
+                                <PrimaryIconButton hideText={!matches} title="Device Settings" iconName="settingstwotone" onClick={() => { navigate(`/devices/${device?.id}/setting`) }} />
+                                <PrimaryIconButton hideText={!matches} title="New Interface" iconName="add" onClick={handleToggleModal} />
                             </Box>
                         ):null
                     }

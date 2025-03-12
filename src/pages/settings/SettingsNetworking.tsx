@@ -499,7 +499,7 @@ export default function SettingsNetworking() {
                                 hasUnsavedChanges?(
                                     <PrimaryIconButton
                                         disabled={!hasUnsavedChanges}
-                                        iconname="save"
+                                        iconName="save"
                                         onClick={handleSaveClick}
                                         type="button"
                                         title="SAVE"
