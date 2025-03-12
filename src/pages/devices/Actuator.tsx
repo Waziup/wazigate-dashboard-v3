@@ -6,7 +6,7 @@ import type { Actuator, Device, } from "waziup";
 import { Link } from "react-router-dom";
 import PrimaryIconButton from "../../components/shared/PrimaryIconButton";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
-import SensorTable from "../../components/ui/DeviceTable";
+import ValuesTable from "../../components/ui/DeviceTable";
 import { cleanString } from "../../utils";
 export default function Actuator() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
@@ -176,7 +176,7 @@ export default function Actuator() {
                 <Box width={matches ? '80%' : '90%'}>
                     {
                         values.length>0?(
-                            <SensorTable
+                            <ValuesTable
                                 title={'Actuator Data'}
                                 fetchMoreData={fetchMoreData}
                                 values={values}
