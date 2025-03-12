@@ -62,7 +62,6 @@ export default function DeviceSensor() {
         const valuesGraph = (newValsx as { time: string, value: number }[]).map((value) => {
             const date = new Date(value.time);
             const hours = String(date.getUTCHours()).padStart(2, '0');
-
             const minutes = String(date.getUTCMinutes()).padStart(2, '0');
             return { 
                 y: Math.round(value.value * 100) / 100,
