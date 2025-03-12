@@ -6,7 +6,7 @@ import type {  Device, Sensor } from "waziup";
 import { Link } from "react-router-dom";
 import PrimaryIconButton from "../../components/shared/PrimaryIconButton";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
-import SensorTable from "../../components/ui/DeviceTable";
+import ValuesTable from "../../components/ui/DeviceTable";
 import { cleanString } from "../../utils";
 export default function DeviceSensor() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
@@ -177,7 +177,7 @@ export default function DeviceSensor() {
                 <Box width={matches ? '80%' : '90%'}>
                     {
                         values.length>0?(
-                            <SensorTable
+                            <ValuesTable
                                 title={'Sensor Data'}
                                 fetchMoreData={fetchMoreData}
                                 values={values}
