@@ -94,7 +94,7 @@ export default function LogsTabMaintenance() {
                     {data}
                 </pre>
             </Box>
-            <PrimaryIconButton onClick={downloadLogs} iconname='download' title={'Download Logs'} />
+            <PrimaryIconButton onClick={downloadLogs} iconName='download' title={'Download Logs'} />
         </>
     )
 }
