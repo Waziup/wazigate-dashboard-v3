@@ -1,4 +1,4 @@
-import { Alert, Box, Button, FormControl, Input, Snackbar, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Alert, Box, Button, FormControl, Input, Snackbar, Typography} from '@mui/material';
   import { DEFAULT_COLORS } from '../constants';
   import { useNavigate } from 'react-router-dom';
   import { yupResolver } from '@hookform/resolvers/yup';
@@ -21,13 +21,15 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography, useMediaQ
   interface TextInputProps {
     children: React.ReactNode;
     label: string;
+    mendatory?: boolean;
+    id?: string;
   }
   
-  const TextInput = ({ children, label }: TextInputProps) => (
+   export const TextInput = ({ children, label, mendatory }: TextInputProps) => (
     <Box py={1}>
-      <Typography variant="body1" sx={{ color: DEFAULT_COLORS.third_dark, fontWeight: 300, display: 'flex', alignItems: 'center' }}>
+      <Typography variant="body1" sx={{ color: DEFAULT_COLORS.primary_black, fontWeight: 300, display: 'flex', alignItems: 'center' }}>
         {label}
-        <Typography component="span" sx={{ color: DEFAULT_COLORS.orange, ml: 0.5 }}>*</Typography>
+        {mendatory && <Typography component="span" sx={{ color: DEFAULT_COLORS.orange, ml: 0.5 }}>*</Typography>}
       </Typography>
       {children}
     </Box>
@@ -41,8 +43,6 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography, useMediaQ
       resolver: yupResolver(schema),
     });
     const { setAccessToken } = useContext(DevicesContext);
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
     const onSubmit: SubmitHandler<RegistrationInput> = async (data) => {
       try {
@@ -132,12 +132,11 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography, useMediaQ
                 type="submit"
                 fullWidth
                 variant="contained"
+                color='secondary'
                 sx={{
                   mt: 2,
                   borderRadius: 1,
                   py: 1.5,
-                  bgcolor: '#499dff',
-                  '&:hover': { bgcolor: '#3a7dcc' }
                 }}
               >
                 LOGIN
