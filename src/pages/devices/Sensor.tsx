@@ -1,3 +1,4 @@
+test
 import { Box, Typography, Breadcrumbs } from "@mui/material";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Chart from 'react-apexcharts';
