@@ -283,7 +283,7 @@ export default function DeviceSensorSettings() {
                 </Box>
                 <Box sx={{borderTopRightRadius:10,display:'flex',flexDirection:matches?'row':'column',px:matches?4:3,height:'auto', width:'100%',pt:matches?0:.5}} >
                     <Box bgcolor={'white'} boxShadow={1} borderRadius={2} p={2}  width={matches?'50%':'99%'}>
-                        <Typography fontWeight={500} fontSize={20}  color={'#292F3F'}>Actuator settings</Typography>
+                        <Typography fontWeight={500} fontSize={20}  color={'#292F3F'}>Sensor settings</Typography>
                         <>
                             <form onSubmit={handleChangeSensorSubmission}>
                                 <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #292F3F'}}>
@@ -343,7 +343,7 @@ export default function DeviceSensorSettings() {
                                     <Box width={ '90%'}>
                                         <Box>
                                             <Typography sx={{fontWeight:500,fontSize:matches?20:18,mb:2,color:'#292F3F'}}>Cloud Synchronization</Typography>                                                    <RowContainerBetween additionStyles={{ my: .5 }}>
-                                                <Typography fontSize={15} color={'#292F3F'}>Sync {'Actuator'}</Typography>
+                                                <Typography fontSize={15} color={'#292F3F'}>Sync {'Sensor'}</Typography>
                                                 <Icon 
                                                     onClick={handleToggleEnableSwitch}
                                                     sx={{cursor:'pointer', color: sensor?.meta.doNotSync ? DEFAULT_COLORS.secondary_gray : DEFAULT_COLORS.primary_blue, fontSize: 40, }} 
