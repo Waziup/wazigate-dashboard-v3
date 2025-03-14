@@ -4,7 +4,7 @@ import Layout from './components/layout/Layout'
 import Dashboard from './pages/Dashboard'
 import Devices from './pages/devices/Devices'
 // import Automation from './pages/Automation'
-import Apps from './pages/Apps'
+import Apps from './pages/EdgeApplicationsPage'
 import Settings from './pages/settings/Settings'
 import Login from './pages/Login';
 import DeviceSensor from './pages/devices/Sensor'
