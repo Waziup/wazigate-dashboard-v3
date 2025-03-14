@@ -19,14 +19,16 @@ interface ItemProps {
     path: string;
     onClick: (path: string) => void;
 }
-export const Item: FC<ItemProps> = ({ path, onClick, children, icon, title }) => {
+export const InfoCard: FC<ItemProps> = ({ path, onClick, children, icon, title }) => {
     const handleClick = useCallback(() => onClick(path), [onClick, path]);
 
     return (
-        <Card onClick={handleClick} sx={{ minWidth: 300, cursor: 'pointer' }}>
+        <Card onClick={handleClick} sx={{ width: 350, cursor: 'pointer' }}>
             <CardContent>
-                {icon}
-                <NormalText title={title} />
+                <Stack direction={'row'} spacing={2} mb={2}>
+                    {icon}
+                    <Typography variant="body1">{title}</Typography>
+                </Stack>
                 {children}
             </CardContent>
         </Card>
@@ -39,7 +41,7 @@ const DeviceStatus = ({ devices, onDeviceClick, activeDevices, totalDevices }: {
             <Box>
                 <NormalText title="Device Status" />
                 <Box sx={{ display: 'flex', alignItems: 'center', }}>
-                    <Typography fontSize={14} color={DEFAULT_COLORS.secondary_black} fontWeight={300}>{activeDevices} of {totalDevices} devices {activeDevices === 1 ? 'are' : 'is'} active.</Typography>
+                    <Typography variant="caption">{activeDevices} of {totalDevices} devices {activeDevices === 1 ? 'are' : 'is'} active.</Typography>
                 </Box>
             </Box>
             <Link style={{ textDecoration: 'underline', color: DEFAULT_COLORS.orange, }} to={'/devices'}>
@@ -120,7 +122,9 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
         </MyScrollingElement>
     </Paper>
 );
+
 export const NormalText = ({ title }: { title: string }) => (<Typography color={DEFAULT_COLORS.navbar_dark}>{title}</Typography>)
+
 function Dashboard() {
     const { devices, networkDevices, selectedCloud, apps } = useContext(DevicesContext);
     const [matches] = useOutletContext<[matches: boolean]>();
@@ -151,36 +155,36 @@ function Dashboard() {
                             </div>
                         </Box>
                         <Stack direction={'row'} mt={2} spacing={2}>
-                            <Item icon={selectedCloud?.paused ? (<CloudOff sx={{ mb: 2, fontSize: 42, color: '#D9D9D9' }} />) : (<Cloud sx={{ mb: 2, fontSize: 42, color: 'black' }} />)} path='/settings/networking' onClick={onClick} title="Cloud Synchronization">
+                            <InfoCard icon={selectedCloud?.paused ? (<CloudOff sx={{ fontSize: 24, color: '#D9D9D9' }} />) : (<Cloud sx={{ fontSize: 24, color: 'black' }} />)} path='/settings/networking' onClick={onClick} title="Cloud Synchronization">
                                 <Typography variant="body2" color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
                                     {!(selectedCloud?.paused) ? 'Synched with Waziup Cloud' : 'Not Synchronized'}
                                 </Typography>
-                                <RowContainerNormal additionStyles={{ m: 0 }}>
-                                    <Typography variant="body2" fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Status: </Typography>
-                                    <Typography variant="body2" color={selectedCloud?.paused ? "#CCC400" : DEFAULT_COLORS.primary_blue} fontWeight={600}>{selectedCloud?.paused ? "Inactive" : 'Active'}</Typography>
+                                <RowContainerNormal additionStyles={{ gap: 1, m: 0 }}>
+                                    <Typography variant="body2">Status: </Typography>
+                                    <Typography variant="body2" color={selectedCloud?.paused ? "#FA9E0E" : DEFAULT_COLORS.primary_blue} fontWeight={600}>{selectedCloud?.paused ? "Inactive" : 'Active'}</Typography>
                                 </RowContainerNormal>
-                            </Item>
+                            </InfoCard>
                             {
                                 (eth0 && eth0.IP4Config) ? (
-                                    <Item icon={<Wifi sx={{ mb: 2, fontSize: 42, color: 'black' }} />} path='/settings/networking' onClick={onClick} title="Ethernet Connection" >
+                                    <InfoCard icon={<Wifi sx={{ fontSize: 24, color: 'black' }} />} path='/settings/networking' onClick={onClick} title="Ethernet Connection" >
                                         <Typography variant="body2" color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
                                             {`IP Address: ${(eth0 && eth0.IP4Config) ? eth0.IP4Config.Addresses[0].Address : ''}`}
                                         </Typography>
-                                        <RowContainerNormal additionStyles={{ m: 0 }}>
-                                            <Typography variant="body2" fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Internet: </Typography>
+                                        <RowContainerNormal additionStyles={{ gap: 1, m: 0 }}>
+                                            <Typography variant="body2">Internet: </Typography>
                                             <InternetIndicator />
                                         </RowContainerNormal>
-                                    </Item>
+                                    </InfoCard>
                                 ) : (
-                                    <Item icon={<Wifi sx={{ mb: 2, fontSize: 42, color: 'black' }} />} path='/settings/networking' onClick={onClick} title="Wifi Connection"  >
+                                    <InfoCard icon={<Wifi sx={{ fontSize: 24, color: 'black' }} />} path='/settings/networking' onClick={onClick} title="Wifi Connection"  >
                                         <Typography variant="body2" color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
                                             {`Wifi Name: ${apConn?.connection.id}`}
                                         </Typography>
-                                        <RowContainerNormal additionStyles={{ m: 0 }}>
-                                            <Typography variant="body2" fontWeight={300} color={DEFAULT_COLORS.secondary_black} mr={1}>Internet: </Typography>
+                                        <RowContainerNormal additionStyles={{ gap: 1, m: 0 }}>
+                                            <Typography variant="body2">Internet: </Typography>
                                             <InternetIndicator />
                                         </RowContainerNormal>
-                                    </Item>
+                                    </InfoCard>
                                 )
                             }
                         </Stack>
