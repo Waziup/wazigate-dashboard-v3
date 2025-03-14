@@ -3,6 +3,7 @@ import ontologies from "../../assets/ontologies.json";
 import ontologiesicons from '../../assets/ontologies.svg';
 import { Box,Autocomplete, InputAdornment, TextField, createFilterOptions } from '@mui/material';
 import SVGIcon from './SVGIcon';
+import { InputField } from '../../pages/Login';
 interface Props{
     value: string;
     onChange: (name: string, value: string | null) => void;
@@ -101,15 +102,18 @@ export default function OntologyKindInput({deviceType,onChange,title,value,name}
                     </>
                 );
                 return (
-                    <TextField
-                        {...params}
-                        // value={ontology[value] && ontology[value].label && <Box ml={1}>{ontology[value].label}</Box>}
-                        label={deviceType == "actuator" ? title || "Actuator Type" : title || "Sensor Type"}
-                        placeholder={(ontology && ontology[value]) ? (ontology && ontology[value]).label : value}
-                        value={value}
-                        variant='standard'
-                        color='primary'
-                    />
+                    <InputField mendatory label={deviceType == "actuator" ? title || "Actuator Type" : title || "Sensor Type"}>
+
+                        <TextField
+                            {...params}
+                            // value={ontology[value] && ontology[value].label && <Box ml={1}>{ontology[value].label}</Box>}
+                            // label={deviceType == "actuator" ? title || "Actuator Type" : title || "Sensor Type"}
+                            placeholder={(ontology && ontology[value]) ? (ontology && ontology[value]).label : value}
+                            value={value}
+                            variant='standard'
+                            color='primary'
+                        />
+                    </InputField>
                 )
             }}
         />

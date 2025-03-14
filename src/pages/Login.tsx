@@ -25,9 +25,9 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography} from '@mu
     id?: string;
   }
   
-   export const TextInput = ({ children, label, mendatory }: TextInputProps) => (
+   export const InputField = ({ children, label, mendatory }: TextInputProps) => (
     <Box py={1}>
-      <Typography variant="body1" sx={{ color: DEFAULT_COLORS.primary_black, fontWeight: 300, display: 'flex', alignItems: 'center' }}>
+      <Typography variant="caption" sx={{ color: DEFAULT_COLORS.primary_black, fontWeight: 300, display: 'flex', alignItems: 'center' }}>
         {label}
         {mendatory && <Typography component="span" sx={{ color: DEFAULT_COLORS.orange, ml: 0.5 }}>*</Typography>}
       </Typography>
@@ -68,7 +68,7 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography} from '@mu
     const handleClose = () => setShowErrSnackbar(false);
   
     return (
-      <Box height="100vh" width="100%" bgcolor="#f6fbff">
+      <Box height="100vh" width="100%" bgcolor="#e8e7e7">
         <Snackbar
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           open={showErrSnackbar}
@@ -103,7 +103,7 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography} from '@mu
   
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl fullWidth>
-              <TextInput label="Username">
+              <InputField label="Username">
                 <Input
                   {...register('username')}
                   fullWidth
@@ -113,9 +113,9 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography} from '@mu
                     '&:before, &:after': { borderBottom: 'none' }
                   }}
                 />
-              </TextInput>
+              </InputField>
   
-              <TextInput label="Password">
+              <InputField label="Password">
                 <Input
                   {...register('password')}
                   type="password"
@@ -126,7 +126,7 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography} from '@mu
                     '&:before, &:after': { borderBottom: 'none' }
                   }}
                 />
-              </TextInput>
+              </InputField>
   
               <Button
                 type="submit"

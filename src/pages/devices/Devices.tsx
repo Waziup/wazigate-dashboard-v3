@@ -1,4 +1,4 @@
-import { Box, Grid, CardContent, Typography, SelectChangeEvent, Breadcrumbs, Pagination } from '@mui/material';
+import { Box, Grid, CardContent, Typography, SelectChangeEvent, Breadcrumbs, } from '@mui/material';
 import RowContainerBetween from '../../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../../constants';
 import { Link, useNavigate, useOutletContext, } from 'react-router-dom';
@@ -10,7 +10,7 @@ import { DevicesContext, SensorX } from '../../context/devices.context';
 import { devEUIGenerateFc, differenceInMinutes, lineClamp } from '../../utils';
 import PrimaryIconButton from '../../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../../components/shared/SensorActuatorInfo';
-import MenuComponent from '../../components/shared/MenuDropDown';
+import MenuDropDown from '../../components/shared/MenuDropDown';
 import RowContainerNormal from '../../components/shared/RowContainerNormal';
 import DeviceImage from '../../assets/device.png';
 
@@ -193,9 +193,9 @@ function Devices() {
 
     function handleDeleteDevice(device: Device) {
         showDialog({
-            title: "Remove " + device.name,
-            acceptBtnTitle: "OK!",
-            content: `Are you sure you want to remove ${device.name}?`,
+            title: `Deleting Device: [${device.name}]`,
+            acceptBtnTitle: "Delete",
+            content: `Are you sure you want to delete [${device.name}] ? This action cannot be undone.`,
             onAccept() {
                 window.wazigate.deleteDevice(device.id)
                     .then(() => {
@@ -525,7 +525,7 @@ function Devices() {
                                                         <Typography color={DEFAULT_COLORS.secondary_black} variant='caption'> Last updated {differenceInMinutes(new Date(device.modified).toISOString())}  before</Typography>
                                                     </Box>
                                                 </RowContainerNormal>
-                                                <MenuComponent
+                                                <MenuDropDown
                                                     open={open}
                                                     menuItems={[
                                                         {
@@ -565,12 +565,12 @@ function Devices() {
                                                 {device.sensors.length === 0 && device.actuators.length === 0 && (
                                                     <Box m={5} position={'relative'} textAlign={'center'} top={'50%'} display={'flex'} flexDirection={'column'}>
                                                         <Typography color={'#797979'} variant='caption'>No interfaces found</Typography>
-                                                        <Typography color={'#797979'} variant='body2' component={'span'}> Click <Link style={{ textDecoration: 'none', color: '#499dff' }} to={device.id}> here </Link> to create </Typography>
+                                                        <Typography color={'#797979'} variant='body2' component={'span'}> Click <Link style={{ textDecoration: 'underline', color: '#f25f16', fontWeight: '500' }} to={device.id}>here</Link> to create </Typography>
                                                     </Box>
                                                 )}
                                                 {
                                                     device.sensors.length > 0 ? device.sensors.map((sensor) => (
-                                                        <Box key={sensor.id}>
+                                                        <Box key={sensor.id} sx={{ cursor: 'pointer' }}>
                                                             <SensorActuatorInfo
                                                                 type='sensor'
                                                                 key={sensor.id}
@@ -591,7 +591,7 @@ function Devices() {
                                                 }
                                                 {
                                                     device.actuators.length > 0 ? device.actuators.map((act) => (
-                                                        <Box key={act.id}>
+                                                        <Box key={act.id} sx={{ cursor: 'pointer' }}>
                                                             <SensorActuatorInfo
                                                                 onClick={() => {
                                                                     navigate(`/devices/${device.id}/actuators/${act.id}`, { state: { deviceId: device.id, actuatordId: act.id, actuatorname: act.name } })

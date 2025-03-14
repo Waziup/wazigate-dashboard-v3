@@ -1,6 +1,6 @@
 import { Box, FormControl, Typography, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, } from "@mui/material";
 import { Device } from "waziup";
-import { TextInput } from "../../pages/Login";
+import { InputField } from "../../pages/Login";
 
 interface DropDownProps {
     name?: string;
@@ -16,7 +16,7 @@ interface DropDownProps {
 export const DropDownCreateDeviceTab1 = ({ name, title = 'Select board Type', value, options, handleChangeSelect, matchesWidth = true, mt = 2, my = 0, }: DropDownProps) => (
     <FormControl variant="standard" sx={{ p: 0, mt, my, width: '100%', minWidth: matchesWidth ? 300 : '100%', }}>
         {/* <InputLabel id={`${name}-select-label`}>{title}</InputLabel> */}
-        <TextInput id={`${name}-select-label`} label={title} mendatory>
+        <InputField id={`${name}-select-label`} label={title} mendatory>
             <Select
                 placeholder="Select device codec"
                 name={name}
@@ -38,12 +38,12 @@ export const DropDownCreateDeviceTab1 = ({ name, title = 'Select board Type', va
                         sx={{ display: 'flex', justifyContent: 'space-between' }}
                     >
                         <Box display="flex" alignItems="center">
-                            <Typography variant="body2">{option.name}</Typography>
+                            <Typography variant="body1">{option.name}</Typography>
                         </Box>
                     </MenuItem>
                 ))}
             </Select>
-        </TextInput>
+        </InputField>
     </FormControl>
 );
 

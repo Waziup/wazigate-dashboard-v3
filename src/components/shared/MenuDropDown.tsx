@@ -3,8 +3,13 @@ import { Box, Menu, Icon, MenuItem, ListItemIcon, SxProps, Theme } from '@mui/ma
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import React from 'react'
 interface Props {
-    open: boolean
-    menuItems: ({ icon: string, text: string, clickHandler: () => void, menuItemAdditionalStyle?: SxProps<Theme> } | null)[],
+    open: boolean,
+    menuItems: ({
+        icon: string,
+        text: string,
+        clickHandler: () => void,
+        menuItemAdditionalStyle?: SxProps<Theme>
+    } | null)[],
 }
 export default function MenuComponent({ open, menuItems }: Props) {
     return (
