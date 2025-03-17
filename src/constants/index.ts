@@ -2,6 +2,7 @@ export const DEFAULT_COLORS={
     primary_blue:'#3693c4',
     primary_blue_light:'#e5f6fd',
     orange: '#F35E19',
+    red: '#FF0000',
     primary_black:'#000',
     secondary_black:'#000000',
     third_dark:'#325460',

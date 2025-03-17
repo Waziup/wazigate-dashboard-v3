@@ -104,7 +104,7 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
                                         /> */}
                                     </Box>
                                 </RowContainerNormal>
-                                <Typography variant="body2" sx={{ color: app.state ? app.state.running ? DEFAULT_COLORS.primary_blue : '#CCC400' : DEFAULT_COLORS.primary_blue, fontWeight: 600 }}>
+                                <Typography variant="body2" sx={{ color: app.state ? app.state.running ? DEFAULT_COLORS.primary_blue : DEFAULT_COLORS.red : DEFAULT_COLORS.primary_blue, fontWeight: 600 }}>
                                     {
                                         app.state ? capitalizeFirstLetter(app.state.status) : ''
                                     }

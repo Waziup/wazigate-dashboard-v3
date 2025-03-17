@@ -3,7 +3,6 @@ import { DEFAULT_COLORS } from '../../constants';
 import { Mode, PowerSettingsNew, RestartAlt } from '@mui/icons-material';
 import { SxProps, Theme } from '@mui/material';
 import RowContainerBetween from '../../components/shared/RowContainerBetween';
-import RowContainerNormal from '../../components/shared/RowContainerNormal';
 import { Link, useOutletContext } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
@@ -285,11 +284,11 @@ function Settings() {
                             </Breadcrumbs>
                         </div>
                     </Box>
-                    {
+                    {/* {
                         matches ? <Typography sx={{ my: 2, fontSize: 13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography> : null
-                    }
+                    } */}
                 </Box>
-                <Grid width={'100%'} container>
+                <Grid width={'100%'} container mt={1}>
                     <GridItem additionStyles={{ mr: matches ? 2 : 0, }} md={12} xs={12} matches={matches} >
                         <GridItemEl additionStyles={{ pb: .2, }} icon='cell_tower' text={apConn ? 'Wifi info' : 'Ethernet'}> {/* text={(eth0 && eth0.IP4Config)?'Ethernet':'Network'}*/}
                             <RowContainer >
@@ -325,32 +324,7 @@ function Settings() {
                                 }
                             </RowContainer> */}
                         </GridItemEl>
-                        <GridItemEl text='Wazigate Identity' icon='fingerprint'>
-                            <RowContainer>
-                                <Typography sx={{ textAlign: 'left', color: DEFAULT_COLORS.navbar_dark, fontWeight: 300 }}>
-                                    Wazigate ID
-                                </Typography>
-                                <Typography textTransform='uppercase' color={DEFAULT_COLORS.navbar_dark} component={'span'}>{wazigateId}</Typography>
-                            </RowContainer>
-                            <RowContainer>
-                                <Typography sx={{ textAlign: 'left', color: DEFAULT_COLORS.navbar_dark, fontWeight: 300 }}>
-                                    Version
-                                </Typography>
-                                <Typography color={DEFAULT_COLORS.navbar_dark} component='span'>{infoConfig.version} (build number: {infoConfig.buildNr})</Typography>
-                            </RowContainer>
-                        </GridItemEl>
-                        <GridItemEl text='Gateway Power' icon='power_settings_new'>
-                            <RowContainerNormal additionStyles={{ m: 1, borderRadius: 1, pb: matches ? 1 : 2 }}>
-                                <Button onClick={shutdownHandler} variant="contained" sx={{ mx: 1, fontWeight: 'bold', bgcolor: 'info.main' }} startIcon={<PowerSettingsNew />}>
-                                    Shutdown
-                                </Button>
-                                <Button onClick={rebootHandler} variant="contained" sx={{ mx: 1, fontWeight: 'bold', bgcolor: 'info.main' }} startIcon={<RestartAlt />}>
-                                    Restart
-                                </Button>
-                            </RowContainerNormal>
-                        </GridItemEl>
-                    </GridItem>
-                    <GridItem additionStyles={{ borderRadius: 2, boxShadow: 0 }} md={12} xs={12} matches={matches} >
+
                         <GridItemEl additionStyles={{ pb: .2, }} icon='access_time' text={'Time Settings'}>
                             <Box my={2}>
 
@@ -402,6 +376,50 @@ function Settings() {
                             </Box>
                         </GridItemEl>
 
+                        <GridItemEl text='Gateway Power' icon='power_settings_new'>
+                            <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1.5, p: 2 }}>
+                                <Button onClick={shutdownHandler} variant="outlined" color='secondary' startIcon={<PowerSettingsNew />}>
+                                    Shutdown
+                                </Button>
+                                <Button onClick={rebootHandler} variant="contained" color='secondary' startIcon={<RestartAlt />}>
+                                    Restart
+                                </Button>
+                            </Box>
+                        </GridItemEl>
+                    </GridItem>
+
+                    <GridItem additionStyles={{ borderRadius: 2, boxShadow: 0 }} md={12} xs={12} matches={matches} >
+
+                        <GridItemEl text='Wazigate Identity' icon='fingerprint'>
+                            <RowContainer>
+                                <Typography sx={{ textAlign: 'left', color: DEFAULT_COLORS.navbar_dark, fontWeight: 300 }}>
+                                    Wazigate ID
+                                </Typography>
+                                <Typography textTransform='uppercase' color={DEFAULT_COLORS.navbar_dark} component={'span'}>{wazigateId}</Typography>
+                            </RowContainer>
+                            {/* <RowContainer> */}
+                            {/* <Typography sx={{ textAlign: 'left', color: DEFAULT_COLORS.navbar_dark, fontWeight: 300 }}>
+                                    Version
+                                </Typography> */}
+                            {/* <Typography color={DEFAULT_COLORS.navbar_dark} component='span'>{infoConfig.version} (build number: {infoConfig.buildNr})</Typography> */}
+                            <Box
+                                component="pre"
+                                sx={{
+                                    backgroundColor: '#e8f0fd',
+                                    color: '#000',
+                                    padding: 2,
+                                    // borderRadius: 1,
+                                    overflowX: 'auto',
+                                    fontFamily: 'monospace',
+                                    whiteSpace: 'pre-wrap',
+                                }}
+                            >
+                                <code>
+                                    {infoConfig.version} (build number: {infoConfig.buildNr})
+                                </code>
+                            </Box>
+                            {/* </RowContainer> */}
+                        </GridItemEl>
                     </GridItem>
                 </Grid>
             </Box>
