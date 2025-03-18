@@ -41,7 +41,7 @@ const DeviceStatus = ({ devices, onDeviceClick, activeDevices, totalDevices }: {
             <Box>
                 <NormalText title="Device Status" />
                 <Box sx={{ display: 'flex', alignItems: 'center', }}>
-                    <Typography variant="caption">{activeDevices} of {totalDevices} devices {activeDevices === 1 ? 'are' : 'is'} active.</Typography>
+                    <Typography variant="caption">{activeDevices} of {totalDevices} devices {activeDevices === 1 ? 'are' : 'is'} active</Typography>
                 </Box>
             </Box>
             <Link style={{ textDecoration: 'underline', color: DEFAULT_COLORS.orange, }} to={'/devices'}>
@@ -66,10 +66,26 @@ const MyScrollingElement = styled(Stack)(() => ({
         display: 'none', // Hide the scrollbar for IE
     },
 }));
+
+export function countActiveApp(items: App[]): number{
+    let count = 0;
+    items.forEach((item)=>{
+        if(item.state.running){
+            count++;
+        }
+    });
+    return count;
+}
+
 const AppStatus = ({ apps }: { apps: App[] }) => (
     <Paper sx={{ height: '100%', bgcolor: 'white', borderRadius: 2, }}>
         <RowContainerBetween additionStyles={{ p: 2 }}>
-            <NormalText title="App Status" />
+            <Box>
+                <NormalText title="App Status" />
+                <Box sx={{ display: 'flex', alignItems: 'center', }}>
+                    <Typography variant="caption">{countActiveApp(apps)} of {apps.length} apps active</Typography>
+                </Box>
+            </Box>
             <Link style={{ textDecoration: 'underline', color: DEFAULT_COLORS.orange, }} to={'/apps'}>
                 <Typography fontSize={14}>See all</Typography>
             </Link>
