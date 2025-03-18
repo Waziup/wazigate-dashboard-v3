@@ -51,7 +51,7 @@ const styleFunc1 = ({ isActive, }: { isActive: boolean }): CSSProperties => {
     return {
         color: isActive ? DEFAULT_COLORS.primary_black : 'inherit',
         backgroundColor: isActive ? '#D4E3F5' : 'inherit',
-        borderBottom: '0.1px solid #797979',
+        // borderBottom: '0.1px solid #797979',
         ...commonstyle
     }
 }
@@ -211,7 +211,7 @@ function Sidebar({ matchesMd }: { matchesMd: boolean }) {
 
                                 <Collapse in={open} timeout="auto" unmountOnExit>
                                     <List component="div" disablePadding>
-                                        <NavLink state={{ title: 'Networking' }} to={'/settings/networking'} style={styleFunc1}>
+                                        <NavLink state={{ title: 'Networks' }} to={'/settings/networking'} style={styleFunc1}>
                                             <Box
                                                 display="flex"
                                                 sx={{
@@ -240,7 +240,7 @@ function Sidebar({ matchesMd }: { matchesMd: boolean }) {
                                                         }}
                                                     />
                                                 </ListItemIcon>
-                                                <ListItemText sx={{ fontSize: 1, color: '#000' }} primary="Networking" />
+                                                <ListItemText sx={{ fontSize: 1, color: '#000' }} primary="Networks" />
                                             </Box>
                                         </NavLink>
 
@@ -380,7 +380,7 @@ function Sidebar({ matchesMd }: { matchesMd: boolean }) {
                             <List component="div" disablePadding>
                                 <NavigationSmall
                                     location={location}
-                                    title='Networking'
+                                    title='Networks'
                                     path={'/settings/networking'}
                                     icon='wifi'
                                     iconColor={location.includes('/settings') ? '#292F3F' : '#fff'}
