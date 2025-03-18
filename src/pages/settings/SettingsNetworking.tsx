@@ -19,11 +19,11 @@ import { lineClamp, nameForState, orderAccessPointsByStrength } from "../../util
 import SnackbarComponent from "../../components/shared/Snackbar";
 import { InputField } from "../Login";
 
-const GridItem = ({ children, matches, lg, xl, xs, md, additionStyles }: { xs: number, md: number, xl: number, lg: number, spacing?: number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode, }) => (
-    <Grid my={matches ? 1 : 0} lg={lg} sm={12} xl={xl} item xs={xs} md={md} sx={additionStyles} borderRadius={2}  >
-        {children}
-    </Grid>
-);
+// const GridItem = ({ children, matches, lg, xl, xs, md, additionStyles }: { xs: number, md: number, xl: number, lg: number, spacing?: number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode, }) => (
+//     <Grid my={matches ? 1 : 0} lg={lg} sm={12} xl={xl} item xs={xs} md={md} sx={additionStyles} borderRadius={2}  >
+//         {children}
+//     </Grid>
+// );
 const style1 = {
     position: 'absolute',
     top: '50%',
