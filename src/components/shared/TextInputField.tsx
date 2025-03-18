@@ -14,20 +14,20 @@ interface InputFieldProps extends React.ComponentProps<typeof TextField> {
     bgcolor?: string,
     icon?: React.ReactNode
 }
-export default function TextInputField({onChange,value,label,icon,placeholder,type,sx,bgcolor, name}:InputFieldProps) {
+export default function TextInputField({ onChange, value, label, icon, placeholder, type, sx, bgcolor, name }: InputFieldProps) {
     return (
-        <FormControl sx={{my:1,width:'100%', borderBottom:'1px solid #ccc',...sx}}>
+        <FormControl sx={{ my: 1, width: '100%', borderBottom: '1px solid #ccc', ...sx }}>
             <Typography textAlign={'left'} mb={.4} fontSize={14}>{label}</Typography>
-            <Box sx={{display:'flex',alignItems:'flex-end' }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                 {icon}
-                <input 
-                    onInput={onChange} 
-                    name={name} 
-                    placeholder={placeholder?placeholder:'Enter device name'} 
+                <input
+                    onInput={onChange}
+                    name={name}
+                    placeholder={placeholder ? placeholder : 'Enter device name'}
                     value={value}
                     required
-                    type={type?type:'text'}
-                    style={{border:'none',width:'100%',fontSize:16,color:'#888',backgroundColor:bgcolor?bgcolor:'', margin:'0 3px', outline:'none'}}
+                    type={type ? type : 'text'}
+                    style={{ border: 'none', width: '100%', fontSize: 16, color: '#888', backgroundColor: bgcolor ? bgcolor : '', margin: '0 3px', outline: 'none' }}
                 />
             </Box>
         </FormControl>
