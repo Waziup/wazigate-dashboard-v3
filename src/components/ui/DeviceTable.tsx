@@ -25,9 +25,9 @@ interface Data {
 
   values: number | string;
   sos: string;
-//   fat: number;
+  //   fat: number;
   name: string;
-//   protein: number;
+  //   protein: number;
 }
 
 function createData(
@@ -84,32 +84,32 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
 }
 
 interface HeadCell {
-    disablePadding: boolean;
-    id: keyof Data;
-    label: string;
-    numeric: boolean;
-  }
-  
-  const headCells: readonly HeadCell[] = [
-    {
-      id: 'name',
-      numeric: false,
-      disablePadding: true,
-      label: 'Time',
-    },
-    {
-      id: 'values',
-      numeric: true,
-      disablePadding: false,
-      label: 'Values',
-    },
-    {
-      id: 'sos',
-      numeric: true,
-      disablePadding: false,
-      label: 'SoS',
-    },
-  ];
+  disablePadding: boolean;
+  id: keyof Data;
+  label: string;
+  numeric: boolean;
+}
+
+const headCells: readonly HeadCell[] = [
+  {
+    id: 'name',
+    numeric: false,
+    disablePadding: true,
+    label: 'Time',
+  },
+  {
+    id: 'values',
+    numeric: true,
+    disablePadding: false,
+    label: 'Values',
+  },
+  {
+    id: 'sos',
+    numeric: true,
+    disablePadding: false,
+    label: 'SoS',
+  },
+];
 
 interface EnhancedTableProps {
   numSelected: number;
@@ -121,7 +121,7 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const {  order, orderBy,  onRequestSort } =
+  const { order, orderBy, onRequestSort } =
     props;
   const createSortHandler =
     (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
@@ -129,13 +129,13 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     };
 
   return (
-    <TableHead sx={{bgcolor:'#F6F6F6',border: '.5px solid #d8d8d8'}}>
+    <TableHead sx={{ bgcolor: '#F6F6F6', border: '.5px solid #d8d8d8' }}>
       <TableRow>
-        <TableCell  padding="checkbox">
+        <TableCell padding="checkbox">
           <Typography sx={{
             fontWeight: 'bold',
             fontSize: '14px',
-            mx:2,
+            mx: 2,
             lineHeight: '16px',
             color: '#424242',
           }}>
@@ -150,24 +150,24 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             sortDirection={orderBy === headCell.id ? order : false}
           >
             {
-                headCell.id==='values'?(
-                    <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}
-                    >
-                    {headCell.label}
-                    {orderBy === headCell.id ? (
-                        <Box component="span" sx={visuallyHidden}>
-                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                        </Box>
-                    ) : null}
-                    </TableSortLabel>
-                ):(
-                    <>
-                        {headCell.label}
-                    </>
-                )
+              headCell.id === 'values' ? (
+                <TableSortLabel
+                  active={orderBy === headCell.id}
+                  direction={orderBy === headCell.id ? order : 'asc'}
+                  onClick={createSortHandler(headCell.id)}
+                >
+                  {headCell.label}
+                  {orderBy === headCell.id ? (
+                    <Box component="span" sx={visuallyHidden}>
+                      {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                    </Box>
+                  ) : null}
+                </TableSortLabel>
+              ) : (
+                <>
+                  {headCell.label}
+                </>
+              )
             }
           </TableCell>
         ))}
@@ -183,7 +183,7 @@ interface EnhancedTableToolbarProps {
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected,handleRequestSort, } = props;
+  const { numSelected, handleRequestSort, } = props;
 
   return (
     <Toolbar
@@ -198,7 +198,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     >
       {numSelected > 0 ? (
         <Typography
-        
+
           sx={{ flex: '1 1 100%' }}
           color="inherit"
           variant="subtitle1"
@@ -219,16 +219,16 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       {numSelected > 0 ? (
         null
       ) : (
-        <Box sx={{display:'flex',alignItems:'center'}}>
-            <Tooltip title="Filter list">
-                <IconButton>
-                    <Tune
-                        onClick={(event)=>handleRequestSort(event,'values')}
-                    />
-                </IconButton>
-            </Tooltip>
-            <Box></Box>
-            {/* <Tooltip title="Download">
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title="Filter list">
+            <IconButton>
+              <Tune
+                onClick={(event) => handleRequestSort(event, 'values')}
+              />
+            </IconButton>
+          </Tooltip>
+          <Box></Box>
+          {/* <Tooltip title="Download">
                 <IconButton>
                     <Download sx={{mx:1}}/>
                 </IconButton>
@@ -238,33 +238,33 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     </Toolbar>
   );
 }
-interface Props{
-    title: string
-    fetchMoreData:()=>void,
-    values:{
-      value:number | string,
-      modified:string
-    }[]
+interface Props {
+  title: string
+  fetchMoreData: () => void,
+  values: {
+    value: number | string,
+    modified: string
+  }[]
 }
-export default function SensorTable({values,fetchMoreData,title}:Props) {
-    const rows = useMemo(() => values.map((v,idx,arr)=>{
-        const nextItem = arr[idx+1]?arr[idx+1]:arr[idx];
-        return createData(idx+1,v.modified,v.value,v.value>nextItem.value?'trending_up':v.value=== nextItem.value?'trending_flat':'trending_down')
-    }),[values]);
-    const [order, setOrder] = React.useState<Order>('asc');
-    const [orderBy, setOrderBy] = React.useState<keyof Data>('values');
-    const [selected, setSelected] = React.useState<readonly number[]>([]);
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [showMore,setShowMore] = React.useState(false);
-    const handleRequestSort = (
-        _event: React.MouseEvent<unknown>,
-        property: keyof Data,
-    ) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
+export default function SensorTable({ values, fetchMoreData, title }: Props) {
+  const rows = useMemo(() => values.map((v, idx, arr) => {
+    const nextItem = arr[idx + 1] ? arr[idx + 1] : arr[idx];
+    return createData(idx + 1, v.modified, v.value, v.value > nextItem.value ? 'trending_up' : v.value === nextItem.value ? 'trending_flat' : 'trending_down')
+  }), [values]);
+  const [order, setOrder] = React.useState<Order>('asc');
+  const [orderBy, setOrderBy] = React.useState<keyof Data>('values');
+  const [selected, setSelected] = React.useState<readonly number[]>([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [showMore, setShowMore] = React.useState(false);
+  const handleRequestSort = (
+    _event: React.MouseEvent<unknown>,
+    property: keyof Data,
+  ) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -297,9 +297,9 @@ export default function SensorTable({values,fetchMoreData,title}:Props) {
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
     // check if it is the last page, if so, fetch more data
-    if(newPage === Math.floor(rows.length/rowsPerPage)){
-        // fetch more data
-        setShowMore(true);
+    if (newPage === Math.floor(rows.length / rowsPerPage)) {
+      // fetch more data
+      setShowMore(true);
     }
   };
 
@@ -308,7 +308,7 @@ export default function SensorTable({values,fetchMoreData,title}:Props) {
     setPage(0);
   };
 
-  
+
 
   const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
@@ -332,7 +332,7 @@ export default function SensorTable({values,fetchMoreData,title}:Props) {
         <EnhancedTableToolbar
           title={title}
           handleRequestSort={handleRequestSort}
-          numSelected={selected.length} 
+          numSelected={selected.length}
         />
         <TableContainer>
           <Table
@@ -365,8 +365,8 @@ export default function SensorTable({values,fetchMoreData,title}:Props) {
                     sx={{ cursor: 'pointer' }}
                   >
                     <TableCell padding="checkbox">
-                      <Typography sx={{fontWeight: 'bold',fontSize: '14px',mx:2,lineHeight: '16px',color: '#424242'}}>
-                        {index<9?'0'+(index+1):index+1}
+                      <Typography sx={{ fontWeight: 'bold', fontSize: '14px', mx: 2, lineHeight: '16px', color: '#424242' }}>
+                        {index < 9 ? '0' + (index + 1) : index + 1}
                       </Typography>
                     </TableCell>
                     <TableCell
@@ -379,7 +379,7 @@ export default function SensorTable({values,fetchMoreData,title}:Props) {
                     </TableCell>
                     <TableCell align="right">{row.values}</TableCell>
                     <TableCell align="right">
-                      <Icon sx={{color:row.sos==='trending_up'?'#7E9B08':row.sos==='trending_down'?'#ff0000':'#000000'}}>{row.sos}</Icon>
+                      <Icon sx={{ color: row.sos === 'trending_up' ? '#7E9B08' : row.sos === 'trending_down' ? '#ff0000' : '#000000' }}>{row.sos}</Icon>
                     </TableCell>
                   </TableRow>
                 );
@@ -396,7 +396,7 @@ export default function SensorTable({values,fetchMoreData,title}:Props) {
             </TableBody>
           </Table>
         </TableContainer>
-        <Box sx={{display:'flex',alignItems:'center',p:2}}>
+        <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
@@ -406,7 +406,7 @@ export default function SensorTable({values,fetchMoreData,title}:Props) {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-          <Typography onClick={()=>fetchMoreData()} sx={{visibility:showMore?'visible':'hidden', cursor:'pointer',color:'#499dff',}}>
+          <Typography onClick={() => fetchMoreData()} sx={{ visibility: showMore ? 'visible' : 'hidden', cursor: 'pointer', color: '#499dff', }}>
             Load More
           </Typography>
         </Box>

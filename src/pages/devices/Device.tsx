@@ -347,10 +347,11 @@ function DeviceSettings() {
                 </DialogActions>
                 {/* </Box> */}
             </Dialog>
-            <Box sx={{ px: matches ? 4 : 2, py: 2, position: 'relative', overflowY: device ? (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0 ? 'hidden' : 'auto' : 'hidden', height: '100%' }}>
+
+            <Box sx={{ px: [2], position: 'relative', overflowY: device ? (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0 ? 'hidden' : 'auto' : 'hidden', height: '100%' }}>
                 <RowContainerBetween>
                     <Box>
-                        <Typography fontWeight={600} fontSize={24} color={'black'}>{device?.name}</Typography>
+                        <Typography variant="h5" color={'black'}>{device?.name}</Typography>
                         <div role="presentation" onClick={handleClick}>
                             <Breadcrumbs aria-label="breadcrumb">
                                 <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
