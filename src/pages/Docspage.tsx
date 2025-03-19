@@ -14,7 +14,7 @@ interface CardProps {
 }
 
 const CardComponent = ({ description, path, title, newTab, icon }: CardProps) => (
-    <Card elevation={1} sx={{ width: ['100%', 300] }}>
+    <Card elevation={1} sx={{ width: ['100%', 350] }}>
         <CardContent>
             {icon}
             <Typography gutterBottom sx={{ ...lineClamp(1) }}>{title}</Typography>
@@ -33,7 +33,7 @@ const CardComponent = ({ description, path, title, newTab, icon }: CardProps) =>
 function Docspage() {
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
 
-    const cards = [
+    const docs = [
         {
             title: 'Wazigate Documentation',
             description: 'Checkout the wazigate Documentation on Wazilab and learn more about the gateway',
@@ -76,8 +76,8 @@ function Docspage() {
             </Box>
             <Box mt={2}>
                 <Stack mt={2} alignItems="center" flexWrap="wrap" direction="row" gap={2}>
-                    {cards.map((card, index) => (
-                        <CardComponent key={index} {...card} />
+                    {docs.map((doc, index) => (
+                        <CardComponent key={index} {...doc} />
                     ))}
                 </Stack>
             </Box>

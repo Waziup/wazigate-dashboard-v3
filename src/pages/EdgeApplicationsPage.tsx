@@ -1,23 +1,23 @@
-import { Box, Breadcrumbs, Button, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material';
-import { NormalText, } from './Dashboard';
+import { Box, Breadcrumbs, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
-import { Download, FiberNew, Terminal, } from '@mui/icons-material';
+import { Download, FiberNew, } from '@mui/icons-material';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { Link, useNavigate, useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { StartAppConfig, type App } from 'waziup';
-import { DevicesContext, SensorX } from '../context/devices.context';
+import { DevicesContext } from '../context/devices.context';
 import CustomApp from '../components/CustomApp';
 import { SelectElement } from './devices/DeviceSettings';
 import { LoadingButton } from '@mui/lab';
-import { differenceInMinutes, lineClamp, returnAppURL } from '../utils';
+import { lineClamp, returnAppURL } from '../utils';
 import TextInputField from '../components/shared/TextInputField';
 import MenuComponent from '../components/shared/MenuDropDown';
 import Logo from '../assets/wazilogo.svg';
-import LogoSig from '../assets/wazi_sig.svg';
 import SnackbarComponent from '../components/shared/Snackbar';
 import WaziAppIcon from '../assets/WaziApp.svg';
 import CustomEdgeAppIcon from '../assets/CustomApp.svg';
+import Logo404 from '../assets/search.svg';
+import RowContainerNormal from '../components/shared/RowContainerNormal';
 
 type App1 = App & {
     description: string
@@ -132,12 +132,8 @@ type UpdateStatus = {
     hasUpdate: boolean;
     newVersion: string | null;
 };
-import Logo404 from '../assets/search.svg';
-import RowContainerNormal from '../components/shared/RowContainerNormal';
-import SensorActuatorInfo from '../components/shared/SensorActuatorInfo';
 
 export default function Apps() {
-    const navigate = useNavigate();
     const [customAppId, setCustomAppId] = useState<App2>(customAppProps);
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -698,7 +694,7 @@ export default function Apps() {
                         <Typography fontSize={matches ? 15 : 13} sx={{fontSize:matches ? 15 : 13,my:2, color: DEFAULT_COLORS.secondary_black }}>Setup your Wazigate Edge Apps</Typography>
                     ):null
                 } */}
-                <Grid container spacing={2} py={2}>
+                <Grid container spacing={2} >
                     {
                         apps.length > 0 ? apps.map((app, idx) => {
                             return (
@@ -710,64 +706,7 @@ export default function Apps() {
                                                 app={app}
                                             />
                                         ) : (
-                                            // <GridItem key={app.id}>
-                                            //     {
-                                            //         app.author ? (
-                                            //             <Box px={1} py={.5} display={'flex'} alignItems={'center'} sx={{ position: 'absolute', top: -5, my: -1, }} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.primary_blue}>
-                                            //                 {/* waiapp tag */}
-                                            //                 <Box component={'img'} src={LogoSig} />
-                                            //                 <Typography fontSize={15} mx={1} color={'white'} component={'span'}>{app.author ? typeof (app.author) === 'string' ? app.author : app.author.name ?? 'CustomApp' : ''}</Typography>
-                                            //             </Box>
-                                            //         ) : (
-                                            //             <Box px={1} py={.5} display={'flex'} alignItems={'center'} sx={{ position: 'absolute', top: -5, my: -1, }} borderRadius={1} mx={1} bgcolor={DEFAULT_COLORS.orange}>
-                                            //                 <Terminal sx={{ color: '#fff' }} />
-                                            //                 <Typography mx={1} color={'white'} component={'span'}>Custom App</Typography>
-                                            //             </Box>
-                                            //         )
-                                            //     }
-                                            //     <CardHeader
-                                            //         title={<Typography variant='body1'>{app.name}</Typography>}
-                                            //         subheader={<Typography variant='body2'>{`Version: ${app.version}`}</Typography>}
-                                            //         action={
-                                            //             <MenuComponent
-                                            //                 open={open}
-                                            //                 menuItems={[
-                                            //                     app.state && app.state.running ? {
-                                            //                         icon: `stop_circle`,
-                                            //                         text: app.state ? app.state.running ? 'Stop' : 'Start' : 'Start',
-                                            //                         clickHandler: () => { startOrStopApp(app.id, app.state ? app.state.running : false) }
-                                            //                     } : null,
-                                            //                     {
-                                            //                         icon: 'settings',
-                                            //                         text: 'Settings',
-                                            //                         clickHandler: () => { setSelectedApp(app); setShowAppSettings(!showAppSettings) }
-                                            //                     },
-                                            //                     {
-                                            //                         icon: 'delete_forever',
-                                            //                         text: 'Uninstall',
-                                            //                         menuItemAdditionalStyle: { borderTop: '0.1px solid #797979' },
-                                            //                         clickHandler: () => { setAppToUninstallFc(idx) }
-                                            //                     },
-                                            //                 ]}
-                                            //             />
-                                            //         }
-                                            //     />
-                                            //     <Box sx={{ px: 2 }}>
-                                            //         <Typography variant='body2'>Status: <Typography component={'span'} fontWeight={600} color={app.state ? app.state.running ? DEFAULT_COLORS.primary_blue : DEFAULT_COLORS.navbar_dark : DEFAULT_COLORS.navbar_dark}>{app.state ? app.state.running ? 'Running' : 'Stopped' : 'Stopped'}</Typography></Typography>
-                                            //         <Typography variant='body2' sx={{ ...lineClamp(2), my: 1 }}>{(app as App1).description.length > 40 ? (app as App1).description.slice(0, 39) + '...' : (app as App1).description}</Typography>
-                                            //     </Box>
-                                            //     <Box sx={{ px: 2 }}>
-                                            //         {
-                                            //             app.state && app.state.running ? (
-                                            //                 <Link style={{ width: '100%' }} to={returnAppURL(app)} >
-                                            //                     <Button disabled={app.state ? !app.state.running : true} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: '#f25f16', width: '100%' }}>OPEN</Button>
-                                            //                 </Link>
-                                            //             ) : (
-                                            //                 <Button onClick={() => { startOrStopApp(app.id, app.state ? app.state.running : false) }} sx={{ fontWeight: '500', bgcolor: '#F4F7F6', my: 1, color: '#f25f16', width: '100%' }}>START APP</Button>
-                                            //             )
-                                            //         }
-                                            //     </Box>
-                                            // </GridItem>
+                                            
                                             <Grid item key={app.id} xs={12} sm={6} lg={4} my={1} px={0} bgcolor='#fff'>
                                                 <Box sx={{ boxShadow: 1, height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 1 }}>
                                                     <RowContainerNormal additionStyles={{ p: 2, borderBottom: '1px solid #dddddd', gap: 1, justifyContent: 'space-between' }}>

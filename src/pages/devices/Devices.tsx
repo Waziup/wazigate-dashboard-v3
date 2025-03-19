@@ -513,7 +513,7 @@ function Devices() {
                         {
                             devices.map((device, id) => {
                                 return (
-                                    <Grid item key={id} xs={12} sm={6} lg={4} my={1} px={0}>
+                                    <Grid item key={id} xs={12} sm={6} lg={4} px={0}>
                                         <Box sx={{ boxShadow: 1, height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 1, }}>
 
                                             <RowContainerBetween additionStyles={{ p: 2, borderBottom: '1px solid #dddddd', py: 1.5, }}>
