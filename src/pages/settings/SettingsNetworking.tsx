@@ -440,9 +440,9 @@ export default function SettingsNetworking() {
                     }
                 </Box>
             </Modal>
-            <Box sx={{ px: matches ? 4 : 2, py: 2 }} >
+            <Box sx={{ px: matches ? 4 : 2, py: [0, 2],}} >
                 <Box>
-                    <Typography fontWeight={600} fontSize={24} color={'black'}>Networks</Typography>
+                    <Typography typography='h5'>Networks</Typography>
                     <Box role="presentation" >
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">

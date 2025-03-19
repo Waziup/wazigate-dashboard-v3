@@ -459,7 +459,7 @@ function Devices() {
                     changeEditMakeLoraWAN={changeEditMakeLoraWAN}
                     autoGenerateLoraWANOptionsHandler={autoGenerateLoraWANOptions}
                 />
-                <Box sx={{ px: matches ? 4 : 2, py: matches ? 2 : 0, width: '100%', height: '100%' }}>
+                <Box sx={{ px: matches ? 4 : 2, py: [0, 2], width: '100%', height: '100%' }}>
                     <RowContainerBetween >
                         <Box>
                             <Typography variant='h5'>Devices</Typography>
@@ -509,13 +509,12 @@ function Devices() {
                             </Box>
                         ) : null
                     }
-                    <Grid container my={matches ? 2 : 0} spacing={2}>
+                    <Grid container my={[2]} spacing={2}>
                         {
                             devices.map((device, id) => {
                                 return (
                                     <Grid item key={id} xs={12} sm={6} lg={4} px={0}>
                                         <Box sx={{ boxShadow: 1, height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 1, }}>
-
                                             <RowContainerBetween additionStyles={{ p: 2, borderBottom: '1px solid #dddddd', py: 1.5, }}>
                                                 <RowContainerNormal onClick={() => { navigate(`/devices/${device.id}`, { state: { title: device.name } }) }} additionStyles={{ my: 1, gap: 1, flexGrow: 1, cursor: 'pointer' }}>
                                                     <Box component={'img'} src={DeviceImage} width={35} height={35} mr={1} />

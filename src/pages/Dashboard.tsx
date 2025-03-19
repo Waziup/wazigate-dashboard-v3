@@ -1,5 +1,5 @@
 import { Avatar, Box, Breadcrumbs, Card, CardContent, Grid, Paper, Stack, Typography, styled } from "@mui/material";
-import { CloudOff, Wifi, Cloud, SearchOff, } from '@mui/icons-material';
+import { CloudOff, Wifi, CloudQueue, SearchOff, } from '@mui/icons-material';
 import BasicTable from "../components/ui/BasicTable";
 import React, { useContext, useMemo, FC, useCallback } from "react";
 import { DEFAULT_COLORS } from "../constants";
@@ -25,10 +25,10 @@ export const InfoCard: FC<ItemProps> = ({ path, onClick, children, icon, title }
     return (
         <Card onClick={handleClick} sx={{ width: 350, cursor: 'pointer' }}>
             <CardContent>
-                <Stack direction={'row'} spacing={2} mb={2}>
+                {/* <Stack direction={'row'} spacing={2} mb={2}> */}
                     {icon}
-                    <Typography variant="body1">{title}</Typography>
-                </Stack>
+                    <Typography gutterBottom >{title}</Typography>
+                {/* </Stack> */}
                 {children}
             </CardContent>
         </Card>
@@ -160,44 +160,44 @@ function Dashboard() {
                     <Box sx={{ px: 4, py: 2, height: '100%', overflowY: 'hidden' }}>
                         <Box>
                             <Typography variant="h5">Gateway Dashboard</Typography>
-                            <div role="presentation" onClick={() => { }}>
+                            <Box role="presentation" onClick={() => { }}>
                                 <Breadcrumbs aria-label="breadcrumb">
                                     <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
-                                        <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                        <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color='text.secondary' to="/">
                                             Home
                                         </Link>
                                     </Typography>
                                 </Breadcrumbs>
-                            </div>
+                            </Box>
                         </Box>
                         <Stack direction={'row'} mt={2} spacing={2}>
-                            <InfoCard icon={selectedCloud?.paused ? (<CloudOff sx={{ fontSize: 24, color: '#D9D9D9' }} />) : (<Cloud sx={{ fontSize: 24, color: 'black' }} />)} path='/settings/networking' onClick={onClick} title="Cloud Synchronization">
-                                <Typography variant="body2" color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
+                            <InfoCard icon={selectedCloud?.paused ? (<CloudOff sx={{ my:1, color: '#D9D9D9' }} />) : (<CloudQueue sx={{ my:1, color: 'black' }} />)} path='/settings/networking' onClick={onClick} title="Cloud Synchronization">
+                                <Typography variant="subtitle2" color='text.secondary' fontWeight={300}>
                                     {!(selectedCloud?.paused) ? 'Synched with Waziup Cloud' : 'Not Synchronized'}
                                 </Typography>
                                 <RowContainerNormal additionStyles={{ gap: 1, m: 0 }}>
-                                    <Typography variant="body2">Status: </Typography>
-                                    <Typography variant="body2" color={selectedCloud?.paused ? "#FA9E0E" : DEFAULT_COLORS.primary_blue} fontWeight={600}>{selectedCloud?.paused ? "Inactive" : 'Active'}</Typography>
+                                    <Typography variant="subtitle2" color='text.secondary'>Status: </Typography>
+                                    <Typography variant="subtitle2" color={selectedCloud?.paused ? "#FA9E0E" : DEFAULT_COLORS.primary_blue} fontWeight={600}>{selectedCloud?.paused ? "Inactive" : 'Active'}</Typography>
                                 </RowContainerNormal>
                             </InfoCard>
                             {
                                 (eth0 && eth0.IP4Config) ? (
-                                    <InfoCard icon={<Wifi sx={{ fontSize: 24, color: 'black' }} />} path='/settings/networking' onClick={onClick} title="Ethernet Connection" >
-                                        <Typography variant="body2" color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
+                                    <InfoCard icon={<Wifi sx={{ my:1, color: 'black' }} />} path='/settings/networking' onClick={onClick} title="Ethernet Connection" >
+                                        <Typography variant="subtitle2" color='text.secondary' fontWeight={300}>
                                             {`IP Address: ${(eth0 && eth0.IP4Config) ? eth0.IP4Config.Addresses[0].Address : ''}`}
                                         </Typography>
                                         <RowContainerNormal additionStyles={{ gap: 1, m: 0 }}>
-                                            <Typography variant="body2">Internet: </Typography>
+                                            <Typography variant="subtitle2" color='text.secondary'>Internet: </Typography>
                                             <InternetIndicator />
                                         </RowContainerNormal>
                                     </InfoCard>
                                 ) : (
-                                    <InfoCard icon={<Wifi sx={{ fontSize: 24, color: 'black' }} />} path='/settings/networking' onClick={onClick} title="Wifi Connection"  >
-                                        <Typography variant="body2" color={DEFAULT_COLORS.secondary_black} fontWeight={300}>
+                                    <InfoCard icon={<Wifi sx={{ my:1, color: 'black' }} />} path='/settings/networking' onClick={onClick} title="Wifi Connection"  >
+                                        <Typography variant="subtitle2" color='text.secondary' fontWeight={300}>
                                             {`Wifi Name: ${apConn?.connection.id}`}
                                         </Typography>
                                         <RowContainerNormal additionStyles={{ gap: 1, m: 0 }}>
-                                            <Typography variant="body2">Internet: </Typography>
+                                            <Typography variant="subtitle2" color='text.secondary'>Internet: </Typography>
                                             <InternetIndicator />
                                         </RowContainerNormal>
                                     </InfoCard>

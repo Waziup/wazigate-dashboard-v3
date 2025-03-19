@@ -119,8 +119,8 @@ const SettingsMaintenance: React.FC = () => {
     const TabComponent = activeTab === '2' ? ContainersTabMaintenance : tabs[activeTab].component;
 
     return (
-        <Box sx={{ px: matches ? 4 : 2, py: 2 }}>
-            <Typography fontWeight={600} fontSize={24}>Maintenance</Typography>
+        <Box sx={{ px: matches ? 4 : 2, py: [0, 2], }}>
+            <Typography variant="h5">Maintenance</Typography>
             <Breadcrumbs>
                 <Typography component={Link} to="/settings" sx={{ textDecoration: 'none', fontWeight: 300, color: 'black' }}>
                     Settings

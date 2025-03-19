@@ -267,10 +267,10 @@ function Settings() {
                     <Button autoFocus onClick={submitTime} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >SAVE</Button>
                 </DialogActions>
             </Dialog>
-            <Box sx={{ px: matches ? 4 : 2, py: 2, overflowY: 'auto', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' }, height: '100%' }}>
+            <Box sx={{ px: matches ? 4 : 2, py: [0, 2], overflowY: 'auto', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' }, height: '100%' }}>
                 <Box>
                     <Box>
-                        <Typography fontWeight={700} fontSize={24} color={'black'}>Settings</Typography>
+                        <Typography variant='h5'>Settings</Typography>
                         <div role="presentation" onClick={() => { }}>
                             <Breadcrumbs aria-label="breadcrumb">
                                 <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">

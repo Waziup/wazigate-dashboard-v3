@@ -143,9 +143,9 @@ function User() {
                 </Alert>
             </Snackbar>
 
-            <Box sx={{ px: matches ? 4 : 1, py: 2, width: '100%', position: 'relative', height: '100%', }}>
+            <Box sx={{ px: matches ? 4 : 1, py: [0, 2], width: '100%', position: 'relative', height: '100%', }}>
                 <Box>
-                    <Typography fontWeight={600} fontSize={24} color={'black'}>Profile</Typography>
+                    <Typography variant="h5">Profile</Typography>
                     <Box role="presentation" onClick={() => { }}>
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">

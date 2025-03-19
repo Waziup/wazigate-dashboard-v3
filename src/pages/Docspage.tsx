@@ -62,17 +62,17 @@ function Docspage() {
     ];
 
     return (
-        <Box sx={{ px: matches ? 4 : 2, py: 2, height: '100%' }}>
+        <Box sx={{ px: [2, 4], py: [0, 2], height: '100%' }}>
             <Box>
-                <Typography fontWeight={600} fontSize={24} color="black">Help</Typography>
-                <div role="presentation" onClick={() => { }}>
+                <Typography variant='h5'>Help</Typography>
+                <Box role="presentation" onClick={() => { }}>
                     <Breadcrumbs aria-label="breadcrumb">
                         <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                             <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300, }} state={{ title: 'Devices' }} color="inherit" to="/">Home</Link>
                         </Typography>
                         <Typography color="text.primary" sx={{ color: 'black', textDecoration: 'none', fontWeight: 300, }}>Wazigate Help</Typography>
                     </Breadcrumbs>
-                </div>
+                </Box>
             </Box>
             <Box mt={2}>
                 <Stack mt={2} alignItems="center" flexWrap="wrap" direction="row" gap={2}>
