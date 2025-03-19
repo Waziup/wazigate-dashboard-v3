@@ -159,7 +159,7 @@ function Dashboard() {
                 matches ? (
                     <Box sx={{ px: 4, py: 2, height: '100%', overflowY: 'hidden' }}>
                         <Box>
-                            <Typography fontSize={24} color={'black'} fontWeight={700}>Gateway Dashboard</Typography>
+                            <Typography variant="h5">Gateway Dashboard</Typography>
                             <div role="presentation" onClick={() => { }}>
                                 <Breadcrumbs aria-label="breadcrumb">
                                     <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">

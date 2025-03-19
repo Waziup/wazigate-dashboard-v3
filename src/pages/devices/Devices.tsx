@@ -462,7 +462,7 @@ function Devices() {
                 <Box sx={{ px: matches ? 4 : 2, py: matches ? 2 : 0, width: '100%', height: '100%' }}>
                     <RowContainerBetween >
                         <Box>
-                            <Typography fontSize={24} fontWeight={700} color={'black'}>Devices</Typography>
+                            <Typography variant='h5'>Devices</Typography>
                             <div role="presentation" onClick={() => { }}>
                                 <Breadcrumbs aria-label="breadcrumb">
                                     <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
