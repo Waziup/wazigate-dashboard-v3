@@ -655,10 +655,10 @@ export default function Apps() {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Box onClick={() => { open ? handleClose() : null }} sx={{ px: matches ? 4 : 2, py: 2, overflowY: 'auto', height: '100%' }}>
+            <Box onClick={() => { open ? handleClose() : null }} sx={{ px: [2, 4], py: 2, overflowY: 'auto', height: '100%' }}>
                 <RowContainerBetween>
                     <Box >
-                        <Typography fontWeight={700} fontSize={24} color={'black'}>Apps</Typography>
+                        <Typography variant='h5'>Apps</Typography>
                         <div role="presentation" onClick={() => { }}>
                             <Breadcrumbs aria-label="breadcrumb">
                                 <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
@@ -666,9 +666,7 @@ export default function Apps() {
                                         Home
                                     </Link>
                                 </Typography>
-                                <p style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} color="text.primary">
-                                    Apps
-                                </p>
+                                <p style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} color="text.primary">Apps</p>
                             </Breadcrumbs>
                         </div>
                     </Box>
@@ -694,7 +692,7 @@ export default function Apps() {
                         <Typography fontSize={matches ? 15 : 13} sx={{fontSize:matches ? 15 : 13,my:2, color: DEFAULT_COLORS.secondary_black }}>Setup your Wazigate Edge Apps</Typography>
                     ):null
                 } */}
-                <Grid container spacing={2} >
+                <Grid container mt={2} gap={2}>
                     {
                         apps.length > 0 ? apps.map((app, idx) => {
                             return (
@@ -706,54 +704,52 @@ export default function Apps() {
                                                 app={app}
                                             />
                                         ) : (
-                                            
-                                            <Grid item key={app.id} xs={12} sm={6} lg={4} my={1} px={0} bgcolor='#fff'>
-                                                <Box sx={{ boxShadow: 1, height: '100%', position: 'relative', bgcolor: 'white', borderRadius: 1 }}>
-                                                    <RowContainerNormal additionStyles={{ p: 2, borderBottom: '1px solid #dddddd', gap: 1, justifyContent: 'space-between' }}>
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                            <Box component={'img'} src={app.author ? WaziAppIcon : CustomEdgeAppIcon} width={35} height={35} mr={1} />
-                                                            <Box>
-                                                                <Typography variant='body1'>{app.name}</Typography>
-                                                                <Typography variant='body2'>{`Version: ${app.version}`}</Typography>
-                                                            </Box>
+
+                                            <Grid item key={app.id} xs={12} sm={6} lg={3.88} bgcolor='#fff' borderRadius={1} boxShadow={1} >
+                                                <RowContainerNormal additionStyles={{ p: 1, borderBottom: '1px solid #dddddd', gap: 1, justifyContent: 'space-between' }}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                        <Box component={'img'} src={app.author ? WaziAppIcon : CustomEdgeAppIcon} width={35} height={35} mr={1} />
+                                                        <Box>
+                                                            <Typography variant='body1'>{app.name}</Typography>
+                                                            <Typography variant='body2'>{`Version: ${app.version}`}</Typography>
                                                         </Box>
-                                                        <MenuComponent
-                                                            open={open}
-                                                            menuItems={[
-                                                                app.state && app.state.running ? {
-                                                                    icon: `stop_circle`,
-                                                                    text: app.state ? app.state.running ? 'Stop' : 'Start' : 'Start',
-                                                                    clickHandler: () => { startOrStopApp(app.id, app.state ? app.state.running : false) }
-                                                                } : null,
-                                                                {
-                                                                    icon: 'settings',
-                                                                    text: 'Settings',
-                                                                    clickHandler: () => { setSelectedApp(app); setShowAppSettings(!showAppSettings) }
-                                                                },
-                                                                {
-                                                                    icon: 'delete_forever',
-                                                                    text: 'Uninstall',
-                                                                    menuItemAdditionalStyle: { borderTop: '0.1px solid #797979' },
-                                                                    clickHandler: () => { setAppToUninstallFc(idx) }
-                                                                },
-                                                            ]}
-                                                        />
-                                                    </RowContainerNormal>
-                                                    <Box sx={{ px: 2, py: 2 }}>
-                                                        <Typography variant='body2'>Status: <Typography component={'span'} fontWeight={600} color={app.state ? app.state.running ? DEFAULT_COLORS.primary_blue : DEFAULT_COLORS.navbar_dark : DEFAULT_COLORS.navbar_dark}>{app.state ? app.state.running ? 'Running' : 'Stopped' : 'Stopped'}</Typography></Typography>
-                                                        <Typography variant='body2' sx={{ ...lineClamp(2), my: 1 }}>{(app as App1).description.length > 40 ? (app as App1).description.slice(0, 39) + '...' : (app as App1).description}</Typography>
                                                     </Box>
-                                                    <Box sx={{ px: 2 }}>
-                                                        {
-                                                            app.state && app.state.running ? ( 
-                                                                <Link style={{ width: '100%' }} to={returnAppURL(app)} >
-                                                                    <Button disabled={app.state ? !app.state.running : true} variant='outlined' color='secondary' sx={{ my: 1, width: '100%' }}>OPEN</Button>
-                                                                </Link>
-                                                            ) : (
-                                                                <Button onClick={() => { startOrStopApp(app.id, app.state ? app.state.running : false) }} variant='outlined' color='secondary' sx={{ my: 1, width: '100%' }}>START APP</Button>
-                                                            )
-                                                        }
-                                                    </Box>
+                                                    <MenuComponent
+                                                        open={open}
+                                                        menuItems={[
+                                                            app.state && app.state.running ? {
+                                                                icon: `stop_circle`,
+                                                                text: app.state ? app.state.running ? 'Stop' : 'Start' : 'Start',
+                                                                clickHandler: () => { startOrStopApp(app.id, app.state ? app.state.running : false) }
+                                                            } : null,
+                                                            {
+                                                                icon: 'settings',
+                                                                text: 'Settings',
+                                                                clickHandler: () => { setSelectedApp(app); setShowAppSettings(!showAppSettings) }
+                                                            },
+                                                            {
+                                                                icon: 'delete_forever',
+                                                                text: 'Uninstall',
+                                                                menuItemAdditionalStyle: { borderTop: '0.1px solid #797979' },
+                                                                clickHandler: () => { setAppToUninstallFc(idx) }
+                                                            },
+                                                        ]}
+                                                    />
+                                                </RowContainerNormal>
+                                                <Box sx={{ p: 1 }}>
+                                                    <Typography variant='body2'>Status: <Typography component={'span'} fontWeight={600} color={app.state ? app.state.running ? DEFAULT_COLORS.primary_blue : DEFAULT_COLORS.navbar_dark : DEFAULT_COLORS.navbar_dark}>{app.state ? app.state.running ? 'Running' : 'Stopped' : 'Stopped'}</Typography></Typography>
+                                                    <Typography variant='body2' sx={{ ...lineClamp(2), my: 1 }}>{(app as App1).description.length > 40 ? (app as App1).description.slice(0, 39) + '...' : (app as App1).description}</Typography>
+                                                </Box>
+                                                <Box sx={{ p: 1 }}>
+                                                    {
+                                                        app.state && app.state.running ? (
+                                                            <Link style={{ width: '100%' }} to={returnAppURL(app)} >
+                                                                <Button disabled={app.state ? !app.state.running : true} variant='text' color='secondary' fullWidth sx={{ my: 1, bgcolor: '#e8f0fd' }}>OPEN</Button>
+                                                            </Link>
+                                                        ) : (
+                                                            <Button onClick={() => { startOrStopApp(app.id, app.state ? app.state.running : false) }} variant='text' color='secondary' fullWidth sx={{ my: 1, bgcolor: '#e8f0fd' }}>START APP</Button>
+                                                        )
+                                                    }
                                                 </Box>
                                             </Grid>
                                         )
