@@ -1,11 +1,10 @@
-import { Box, Breadcrumbs, Button, Icon, FormControl, Typography, MenuItem, Select, SelectChangeEvent, Stack, Paper, Input, Theme, useMediaQuery } from "@mui/material";
+import { Box, Breadcrumbs, Button, Icon, FormControl, Typography, MenuItem, Select, SelectChangeEvent, Paper, Input, Theme, useMediaQuery } from "@mui/material";
 import { Link, useOutletContext, useParams, useNavigate, } from "react-router-dom";
 import { ArrowForward } from "@mui/icons-material";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Actuator, Device } from "waziup";
 import React from "react";
 import OntologyKindInput from "../../components/shared/OntologyKindInput";
-import PrimaryIconButton from "../../components/shared/PrimaryIconButton";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
 import SnackbarComponent from "../../components/shared/Snackbar";
 import { DEFAULT_COLORS } from "../../constants";
@@ -262,9 +261,9 @@ export default function ActuatorSettings() {
                     />
                 ) : null
             }
-            <Box sx={{}}>
-                <Box sx={{ px: 2, py: 2, }}>
-                    <Typography fontWeight={600} fontSize={24} color='black'>{actuator?.name} Settings</Typography>
+            <Box>
+                <Box sx={{ px: [2, 4], py: [0, 2], }}>
+                    <Typography variant="h5">{actuator?.name} Settings</Typography>
                     <div role="presentation" onClick={() => { }}>
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
@@ -300,7 +299,7 @@ export default function ActuatorSettings() {
                     </div>
                 </Box>
 
-                <Box sx={{ borderTopRightRadius: 2, display: 'flex', flexDirection: 'column', px: 2, gap: 2, mb: 2, height: 'auto', width: '100%' }}  >
+                <Box sx={{ borderTopRightRadius: 2, display: 'flex', flexDirection: 'column', px: [2, 4], gap: 2, mb: 2, height: 'auto', width: '100%' }}  >
                     <Box boxShadow={1} borderRadius={2} p={2} width={['100%', undefined, '80%', '50%']}>
                         <Typography variant="h6">Actuator settings</Typography>
                         <Box>
@@ -449,7 +448,7 @@ export default function ActuatorSettings() {
                         </form>
                     </Paper>
 
-                    <Paper sx={{ p: 2, }}>
+                    <Paper sx={{ p: 2, width: ['100%', undefined, '80%', '50%'] }}>
                         <Typography variant="h6" sx={{ mb: 2, color: '#DE3629' }}>Danger Zone</Typography>
                         <Box display='flex' flexDirection={['column', 'row']} alignItems='center' gap={1}>
                             <Box display='flex' flexDirection='column' flexGrow={1} gap={1}>

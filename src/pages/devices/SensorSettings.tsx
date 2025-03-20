@@ -343,8 +343,8 @@ export default function DeviceSensorSettings() {
                 ) : null
             }
             <Box>
-                <Box sx={{ px: 2, py: 2, }}>
-                    <Typography fontWeight={600} fontSize={24} color='black'>{sensorX?.name} Settings</Typography>
+                <Box sx={{ px: [2, 4], py: [0, 2], }}>
+                    <Typography variant="h5">{sensorX?.name} Settings</Typography>
                     <div role="presentation" onClick={() => { }}>
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
@@ -380,8 +380,8 @@ export default function DeviceSensorSettings() {
                     </div>
                 </Box>
 
-                <Box display='flex' flexDirection={['column', 'row']}>
-                    <Box sx={{ borderTopRightRadius: 2, display: 'flex', flexDirection: 'column', px: 2, gap: 2, mb: 2, height: 'auto', width: ['100%', undefined, '50%'] }} >
+                <Box display='flex' flexDirection={['column', 'row']} py={2}>
+                    <Box sx={{ borderTopRightRadius: 2, display: 'flex', flexDirection: 'column', px: [2, 4], gap: 2, mb: 2, height: 'auto', width: ['100%', undefined, '50%'] }} >
                         <Box boxShadow={1} borderRadius={2} p={2}>
                             <Typography variant="h6">Sensor settings</Typography>
                             <Box>
@@ -480,74 +480,7 @@ export default function DeviceSensorSettings() {
 
                     </Box>
 
-                    <Paper sx={{ width: ['100%', undefined, '50%'], }}>
-                        <Box sx={{ display: 'flex', width: '100%', pt: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                            <Box width='100%' mb={3} px={1}>
-                                <Box sx={{ width: '100%', pl: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <Typography variant="h6"> Sensor Readings</Typography>
-                                </Box>
-                                <Chart
-                                    options={{
-                                        chart: {
-                                            id: 'sensor_actuator_plot',
-                                            // height: 350,
-                                            type: 'area',
-                                            zoom: {
-                                                enabled: true,
-                                            },
-                                            animations: {
-                                                enabled: true,
-                                                easing: 'linear',
-                                                dynamicAnimation: {
-                                                    speed: 1000
-                                                }
-                                            },
-                                        },
-                                        xaxis: {
-                                            categories: graphValues.map((value) => value.x),
-                                            tickAmount: 10,
-                                            // type: 'numeric',
-                                        },
-                                        markers: {
-                                            size: 0,
-                                        },
-                                        dataLabels: {
-                                            enabled: false
-                                        },
-                                        stroke: {
-                                            curve: 'smooth',
-                                            width: 2
-                                        },
-                                        colors: ['#4592F6'],
-                                    }}
-                                    series={[
-                                        {
-                                            name: "series-1",
-                                            data: graphValues.map((value) => value.y)
-                                        }
-                                    ]}
-                                    type="area"
-                                    width={'100%'}
-                                    height={matches ? 350 : 290}
-                                />
-                            </Box>
-                            <Box width='100%'>
-                                {
-                                    values.length > 0 ? (
-                                        <SensorTable
-                                            title={'Sensor Data'}
-                                            fetchMoreData={fetchMoreData}
-                                            values={values}
-                                        />
-                                    ) : (
-                                        <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', height: 300 }}>
-                                            <Typography fontSize={14} fontWeight={300} color={'#1D2129'}>No readings available</Typography>
-                                        </Box>
-                                    )
-                                }
-                            </Box>
-                        </Box>
-                    </Paper>
+
                 </Box>
             </Box>
         </>

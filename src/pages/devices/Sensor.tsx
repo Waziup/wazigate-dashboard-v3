@@ -1,14 +1,16 @@
-import { Box, Typography, Breadcrumbs, Button, Theme, useMediaQuery } from "@mui/material";
+import { Box, Typography, Breadcrumbs, Button, Theme, useMediaQuery, Paper, Stack, Card, CardContent } from "@mui/material";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Chart from 'react-apexcharts';
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import type { Device, Sensor } from "waziup";
 import { Link } from "react-router-dom";
-import PrimaryIconButton from "../../components/shared/PrimaryIconButton";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
 import SensorTable from "../../components/ui/DeviceTable";
-import { cleanString } from "../../utils";
+import { cleanString, differenceInMinutes, lineClamp } from "../../utils";
 import { Settings } from "@mui/icons-material";
+import SVGIcon from "../../components/shared/SVGIcon";
+import OntologiesIcons from '../../assets/ontologies.svg';
+
 
 export default function DeviceSensor() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
@@ -104,12 +106,11 @@ export default function DeviceSensor() {
     }, [getGraphValues, id, sensorId]);
 
     return (
-        <Box sx={{ height: '100%', overflowY: 'auto' }}>
-            <RowContainerBetween additionStyles={{ pl: 2, }}>
+        <Box sx={{ height: '100%', overflowY: 'auto', px: [2, 4], py: [0, 2], }}>
+            <RowContainerBetween>
                 <Box>
                     <Typography variant="h5">{sensor?.name}</Typography>
-                    <div role="presentation" onClick={handleClick}>
-
+                    <Box role="presentation" onClick={handleClick}>
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                                 <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/devices">
@@ -123,25 +124,22 @@ export default function DeviceSensor() {
                             </Typography>
                             <Typography fontSize={14} fontWeight={300} color="inherit">sensors <span style={{ fontSize: 14, color: 'inherit', fontWeight: 500 }}>/</span>  {cleanString(sensor?.name)}</Typography>
                         </Breadcrumbs>
-                    </div>
+                    </Box>
                 </Box>
-                {/* {
-                    matches ? (
-                        <PrimaryIconButton title={'SETTINGS'} iconName={'settings_two_ton'} onClick={() => navigate(`/devices/${device?.id}/sensors/${sensor?.id}/setting`)} />
-                    ) : null
-                } */}
             </RowContainerBetween>
 
-            <Box mx={4} >
+            <Box my={2} >
                 {isTablet && <Button
                     onClick={() => navigate(`/devices/${device?.id}/sensors/${sensor?.id}/setting`)}
                     variant="text"
                     startIcon={<Settings />}
                     sx={{
+                        px: 2,
                         color: 'gray',       // Text and icon color
                         '& .MuiButton-startIcon': {
                             color: 'gray',
-                        }
+                        },
+                        bgcolor: '#e5e5e5'
                     }}
                 >
                     Settings
@@ -149,72 +147,101 @@ export default function DeviceSensor() {
                 }
             </Box>
 
-            <Box sx={{ display: 'flex', width: '100%', pt: [2], flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <Box px={[1, 2]} width={matches ? '100%' : '95%'} mb={3}>
-                    <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Typography color={'#1D2129'} fontSize={15} fontWeight={500}> Sensor Readings</Typography>
-                    </Box>
-                    <Chart
-                        options={{
-                            chart: {
-                                id: 'sensor_actuator_plot',
-                                // height: 350,
-                                type: 'area',
-                                zoom: {
-                                    enabled: true,
-                                },
-                                animations: {
-                                    enabled: true,
-                                    easing: 'linear',
-                                    dynamicAnimation: {
-                                        speed: 1000
-                                    }
-                                },
-                            },
-                            xaxis: {
-                                categories: graphValues.map((value) => value.x),
-                                tickAmount: 10,
-                                // type: 'numeric',
-                            },
-                            markers: {
-                                size: 0,
-                            },
-                            dataLabels: {
-                                enabled: false
-                            },
-                            stroke: {
-                                curve: 'smooth',
-                                width: 2
-                            },
-                            colors: ['#4592F6'],
-                        }}
-                        series={[
-                            {
-                                name: "series-1",
-                                data: graphValues.map((value) => value.y)
-                            }
-                        ]}
-                        type="area"
-                        width={'100%'}
-                        height={matches ? 350 : 290}
-                    />
-                </Box>
-                <Box width={['90%']}>
-                    {
-                        values.length > 0 ? (
-                            <SensorTable
-                                title={'Sensor Data'}
-                                fetchMoreData={fetchMoreData}
-                                values={values}
-                            />
-                        ) : (
-                            <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', height: 300 }}>
-                                <Typography fontSize={14} fontWeight={300} color={'#1D2129'}>No readings available</Typography>
+            <Box display='flex' flexDirection={['column']} gap={2} px={[]} py={[]}>
+                <Box width={['100%',]} display='flex' flexDirection='column' gap={1}>
+                    <Card elevation={1} sx={{ width: ['100%', 350] }}>
+                        <CardContent>
+                            <Box display='flex' justifyContent='space-between' alignItems='center'>
+                                <Stack>
+                                    <SVGIcon style={{ width: 32, height: 32 }} src={`${OntologiesIcons}#${sensor?.meta.icon}`} />
+                                    <Typography gutterBottom sx={{ ...lineClamp(1) }}>{sensor?.name}</Typography>
+                                    <Typography variant='subtitle2' gutterBottom sx={{ color: 'text.secondary', ...lineClamp(2) }}>{`Type: ${sensor?.meta.Kind} `}</Typography>
+                                </Stack>
+                                <Typography variant="h4" >
+                                    {Math.round(sensor?.value * 100) / 100}
+                                    <Typography component={'span'} variant="h4">
+                                        {' ' + sensor?.meta.unitSymbol ? sensor?.meta.unitSymbol : ''}
+                                    </Typography>
+                                </Typography>
                             </Box>
-                        )
-                    }
+
+                            <Typography variant="subtitle2" color={'text.primary'} fontWeight={400}>
+                                {
+                                    sensor?.modified
+                                        ? `Last updated: ${differenceInMinutes(new Date(sensor.modified).toISOString())} ago`
+                                        : 'Last updated: N/A'
+                                }
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Box>
+
+                <Box sx={{ display: 'flex', width: ['100%',], flexDirection: ['column', 'row'], gap: [1, 2], }}>
+                    <Paper sx={{ width: ['100%', '50%'], px: [1], py: [1] }}>
+                        <Typography variant="h6" pl={1}> Sensor Readings</Typography>
+                        <Chart
+                            options={{
+                                chart: {
+                                    id: 'sensor_actuator_plot',
+                                    // height: 350,
+                                    type: 'area',
+                                    zoom: {
+                                        enabled: true,
+                                    },
+                                    animations: {
+                                        enabled: true,
+                                        easing: 'linear',
+                                        dynamicAnimation: {
+                                            speed: 1000
+                                        }
+                                    },
+                                },
+                                xaxis: {
+                                    categories: graphValues.map((value) => value.x),
+                                    tickAmount: 10,
+                                    // type: 'numeric',
+                                },
+                                markers: {
+                                    size: 0,
+                                },
+                                dataLabels: {
+                                    enabled: false
+                                },
+                                stroke: {
+                                    curve: 'smooth',
+                                    width: 2
+                                },
+                                colors: ['#4592F6'],
+                            }}
+                            series={[
+                                {
+                                    name: "series-1",
+                                    data: graphValues.map((value) => value.y)
+                                }
+                            ]}
+                            type="area"
+                            width={'100%'}
+                            height={matches ? 350 : 290}
+                        />
+                    </Paper>
+                    <Paper sx={{ width: ['100%', '50%'] }} >
+                        {
+                            values.length > 0 ? (
+                                <SensorTable
+                                    title={'Sensor Data'}
+                                    fetchMoreData={fetchMoreData}
+                                    values={values}
+                                />
+                            ) : (
+                                <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', height: 300 }}>
+                                    <Typography fontSize={14} fontWeight={300} color={'#1D2129'}>No readings available</Typography>
+                                </Box>
+                            )
+                        }
+                    </Paper>
                 </Box>
             </Box>
+
         </Box>
     );
 }
