@@ -348,7 +348,7 @@ function DeviceSettings() {
                 {/* </Box> */}
             </Dialog>
 
-            <Box sx={{ px: [2], position: 'relative', overflowY: device ? (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0 ? 'hidden' : 'auto' : 'hidden', height: '100%' }}>
+            <Box sx={{ px: [2, 4], py: [0, 2], position: 'relative', overflowY: device ? (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0 ? 'hidden' : 'auto' : 'hidden', height: '100%' }}>
                 <RowContainerBetween>
                     <Box>
                         <Typography variant="h5" color={'black'}>{device?.name}</Typography>

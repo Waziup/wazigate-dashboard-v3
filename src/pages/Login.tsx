@@ -68,7 +68,7 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography} from '@mu
     const handleClose = () => setShowErrSnackbar(false);
   
     return (
-      <Box height="100vh" width="100%" bgcolor="#e8e7e7">
+      <Box height="100vh" width="100%" bgcolor="#f6f8f6">
         <Snackbar
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           open={showErrSnackbar}
@@ -87,6 +87,7 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography} from '@mu
             top: '50%',
             left: '50%',
             borderRadius: 2,
+            boxShadow: 1,
             bgcolor: '#fff',
             width: 350,
             p: 3

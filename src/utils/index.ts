@@ -167,7 +167,7 @@ export function time_ago(time: string | number | Date | null) {
             if (typeof format[2] == 'string')
                 return "Last updated "+format[list_choice];
             else
-                return "Last Updated "+Math.floor(seconds / format[2]) + ' ' + format[1] + ' ' + token;
+                return "Last updated "+Math.floor(seconds / format[2]) + ' ' + format[1] + ' ' + token;
         }
     }
     return time;

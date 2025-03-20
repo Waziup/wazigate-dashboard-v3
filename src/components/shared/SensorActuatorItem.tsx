@@ -30,7 +30,7 @@ const isActuator = (kind: string): boolean =>
 
 const SensorActuatorItem: FC<SensorActuatorItemProps> = ({
     kind,
-    icon,
+    icon: ontologyIcon,
     errorCallback,
     callbackFc,
     type,
@@ -115,7 +115,7 @@ const SensorActuatorItem: FC<SensorActuatorItemProps> = ({
             >
                 <RowContainerBetween>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <SVGIcon style={{ width: 32, height: 32 }} src={`${ontologiesicons}#${icon || iconPath}`} />
+                        <SVGIcon style={{ width: 32, height: 32 }} src={`${ontologiesicons}#${ontologyIcon || iconPath}`} />
                         <Box>
                             <Typography variant="body2" sx={{ ...lineClamp(1) }}>{removeSpecialChars(sens?.name || '')}</Typography>
                             <Typography variant="caption" sx={{ ...lineClamp(1) }}>{sens.meta.kind || ''}</Typography>
