@@ -327,90 +327,89 @@ export default function SensorTable({ values, fetchMoreData, title }: Props) {
   );
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar
-          title={title}
-          handleRequestSort={handleRequestSort}
-          numSelected={selected.length}
-        />
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={'medium'}
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${index}`;
-
-                return (
-                  <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.id}
-                    selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell padding="checkbox">
-                      <Typography sx={{ fontWeight: 'bold', fontSize: '14px', mx: 2, lineHeight: '16px', color: '#424242' }}>
-                        {index < 9 ? '0' + (index + 1) : index + 1}
-                      </Typography>
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                    >
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="right">{row.values}</TableCell>
-                    <TableCell align="right">
-                      <Icon sx={{ color: row.sos === 'trending_up' ? '#7E9B08' : row.sos === 'trending_down' ? '#ff0000' : '#000000' }}>{row.sos}</Icon>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+    <Box>
+      <EnhancedTableToolbar
+        title={title}
+        handleRequestSort={handleRequestSort}
+        numSelected={selected.length}
+      />
+      <TableContainer>
+        <Table
+          sx={{ width: '100%' }}
+          aria-labelledby="tableTitle"
+          size={'small'}
+        >
+          <EnhancedTableHead
+            numSelected={selected.length}
+            order={order}
+            orderBy={orderBy}
+            onSelectAllClick={handleSelectAllClick}
+            onRequestSort={handleRequestSort}
+            rowCount={rows.length}
           />
-          <Typography onClick={() => fetchMoreData()} sx={{ visibility: showMore ? 'visible' : 'hidden', cursor: 'pointer', color: '#499dff', }}>
-            Load More
-          </Typography>
-        </Box>
-      </Paper>
+          <TableBody>
+            {visibleRows.map((row, index) => {
+              const isItemSelected = isSelected(row.id);
+              const labelId = `enhanced-table-checkbox-${index}`;
+
+              return (
+                <TableRow
+                  hover
+                  onClick={(event) => handleClick(event, row.id)}
+                  role="checkbox"
+                  aria-checked={isItemSelected}
+                  tabIndex={-1}
+                  key={row.id}
+                  selected={isItemSelected}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  <TableCell padding="checkbox">
+                    <Typography sx={{ fontWeight: 'bold', fontSize: '14px', mx: 2, lineHeight: '16px', color: '#424242' }}>
+                      {index < 9 ? '0' + (index + 1) : index + 1}
+                    </Typography>
+                  </TableCell>
+                  <TableCell
+                    component="th"
+                    id={labelId}
+                    scope="row"
+                    padding="none"
+                  >
+                    {row.name}
+                  </TableCell>
+                  <TableCell align="right">{row.values}</TableCell>
+                  <TableCell align="right">
+                    <Icon sx={{ color: row.sos === 'trending_up' ? '#7E9B08' : row.sos === 'trending_down' ? '#ff0000' : '#000000' }}>{row.sos}</Icon>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+            {emptyRows > 0 && (
+              <TableRow
+                style={{
+                  height: (53) * emptyRows,
+                }}
+              >
+                <TableCell colSpan={6} />
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      
+      <Box sx={{ display: 'flex', alignItems: 'center',  }}>
+        <TablePagination
+          rowsPerPageOptions={[7, 15, 25]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+        <Typography onClick={() => fetchMoreData()} sx={{ visibility: showMore ? 'visible' : 'hidden', cursor: 'pointer', color: '#499dff', }}>
+          Load More
+        </Typography>
+      </Box>
     </Box>
   );
 }
