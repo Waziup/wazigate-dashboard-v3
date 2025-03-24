@@ -13,6 +13,7 @@ import { Android12Switch } from "../../components/shared/Switch";
 import SensorActuatorItem from "../../components/shared/SensorActuatorItem";
 import { Add } from "@mui/icons-material";
 import Logo404 from '../../assets/search.svg';
+import { lineClamp } from "../../utils";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: SelectChangeEvent<string>) => void,
     title: string,
@@ -309,6 +310,11 @@ function DeviceSettings() {
                         <div role="presentation" onClick={handleClick}>
                             <Breadcrumbs aria-label="breadcrumb">
                                 <Typography fontSize={16} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                    <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                        Home
+                                    </Link>
+                                </Typography>
+                                <Typography fontSize={16} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
                                     <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/devices">
                                         Devices
                                     </Link>
@@ -373,10 +379,11 @@ function DeviceSettings() {
                                                                 }
                                                             </Typography>
                                                         ):(
-                                                            <Typography m={1} fontSize={matches?24:20} >
-                                                                {Math.round(sens.value * 100) / 100}
+                                                            <Typography sx={{m:1, fontSize:matches?24:20, ...lineClamp(1)}} m={1}  >
+                                                                
+                                                                {isNaN(parseFloat(sens.value))? sens.value??'0.00 ': Math.round(sens.value * 100) / 100}
                                                                 <Typography component={'span'} fontSize={matches?24:20}> 
-                                                                    {' ' +sens.meta.unitSymbol? sens.meta.unitSymbol: ''}
+                                                                    {' ' +sens.meta.unitSymbol? sens.meta.unitSymbol: ' '}
                                                                 </Typography>
                                                             </Typography>
                                                         )

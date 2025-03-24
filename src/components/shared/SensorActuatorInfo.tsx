@@ -3,6 +3,7 @@ import SVGIcon from "./SVGIcon";
 import ontologies from '../../assets/ontologies.json';
 import ontologiesicons from '../../assets/ontologies.svg';
 import { useMemo } from "react";
+import { lineClamp } from "../../utils";
 export default function SensorActuatorInfo({type, text,unit, name,kind, onClick,lastUpdated, iconname }: {lastUpdated: string, unit:string, kind:string, type:'sensor'|'actuator', text: string | number, name: string, onClick: () => void, iconname: string }) {
     const val = useMemo(() => {
         if (typeof text === 'number') {
@@ -37,8 +38,12 @@ export default function SensorActuatorInfo({type, text,unit, name,kind, onClick,
                 </Box>
             </Box>
             <Box display={'flex'} alignItems={'center'}>    
-                <Typography color={'primary.main'}mr={0.5} fontSize={14} fontWeight={300}>{val}</Typography>
-                <Typography color={'primary'} fontSize={12} fontWeight={300}>{typeof text==='object'?'':unit}</Typography>
+                <Typography sx={{mr: 0.5,fontSize:14, fontWeight:300, ...lineClamp(1),}} >{val && val.length >10?val.slice(0,10)+'...':val}</Typography>
+                {
+                    isNaN(parseFloat(text as  unknown as string))?null:(
+                        <Typography color={'primary'} fontSize={12} fontWeight={300}>{typeof text==='object'?'':unit}</Typography>
+                    )
+                }
             </Box>
         </Box>
     )
