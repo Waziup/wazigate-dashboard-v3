@@ -266,6 +266,11 @@ export default function ActuatorSettings() {
                     <div role="presentation" onClick={() => { }}>
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/">
+                                    Home
+                                </Link>
+                            </Typography>
+                            <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
                                 <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/devices">
                                     Devices
                                 </Link>

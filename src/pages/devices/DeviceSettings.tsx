@@ -303,6 +303,11 @@ export default function DeviceSettings() {
                         <div role="presentation" onClick={handleClick}>
                             <Breadcrumbs aria-label="breadcrumb">
                                 <Typography fontSize={matches?15:12} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                                    <Link style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                        Home
+                                    </Link>
+                                </Typography>
+                                <Typography fontSize={matches?15:12} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
                                     <Link style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }} state={{ title: 'Devices' }} color="inherit" to="/devices">
                                         Devices
                                     </Link>
