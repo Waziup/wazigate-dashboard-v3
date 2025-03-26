@@ -78,6 +78,15 @@ export function allActiveDevices(devices: Device[]): number{
     });
     return count;
 }
+export function countActiveApp(items: App[]): number{
+    let count = 0;
+    items.forEach((item)=>{
+        if(item.state && item.state.running){
+            count++;
+        }
+    });
+    return count;
+}
 export const orderByLastUpdated = (devices: Device[]) => devices.sort((a,b)=>b.modified.getTime()-a.modified.getTime())
 
 export const appChecker = (appState: AppState)=>{

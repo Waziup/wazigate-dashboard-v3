@@ -9,7 +9,7 @@ import RowContainerNormal from "../components/shared/RowContainerNormal";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { DevicesContext } from "../context/devices.context";
 import { App, Device } from "waziup";
-import { allActiveDevices, appChecker, capitalizeFirstLetter, orderByLastUpdated, returnAppURL } from "../utils";
+import { allActiveDevices, appChecker, capitalizeFirstLetter, countActiveApp, orderByLastUpdated, returnAppURL } from "../utils";
 import InternetIndicator from "../components/ui/InternetIndicator";
 
 interface ItemProps {
@@ -67,15 +67,7 @@ const MyScrollingElement = styled(Stack)(() => ({
     },
 }));
 
-export function countActiveApp(items: App[]): number{
-    let count = 0;
-    items.forEach((item)=>{
-        if(item.state.running){
-            count++;
-        }
-    });
-    return count;
-}
+
 
 const AppStatus = ({ apps }: { apps: App[] }) => (
     <Paper sx={{ height: '100%', bgcolor: 'white', borderRadius: 2, }}>
