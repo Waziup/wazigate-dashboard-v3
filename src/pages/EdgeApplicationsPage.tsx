@@ -3,7 +3,7 @@ import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
 import { Download, FiberNew, } from '@mui/icons-material';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { Link, useOutletContext } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { StartAppConfig, type App } from 'waziup';
 import { DevicesContext } from '../context/devices.context';
 import CustomApp from '../components/CustomApp';
@@ -18,6 +18,7 @@ import WaziAppIcon from '../assets/WaziApp.svg';
 import CustomEdgeAppIcon from '../assets/CustomApp.svg';
 import Logo404 from '../assets/search.svg';
 import RowContainerNormal from '../components/shared/RowContainerNormal';
+import PrimaryIconButton from '../components/shared/PrimaryIconButton';
 
 type App1 = App & {
     description: string
@@ -63,7 +64,7 @@ const onCloseHandler = () => {
         }
     }, 0);
 }
-const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHandler, age }: { customAppInstallHandler: () => void, matches: boolean, recommendedApps: RecomendedApp[], handleChange: (e: SelectChangeEvent) => void, age: string }) => (
+export const DropDown = ({ handleChange, matches, recommendedApps, customAppInstallHandler, age }: { customAppInstallHandler: () => void, matches: boolean, recommendedApps: RecomendedApp[], handleChange: (e: SelectChangeEvent) => void, age: string }) => (
     <FormControl color='info' size='small' sx={{ p: 0, border: 'none', width: matches ? '25%' : '45%', }}>
         <InputLabel color='info' id="demo-simple-select-helper-label">Install App</InputLabel>
         <Select sx={{ borderColor: '#499dff', width: '100%', py: 0, }}
@@ -133,11 +134,11 @@ type UpdateStatus = {
     newVersion: string | null;
 };
 
-export default function Apps() {
+export default function EdgeApplicationsPage() {
     const [customAppId, setCustomAppId] = useState<App2>(customAppProps);
-    const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [loadingUninstall, setLoadingUninstall] = React.useState<boolean>(false);
+    const [installAppDialogOpen,setInstallAppDialogOpen] = React.useState<boolean>(false);
     const [loading, setLoading] = React.useState<boolean>(false);
     const open = Boolean(anchorEl)
     const [modalProps, setModalProps] = useState<{ open: boolean, title: string, children: React.ReactNode, otherArgs?: string }>({ open: false, title: '', children: null, otherArgs: '' });
@@ -156,7 +157,9 @@ export default function Apps() {
                 logs: res as unknown as string
             });
             getApps();
+            getRecApps()
         }).catch((err) => {
+            setError({ message: 'Error: '+(err as string).toString(), severity: 'error' })
             setLogs({
                 done: true,
                 logs: err,
@@ -168,10 +171,10 @@ export default function Apps() {
     }
     const getRecApps = async () => {
         window.wazigate.get<RecomendedApp[]>('apps?available')
-            .then((appsr) => {
-                setRecommendedApps(appsr);
-            })
-            .catch(setError)
+        .then((appsr) => {
+            setRecommendedApps(appsr);
+        })
+        .catch((err)=>{setError({ message: 'Error: '+(err as string).toString(), severity: 'error' })})
     }
     useEffect(() => {
         if (apps.length === 0) {
@@ -232,6 +235,7 @@ export default function Apps() {
                 });
             }
         }).catch((err) => {
+            setError({ message: 'Error: '+(err as string).toString(), severity: 'error' })
             setLogs({
                 done: true,
                 logs: '',
@@ -266,9 +270,11 @@ export default function Apps() {
                     ...logs,
                     done: false,
                 });
+                setError({ message: 'Installation complete', severity: 'success' })
                 setModalProps({ open: false, title: '', children: null, otherArgs: '' });
                 setAppToInstallId('');
                 getApps();
+                getRecApps()
                 return;
             }
             return () => clearInterval(intervalId);
@@ -288,8 +294,10 @@ export default function Apps() {
                     done: false,
                 });
                 setSelectedApp(null)
+                setError({ message: 'Installation complete', severity: 'success' })
                 setModalProps({ open: false, title: '', children: null, otherArgs: '' });
                 getApps();
+                getRecApps()
                 return;
             }
             return () => clearInterval(intervalId);
@@ -471,6 +479,45 @@ export default function Apps() {
                     </DialogContent>
                 </Dialog>
             }
+            <Dialog open={installAppDialogOpen} onClose={()=>setInstallAppDialogOpen(!installAppDialogOpen)}>
+                <DialogTitle>Install App</DialogTitle>
+                <DialogContent sx={{ borderTop: '1px solid black', overflow: 'auto',  }}>
+                    <ListSubheader>WaziApps</ListSubheader>
+                    {
+                        recommendedApps.map((app) => (
+                            <Box onClick={() => { setInstallAppDialogOpen(!installAppDialogOpen); setModalProps({ open: true,  title: 'Confirm Installation', children: <></>, otherArgs: app.image + "*" + app.id }) }} key={app.id} sx={{cursor:'pointer', ":hover": { bgcolor: '#D4E3F5' }, display: 'flex', width: '100%',my:1, py: 1,borderBottom:'1px solid #ccc', justifyContent: 'space-between' }}>
+                                <Box display={'flex'} alignItems={'center'}>
+                                    <Box component={'img'} sx={{ width: 20, mx: 1, height: 20 }} src={Logo} />
+                                    <Tooltip color='black' followCursor title={app.description} placement="top-start">
+                                        <Typography sx={{ fontSize: 14, color: '#325460', ...lineClamp(1) }} >{app.description.slice(0, 30) + '...'}</Typography>
+                                    </Tooltip>
+                                </Box>
+                                <Box display={'flex'} alignItems={'center'}>
+                                    <Download sx={{ fontSize: 15, mx: 1, color: '#325460' }} />
+                                    <Typography sx={{ textTransform: 'uppercase', color: '#325460', fontSize: 11 }}>
+                                        Install
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        ))
+                    }
+                    <Box  mt={1}>
+                        <ListSubheader >Custom App</ListSubheader>
+                        <Box onClick ={() => {setInstallAppDialogOpen(!installAppDialogOpen); setModalProps({ open: true, title: 'Confirm Installation', children: <></>, otherArgs: undefined }) }} sx={{cursor:'pointer',":hover": { bgcolor: '#D4E3F5' }, display: 'flex',p:1, width: '100%', justifyContent: 'space-between' }}>
+                            <Box display={'flex'} alignItems={'center'}>
+                                <FiberNew sx={{ fontSize: 20, mx: 1, color: '#F48652' }} />
+                                <Typography color={'#325460'} fontSize={15}>Install Custom App</Typography>
+                            </Box>
+                            <Box display={'flex'} alignItems={'center'}>
+                                <Download sx={{ fontSize: 15, mx: 1, color: '#325460' }} />
+                                <Typography sx={{ textTransform: 'uppercase', color: '#325460', fontSize: 11 }}>
+                                    Install
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Box>
+                </DialogContent>
+            </Dialog>
             <Dialog open={modalProps.open && modalProps.title.startsWith('Updating')} onClose={closeModal}>
                 <DialogTitle>{modalProps.title}</DialogTitle>
                 <DialogContent sx={{ borderTop: '1px solid black', bgcolor: '#000', overflow: 'auto', height: 250 }}>
@@ -558,8 +605,8 @@ export default function Apps() {
                     }
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => { setAppToUninstall(null); setUninstLoader(!uninstLoader) }} sx={{ mx: 2, color: '#ff0000', }} variant="text" color="warning" >CANCEL</Button>
-                    <Button autoFocus onClick={uninstall} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >UNINSTALL</Button>
+                    <Button disabled={loadingUninstall} onClick={() => { setAppToUninstall(null); setUninstLoader(!uninstLoader) }} sx={{ mx: 2, color: '#ff0000', }} variant="text" color="warning" >CANCEL</Button>
+                    <Button autoFocus disabled={loadingUninstall} onClick={uninstall} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >UNINSTALL</Button>
                 </DialogActions>
             </Dialog>
             <Dialog fullWidth open={showAppSettings} onClose={() => { setShowAppSettings(!showAppSettings) }}>
@@ -670,23 +717,8 @@ export default function Apps() {
                             </Breadcrumbs>
                         </div>
                     </Box>
-                    <DropDown
-                        customAppInstallHandler={() => { setModalProps({ open: true, title: 'Confirm Installation', children: <></>, otherArgs: undefined }) }}
-                        // customAppInstallHandler={handleInstallAppModal}
-                        recommendedApps={recommendedApps}
-                        matches={matches}
-                        handleChange={(e) => {
-                            setModalProps({
-                                open: true,
-                                title: 'Confirm Installation',
-                                children: <></>,
-                                otherArgs: isNaN(parseInt(e.target.value)) ? e.target.value : undefined
-                            })
-                        }}
-                        // handleChange={handleChangeLogsModal}
-                        age={''}
-                    />
                 </RowContainerBetween>
+                <PrimaryIconButton onClick={()=>setInstallAppDialogOpen(!installAppDialogOpen)} additionStyles={{mt:3}} color="secondary" title="Install App" iconName="add" />
                 {/* {
                     matches?(
                         <Typography fontSize={matches ? 15 : 13} sx={{fontSize:matches ? 15 : 13,my:2, color: DEFAULT_COLORS.secondary_black }}>Setup your Wazigate Edge Apps</Typography>
