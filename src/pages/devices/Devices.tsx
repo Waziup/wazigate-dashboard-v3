@@ -1,19 +1,18 @@
-import { Box, Grid, CardContent, Typography, SelectChangeEvent, Breadcrumbs, } from '@mui/material';
+import { Box, Grid, CardContent, Typography, SelectChangeEvent, Breadcrumbs } from '@mui/material';
 import RowContainerBetween from '../../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../../constants';
 import { Link, useNavigate, useOutletContext, } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
 import { type Device } from 'waziup';
-import CreateDeviceModalWindow from '../../components/ui/ModalCreateDevice';
-import EditDeviceModal from '../../components/ui/EditDeviceModal';
 import { DevicesContext, SensorX } from '../../context/devices.context';
-import { devEUIGenerateFc, differenceInMinutes, lineClamp } from '../../utils';
+import { devEUIGenerateFc, differenceInMinutes, lineClamp, } from '../../utils';
 import PrimaryIconButton from '../../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../../components/shared/SensorActuatorInfo';
 import MenuDropDown from '../../components/shared/MenuDropDown';
 import RowContainerNormal from '../../components/shared/RowContainerNormal';
 import DeviceImage from '../../assets/device.png';
 import SnackbarComponent from '../../components/shared/Snackbar';
+import EditeCreateDeviceDialog from '../../components/ui/EditCreateDeviceDialog';
 
 const SortOptions = [
     { id: '1', name: 'Date Created' },
@@ -35,19 +34,18 @@ const initialNewDevice: Device = {
     name: '',
     sensors: [],
 }
+
 function Devices() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
     const { devices, wazigateId, getDevicesFc, sortDevices, showDialog } = useContext(DevicesContext);
     const [selectedDevice, setSelectedDevice] = useState<null | Device>(null);
+    const [mode, setMode] = useState<"edit" | "create">("create");
     const [error, setError] = useState<{ message: Error | null | string, severity: "error" | "warning" | "info" | "success" } | null>(null);
-    const [newDevice, setNewDevice] = useState<Device>(initialNewDevice);
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
-    const [openModal, setOpenModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
-    const [selectedValue, setSelectedValue] = useState('');
-    const [screen, setScreen] = useState<'tab1' | 'tab2'>('tab1');
+    const [openEditCreateDialog, setOpenEditCreateDialog] = useState(false);
 
     useEffect(() => {
         if (devices.length === 0) {
@@ -58,34 +56,24 @@ function Devices() {
     }, [devices, getDevicesFc])
 
     const handleToggleModal = () => {
-        setOpenModal(!openModal);
-        if (!openModal) {
-            setNewDevice(initialNewDevice);
-        }
+        setMode("create");
+        setSelectedDevice(initialNewDevice);
+        setOpenEditCreateDialog(!openEditCreateDialog)
     };
 
     const handleToggleEditModal = () => {
-        setOpenEditModal(!openEditModal);
+        setOpenEditCreateDialog(!openEditCreateDialog)
     }
 
     const handleToggleEditModalClose = () => {
         setSelectedDevice(null);
         setOpenEditModal(!openEditModal);
     }
-
-    const changeMakeLoraWAN = () => {
-        setNewDevice({
-            ...newDevice,
-            meta: {
-                ...newDevice.meta,
-                lorawan: newDevice.meta.lorawan ? null : {
-                    profile: 'WaziDev',
-                },
-            }
-        })
+    const handleToggleEditCreateDialogClose = () => {
+        setSelectedDevice(null);
+        setOpenEditCreateDialog(!openEditCreateDialog);
     }
-
-    const changeEditMakeLoraWAN = () => {
+    const changeEditMakeLoraWANDevice = () => {
         if (selectedDevice) {
             setSelectedDevice({
                 ...selectedDevice,
@@ -98,14 +86,6 @@ function Devices() {
             }) as unknown as Device
         }
     }
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setNewDevice({
-            ...newDevice,
-            name: event.target.value,
-        })
-    }
-
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -113,11 +93,10 @@ function Devices() {
     function submitCreateDevice(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const device: Device = {
-            ...newDevice,
+            ...selectedDevice as Device,
         }
         window.wazigate.addDevice(device)
             .then(() => {
-                setScreen('tab1');
                 handleToggleModal();
                 setError({
                     message: "Devices added successfully",
@@ -125,7 +104,6 @@ function Devices() {
                 })
                 getDevicesFc();
             }).catch(err => {
-                setScreen('tab1');
                 showDialog({
                     content: err,
                     onAccept: () => { },
@@ -136,42 +114,28 @@ function Devices() {
                 });
             });
     }
-
-    const blockOnClick = (value: string) => {
-        setSelectedValue(value);
-    }
-
-    const handleChangeSelect = (event: SelectChangeEvent<string>) => {
-        setSelectedValue(event.target.value);
-        setNewDevice({
-            ...newDevice,
-            meta: {
-                ...newDevice.meta,
-                type: event.target.value
+    const handleTextInputChangeEditCreateDevice = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (selectedDevice) {
+            let devEUI = selectedDevice?.meta.lorawan?.devEUI;
+            let devAddr = selectedDevice?.meta.lorawan?.devAddr;
+            if (e.target.name === 'devAddr') {
+                devAddr = e.target.value;
+                devEUI = devEUIGenerateFc(e.target.value);
             }
-        })
-    };
-
-    const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let devEUI = newDevice?.meta.lorawan?.devEUI;
-        let devAddr = newDevice?.meta.lorawan?.devAddr;
-        if (e.target.name === 'devAddr') {
-            devAddr = e.target.value;
-            devEUI = devEUIGenerateFc(e.target.value);
+            setSelectedDevice({
+                ...selectedDevice as Device,
+                meta: {
+                    ...(selectedDevice as Device).meta,
+                    lorawan: {
+                        ...selectedDevice.meta.lorawan,
+                        nwkSEncKey: (e.target.name === 'nwkSEncKey') ? e.target.value : selectedDevice?.meta.lorawan?.nwkSEncKey,
+                        appSKey: (e.target.name === 'appSKey') ? e.target.value : selectedDevice?.meta.lorawan?.appSKey,
+                        devAddr,
+                        devEUI,
+                    }
+                }
+            });
         }
-        setNewDevice({
-            ...newDevice,
-            meta: {
-                ...newDevice.meta,
-                lorawan: {
-                    ...newDevice.meta.lorawan,
-                    nwkSEncKey: e.target.name === 'nwkSEncKey' ? e.target.value : newDevice.meta.lorawan.nwkSEncKey,
-                    appSKey: e.target.name === 'appSKey' ? e.target.value : newDevice.meta.lorawan.appSKey,
-                    devEUI,
-                    devAddr,
-                },
-            }
-        })
     }
 
     const handleChangeDeviceCodec = (event: SelectChangeEvent<string>) => {
@@ -184,18 +148,7 @@ function Devices() {
                 }
             }) as unknown as Device
         }
-        setNewDevice({
-            ...newDevice,
-            meta: {
-                ...newDevice.meta,
-                codec: event.target.value
-            }
-        })
     };
-
-    const handleScreenChange = (screen: 'tab1' | 'tab2') => {
-        setScreen(screen);
-    }
 
     function handleDeleteDevice(device: Device) {
         showDialog({
@@ -228,12 +181,13 @@ function Devices() {
     }
 
     function handleSelectDevice(device: Device) {
+        setMode("edit");
         setSelectedDevice(device);
         handleClose();
         handleToggleEditModal();
     }
 
-    function handleEditSelectedDeviceName(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleEditCreateDeviceName(e: React.ChangeEvent<HTMLInputElement>) {
         if (selectedDevice) {
             setSelectedDevice({
                 ...selectedDevice,
@@ -254,81 +208,59 @@ function Devices() {
         }
     }
 
-    const handleTextInputEditCodec = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let devEUI = selectedDevice?.meta.lorawan?.devEUI;
-        let devAddr = selectedDevice?.meta.lorawan?.devAddr;
-        if (e.target.name === 'devAddr') {
-            devAddr = e.target.value;
-            devEUI = devEUIGenerateFc(e.target.value);
-        }
-        if (selectedDevice) {
-            setSelectedDevice({
-                ...selectedDevice as Device,
-                meta: {
-                    ...(selectedDevice as Device).meta,
-                    lorawan: {
-                        ...selectedDevice.meta.lorawan,
-                        nwkSEncKey: (e.target.name === 'nwkSEncKey') ? e.target.value : selectedDevice?.meta.lorawan?.nwkSEncKey,
-                        appSKey: (e.target.name === 'appSKey') ? e.target.value : selectedDevice?.meta.lorawan?.appSKey,
-                        devAddr,
-                        devEUI,
-                    }
-                }
-            });
-        }
-    }
-
     const handleSubmitEditDevice = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const devdev = devices.find((dev) => dev.id === selectedDevice?.id);
         if (selectedDevice?.meta) {
             if (devdev?.meta !== selectedDevice?.meta) {
                 window.wazigate.setDeviceMeta(selectedDevice?.id as string, selectedDevice?.meta as Device)
-                    .then(() => {
-                        showDialog({
-                            content: "Device meta update updated successfully ",
-                            onAccept: () => { },
-                            onCancel: () => { },
-                            hideCloseButton: true,
-                            acceptBtnTitle: "Close",
-                            title: "Update successfully"
-                        });
-                        getDevicesFc();
-                        return;
-                    }).catch(err => {
-                        showDialog({
-                            content: err,
-                            onAccept: () => { },
-                            onCancel: () => { },
-                            acceptBtnTitle: "Close",
-                            title: "Error encountered",
-                            hideCloseButton: true,
-                        });
+                .then(() => {
+                    showDialog({
+                        content: "Device meta update updated successfully",
+                        onAccept: () => { },
+                        onCancel: () => { },
+                        hideCloseButton: true,
+                        acceptBtnTitle: "Close",
+                        title: "Update successfully"
                     });
+                    getDevicesFc();
+                    return;
+                }).catch(err => {
+                    showDialog({
+                        content: err,
+                        onAccept: () => { },
+                        onCancel: () => { },
+                        acceptBtnTitle: "Close",
+                        title: "Error encountered",
+                        hideCloseButton: true,
+                    });
+                });
+                setMode('create')
             }
             if (devdev?.name !== selectedDevice?.name) {
                 // window.wazigate.setDeviceName(selectedDevice.id as string, selectedDevice.name)
                 window.wazigate.set(`devices/${selectedDevice?.id}/name`, selectedDevice?.name)
-                    .then(() => {
-                        showDialog({
-                            content: "Device name update updated successfully ",
-                            onAccept: () => { },
-                            onCancel: () => { },
-                            acceptBtnTitle: "Close",
-                            hideCloseButton: true,
-                            title: "Update successfully"
-                        });
-                        return;
-                    }).catch(err => {
-                        showDialog({
-                            content: err,
-                            onAccept: () => { },
-                            onCancel: () => { },
-                            hideCloseButton: true,
-                            acceptBtnTitle: "Close",
-                            title: "Error encountered"
-                        });
+                .then(() => {
+                    showDialog({
+                        content: "Device name update updated successfully ",
+                        onAccept: () => { },
+                        onCancel: () => { },
+                        acceptBtnTitle: "Close",
+                        hideCloseButton: true,
+                        title: "Update successfully"
                     });
+                    return;
+                }).catch(err => {
+                    showDialog({
+                        content: err,
+                        onAccept: () => { },
+                        onCancel: () => { },
+                        hideCloseButton: true,
+                        acceptBtnTitle: "Close",
+                        title: "Error encountered"
+                    });
+                });
+                setMode('create')
             }
         }
         setSelectedDevice(null);
@@ -358,25 +290,7 @@ function Devices() {
                             }
                         }
                     }) as unknown as Device
-                } else {
-                    let devEUI = newDevice?.meta.lorawan.devEUI;
-                    let devAddr = newDevice?.meta.lorawan.devAddr;
-                    if (title === 'devAddr') {
-                        devAddr = [...Array(8)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase()
-                        devEUI = devEUIGenerateFc(devAddr.toString())
-                    }
-                    setNewDevice({
-                        ...newDevice,
-                        meta: {
-                            ...newDevice.meta,
-                            lorawan: {
-                                ...newDevice.meta.lorawan,
-                                devEUI,
-                                devAddr,
-                            }
-                        }
-                    });
-                }
+                } 
                 break;
             case 'nwkSEncKey':
                 if (selectedDevice) {
@@ -390,18 +304,6 @@ function Devices() {
                             }
                         }
                     }) as unknown as Device
-                }
-                else {
-                    setNewDevice({
-                        ...newDevice,
-                        meta: {
-                            ...newDevice.meta,
-                            lorawan: {
-                                ...newDevice.meta.lorawan,
-                                nwkSEncKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
-                            }
-                        }
-                    });
                 }
                 break;
             case 'appSKey':
@@ -417,24 +319,11 @@ function Devices() {
                         }
                     }) as unknown as Device
                 }
-                else {
-                    setNewDevice({
-                        ...newDevice,
-                        meta: {
-                            ...newDevice.meta,
-                            lorawan: {
-                                ...newDevice.meta.lorawan,
-                                appSKey: [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join('').toUpperCase(),
-                            }
-                        }
-                    });
-                }
                 break;
             default:
                 break;
         }
     }
-
     return (
         <>
             {
@@ -447,36 +336,20 @@ function Devices() {
                     />
                 ) : null
             }
-            <Box sx={{ height: '100%', }}>
-                <CreateDeviceModalWindow
-                    fullWidth={matches}
-                    openModal={openModal}
-                    handleToggleModal={handleToggleModal}
-                    submitCreateDevice={submitCreateDevice}
-                    handleChange={handleChange}
-                    handleChangeSelect={handleChangeSelect}
-                    selectedValue={selectedValue}
-                    screen={screen}
-                    handleScreenChange={handleScreenChange}
-                    blockOnClick={blockOnClick}
-                    newDevice={newDevice}
-                    changeMakeLoraWAN={changeMakeLoraWAN}
-                    handleChangeDeviceCodec={handleChangeDeviceCodec}
-                    onTextInputChange={handleTextInputChange}
-                    autoGenerateLoraWANOptionsHandler={autoGenerateLoraWANOptions}
-                />
-                <EditDeviceModal
+            <Box sx={{ height: '100%' }}>
+                <EditeCreateDeviceDialog
+                    mode={mode}
                     matchesWidth={matches}
                     device={selectedDevice as Device}
-                    openModal={openEditModal}
+                    openModal={openEditCreateDialog}
                     isFirst={wazigateId === selectedDevice?.id}
                     handleChangeSelectDeviceType={handleChangeSelectDeviceType}
-                    handleToggleModal={handleToggleEditModalClose}
+                    handleToggleModal={handleToggleEditCreateDialogClose}
                     handleChangeDeviceCodec={handleChangeDeviceCodec}
-                    handleNameChange={handleEditSelectedDeviceName}
-                    handleTextInputEditCodec={handleTextInputEditCodec}
-                    submitEditDevice={handleSubmitEditDevice}
-                    changeEditMakeLoraWAN={changeEditMakeLoraWAN}
+                    handleNameChange={handleEditCreateDeviceName}
+                    handleTextInputChangeEditCreateDevice={handleTextInputChangeEditCreateDevice}
+                    submitEditDevice={mode==="edit"?handleSubmitEditDevice:submitCreateDevice}
+                    changeEditMakeLoraWANDevice={changeEditMakeLoraWANDevice}
                     autoGenerateLoraWANOptionsHandler={autoGenerateLoraWANOptions}
                 />
                 <Box sx={{ px: matches ? 4 : 2, py: [0, 2], width: '100%', height: '100%' }}>
