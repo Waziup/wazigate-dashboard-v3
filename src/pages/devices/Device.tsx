@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useLayoutEffect, useState } from "react
 import { Box, Breadcrumbs, Button, Typography, Grid, SelectChangeEvent, FormControl, MenuItem, Select, Dialog, DialogActions, DialogContent, Theme, useMediaQuery, DialogTitle, Input, } from "@mui/material";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
 import ontologies from '../../assets/ontologies.json';
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Sensor, Actuator, Device } from "waziup";
 import { DevicesContext, SensorX } from "../../context/devices.context";
@@ -68,7 +68,6 @@ function DeviceSettings() {
     const [device, setDevice] = useState<Device | null>(null);
     const [isError, setIsError] = useState<boolean>(false);
     const [modalProps, setModalProps] = useState<{ title: string, placeholder: string }>({ title: '', placeholder: '' });
-    const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const { getDevicesFc, showDialog } = useContext(DevicesContext)
     const { id } = useParams();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -352,18 +351,18 @@ function DeviceSettings() {
                 <RowContainerBetween>
                     <Box>
                         <Typography variant="h5" color={'black'}>{device?.name}</Typography>
-                        <div role="presentation" onClick={handleClick}>
+                        <Box role="presentation" onClick={handleClick}>
                             <Breadcrumbs aria-label="breadcrumb">
                                 <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                                     <Link style={{ color: 'black', textDecoration: 'none', fontWeight: '300', fontSize: 16 }} state={{ title: 'Devices' }} color="inherit" to="/devices">
                                         Devices
                                     </Link>
                                 </Typography>
-                                <p style={{ color: 'black', textDecoration: 'none', fontWeight: 300, fontSize: 16 }} color="text.primary">
+                                <Typography style={{ color: 'black', textDecoration: 'none', fontWeight: 300, fontSize: 16 }} color="text.primary">
                                     {device ? device.name.length > 10 ? device.name.slice(0, 10) + '....' : device?.name : ''}
-                                </p>
+                                </Typography>
                             </Breadcrumbs>
-                        </div>
+                        </Box>
                     </Box>
                     {/* {
                         matches ? (

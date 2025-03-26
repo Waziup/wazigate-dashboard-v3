@@ -21,7 +21,7 @@ const Item = styled(Paper)(({ theme }) => ({
     marginBottom: theme.spacing(2),
     color: theme.palette.text.secondary,
 }));
-const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
+const IconStyle: SxProps<Theme> = {mr:1 , color: DEFAULT_COLORS.primary_black };
 
 const GridItemEl = ({ children, text, additionStyles, icon }: { additionStyles?: SxProps<Theme>, text: string, children: React.ReactNode, icon: string }) => (
     <Item sx={{ boxShadow: 0, ...additionStyles }}>

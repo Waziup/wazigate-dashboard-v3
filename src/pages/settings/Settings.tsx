@@ -271,18 +271,18 @@ function Settings() {
                 <Box>
                     <Box>
                         <Typography variant='h5'>Settings</Typography>
-                        <div role="presentation" onClick={() => { }}>
+                        <Box role="presentation" onClick={() => { }}>
                             <Breadcrumbs aria-label="breadcrumb">
                                 <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                                     <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color="inherit" to="/">
                                         Home
                                     </Link>
                                 </Typography>
-                                <p style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} color="text.primary">
+                                <Typography style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} color="text.primary">
                                     Settings
-                                </p>
+                                </Typography>
                             </Breadcrumbs>
-                        </div>
+                        </Box>
                     </Box>
                     {/* {
                         matches ? <Typography sx={{ my: 2, fontSize: 13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography> : null
@@ -338,7 +338,7 @@ function Settings() {
                                                 ) : (<CircularProgress size={10} sx={{ fontSize: 10, }} />)
                                             }
                                         </Typography>
-                                        <Mode onClick={() => { setModalProps({ open: true, title: 'Changing Timezone', }) }} sx={{ fontSize: 16, cursor: 'pointer', mx: 1 }} />
+                                        <Mode onClick={() => { setModalProps({ open: true, title: 'Changing Time and date' }) }} sx={{ fontSize: 16, cursor: 'pointer', mx: 1 }} />
                                     </Box>
                                 </RowContainer>
                                 <RowContainer>
@@ -353,7 +353,7 @@ function Settings() {
                                                 )
                                             }
                                         </Typography>
-                                        <Mode onClick={() => { setModalProps({ open: true, title: 'Changing Time and date' }) }} sx={{ fontSize: 16, cursor: 'pointer', mx: 1 }} />
+                                        <Mode onClick={() => { setModalProps({ open: true, title: 'Changing Timezone', }) }} sx={{ fontSize: 16, cursor: 'pointer', mx: 1 }} />
                                     </Box>
                                 </RowContainer>
                                 {/* <Box borderRadius={1} p={1} m={1}>
