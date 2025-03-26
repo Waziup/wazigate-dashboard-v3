@@ -1,5 +1,4 @@
 import { styled, Paper, Typography, Box, Icon, SxProps, Theme } from "@mui/material";
-import { IconStyle } from "../layout/Sidebar";
 import { DEFAULT_COLORS } from "../../constants";
 
 const Item = styled(Paper)(({ theme }) => ({

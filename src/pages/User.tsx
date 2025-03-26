@@ -255,32 +255,10 @@ function User() {
                                     style={textinputStyle}
                                 />
                             </TextInput> */}
-                            {
-                                ((profile?.name != rProfile?.name) || (profile?.password != rProfile?.password)) && (
-                                    <Box display={'flex'} justifyContent={'center'} py={1}>
-                                        {/* <button
-                                            type="submit"
-                                            style={{
-                                                cursor: 'pointer',
-                                                width: '50%',
-                                                border: 'none',
-                                                justifyContent: 'center',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                borderRadius: 5,
-                                                outline: 'none',
-                                                padding: 10,
-                                                backgroundColor: '#499dff',
-                                                color: 'white'
-                                            }}
-                                        >
-                                            <Save sx={{ fontSize: 20 }} />
-                                            SAVE CHANGES
-                                        </button> */}
-                                        <Button type="submit" variant="contained" color="secondary" startIcon={<Save />}>Save Changes</Button>
-                                    </Box>
-                                )
-                            }
+                            <Box display={'flex'} justifyContent={'center'} py={1}>
+                                <Button type="submit" variant="contained" disabled={!((profile?.name != rProfile?.name) || (profile?.password != rProfile?.password))} color="secondary" startIcon={<Save />}>Save Changes</Button>
+                            </Box>
+                            
                         </Box>
                     </form>
                 </Paper>

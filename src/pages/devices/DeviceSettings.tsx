@@ -9,7 +9,6 @@ import { devEUIGenerateFc, lineClamp, toStringHelper } from "../../utils";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
 import { DEFAULT_COLORS } from "../../constants";
 import BoxDownload from '../../assets/box_download.svg';
-import PrimaryButton from "../../components/shared/PrimaryButton";
 import { DropDownCreateDeviceTab1 } from "../../components/ui/CreateDeviceTab1";
 import { InputField } from "../Login";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -376,9 +375,8 @@ export default function DeviceSettings() {
                                 placeholder={'App Key. 32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan ? thisDevice?.meta.lorawan.appSKey : '')}
                             />
                         </Box>
-                        {
-                            isEdited && <Button variant="contained" fullWidth color="secondary" type="button" onClick={() => handleSubmitEditDevice()}>Save Changes</Button>
-                        }
+                        
+                        <Button variant="contained" disabled={!isEdited} fullWidth color="secondary" type="button" onClick={() => handleSubmitEditDevice()}>Save Changes</Button>
                     </Box>
 
                     <Box boxShadow={1} bgcolor={'#fff'} my={2} px={2} py={2} borderRadius={2}>
@@ -397,9 +395,7 @@ export default function DeviceSettings() {
                                 options={codecsList ? codecsList : []}
                             />
                         </Box>
-                        {
-                            isEditedCodec && <Button variant="contained" fullWidth color="secondary" type="button" onClick={() => handleSubmitEditDevice()}>Save Change</Button>
-                        }
+                        <Button variant="contained" disabled={!isEditedCodec} fullWidth color="secondary" type="button" onClick={() => handleSubmitEditDevice()}>Save Change</Button>
                     </Box>
 
                     <Paper sx={{ p: 2, }}>

@@ -1,15 +1,13 @@
-import { Router, RouterOutlined } from "@mui/icons-material";
+import { RouterOutlined } from "@mui/icons-material";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Input, SelectChangeEvent, Stack, Typography } from "@mui/material";
 import { Device } from "waziup";
 import RowContainerBetween from "../shared/RowContainerBetween";
 import { DropDownCreateDeviceTab1 } from "./CreateDeviceTab1";
 import AddTextShow from "../shared/AddTextInput";
 import { Android12Switch } from "../shared/Switch";
-import RowContainerNormal from "../shared/RowContainerNormal";
 import React, { useContext } from "react";
 import { DevicesContext } from "../../context/devices.context";
 import { toStringHelper } from "../../utils";
-import PrimaryButton from "../shared/PrimaryButton";
 import { DEFAULT_COLORS } from "../../constants";
 import { InputField } from "../../pages/Login";
 
@@ -126,12 +124,7 @@ export default function EditDeviceModal(props: EditDeviceModalProps) {
                     >
                         Cancel
                     </Button>
-                    <PrimaryButton
-                        title="Save Changes"
-                        type="submit"
-                        variant="text"
-                        textColor={DEFAULT_COLORS.primary_blue}
-                    />
+                    <Button variant="text" type="submit" sx={{color:DEFAULT_COLORS.primary_blue}}>Save Changes</Button>
                 </DialogActions>
             </Box>
         </Dialog>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Breadcrumbs, Card, CardActions, CardContent, Stack, Tooltip, Typography } from '@mui/material';
 import { DataObject, DescriptionOutlined, Language, MailOutline } from '@mui/icons-material';
-import { Link, To, useOutletContext } from 'react-router-dom';
+import { Link, To, } from 'react-router-dom';
 import { DEFAULT_COLORS } from '../constants';
 import { lineClamp } from '../utils';
 
@@ -31,8 +31,6 @@ const CardComponent = ({ description, path, title, newTab, icon }: CardProps) =>
 );
 
 function Docspage() {
-    const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
-
     const docs = [
         {
             title: 'Wazigate Documentation',

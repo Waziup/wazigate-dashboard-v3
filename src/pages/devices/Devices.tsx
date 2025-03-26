@@ -13,6 +13,7 @@ import SensorActuatorInfo from '../../components/shared/SensorActuatorInfo';
 import MenuDropDown from '../../components/shared/MenuDropDown';
 import RowContainerNormal from '../../components/shared/RowContainerNormal';
 import DeviceImage from '../../assets/device.png';
+import SnackbarComponent from '../../components/shared/Snackbar';
 
 const SortOptions = [
     { id: '1', name: 'Date Created' },
@@ -40,6 +41,7 @@ function Devices() {
     const navigate = useNavigate();
     const { devices, wazigateId, getDevicesFc, sortDevices, showDialog } = useContext(DevicesContext);
     const [selectedDevice, setSelectedDevice] = useState<null | Device>(null);
+    const [error, setError] = useState<{ message: Error | null | string, severity: "error" | "warning" | "info" | "success" } | null>(null);
     const [newDevice, setNewDevice] = useState<Device>(initialNewDevice);
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();
     const [openModal, setOpenModal] = useState(false);
@@ -117,6 +119,10 @@ function Devices() {
             .then(() => {
                 setScreen('tab1');
                 handleToggleModal();
+                setError({
+                    message: "Devices added successfully",
+                    severity: 'success'
+                })
                 getDevicesFc();
             }).catch(err => {
                 setScreen('tab1');
@@ -200,6 +206,10 @@ function Devices() {
                 window.wazigate.deleteDevice(device.id)
                     .then(() => {
                         getDevicesFc();
+                        setError({
+                            message: "Device removed successfully",
+                            severity: 'success'
+                        })
                     })
                     .catch(err => {
                         showDialog({
@@ -427,6 +437,16 @@ function Devices() {
 
     return (
         <>
+            {
+                error ? (
+                    <SnackbarComponent
+                        autoHideDuration={5000}
+                        severity={error.severity}
+                        message={(error.message as Error).message ? (error.message as Error).message : (error.message as string)}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                    />
+                ) : null
+            }
             <Box sx={{ height: '100%', }}>
                 <CreateDeviceModalWindow
                     fullWidth={matches}
@@ -470,9 +490,9 @@ function Devices() {
                                             Home
                                         </Link>
                                     </Typography>
-                                    <p style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} color="text.primary">
+                                    <Typography style={{ textDecoration: 'none', fontWeight: 300 }} color="text.primary">
                                         Devices
-                                    </p>
+                                    </Typography>
                                 </Breadcrumbs>
                             </div>
                         </Box>
@@ -487,7 +507,7 @@ function Devices() {
                         <PrimaryIconButton title={'New Device'} color={'secondary'} iconName={'add'} onClick={handleToggleModal} />
 
                         <Box sx={{ overflow: "hidden", position: "relative", display: 'flex', zIndex: 1, }}>
-                            <p style={{ color: '#797979', fontSize: 14 }}>Sort by:&nbsp;</p>
+                            <Typography  style={{ color: '#797979',}}>Sort by:&nbsp;</Typography>
                             <select
                                 onChange={(e) => sortDevices(e.target.value as '1' | '2' | '3' | '4')}
                                 style={{ border: 'none', color: '#797979', cursor: 'pointer', outline: "none", background: "none" }}
