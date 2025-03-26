@@ -62,7 +62,7 @@ export default function ExportTabMaintenance({ matches }: Props) {
                     </GridItemEl>
                 </GridItem>
                 <GridItem spacing={2} md={7} xs={12} matches={matches as boolean} >
-                    <GridItemEl additionStyles={{ boxShadow: 1 }} icon='sensor' text='Export Actuator and Sensor Data' >
+                    <GridItemEl additionStyles={{ boxShadow: 1 }} icon='sensors' text='Export Actuator and Sensor Data' >
                         <Box borderRadius={1} px={2} py={2} display='flex' flexDirection='column' justifyContent='space-between' gap={2}>
 
                             <Grid container spacing={2}>

@@ -56,10 +56,9 @@ export default function DeviceSensorSettings() {
     const [matches] = useOutletContext<[matches: boolean]>();
     // const { pathname } = useLocation();
     const { id, sensorId } = useParams();
-    const [sensor, setSensor] = useState<Sensor | null>(null)
+    const [sensor, setSensor] = useState<SensorX | null>(null)
     const [device, setDevice] = useState<Device | null>(null);
-    const [sensorX, setSensorX] = useState<SensorX | null>(null);
-    const [rSensorX, setRemoteSensorX] = useState<SensorX | null>(null);
+    const [rsensor, setRemotesensor] = useState<SensorX | null>(null);
     const [error, setError] = useState<{ message: Error | null | string, severity: "error" | "warning" | "info" | "success" } | null>(null);
     const { getDevicesFc, showDialog } = useContext(DevicesContext);
     const [graphValues, setGraphValues] = useState<{ y: number, x: string }[]>([]);
@@ -109,7 +108,7 @@ export default function DeviceSensorSettings() {
         window.wazigate.getDevice(id).then((de) => {
             const sensor = de.sensors.find((sensor) => sensor.id === sensorId);
             if (sensor) {
-                setSensor({ ...sensor, name: cleanString(sensor.name) });
+                setSensor({ ...sensor, name: cleanString(sensor.name) } as SensorX);
                 getGraphValues(id as string, sensorId as string);
             }
             setDevice({
@@ -120,21 +119,21 @@ export default function DeviceSensorSettings() {
     }, [getGraphValues, id, sensorId]);
 
     const handleToggleEnableSwitch = () => {
-        setSensorX({
-            ...sensorX!,
-            name: cleanString(sensorX?.name),
+        setSensor({
+            ...sensor!,
+            name: cleanString(sensor?.name),
             meta: {
-                ...sensorX?.meta,
-                doNotSync: !sensorX?.meta.doNotSync
+                ...sensor?.meta,
+                doNotSync: !sensor?.meta.doNotSync
             }
         })
 
     }
 
     const resetHandler = () => {
-        setSensorX({
-            ...rSensorX!,
-            name: cleanString(rSensorX?.name)
+        setSensor({
+            ...rsensor!,
+            name: cleanString(rsensor?.name)
         });
     }
 
@@ -142,11 +141,11 @@ export default function DeviceSensorSettings() {
         window.wazigate.getDevice(id).then((de) => {
             const sensor = de.sensors.find((sensor) => sensor.id === sensorId);
             if (sensor) {
-                setSensorX({
+                setSensor({
                     ...sensor,
                     name: cleanString(sensor.name)
                 } as SensorX);
-                setRemoteSensorX({
+                setRemotesensor({
                     ...sensor,
                     name: cleanString(sensor.name)
                 } as SensorX);
@@ -167,39 +166,39 @@ export default function DeviceSensorSettings() {
     const [unitsCondition, setUnitsCondition] = React.useState<string[]>([]);
 
     useEffect(() => {
-        const kind = sensorX?.meta?.kind ? sensorX.meta.kind : sensorX?.kind;
-        if (sensorX?.meta.kind) {
+        const kind = sensor?.meta?.kind ? sensor.meta.kind : sensor?.kind;
+        if (sensor?.meta.kind) {
             setQuantitiesCondition(
                 (ontologies.sensingDevices)[kind as keyof typeof ontologies.sensingDevices] ?
                     (ontologies.sensingDevices)[kind as keyof typeof ontologies.sensingDevices].quantities : []);
         }
-    }, [sensorX?.kind, sensorX?.meta.kind]);
+    }, [sensor?.kind, sensor?.meta.kind]);
 
     useEffect(() => {
-        const quantity = sensorX?.meta.quantity ? sensorX.meta.quantity : sensorX?.quantity;
-        if (sensorX?.meta.quantity) {
+        const quantity = sensor?.meta.quantity ? sensor.meta.quantity : sensor?.quantity;
+        if (sensor?.meta.quantity) {
             setUnitsCondition((ontologies.quantities)[quantity as keyof typeof ontologies.quantities].units);
-        } else if (sensorX?.quantity) {
+        } else if (sensor?.quantity) {
             setUnitsCondition((ontologies.quantities)[quantity as keyof typeof ontologies.quantities].units);
         } else {
             setUnitsCondition([]);
         }
-    }, [sensorX?.meta.quantity, sensorX?.quantity])
+    }, [sensor?.meta.quantity, sensor?.quantity])
 
     const onSliderChange = (val: string) => {
-        setSensorX({
-            ...sensorX!,
+        setSensor({
+            ...sensor!,
             meta: {
-                ...sensorX?.meta,
+                ...sensor?.meta,
                 syncInterval: val
             }
         })
     }
 
     const handleChange = (name: string, value: string) => {
-        let unitSymbol = name === 'unit' ? ontologies.units[value as keyof typeof ontologies.units].label : sensorX?.meta.unitSymbol;
-        let quantity = sensorX?.meta.quantity ? sensorX.meta.quantity : sensorX?.quantity;
-        let unit = sensorX?.meta.unit ? sensorX.meta.unit : sensorX?.unit;
+        let unitSymbol = name === 'unit' ? ontologies.units[value as keyof typeof ontologies.units].label : sensor?.meta.unitSymbol;
+        let quantity = sensor?.meta.quantity ? sensor.meta.quantity : sensor?.quantity;
+        let unit = sensor?.meta.unit ? sensor.meta.unit : sensor?.unit;
         let icon = '';
         if (name === 'kind' && value in ontologies.sensingDevices) {
             icon = ontologies.sensingDevices[value as keyof typeof ontologies.sensingDevices].icon;
@@ -209,18 +208,18 @@ export default function DeviceSensorSettings() {
             unit = '';
             quantity = '';
         } else {
-            icon = sensorX?.meta.icon ? sensorX.meta.icon : '';
+            icon = sensor?.meta.icon ? sensor.meta.icon : '';
         }
         if (name === 'quantity') {
             unit = ''
             unitSymbol = ''
         }
 
-        setSensorX({
-            ...sensorX!,
+        setSensor({
+            ...sensor!,
             [name]: value as string,
             meta: {
-                ...sensorX?.meta,
+                ...sensor?.meta,
                 quantity,
                 unit,
                 [name]: value as string,
@@ -231,13 +230,13 @@ export default function DeviceSensorSettings() {
     }
     const handleChangeSensorSubmission = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (sensorX?.name !== rSensorX?.name) {
+        if (sensor?.name !== rsensor?.name) {
             showDialog({
                 title: "Change name",
                 acceptBtnTitle: "CHANGE",
-                content: `Are you sure you want to change the name of ${rSensorX?.name} to ${sensorX?.name}?`,
+                content: `Are you sure you want to change the name of ${rsensor?.name} to ${sensor?.name}?`,
                 onAccept: () => {
-                    window.wazigate.setSensorName(id as string, sensorX?.id as string, sensorX?.name as string).then(() => {
+                    window.wazigate.setSensorName(id as string, sensor?.id as string, sensor?.name as string).then(() => {
                         init();
                         getDevicesFc();
                     }).catch((err) => {
@@ -250,13 +249,13 @@ export default function DeviceSensorSettings() {
                 onCancel: () => { },
             });
         }
-        if ((sensorX?.meta !== rSensorX?.meta)) {
+        if ((sensor?.meta !== rsensor?.meta)) {
             showDialog({
                 title: "Change Meta fields",
                 acceptBtnTitle: "CHANGE",
-                content: `Are you sure you want to change fields of ${sensorX?.name}?`,
+                content: `Are you sure you want to change fields of ${sensor?.name}?`,
                 onAccept: () => {
-                    window.wazigate.setSensorMeta(id as string, sensorX?.id as string, sensorX?.meta as Sensor['meta']).then(() => {
+                    window.wazigate.setSensorMeta(id as string, sensor?.id as string, sensor?.meta as Sensor['meta']).then(() => {
                         init();
                         setError({
                             message: "Meta fields changed successfully",
@@ -276,11 +275,11 @@ export default function DeviceSensorSettings() {
     }
     const deleteSensor = () => {
         showDialog({
-            title: `Deleting ${sensorX?.name}`,
+            title: `Deleting ${sensor?.name}`,
             acceptBtnTitle: "DELETE",
-            content: `Deleting ${sensorX?.name} will lose all data. Are you sure you want to delete ? `,
+            content: `Deleting ${sensor?.name} will lose all data. Are you sure you want to delete ? `,
             onAccept: () => {
-                window.wazigate.deleteSensor(id as string, sensorX?.id as string).then(() => {
+                window.wazigate.deleteSensor(id as string, sensor?.id as string).then(() => {
                     getDevicesFc();
                     navigate('/devices/' + id)
                 }).catch((err) => {
@@ -294,11 +293,13 @@ export default function DeviceSensorSettings() {
         });
     }
     const handleTextInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSensorX({
-            ...sensorX!,
+        setSensor({
+            ...sensor!,
             name: cleanString(event.target.value) as string,
         })
     }
+    console.log(sensor)
+    console.log(rsensor)
     return (
         <>
             {
@@ -313,7 +314,7 @@ export default function DeviceSensorSettings() {
             }
             <Box>
                 <Box sx={{ px: [2, 4], py: [0, 2], }}>
-                    <Typography variant="h5">{sensorX?.name} Settings</Typography>
+                    <Typography variant="h5">{sensor?.name} Settings</Typography>
                     <Box role="presentation" onClick={() => { }}>
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
@@ -339,9 +340,9 @@ export default function DeviceSensorSettings() {
                                 <Link
                                     style={{ fontSize: 14, color: 'black', fontWeight: '300', textDecoration: 'none' }}
                                     color="black"
-                                    to={"/devices/" + device?.id + "/sensors/" + sensorX?.id}
+                                    to={"/devices/" + device?.id + "/sensors/" + sensor?.id}
                                 >
-                                    {sensorX?.name}
+                                    {sensor?.name}
                                 </Link>
                             </Typography>
                             <Typography fontSize={14}>settings</Typography>
@@ -364,7 +365,7 @@ export default function DeviceSensorSettings() {
                                                 autoFocus
                                                 required
                                                 onInput={handleTextInputChange}
-                                                value={(sensorX)?.name}
+                                                value={(sensor)?.name}
                                                 style={{ width: '100%' }}
                                             />
                                         </InputField>
@@ -373,7 +374,7 @@ export default function DeviceSensorSettings() {
                                         <Box >
                                             <OntologyKindInput
                                                 title={`Measurement Kind`}
-                                                value={sensorX?.meta.kind ? sensorX.meta.kind : sensorX?.kind}
+                                                value={sensor?.meta.kind ? sensor.meta.kind : sensor?.kind}
                                                 onChange={(name, value) => handleChange(name, value as string)}
                                                 deviceType={'sensor'}
                                                 name="kind"
@@ -385,7 +386,7 @@ export default function DeviceSensorSettings() {
                                                 handleChange={(event) => handleChange('quantity', event.target.value)}
                                                 title={`Measurement Type`}
                                                 conditions={quantitiesCondition}
-                                                value={(sensorX?.meta.quantity) ? sensorX.meta.quantity : sensorX?.quantity}
+                                                value={(sensor?.meta.quantity) ? sensor.meta.quantity : sensor?.quantity}
                                                 name="quantity"
                                                 id="quantity"
                                             /> : null
@@ -396,7 +397,7 @@ export default function DeviceSensorSettings() {
                                                     conditions={unitsCondition}
                                                     handleChange={(event) => handleChange('unit', event.target.value)}
                                                     title={`Measurement Unit`}
-                                                    value={sensorX?.meta.unit ? sensorX.meta.unit : sensorX?.unit}
+                                                    value={sensor?.meta.unit ? sensor.meta.unit : sensor?.unit}
                                                     name="unit"
                                                     id="unit"
                                                 /> : null
@@ -409,10 +410,10 @@ export default function DeviceSensorSettings() {
                                                 <Typography>Sync Sensor</Typography>
                                                 <Icon
                                                     onClick={handleToggleEnableSwitch}
-                                                    sx={{ cursor: 'pointer', color: sensorX?.meta.doNotSync ? DEFAULT_COLORS.secondary_gray : DEFAULT_COLORS.orange, fontSize: 40, }}
+                                                    sx={{ cursor: 'pointer', color: sensor?.meta.doNotSync ? DEFAULT_COLORS.secondary_gray : DEFAULT_COLORS.orange, fontSize: 40, }}
                                                 >
                                                     {
-                                                        sensorX?.meta.doNotSync ? 'toggle_off' : 'toggle_on'
+                                                        sensor?.meta.doNotSync ? 'toggle_off' : 'toggle_on'
                                                     }
                                                 </Icon>
                                             </RowContainerBetween>
@@ -421,7 +422,7 @@ export default function DeviceSensorSettings() {
                                         <Box>
                                             <Typography>Sync Interval</Typography>
                                             <DiscreteSliderMarks
-                                                value={sensorX?.meta.syncInterval ? sensorX.meta.syncInterval : "5s"}
+                                                value={sensor?.meta.syncInterval ? sensor.meta.syncInterval : "5s"}
                                                 onSliderChange={onSliderChange}
                                                 matches={matches}
                                             />
@@ -429,7 +430,7 @@ export default function DeviceSensorSettings() {
                                     </Box>
                                     <Box sx={{ display: 'flex', mt: 2, gap: 1, justifyContent: 'end' }} >
                                         <Button onClick={resetHandler} variant={'text'}>RESET</Button>
-                                        <Button type="submit" disabled={JSON.stringify(sensor)===JSON.stringify(rSensorX)} variant="contained" color='secondary' disableElevation>Save Changes</Button>
+                                        <Button type="submit" disabled={JSON.stringify(sensor)===JSON.stringify(rsensor)} variant="contained" color='secondary' disableElevation>Save Changes</Button>
                                     </Box>
                                 </form>
                             </Box>
