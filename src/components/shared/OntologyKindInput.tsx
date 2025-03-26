@@ -25,7 +25,7 @@ export default function OntologyKindInput({deviceType,onChange,title,value,name}
     
     return (
         <Autocomplete
-            value={value}
+            value={value??null}
             options={options}
             id='kind-select'
             onChange={(_event: SyntheticEvent<Element, Event>, newValue: string | null) => {
@@ -103,12 +103,11 @@ export default function OntologyKindInput({deviceType,onChange,title,value,name}
                 );
                 return (
                     <InputField mendatory label={deviceType == "actuator" ? title || "Actuator Type" : title || "Sensor Type"}>
-
                         <TextField
                             {...params}
                             // value={ontology[value] && ontology[value].label && <Box ml={1}>{ontology[value].label}</Box>}
                             // label={deviceType == "actuator" ? title || "Actuator Type" : title || "Sensor Type"}
-                            placeholder={(ontology && ontology[value]) ? (ontology && ontology[value]).label : value}
+                            // placeholder={(ontology && ontology[value]) ? (ontology && ontology[value]).label : value}
                             value={value}
                             variant='standard'
                             color='primary'
