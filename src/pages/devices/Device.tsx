@@ -443,7 +443,7 @@ function DeviceSettings() {
                                                     handleClickMenu={handleClickMenu}
                                                 >
                                                     {
-                                                        (sens.value && typeof sens.value === 'object') ? (
+                                                        (sens.value && Array.isArray(sens.value))?(<Typography>{sens.value.toString()}</Typography>):(sens.value && typeof sens.value === 'object') ? (
                                                             <Typography variant="body1" >
                                                                 {
                                                                     Object.entries(sens.value)
@@ -502,7 +502,7 @@ function DeviceSettings() {
                                                             ) : (
                                                                 <Typography variant="h4">
                                                                     {
-                                                                        act.value && typeof act.value === 'object' ? (
+                                                                        (act.value && Array.isArray(act.value))?(<Typography>{act.value.toString()}</Typography>):act.value && typeof act.value === 'object' ? (
                                                                             Object.entries(act.value)
                                                                                 .map(([key, value]) => `${key}:${(value as number).toFixed(2)}`)
                                                                                 .join(', ')

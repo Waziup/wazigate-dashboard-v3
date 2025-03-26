@@ -18,6 +18,8 @@ export default function SensorActuatorInfo({ type, text, unit, name, kind, onCli
     const val = useMemo(() => {
         if (typeof text === 'number') {
             return (Math.round(text * 100) / 100).toFixed(2);
+        } else if(Array.isArray(text)){
+            return text.toString()
         } else if (typeof text === 'object') {
             const objectString = Object.entries(text)
                 .map(([key, value]) => `${key}:${value}`)
