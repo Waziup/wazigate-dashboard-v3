@@ -1,6 +1,5 @@
 import { Box, Typography, Breadcrumbs, Button, Theme, useMediaQuery, Paper, Stack, Card, CardContent } from "@mui/material";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
-import Chart from 'react-apexcharts';
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import type { Device, Sensor } from "waziup";
 import { Link } from "react-router-dom";
@@ -10,6 +9,7 @@ import { cleanString, differenceInMinutes, lineClamp } from "../../utils";
 import { Settings } from "@mui/icons-material";
 import SVGIcon from "../../components/shared/SVGIcon";
 import OntologiesIcons from '../../assets/ontologies.svg';
+import SensorActuatorValuesChartPlot from "../../components/shared/SensorActuatorValuesChartPlot";
 
 
 export default function DeviceSensor() {
@@ -92,15 +92,15 @@ export default function DeviceSensor() {
     }
 
     useLayoutEffect(() => {
-        window.wazigate.getDevice(id).then((de) => {
-            const sensor = de.sensors.find((sensor) => sensor.id === sensorId);
+        window.wazigate.getDevice(id).then((deviceResponse) => {
+            const sensor = deviceResponse.sensors.find((sensor) => sensor.id === sensorId);
             if (sensor) {
                 setSensor({ ...sensor, name: cleanString(sensor.name) });
                 getGraphValues(id as string, sensorId as string);
             }
             setDevice({
-                ...de,
-                name: cleanString(de.name)
+                ...deviceResponse,
+                name: cleanString(deviceResponse.name)
             })
         });
     }, [getGraphValues, id, sensorId]);
@@ -179,49 +179,9 @@ export default function DeviceSensor() {
                 <Box sx={{ display: 'flex', width: ['100%',], flexDirection: ['column', 'row'], gap: [1, 2], }}>
                     <Paper sx={{ width: ['100%', '50%'], px: [1], py: [1] }}>
                         <Typography variant="h6" pl={1}> Sensor Readings</Typography>
-                        <Chart
-                            options={{
-                                chart: {
-                                    id: 'sensor_actuator_plot',
-                                    // height: 350,
-                                    type: 'area',
-                                    zoom: {
-                                        enabled: true,
-                                    },
-                                    animations: {
-                                        enabled: true,
-                                        easing: 'linear',
-                                        dynamicAnimation: {
-                                            speed: 1000
-                                        }
-                                    },
-                                },
-                                xaxis: {
-                                    categories: graphValues.map((value) => value.x),
-                                    tickAmount: 10,
-                                    // type: 'numeric',
-                                },
-                                markers: {
-                                    size: 0,
-                                },
-                                dataLabels: {
-                                    enabled: false
-                                },
-                                stroke: {
-                                    curve: 'smooth',
-                                    width: 2
-                                },
-                                colors: ['#4592F6'],
-                            }}
-                            series={[
-                                {
-                                    name: "series-1",
-                                    data: graphValues.map((value) => value.y)
-                                }
-                            ]}
-                            type="area"
-                            width={'100%'}
-                            height={matches ? 350 : 290}
+                        <SensorActuatorValuesChartPlot
+                            graphValues={graphValues}
+                            matches={matches}
                         />
                     </Paper>
                     <Paper sx={{ width: ['100%', '50%'] }} >
