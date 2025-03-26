@@ -41,12 +41,12 @@ export default function OntologyKindInput({deviceType,onChange,title,value,name}
             filterOptions={(options, params) => {
                 const filtered = filter(options, params);
 
-                const { inputValue } = params;
-                // Suggest the creation of a new value
-                const isExisting = options.some((option) => inputValue === option);
-                if (inputValue !== '' && !isExisting) {
-                    filtered.push(`use "${inputValue}"`);
-                }
+                // const { inputValue } = params;
+                // // Suggest the creation of a new value
+                // const isExisting = options.some((option) => inputValue === option);
+                // if (inputValue !== '' && !isExisting) {
+                //     filtered.push(`use "${inputValue}"`);
+                // }
                 return filtered;
             }}
             getOptionLabel={(option) => {
