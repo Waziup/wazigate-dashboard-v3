@@ -2,7 +2,6 @@ import { Box, Button, } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { getContainerLogs, dlContainerLogs, getAllContainers, cInfo } from '../../utils/systemapi';
 import { useEffect, useState } from 'react';
-import PrimaryIconButton from '../shared/PrimaryIconButton';
 import SnackbarComponent from '../shared/Snackbar';
 
 export default function LogsTabMaintenance() {
@@ -95,7 +94,6 @@ export default function LogsTabMaintenance() {
                     {data}
                 </pre>
             </Box>
-            {/* <PrimaryIconButton onClick={downloadLogs} iconName='download' title={'Download Logs'} /> */}
             <Button onClick={downloadLogs} variant='contained' color='secondary' disableElevation sx={{ width: 'auto', alignSelf: 'flex-start' }} startIcon={<DownloadIcon />}>Download Logs</Button>
         </Box>
     )
