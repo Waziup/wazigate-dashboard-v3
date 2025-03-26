@@ -12,9 +12,6 @@ import OntologyKindInput from "../../components/shared/OntologyKindInput";
 import { cleanString } from "../../utils";
 import SnackbarComponent from "../../components/shared/Snackbar";
 import { InputField } from "../Login";
-import Chart from 'react-apexcharts';
-import SensorTable from "../../components/ui/DeviceTable";
-
 
 
 export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -67,7 +64,6 @@ export default function DeviceSensorSettings() {
     const { getDevicesFc, showDialog } = useContext(DevicesContext);
     const [graphValues, setGraphValues] = useState<{ y: number, x: string }[]>([]);
     const [values, setValues] = useState<{ value: number | string, modified: string }[]>([]);
-    const [valsLimit, setValsLimit] = useState<number>(700);
     const navigate = useNavigate();
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
@@ -108,33 +104,6 @@ export default function DeviceSensorSettings() {
             window.wazigate.unsubscribe(`devices/${id}/sensors/${sensorId}/#`, () => { });
         }
     }, [graphValues, id, sensorId, values, sensor, getGraphValues]);
-
-    async function fetchMoreData() {
-        const newValsx: { time: string, value: number }[] = await window.wazigate.getSensorValues(id as string, sensorId as string, valsLimit);
-        setValsLimit(valsLimit + 200);
-        const valuesGraph = (newValsx as { time: string, value: number }[]).map((value) => {
-            const date = new Date(value.time);
-            const hours = String(date.getUTCHours()).padStart(2, '0');
-
-            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-            return {
-                y: Math.round(value.value * 100) / 100,
-                x: `${hours}:${minutes}`
-            }
-        });
-        setGraphValues(valuesGraph);
-        const valuesTable = (newValsx as { time: string, value: number }[]).map((value) => {
-            const date = new Date(value.time);
-            const hours = String(date.getUTCHours()).padStart(2, '0');
-
-            const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-            return {
-                value: Math.round(value.value * 100) / 100,
-                modified: `${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()} ${hours}:${minutes}`
-            }
-        });
-        setValues(valuesTable);
-    }
 
     useLayoutEffect(() => {
         window.wazigate.getDevice(id).then((de) => {
@@ -345,7 +314,7 @@ export default function DeviceSensorSettings() {
             <Box>
                 <Box sx={{ px: [2, 4], py: [0, 2], }}>
                     <Typography variant="h5">{sensorX?.name} Settings</Typography>
-                    <div role="presentation" onClick={() => { }}>
+                    <Box role="presentation" onClick={() => { }}>
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                                 <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/devices">
@@ -377,7 +346,7 @@ export default function DeviceSensorSettings() {
                             </Typography>
                             <Typography fontSize={14}>settings</Typography>
                         </Breadcrumbs>
-                    </div>
+                    </Box>
                 </Box>
 
                 <Box display='flex' flexDirection={['column', 'row']} py={2}>
@@ -460,7 +429,7 @@ export default function DeviceSensorSettings() {
                                     </Box>
                                     <Box sx={{ display: 'flex', mt: 2, gap: 1, justifyContent: 'end' }} >
                                         <Button onClick={resetHandler} variant={'text'}>RESET</Button>
-                                        <Button type="submit" variant="contained" color='secondary' disableElevation>Save Changes</Button>
+                                        <Button type="submit" disabled={JSON.stringify(sensor)===JSON.stringify(rSensorX)} variant="contained" color='secondary' disableElevation>Save Changes</Button>
                                     </Box>
                                 </form>
                             </Box>

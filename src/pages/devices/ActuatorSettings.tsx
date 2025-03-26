@@ -22,7 +22,7 @@ export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSe
     isDisabled?: boolean
     matches?: boolean
 }
-export const SelEl = ({ handleChange, title, my, name, conditions, isDisabled, value }: HTMLSelectPropsString) => (
+export const SelectDropdown = ({ handleChange, title, my, name, conditions, isDisabled, value }: HTMLSelectPropsString) => (
     <Box minWidth={120} my={my !== undefined ? my : 2} >
         <Typography fontSize={12} color={DEFAULT_COLORS.secondary_black}>{title}</Typography>
         <FormControl variant="standard" color="primary" disabled={isDisabled} fullWidth>
@@ -37,10 +37,10 @@ export const SelEl = ({ handleChange, title, my, name, conditions, isDisabled, v
                 onChange={handleChange}
             >
                 {
-                    conditions.map((op, idx) => (
-                        <MenuItem key={idx} value={op} sx={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
+                    conditions.map((condition, idx) => (
+                        <MenuItem key={idx} value={condition} sx={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
                             <Box display={'flex'} alignItems={'center'}>
-                                <Typography>{op}</Typography>
+                                <Typography>{condition}</Typography>
                             </Box>
 
                         </MenuItem>
@@ -264,7 +264,7 @@ export default function ActuatorSettings() {
             <Box>
                 <Box sx={{ px: [2, 4], py: [0, 2], }}>
                     <Typography variant="h5">{actuator?.name} Settings</Typography>
-                    <div role="presentation" onClick={() => { }}>
+                    <Box role="presentation" onClick={() => { }}>
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                                 <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/devices">
@@ -296,7 +296,7 @@ export default function ActuatorSettings() {
                             </Typography>
                             <Typography fontSize={14}>settings</Typography>
                         </Breadcrumbs>
-                    </div>
+                    </Box>
                 </Box>
 
                 <Box sx={{ borderTopRightRadius: 2, display: 'flex', flexDirection: 'column', px: [2, 4], gap: 2, mb: 2, height: 'auto', width: '100%' }}  >
@@ -343,7 +343,7 @@ export default function ActuatorSettings() {
                                         />
                                     </Box>
                                     {((quantitiesCondition.length > 0)) ?
-                                        <SelEl
+                                        <SelectDropdown
                                             my={3}
                                             handleChange={(event) => handleChange('quantity', event.target.value)}
                                             title={`Measurement Type`}
@@ -355,7 +355,7 @@ export default function ActuatorSettings() {
                                     }
                                     {
                                         ((unitsCondition.length > 0)) ?
-                                            <SelEl
+                                            <SelectDropdown
                                                 conditions={unitsCondition}
                                                 handleChange={(event) => handleChange('unit', event.target.value)}
                                                 title={`Measurement Unit`}
@@ -399,7 +399,7 @@ export default function ActuatorSettings() {
                                 <Box sx={{ display: 'flex', mt: 2, gap: 1, justifyContent: 'end' }} >
                                     <Button onClick={resetHandler} variant={'text'}>RESET</Button>
                                     {/* <PrimaryIconButton type="submit" iconName="save" title="SAVE" /> */}
-                                    <Button type="submit" variant="contained" color='secondary' disableElevation>Save Changes</Button>
+                                    <Button type="submit" variant="contained" disabled={(JSON.stringify(actuator)===JSON.stringify(rActuator))} color='secondary' disableElevation>Save Changes</Button>
                                 </Box>
                             </form>
                         </Box>
