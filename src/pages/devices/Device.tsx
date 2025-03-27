@@ -363,7 +363,7 @@ function DeviceSettings() {
                                         Devices
                                     </Link>
                                 </Typography>
-                                <Typography style={{ color: 'black', textDecoration: 'none', fontWeight: 300, fontSize: 16 }} color="text.primary">
+                                <Typography sx={{  textDecoration: 'none', fontWeight: 300,  }} color="text.primary">
                                     {device ? device.name.length > 10 ? device.name.slice(0, 10) + '....' : device?.name : ''}
                                 </Typography>
                             </Breadcrumbs>

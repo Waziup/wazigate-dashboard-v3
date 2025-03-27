@@ -313,6 +313,7 @@ export default function EdgeApplicationsPage() {
         setLoadingUninstall(true)
         await window.wazigate.uninstallApp(appToUninstall ? appToUninstall?.id : '', false)
             .then(() => {
+                setError({ message: `${appToUninstall?.name} removed successfully`, severity: 'success' })
                 setUninstLoader(false);
                 load();
                 getRecApps()
@@ -408,6 +409,7 @@ export default function EdgeApplicationsPage() {
             state: 'started'
         })
             .then(() => {
+                setError({ message: 'Config set successfully', severity: 'success' })
                 setLoading(false);
                 getApps();
                 setShowAppSettings(!showAppSettings);

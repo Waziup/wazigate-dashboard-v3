@@ -273,7 +273,7 @@ function Settings() {
                         <Typography variant='h5'>Settings</Typography>
                         <Box role="presentation" onClick={() => { }}>
                             <Breadcrumbs aria-label="breadcrumb">
-                                <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                                <Typography  sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                                     <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color="inherit" to="/">
                                         Home
                                     </Link>
