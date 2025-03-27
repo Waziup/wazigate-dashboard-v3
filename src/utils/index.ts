@@ -78,6 +78,15 @@ export function allActiveDevices(devices: Device[]): number{
     });
     return count;
 }
+export function countActiveApp(items: App[]): number{
+    let count = 0;
+    items.forEach((item)=>{
+        if(item.state && item.state.running){
+            count++;
+        }
+    });
+    return count;
+}
 export const orderByLastUpdated = (devices: Device[]) => devices.sort((a,b)=>b.modified.getTime()-a.modified.getTime())
 
 export const appChecker = (appState: AppState)=>{
@@ -167,7 +176,7 @@ export function time_ago(time: string | number | Date | null) {
             if (typeof format[2] == 'string')
                 return "Last updated "+format[list_choice];
             else
-                return "Last Updated "+Math.floor(seconds / format[2]) + ' ' + format[1] + ' ' + token;
+                return "Last updated "+Math.floor(seconds / format[2]) + ' ' + format[1] + ' ' + token;
         }
     }
     return time;

@@ -3,6 +3,7 @@ import ontologies from "../../assets/ontologies.json";
 import ontologiesicons from '../../assets/ontologies.svg';
 import { Box,Autocomplete, InputAdornment, TextField, createFilterOptions } from '@mui/material';
 import SVGIcon from './SVGIcon';
+import { InputField } from '../../pages/Login';
 interface Props{
     value: string;
     onChange: (name: string, value: string | null) => void;
@@ -24,7 +25,7 @@ export default function OntologyKindInput({deviceType,onChange,title,value,name}
     
     return (
         <Autocomplete
-            value={value}
+            value={value??null}
             options={options}
             id='kind-select'
             onChange={(_event: SyntheticEvent<Element, Event>, newValue: string | null) => {
@@ -40,12 +41,12 @@ export default function OntologyKindInput({deviceType,onChange,title,value,name}
             filterOptions={(options, params) => {
                 const filtered = filter(options, params);
 
-                const { inputValue } = params;
-                // Suggest the creation of a new value
-                const isExisting = options.some((option) => inputValue === option);
-                if (inputValue !== '' && !isExisting) {
-                    filtered.push(`use "${inputValue}"`);
-                }
+                // const { inputValue } = params;
+                // // Suggest the creation of a new value
+                // const isExisting = options.some((option) => inputValue === option);
+                // if (inputValue !== '' && !isExisting) {
+                //     filtered.push(`use "${inputValue}"`);
+                // }
                 return filtered;
             }}
             getOptionLabel={(option) => {
@@ -101,15 +102,17 @@ export default function OntologyKindInput({deviceType,onChange,title,value,name}
                     </>
                 );
                 return (
-                    <TextField
-                        {...params}
-                        // value={ontology[value] && ontology[value].label && <Box ml={1}>{ontology[value].label}</Box>}
-                        label={deviceType == "actuator" ? title || "Actuator Type" : title || "Sensor Type"}
-                        placeholder={(ontology && ontology[value]) ? (ontology && ontology[value]).label : value}
-                        value={value}
-                        variant='standard'
-                        color='primary'
-                    />
+                    <InputField mendatory label={deviceType == "actuator" ? title || "Actuator Type" : title || "Sensor Type"}>
+                        <TextField
+                            {...params}
+                            // value={ontology[value] && ontology[value].label && <Box ml={1}>{ontology[value].label}</Box>}
+                            // label={deviceType == "actuator" ? title || "Actuator Type" : title || "Sensor Type"}
+                            // placeholder={(ontology && ontology[value]) ? (ontology && ontology[value]).label : value}
+                            value={value}
+                            variant='standard'
+                            color='primary'
+                        />
+                    </InputField>
                 )
             }}
         />

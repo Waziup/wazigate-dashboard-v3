@@ -8,16 +8,6 @@ import { DevicesContext } from '../../context/devices.context';
 function Layout() {
     const {setAccessToken, setProfile} = useContext(DevicesContext);
     const navigate = useNavigate();
-    const reToken =useCallback(() => {
-        window.wazigate.set<string>("auth/retoken", {})
-        .then(async(res)=>{
-            setAccessToken(res);
-            await window.wazigate.setToken(res);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-    },[setAccessToken]); 
     const isAuthorized =useCallback(() => {
         fetch("sys/uptime")
         .then((resp)=>{
@@ -50,12 +40,10 @@ function Layout() {
         //delay 30 seconds to check if the user is authorized
         setTimeout(isAuthorized, 1000 * 30);
         const timer = setInterval(isAuthorized, 1000 * 15);
-        const int = setInterval(reToken, 1000 * 60 * 8);
         return ()=>{
             clearInterval(timer);
-            clearInterval(int);
         }
-    },[reToken,isAuthorized])
+    },[isAuthorized])
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const matchesMd = useMediaQuery(theme.breakpoints.between('sm', 'md'));

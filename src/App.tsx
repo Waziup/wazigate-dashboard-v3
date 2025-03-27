@@ -4,7 +4,7 @@ import Layout from './components/layout/Layout'
 import Dashboard from './pages/Dashboard'
 import Devices from './pages/devices/Devices'
 // import Automation from './pages/Automation'
-import Apps from './pages/Apps'
+import EdgeApplicationsPage from './pages/EdgeApplicationsPage'
 import Settings from './pages/settings/Settings'
 import Login from './pages/Login';
 import DeviceSensor from './pages/devices/Sensor'
@@ -58,7 +58,7 @@ function App() {
                                         <Route path='/devices/:id/sensors/:sensorId/setting' element={<DeviceSensorSettings/>}/>
                                         <Route path='/devices/:id/actuators/:actuatorId' element={<Actuator/>}/>
                                         <Route path='/devices/:id/actuators/:actuatorId/setting' element={<ActuatorSettings/>}/>
-                                        <Route path='/apps' element={<Apps/>}/>
+                                        <Route path='/apps' element={<EdgeApplicationsPage/>}/>
                                         <Route path='/apps/:id/:id2/' element={<AppUI/>}/>
                                         <Route path='/settings' element={<Settings/>}/>
                                         <Route path='/settings/networking' element={<SettingsNetworking/>}/>

@@ -8,9 +8,46 @@ async function failResp(resp: Response) {
 }
 
 /*--------------*/
-
+function getTokenExpiry(token: string): number{
+    if(!token) return 0;
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.exp * 1000
+    } catch (error) {
+        console.log("Failed to parse token: ",error)
+        return 0
+    }
+}
+function isTokenExpiringSoon(token: string, buffer: number = 120000): boolean{
+    const expiry = getTokenExpiry(token);
+    return Date.now() >= (expiry - buffer)
+}
+async function tokenChecker(token: string | null){
+    if(!token) return ''
+    if (isTokenExpiringSoon(token as string)) {
+        try {
+            const tokenResp = await fetch(WaziGateApiUrl+'/auth/retoken', {
+                method: "POST",
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                }
+            });
+            if (!tokenResp.ok) {
+                throw new Error(`Failed to refresh token: ${tokenResp.statusText}`);
+            }
+            
+            const tokenText: string = await tokenResp.json();
+            sessionStorage.setItem('token',tokenText)
+            window.wazigate.setToken(tokenText)
+        } catch (error) {
+            console.error("Error refreshing token", error);
+            throw "Failed to refresh token. Please log in again.";
+        }
+    }
+}
 export async function internet() {
     const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "internet", {headers: {Authorization: 'Bearer ' + token}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
@@ -18,7 +55,8 @@ export async function internet() {
 /*--------------*/
 
 export async function getTime() {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "time", {headers: {Authorization: 'Bearer ' + token}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
@@ -27,39 +65,43 @@ export async function getTime() {
 /*-------------- */
 
 export async function getTimezones() {
-  const token = window.sessionStorage.getItem("token");
-  const resp = await fetch(URL + "timezones", {headers: {Authorization: 'Bearer ' + token}});
-  if (!resp.ok) await failResp(resp);
-  return await resp.json();
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch(URL + "timezones", {headers: {Authorization: 'Bearer ' + token}});
+    if (!resp.ok) await failResp(resp);
+    return await resp.json();
 }
 
 export async function getTimezone() {
-  const token = window.sessionStorage.getItem("token");
-  const resp = await fetch(URL + "timezone", {headers: {Authorization: 'Bearer ' + token}});
-  if (!resp.ok) await failResp(resp);
-  return await resp.json();
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch(URL + "timezone", {headers: {Authorization: 'Bearer ' + token}});
+    if (!resp.ok) await failResp(resp);
+    return await resp.json();
 }
 
 export async function getTimezoneAuto() {
-  const token = window.sessionStorage.getItem("token");
-  const resp = await fetch(URL + "timezone/auto", {headers: {Authorization: 'Bearer ' + token}});
-  if (!resp.ok) await failResp(resp);
-  return await resp.json();
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch(URL + "timezone/auto", {headers: {Authorization: 'Bearer ' + token}});
+    if (!resp.ok) await failResp(resp);
+    return await resp.json();
 }
 
 export async function setTimezone(data: string) {
-  const token = window.sessionStorage.getItem("token");
-  const resp = await fetch(URL + "timezone", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": 'Bearer ' + token
-    },
-    body: JSON.stringify(data),
-  });
-  if (!resp.ok) await failResp(resp);
-  return await resp.text();
-  // return await resp.json();
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch(URL + "timezone", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + token
+        },
+        body: JSON.stringify(data),
+    });
+    if (!resp.ok) await failResp(resp);
+    return await resp.text();
+    // return await resp.json();
 }
 
 /*-------------- */
@@ -69,7 +111,8 @@ export async function setTimezone(data: string) {
 export type Devices = Record<string, Device>;
 
 export async function getNetworkDevices(): Promise<Devices> {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "net", {headers: {Authorization: 'Bearer ' + token}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
@@ -97,7 +140,8 @@ export type AccessPointRequest = {
 }
 
 export async function setAPInfo(r: AccessPointRequest) {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "net/wifi/ap", {
         method: "POST",
         headers: {
@@ -113,7 +157,8 @@ export async function setAPInfo(r: AccessPointRequest) {
 //
 
 export async function setAPMode() {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "net/wifi/mode/ap", {
         method: "POST",
         headers: {
@@ -140,7 +185,8 @@ export type AccessPoint = {
 };
 
 export async function getWiFiScan(): Promise<AccessPoint[]> {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "net/wifi/scan", {headers: {Authorization: 'Bearer ' + token}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
@@ -153,7 +199,8 @@ export type WifiReq = {
 }
 
 export async function setWiFiConnect(r: WifiReq) {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "net/wifi", {
         method: "POST",
         headers: {
@@ -166,7 +213,8 @@ export async function setWiFiConnect(r: WifiReq) {
 }
 
 export async function removeWifi(ssid: string) {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "net/wifi", {
         method: "DELETE",
         headers: {
@@ -225,7 +273,8 @@ export type Device = {
 }
 
 export async function getWlanDevice(): Promise<Device> {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "net/wifi", {headers: {Authorization: 'Bearer ' + token}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
@@ -251,7 +300,8 @@ export type UsageInfo = {
 };
 
 export async function getUsageInfo(): Promise<UsageInfo> {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "usage", {headers: {Authorization: 'Bearer ' + token}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
@@ -268,7 +318,8 @@ export type cInfo = {
 };
 
 export async function getAllContainers(): Promise<cInfo[]> {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "docker", {headers: {Authorization: 'Bearer ' + token}});
     if (!resp.ok) await failResp(resp);
     return await resp.json();
@@ -282,7 +333,8 @@ export async function getContainer(id: string): Promise<cInfo> {
 }
 
 export async function setContainerAction(id: string, action: string) {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "docker/" + id + "/" + action, {
         method: "POST",
         headers: {
@@ -296,7 +348,8 @@ export async function setContainerAction(id: string, action: string) {
 }
 
 export async function getContainerLogs(id: string, tail: number) {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "docker/" + id + "/logs/" + tail.toString(), {headers: {Authorization: 'Bearer ' + token}});
 
     if (!resp.ok) await failResp(resp);
@@ -304,7 +357,8 @@ export async function getContainerLogs(id: string, tail: number) {
 }
 
 export async function dlContainerLogs(id: string) {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "docker/" + id + "/logs", {headers: {Authorization: 'Bearer ' + token}});
 
     if (!resp.ok) await failResp(resp);
@@ -314,36 +368,40 @@ export async function dlContainerLogs(id: string) {
 //
 
 export async function doUpdate() {
-  const token = window.sessionStorage.getItem("token");
-  const resp = await fetch(URL + "update", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": 'Bearer ' + token
-    },
-  });
-  if (!resp.ok) await failResp(resp);
-  return await resp.json();
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch(URL + "update", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + token
+        },
+    });
+    if (!resp.ok) await failResp(resp);
+    return await resp.json();
 }
 
 export async function getUpdateStatus() {
-  const token = window.sessionStorage.getItem("token");
-  const resp = await fetch(URL + "update/status", {headers: {Authorization: 'Bearer ' + token}});
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch(URL + "update/status", {headers: {Authorization: 'Bearer ' + token}});
 
-  if (!resp.ok) await failResp(resp);
-  return await resp.json();
+    if (!resp.ok) await failResp(resp);
+    return await resp.json();
 }
 
 export async function getVersion() {
-  const token = window.sessionStorage.getItem("token");
-  const resp = await fetch("version", {headers: {Authorization: 'Bearer ' + token}});
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch("version", {headers: {Authorization: 'Bearer ' + token}});
 
-  if (!resp.ok) await failResp(resp);
-  return await resp.text();
+    if (!resp.ok) await failResp(resp);
+    return await resp.text();
 }
 
 export async function getBuildNr() {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch("/buildnr", {headers: {Authorization: 'Bearer ' + token}});
 
     if (!resp.ok) await failResp(resp);
@@ -353,7 +411,8 @@ export async function getBuildNr() {
 //
 
 export async function getAllSensors() {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "sensors", {headers: {Authorization: 'Bearer ' + token}});
 
     if (!resp.ok) await failResp(resp);
@@ -361,7 +420,8 @@ export async function getAllSensors() {
 }
 
 export async function getSensorValue(name: string) {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "sensors/" + name, {headers: {Authorization: 'Bearer ' + token}});
 
     if (!resp.ok) await failResp(resp);
@@ -371,7 +431,8 @@ export async function getSensorValue(name: string) {
 //
 
 export async function getBlackout() {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "blackout", {headers: {Authorization: 'Bearer ' + token}});
 
     if (!resp.ok) await failResp(resp);
@@ -381,7 +442,8 @@ export async function getBlackout() {
 //
 
 export async function getConf() {
-  const token = window.sessionStorage.getItem("token");
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
     const resp = await fetch(URL + "conf", {headers: {Authorization: 'Bearer ' + token}});
 
     if (!resp.ok) await failResp(resp);
@@ -389,63 +451,67 @@ export async function getConf() {
 }
 
 export async function setConf(data: { fan_trigger_temp:number,oled_halt_timeout:number }) {
-  const token = window.sessionStorage.getItem("token");
-  const resp = await fetch(URL + "conf", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": 'Bearer ' + token
-    },
-    body: JSON.stringify(data),
-  });
-  if (!resp.ok) await failResp(resp);
-  return await resp.text();
-  // return await resp.json();
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch(URL + "conf", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + token
+        },
+        body: JSON.stringify(data),
+    });
+    if (!resp.ok) await failResp(resp);
+    return await resp.text();
+    // return await resp.json();
 }
 
 export async function setTime(data: string) {
-  const token = window.sessionStorage.getItem("token");
-  const resp = await fetch(URL + "time", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": 'Bearer ' + token
-    },
-    body: JSON.stringify(data),
-  });
-  if (!resp.ok) await failResp(resp);
-  return await resp.text();
-  // return await resp.json();
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch(URL + "time", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + token
+        },
+        body: JSON.stringify(data),
+    });
+    if (!resp.ok) await failResp(resp);
+    return await resp.text();
+    // return await resp.json();
 }
 
 //
 
 export async function shutdown() {
-  const token = window.sessionStorage.getItem("token");
-  const resp = await fetch(URL + "shutdown", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": 'Bearer ' + token
-    },
-  });
-  if (!resp.ok) await failResp(resp);
-  return await resp.text();
-  // return await resp.json();
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch(URL + "shutdown", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + token
+        },
+    });
+    if (!resp.ok) await failResp(resp);
+    return await resp.text();
+    // return await resp.json();
 }
 
 export async function reboot() {
-  const token = window.sessionStorage.getItem("token");
-  const resp = await fetch(URL + "reboot", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": 'Bearer ' + token
-    },
-  });
-  if (!resp.ok) await failResp(resp);
-  return await resp.text();
-  // return await resp.json();
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch(URL + "reboot", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + token
+        },
+    });
+    if (!resp.ok) await failResp(resp);
+    return await resp.text();
+    // return await resp.json();
 }
 
 

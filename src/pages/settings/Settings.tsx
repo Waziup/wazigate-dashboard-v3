@@ -1,9 +1,8 @@
-import { Box, Grid, Typography,  Button, CircularProgress, SelectChangeEvent,  Dialog, DialogActions, DialogContent, DialogTitle, Breadcrumbs } from '@mui/material';
+import { Box, Grid, Typography, Button, CircularProgress, SelectChangeEvent, Dialog, DialogActions, DialogContent, DialogTitle, Breadcrumbs } from '@mui/material';
 import { DEFAULT_COLORS } from '../../constants';
 import { Mode, PowerSettingsNew, RestartAlt } from '@mui/icons-material';
 import { SxProps, Theme } from '@mui/material';
 import RowContainerBetween from '../../components/shared/RowContainerBetween';
-import RowContainerNormal from '../../components/shared/RowContainerNormal';
 import { Link, useOutletContext } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
@@ -11,7 +10,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
 import { useState, useEffect, useMemo, useContext } from 'react';
-import {setTime, shutdown,reboot,getBuildNr,getTimezoneAuto, getTime, getTimezones, setTimezone, getVersion, } from '../../utils/systemapi';
+import { setTime, shutdown, reboot, getBuildNr, getTimezoneAuto, getTime, getTimezones, setTimezone, getVersion, } from '../../utils/systemapi';
 import SelectElementString from '../../components/shared/SelectElementString';
 import GridItemEl from '../../components/shared/GridItemElement';
 import SnackbarComponent from '../../components/shared/Snackbar';
@@ -19,8 +18,8 @@ import { DevicesContext } from '../../context/devices.context';
 import InternetIndicator from '../../components/ui/InternetIndicator';
 import Backdrop from '../../components/Backdrop';
 // const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
-const GridItem = ({bgcolor,additionStyles,md, children,}: {xs:number,md:number, matches: boolean,bgcolor?:boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode }) => (
-    <Grid sx={{bgcolor: bgcolor?'#fff':'',...additionStyles}} bgcolor={bgcolor?'#fff':''} item md={md} lg={5.8} xl={5.8} sm={5.8} xs={12} my={1} >
+const GridItem = ({ bgcolor, additionStyles, md, children, }: { xs: number, md: number, matches: boolean, bgcolor?: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode }) => (
+    <Grid sx={{ bgcolor: bgcolor ? '#fff' : '', ...additionStyles }} bgcolor={bgcolor ? '#fff' : ''} item md={md} lg={5.8} xl={5.8} sm={5.8} xs={12} my={1} >
         {children}
     </Grid>
 );
@@ -31,21 +30,21 @@ const GridItem = ({bgcolor,additionStyles,md, children,}: {xs:number,md:number, 
  * put breadcrumbs on all pages.
  */
 const RowContainer = ({ children, additionStyles }: { children: React.ReactNode, additionStyles?: SxProps<Theme> }) => (
-    <RowContainerBetween additionStyles={{ ...additionStyles, alignItems: 'center',  m: 1, borderRadius: 1, p: 1 }}>
+    <RowContainerBetween additionStyles={{ ...additionStyles, alignItems: 'center', m: 1, borderRadius: 1, p: 1 }}>
         {children}
     </RowContainerBetween>
 );
 function padZero(t: number): string {
-    if (t < 10) return "0"+t;
-    return ""+t;
+    if (t < 10) return "0" + t;
+    return "" + t;
 }
 const convTime = (date: Date) => (
-    `${date.getFullYear()}-${padZero(date.getMonth()+1)}-${padZero(date.getDate())}T${padZero(date.getHours())}:${padZero(date.getMinutes())}`
+    `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}T${padZero(date.getHours())}:${padZero(date.getMinutes())}`
 );
 function Settings() {
     const [matches] = useOutletContext<[matches: boolean]>();
-    const [infoConfig, setInfoConfig] = useState<{buildNr: string, version:string,}>({buildNr:'',version:''});
-    const [responseMessage , setReponseMessage] = useState<string>('');
+    const [infoConfig, setInfoConfig] = useState<{ buildNr: string, version: string, }>({ buildNr: '', version: '' });
+    const [responseMessage, setReponseMessage] = useState<string>('');
     const [isSetTimezoneAuto, setIsSetTimezoneAuto] = useState<boolean>(false);
     const [data, setData] = useState<{
         time: Date | null,
@@ -54,65 +53,65 @@ function Settings() {
         rZone: string,
     } | null>(null);
 
-    const [modalProps, setModalProps] = useState<{ open: boolean, title: string,  }>({ open: false, title: '' });
+    const [modalProps, setModalProps] = useState<{ open: boolean, title: string, }>({ open: false, title: '' });
     const [timezones, setTimezones] = useState<string[]>([]);
-    const {wazigateId,networkDevices, showDialog} = useContext(DevicesContext);
-    
+    const { wazigateId, networkDevices, showDialog } = useContext(DevicesContext);
+
     const submitTime = () => {
         setLoading(true)
         const date_and_time = convTime(data?.time as Date);
         setTime(date_and_time).then(() => {
             setLoading(false)
-            setModalProps({open:false,title:''})
+            setModalProps({ open: false, title: '' })
             showDialog({
-                title:"Time set",
-                content:"Time set successfully",
-                acceptBtnTitle:"CLOSE",
+                title: "Time set",
+                content: "Time set successfully",
+                acceptBtnTitle: "CLOSE",
                 hideCloseButton: true,
-                onAccept:()=>{},
-                onCancel:()=>{},
+                onAccept: () => { },
+                onCancel: () => { },
             });
-        },(error) => {
+        }, (error) => {
             setLoading(false)
-            setModalProps({open:false,title:''});
+            setModalProps({ open: false, title: '' });
             showDialog({
-                title:"Error",
-                content:"Error setting time: " + error,
-                acceptBtnTitle:"CLOSE",
+                title: "Error",
+                content: "Error setting time: " + error,
+                acceptBtnTitle: "CLOSE",
                 hideCloseButton: true,
-                onAccept:()=>{},
-                onCancel:()=>{},
+                onAccept: () => { },
+                onCancel: () => { },
             });
         });
     }
     const onTimeChange = (date: dayjs.Dayjs) => {
         setData({
             time: date.toDate(),
-            utc: data? data.utc: null,
-            zone: data? data.zone: '',
-            rZone: data? data.zone: ''
+            utc: data ? data.utc : null,
+            zone: data ? data.zone : '',
+            rZone: data ? data.zone : ''
         });
     }
     const [loading, setLoading] = useState(false)
     const handleChangeTimeZone = (e: SelectChangeEvent<string>) => {
-        if(data){
-            setData({...data, rZone: e.target.value});
+        if (data) {
+            setData({ ...data, rZone: e.target.value });
         }
     }
     const handleSaveTimezone = () => {
         setLoading(true);
         closeModal();
-        setTimezone(data?data.rZone:'')
-        .then(()=>{
-            setReponseMessage("The time zone set");
-            setLoading(false);
-        })
-        .catch(()=>{
-            setReponseMessage("Error setting time zone");
-            setLoading(false);
-        });
+        setTimezone(data ? data.rZone : '')
+            .then(() => {
+                setReponseMessage("The time zone set");
+                setLoading(false);
+            })
+            .catch(() => {
+                setReponseMessage("Error setting time zone");
+                setLoading(false);
+            });
     };
-    const infoConfigFc = async()=>{
+    const infoConfigFc = async () => {
         const buildNr = await getBuildNr()
         const version = await getVersion()
         setInfoConfig({
@@ -123,25 +122,25 @@ function Settings() {
     useEffect(() => {
         const isAuto = window.localStorage.getItem('timezoneAuto') === 'true';
         setIsSetTimezoneAuto(isAuto);
-        if(isAuto){
+        if (isAuto) {
             getTimezoneAuto()
-            .then((res) => {
-                setData({
-                    time: null,
-                    utc: null,
-                    zone: res,
-                    rZone: res
+                .then((res) => {
+                    setData({
+                        time: null,
+                        utc: null,
+                        zone: res,
+                        rZone: res
+                    });
+                }).catch(() => {
+                    setIsSetTimezoneAuto(false);
                 });
-            }).catch(()=>{
-                setIsSetTimezoneAuto(false);
-            });
         }
         getTimezones()
-        .then((res) => {
-            setTimezones(res);
-        },() => {
-            setTimezones([]);
-        });
+            .then((res) => {
+                setTimezones(res);
+            }, () => {
+                setTimezones([]);
+            });
         infoConfigFc()
         const getTimeInterval = setInterval(() => {
             getTime().then(
@@ -149,8 +148,8 @@ function Settings() {
                     setData({
                         time: isNaN(Date.parse(res.time)) ? null : new Date(res.time),
                         utc: isNaN(Date.parse(res.utc)) ? null : new Date(res.utc),
-                        zone: isSetTimezoneAuto? data? data.zone: '': res.zone,
-                        rZone: isSetTimezoneAuto? data? data.zone: '': res.zone
+                        zone: isSetTimezoneAuto ? data ? data.zone : '' : res.zone,
+                        rZone: isSetTimezoneAuto ? data ? data.zone : '' : res.zone
                     });
                 }
             );
@@ -158,149 +157,149 @@ function Settings() {
         // const timer = setInterval(() => {
         //     setCurrentTime(dayjs(data?.time).format('HH:mm:ss'));
         // }, 5000);
-        return () => { 
+        return () => {
             // clearInterval(timer); 
             clearInterval(getTimeInterval);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    const [apConn,eth0,address,connectedWifi] = useMemo(() => {
-        const apCn = networkDevices.wlan0? networkDevices.wlan0.AvailableConnections.find(conn => conn.connection.id === networkDevices.wlan0.ActiveConnectionId): null
+    const [apConn, eth0, address, connectedWifi] = useMemo(() => {
+        const apCn = networkDevices.wlan0 ? networkDevices.wlan0.AvailableConnections.find(conn => conn.connection.id === networkDevices.wlan0.ActiveConnectionId) : null
         const eth0 = networkDevices.eth0;
-        const addR = networkDevices.wlan0? networkDevices.wlan0.IP4Config.Addresses[0].Address: '';
-        const connId = networkDevices.wlan0? networkDevices.wlan0.ActiveConnectionId: '';
-        return [apCn, eth0,addR,connId]; 
-    },[networkDevices]);
+        const addR = networkDevices.wlan0 ? networkDevices.wlan0.IP4Config.Addresses[0].Address : '';
+        const connId = networkDevices.wlan0 ? networkDevices.wlan0.ActiveConnectionId : '';
+        return [apCn, eth0, addR, connId];
+    }, [networkDevices]);
     const shutdownHandler = () => {
         showDialog({
-            title:"Shut down",
-            acceptBtnTitle:"SHUTDOWN",
-            content:"Are you sure you want to shutdown?",
+            title: "Shut down",
+            acceptBtnTitle: "SHUTDOWN",
+            content: "Are you sure you want to shutdown?",
             onAccept() {
                 shutdown();
                 window.close();
             },
-            onCancel() {},
+            onCancel() { },
         })
     }
     useEffect(() => {
-        if(isSetTimezoneAuto){
+        if (isSetTimezoneAuto) {
             getTimezoneAuto()
-            .then((res) => {
-                setData({
-                    time: data?.time || null,
-                    utc: data?.utc || null,
-                    rZone: res,
-                    zone: res
-                })
-                window.localStorage.setItem('timezoneAuto', 'true');
-            }).catch(()=>{
-                setIsSetTimezoneAuto(false);
-            });
-        }else{
+                .then((res) => {
+                    setData({
+                        time: data?.time || null,
+                        utc: data?.utc || null,
+                        rZone: res,
+                        zone: res
+                    })
+                    window.localStorage.setItem('timezoneAuto', 'true');
+                }).catch(() => {
+                    setIsSetTimezoneAuto(false);
+                });
+        } else {
             window.localStorage.setItem('timezoneAuto', 'false');
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[isSetTimezoneAuto])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSetTimezoneAuto])
 
     const rebootHandler = () => {
         showDialog({
-            title:"Reboot",
-            acceptBtnTitle:"REBOOT",
+            title: "Reboot",
+            acceptBtnTitle: "REBOOT",
             content: "Are you sure you want to reboot?",
             onAccept() {
                 reboot();
                 window.close();
             },
-            onCancel() {},
+            onCancel() { },
         });
     }
     function closeModal() {
-        setModalProps({ open: false, title: ''});
+        setModalProps({ open: false, title: '' });
     }
     return (
         <>
             {
-                loading?(
+                loading ? (
                     <Backdrop>
                         <CircularProgress color="info" size={70} />
                     </Backdrop>
-                ):null
+                ) : null
             }
             {
-                responseMessage?(
+                responseMessage ? (
                     <SnackbarComponent anchorOrigin={{ vertical: 'top', horizontal: 'center' }} severity='success' autoHideDuration={6000} message={responseMessage} />
-                ):null
+                ) : null
             }
             <Dialog fullWidth open={modalProps.open && modalProps.title === 'Changing Timezone'} onClose={closeModal}>
                 <DialogTitle>{modalProps.title}</DialogTitle>
-                <DialogContent sx={{my:2,overflow:'auto'}}>
+                <DialogContent sx={{ my: 2, overflow: 'auto' }}>
                     <SelectElementString
                         conditions={timezones}
                         handleChange={handleChangeTimeZone}
                         title='Set TimeZone'
-                        value={data? data.rZone:''}
+                        value={data ? data.rZone : ''}
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button  onClick={closeModal} variant={'text'} sx={{ mx: 2,color:'#ff0000' }} color={'info'}>CLOSE</Button>
+                    <Button onClick={closeModal} variant={'text'} sx={{ mx: 2, color: '#ff0000' }} color={'info'}>CLOSE</Button>
                     <Button autoFocus onClick={handleSaveTimezone} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >SAVE</Button>
                 </DialogActions>
             </Dialog>
             <Dialog fullWidth open={modalProps.open && modalProps.title === 'Changing Time and date'} onClose={closeModal}>
                 <DialogTitle>{modalProps.title}</DialogTitle>
-                <DialogContent sx={{overflow:'auto',my:2,}}>
+                <DialogContent sx={{ overflow: 'auto', my: 2, }}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DemoContainer  components={[ 'DatePicker',]}>
+                        <DemoContainer components={['DatePicker',]}>
                             <DemoItem label="">
-                                <DesktopDateTimePicker 
-                                    onChange={(v)=>onTimeChange(v as dayjs.Dayjs)} 
-                                    sx={{ p: 0 }} 
-                                    value={dayjs(data?.time)} 
-                                    defaultValue={dayjs(data?.time)} 
+                                <DesktopDateTimePicker
+                                    onChange={(v) => onTimeChange(v as dayjs.Dayjs)}
+                                    sx={{ p: 0 }}
+                                    value={dayjs(data?.time)}
+                                    defaultValue={dayjs(data?.time)}
                                 />
                             </DemoItem>
                         </DemoContainer>
                     </LocalizationProvider>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={closeModal} variant={'text'} sx={{ mx: 2,color:'#ff0000' }} color={'info'}>CLOSE</Button>
+                    <Button onClick={closeModal} variant={'text'} sx={{ mx: 2, color: '#ff0000' }} color={'info'}>CLOSE</Button>
                     <Button autoFocus onClick={submitTime} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >SAVE</Button>
                 </DialogActions>
             </Dialog>
-            <Box sx={{px:matches? 4:2,py:2, overflowY: 'auto',scrollbarWidth:'.5rem', "::-webkit-slider-thumb":{backgroundColor:'transparent'}, height: '100%' }}>
+            <Box sx={{ px: matches ? 4 : 2, py: [0, 2], overflowY: 'auto', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' }, height: '100%' }}>
                 <Box>
                     <Box>
-                        <Typography fontWeight={700} fontSize={24} color={'black'}>Settings</Typography>
-                        <div role="presentation" onClick={()=>{}}>
+                        <Typography variant='h5'>Settings</Typography>
+                        <Box role="presentation" onClick={() => { }}>
                             <Breadcrumbs aria-label="breadcrumb">
-                                <Typography fontSize={16} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
-                                    <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                                    <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color="inherit" to="/">
                                         Home
                                     </Link>
                                 </Typography>
-                                <p style={{color: 'black',textDecoration:'none',fontWeight:300,fontSize:16 }} color="text.primary">
+                                <Typography style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} color="text.primary">
                                     Settings
-                                </p>
+                                </Typography>
                             </Breadcrumbs>
-                        </div>
+                        </Box>
                     </Box>
-                    {
-                        matches?  <Typography sx={{my:2, fontSize:13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography>:null
-                    }
+                    {/* {
+                        matches ? <Typography sx={{ my: 2, fontSize: 13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography> : null
+                    } */}
                 </Box>
-                <Grid width={'100%'} container>
-                    <GridItem additionStyles={{mr: matches?2:0,}} md={12} xs={12} matches={matches} >
-                        <GridItemEl additionStyles={{pb:.2,}} icon='cell_tower' text={apConn? 'Wifi info':'Ethernet'}> {/* text={(eth0 && eth0.IP4Config)?'Ethernet':'Network'}*/ }
+                <Grid width={'100%'} container mt={1}>
+                    <GridItem additionStyles={{ mr: matches ? 2 : 0, }} md={12} xs={12} matches={matches} >
+                        <GridItemEl additionStyles={{ pb: .2, }} icon='cell_tower' text={apConn ? 'Wifi info' : 'Ethernet'}> {/* text={(eth0 && eth0.IP4Config)?'Ethernet':'Network'}*/}
                             <RowContainer >
                                 <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
                                     {
-                                        address? 'Wifi name': (eth0 && eth0.IP4Config && eth0.IP4Config.Addresses[0].Address)?'Ethernet': <CircularProgress size={10} sx={{fontSize:10, }} />
+                                        address ? 'Wifi name' : (eth0 && eth0.IP4Config && eth0.IP4Config.Addresses[0].Address) ? 'Ethernet' : <CircularProgress size={10} sx={{ fontSize: 10, }} />
                                     }
                                 </Typography>
                                 <Typography textTransform={'uppercase'} color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>
                                     {
-                                        apConn? atob(apConn?.['802-11-wireless']?.ssid as unknown as string) || 'WAZIGATE-AP' : connectedWifi? connectedWifi:''
+                                        apConn ? atob(apConn?.['802-11-wireless']?.ssid as unknown as string) || 'WAZIGATE-AP' : connectedWifi ? connectedWifi : ''
                                     }
                                 </Typography>
                             </RowContainer>
@@ -308,13 +307,13 @@ function Settings() {
                                 <Typography color='primary.main' fontWeight={300}>IP address</Typography>
                                 <Typography color={DEFAULT_COLORS.primary_black} >
                                     {
-                                        address? address: (eth0 && eth0.IP4Config)? (eth0.IP4Config.Addresses[0].Address):(<CircularProgress size={10} sx={{fontSize:10 }} />)
+                                        address ? address : (eth0 && eth0.IP4Config) ? (eth0.IP4Config.Addresses[0].Address) : (<CircularProgress size={10} sx={{ fontSize: 10 }} />)
                                     }
                                 </Typography>
                             </RowContainer>
                             <RowContainer>
                                 <Typography color={'primary.main'} fontWeight={300}>Internet</Typography>
-                                <InternetIndicator/>
+                                <InternetIndicator />
                             </RowContainer>
                             {/* <RowContainer>
                                 <Typography color={'primary.main'} fontWeight={300}>Blackout Protection</Typography>
@@ -325,61 +324,36 @@ function Settings() {
                                 }
                             </RowContainer> */}
                         </GridItemEl>
-                        <GridItemEl text='Wazigate Identity' icon='fingerprint'>
-                            <RowContainer>
-                                <Typography sx={{textAlign:'left',color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
-                                    Wazigate ID
-                                </Typography>
-                                <Typography textTransform='uppercase' color={DEFAULT_COLORS.navbar_dark} component={'span'}>{wazigateId}</Typography> 
-                            </RowContainer>
-                            <RowContainer>
-                                <Typography sx={{textAlign:'left',color:DEFAULT_COLORS.navbar_dark,fontWeight:300}}>
-                                    Version
-                                </Typography>
-                                <Typography color={DEFAULT_COLORS.navbar_dark} component='span'>{infoConfig.version} (build number: {infoConfig.buildNr})</Typography> 
-                            </RowContainer>
-                        </GridItemEl>
-                        <GridItemEl text='Gateway Power' icon='power_settings_new'>
-                            <RowContainerNormal additionStyles={{ m: 1, borderRadius: 1, pb: matches?1:2 }}>
-                                <Button onClick={shutdownHandler} variant="contained" sx={{ mx: 1, fontWeight: 'bold', bgcolor: 'info.main' }} startIcon={<PowerSettingsNew />}>
-                                    Shutdown
-                                </Button>
-                                <Button onClick={rebootHandler} variant="contained" sx={{ mx: 1, fontWeight: 'bold', bgcolor: 'info.main' }} startIcon={<RestartAlt />}>
-                                    Restart
-                                </Button>
-                            </RowContainerNormal>
-                        </GridItemEl>
-                    </GridItem>
-                    <GridItem additionStyles={{borderRadius:2,boxShadow:0}}  md={12} xs={12} matches={matches} >
-                        <GridItemEl additionStyles={{pb:.2,}} icon='access_time' text={'Time Settings'}>
+
+                        <GridItemEl additionStyles={{ pb: .2, }} icon='access_time' text={'Time Settings'}>
                             <Box my={2}>
-                                
+
                                 <RowContainer>
                                     <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Gateway Time</Typography>
-                                    <Box sx={{display:'flex', alignItems:'center'}}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                         <Typography color={DEFAULT_COLORS.primary_black} fontSize={14}>
                                             {
-                                                data?(
+                                                data ? (
                                                     dayjs(data.time).format('HH:mm:ss')
-                                                ):(<CircularProgress size={10} sx={{fontSize:10, }} />)
+                                                ) : (<CircularProgress size={10} sx={{ fontSize: 10, }} />)
                                             }
                                         </Typography>
-                                        <Mode onClick={()=>{setModalProps({open:true,title:'Changing Timezone',})}} sx={{fontSize:16, cursor:'pointer', mx:1}}/>
+                                        <Mode onClick={() => { setModalProps({ open: true, title: 'Changing Time and date' }) }} sx={{ fontSize: 16, cursor: 'pointer', mx: 1 }} />
                                     </Box>
                                 </RowContainer>
                                 <RowContainer>
                                     <Typography color={DEFAULT_COLORS.navbar_dark} fontWeight={300}>Time Zone</Typography>
-                                    <Box sx={{display:'flex',alignItems:'center'}}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                         <Typography color={DEFAULT_COLORS.primary_black} fontSize={14}>
                                             {
-                                                data?(
+                                                data ? (
                                                     data.zone
-                                                ):(
-                                                    <CircularProgress size={10} sx={{fontSize:10, }} />
+                                                ) : (
+                                                    <CircularProgress size={10} sx={{ fontSize: 10, }} />
                                                 )
                                             }
                                         </Typography>
-                                        <Mode onClick={()=>{setModalProps({open:true,title:'Changing Time and date'})}} sx={{fontSize:16, cursor:'pointer', mx:1}}/>
+                                        <Mode onClick={() => { setModalProps({ open: true, title: 'Changing Timezone', }) }} sx={{ fontSize: 16, cursor: 'pointer', mx: 1 }} />
                                     </Box>
                                 </RowContainer>
                                 {/* <Box borderRadius={1} p={1} m={1}>
@@ -401,7 +375,51 @@ function Settings() {
                                 </Box> */}
                             </Box>
                         </GridItemEl>
-                        
+
+                        <GridItemEl text='Gateway Power' icon='power_settings_new'>
+                            <Box sx={{ display: 'flex', justifyContent: 'start', gap: 1.5, p: 2 }}>
+                                <Button onClick={shutdownHandler} variant="outlined" color='secondary' startIcon={<PowerSettingsNew />}>
+                                    Shutdown
+                                </Button>
+                                <Button onClick={rebootHandler} variant="contained" color='secondary' startIcon={<RestartAlt />}>
+                                    Restart
+                                </Button>
+                            </Box>
+                        </GridItemEl>
+                    </GridItem>
+
+                    <GridItem additionStyles={{ borderRadius: 2, boxShadow: 0 }} md={12} xs={12} matches={matches} >
+
+                        <GridItemEl text='Wazigate Identity' icon='fingerprint'>
+                            <RowContainer>
+                                <Typography sx={{ textAlign: 'left', color: DEFAULT_COLORS.navbar_dark, fontWeight: 300 }}>
+                                    Wazigate ID
+                                </Typography>
+                                <Typography textTransform='uppercase' color={DEFAULT_COLORS.navbar_dark} component={'span'}>{wazigateId}</Typography>
+                            </RowContainer>
+                            {/* <RowContainer> */}
+                            {/* <Typography sx={{ textAlign: 'left', color: DEFAULT_COLORS.navbar_dark, fontWeight: 300 }}>
+                                    Version
+                                </Typography> */}
+                            {/* <Typography color={DEFAULT_COLORS.navbar_dark} component='span'>{infoConfig.version} (build number: {infoConfig.buildNr})</Typography> */}
+                            <Box
+                                component="pre"
+                                sx={{
+                                    backgroundColor: '#e8f0fd',
+                                    color: '#000',
+                                    padding: 2,
+                                    // borderRadius: 1,
+                                    overflowX: 'auto',
+                                    fontFamily: 'monospace',
+                                    whiteSpace: 'pre-wrap',
+                                }}
+                            >
+                                <code>
+                                    {infoConfig.version} (build number: {infoConfig.buildNr})
+                                </code>
+                            </Box>
+                            {/* </RowContainer> */}
+                        </GridItemEl>
                     </GridItem>
                 </Grid>
             </Box>
