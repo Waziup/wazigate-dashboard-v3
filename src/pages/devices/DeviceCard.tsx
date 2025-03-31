@@ -8,7 +8,7 @@ import RowContainerNormal from '../../components/shared/RowContainerNormal';
 import DeviceImage from '../../assets/device.png';
 import { Device } from "waziup";
 import { SensorX } from "../../context/devices.context";
-import { differenceInMinutes, lineClamp } from '../../utils';
+import { lineClamp, time_ago } from '../../utils';
 
 interface DeviceCardProps {
     device: Device,
@@ -28,7 +28,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({ device, navigate, handleSelectD
                         <Box onClick={() => navigate(`/devices/${device.id}`, { state: { title: device.name } })}>
                             <Typography sx={{ ...lineClamp(1) }}>{device.name || 'New Device'}</Typography>
                             <Typography color={DEFAULT_COLORS.secondary_black} variant='caption'>
-                                Last updated {differenceInMinutes(new Date(device.modified).toISOString())} before
+                                {time_ago(new Date(device.modified).toISOString()).toString()}
                             </Typography>
                         </Box>
                     </Box>
@@ -70,7 +70,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({ device, navigate, handleSelectD
                             <SensorActuatorInfo
                                 type='sensor'
                                 onClick={() => navigate(`/devices/${device.id}/sensors/${sensor.id}`, { state: { devicename: device.name, sensorId: sensor.id, deviceId: device.id, sensorname: sensor.name } })}
-                                lastUpdated={differenceInMinutes(new Date(sensor.time ? sensor.time : sensor.modified).toISOString()) ?? ''}
+                                lastUpdated={time_ago(new Date(sensor.time ? sensor.time : sensor.modified).toISOString()).toString() ?? ''}
                                 kind={(sensor.meta?.kind) || (sensor as SensorX).kind || 'AirThermometer'}
                                 iconname={sensor.meta?.icon || ''}
                                 name={sensor.name}
@@ -84,7 +84,7 @@ const DeviceCard: React.FC<DeviceCardProps> = ({ device, navigate, handleSelectD
                             <SensorActuatorInfo
                                 type='actuator'
                                 onClick={() => navigate(`/devices/${device.id}/actuators/${act.id}`, { state: { deviceId: device.id, actuatordId: act.id, actuatorname: act.name } })}
-                                lastUpdated={differenceInMinutes(new Date(act.time ? act.time as Date : act.modified).toISOString()) ?? ''}
+                                lastUpdated={time_ago(new Date(act.time ? act.time as Date : act.modified).toISOString()).toString() ?? ''}
                                 iconname={act.meta?.icon || ''}
                                 name={act.name}
                                 unit={act.meta?.unit && act.value ? act.meta.unit : ''}

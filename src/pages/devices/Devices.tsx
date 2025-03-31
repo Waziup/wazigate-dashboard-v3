@@ -5,7 +5,7 @@ import { Link, useNavigate, useOutletContext, } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
 import { type Device } from 'waziup';
 import { DevicesContext, SensorX } from '../../context/devices.context';
-import { devEUIGenerateFc, differenceInMinutes, lineClamp, } from '../../utils';
+import { devEUIGenerateFc,  lineClamp, time_ago, } from '../../utils';
 import PrimaryIconButton from '../../components/shared/PrimaryIconButton';
 import SensorActuatorInfo from '../../components/shared/SensorActuatorInfo';
 import MenuDropDown from '../../components/shared/MenuDropDown';
@@ -414,7 +414,7 @@ function Devices() {
                                                     <Box >
                                                         {/* <Typography sx={{ ...lineClamp(1) }} >{(device.name && device.name.length > 10) ? device.name : device.name ? device.name : ''}</Typography> */}
                                                         <Typography sx={{ ...lineClamp(1) }} >{device.name || 'New Device'}</Typography>
-                                                        <Typography color={DEFAULT_COLORS.secondary_black} variant='caption'> Last updated {differenceInMinutes(new Date(device.modified).toISOString())}  before</Typography>
+                                                        <Typography color={DEFAULT_COLORS.secondary_black} variant='caption'>{time_ago(new Date(device.modified).toISOString()).toString()}</Typography>
                                                     </Box>
                                                 </RowContainerNormal>
                                                 <MenuDropDown
@@ -469,7 +469,7 @@ function Devices() {
                                                                 onClick={() => {
                                                                     navigate(`/devices/${device.id}/sensors/${sensor.id}`, { state: { devicename: device.name, sensorId: sensor.id, deviceId: device.id, sensorname: sensor.name } })
                                                                 }}
-                                                                lastUpdated={sensor ? differenceInMinutes(new Date(sensor.time ? sensor.time : sensor.modified).toISOString()) ?? '' : ''}
+                                                                lastUpdated={sensor ? time_ago(new Date(sensor.time ? sensor.time : sensor.modified).toISOString()).toString() ?? '' : ''}
                                                                 kind={(sensor.meta && sensor.meta.kind) ? sensor.meta.kind : (sensor as SensorX).kind ? (sensor as SensorX).kind : 'AirThermometer'}
                                                                 iconname={(sensor.meta && sensor.meta.icon) ? sensor.meta.icon : ''}
                                                                 name={sensor.name}
@@ -488,7 +488,7 @@ function Devices() {
                                                                 onClick={() => {
                                                                     navigate(`/devices/${device.id}/actuators/${act.id}`, { state: { deviceId: device.id, actuatordId: act.id, actuatorname: act.name } })
                                                                 }}
-                                                                lastUpdated={act ? differenceInMinutes(new Date(act.time ? act.time as Date : act.modified).toISOString()) ?? '' : ''}
+                                                                lastUpdated={act ? time_ago(new Date(act.time ? act.time as Date : act.modified).toISOString()).toString() ?? '' : ''}
                                                                 key={act.id}
                                                                 type='actuator'
                                                                 iconname={(act.meta && act.meta.icon) ? act.meta.icon : ''}

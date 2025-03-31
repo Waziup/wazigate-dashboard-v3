@@ -5,7 +5,7 @@ import type { Device, Sensor } from "waziup";
 import { Link } from "react-router-dom";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
 import SensorTable from "../../components/ui/DeviceTable";
-import { cleanString, differenceInMinutes, lineClamp } from "../../utils";
+import { cleanString, lineClamp, time_ago } from "../../utils";
 import { Settings } from "@mui/icons-material";
 import SVGIcon from "../../components/shared/SVGIcon";
 import OntologiesIcons from '../../assets/ontologies.svg';
@@ -172,7 +172,7 @@ export default function DeviceSensor() {
                             <Typography variant="subtitle2" color={'text.primary'} fontWeight={400}>
                                 {
                                     sensor?.modified
-                                        ? `Last updated: ${differenceInMinutes(new Date(sensor.modified).toISOString())} ago`
+                                        ? time_ago(new Date(sensor.modified).toISOString()).toString()
                                         : 'Last updated: N/A'
                                 }
                             </Typography>
