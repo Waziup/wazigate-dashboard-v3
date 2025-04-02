@@ -212,7 +212,7 @@ function Dashboard() {
                     </Box>
                 ) : (
                     <Box sx={{ height: '100%', overflowY: 'auto' }}>
-                        <MobileDashboard
+                        {/* <MobileDashboard
                             onClick={onClick}
                             apConn={apConn}
                             eth0={eth0}
@@ -221,7 +221,7 @@ function Dashboard() {
                             totalDevices={devices ? devices.length : 0}
                             activeDevices={devices ? allActiveDevices(devices) : 0}
                             devices={devices ? orderByLastUpdated(devices.slice(-5)) : []}
-                        />
+                        /> */}
                     </Box>
                 )
             }
