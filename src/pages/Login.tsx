@@ -1,4 +1,4 @@
-import { Alert, Box, Button, FormControl, Input, Snackbar, Typography} from '@mui/material';
+import { Alert, Box, Button, FormControl, Icon, Input, Snackbar, Stack, Typography} from '@mui/material';
   import { DEFAULT_COLORS } from '../constants';
   import { useNavigate } from 'react-router-dom';
   import { yupResolver } from '@hookform/resolvers/yup';
@@ -39,6 +39,7 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography} from '@mu
     const navigate = useNavigate();
     const [showErrSnackbar, setShowErrSnackbar] = useState(false);
     const [errorMess, setErrorMessage] = useState('');
+    const [showPassword, setShowPassword] = useState<boolean>(false)
     const { handleSubmit, register } = useForm<RegistrationInput>({
       resolver: yupResolver(schema),
     });
@@ -110,6 +111,13 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography} from '@mu
                   fullWidth
                   placeholder="admin"
                   sx={{
+                    input:{
+                      "&:-webkit-autofill":{
+                        WebkitBoxShadow: '0 0 0 1000px white inset',
+                        WebkitTextFillColor:"#000",
+                        transition:'background-color 5000s ease-in-out 0s'
+                      }
+                    },
                     borderBottom: '1px solid #D5D6D8',
                     '&:before, &:after': { borderBottom: 'none' }
                   }}
@@ -117,16 +125,28 @@ import { Alert, Box, Button, FormControl, Input, Snackbar, Typography} from '@mu
               </InputField>
   
               <InputField label="Password">
-                <Input
-                  {...register('password')}
-                  type="password"
-                  fullWidth
-                  placeholder="••••••••"
-                  sx={{
-                    borderBottom: '1px solid #D5D6D8',
-                    '&:before, &:after': { borderBottom: 'none' }
-                  }}
-                />
+                  <Stack direction="row" borderBottom={'1px solid #D5D6D8'} alignItems="center" justifyContent="space-between">
+                    <Input
+                      {...register('password')}
+                      type= {showPassword?"text": "password"}
+                      fullWidth
+                      placeholder="••••••••"
+                      sx={{
+                        outline:'none',
+                        border:'none',
+                        input:{
+                          "&:-webkit-autofill":{
+                            WebkitBoxShadow: '0 0 0 1000px white inset',
+                            WebkitTextFillColor:"#000",
+                            transition:'background-color 5000s ease-in-out 0s'
+                          }
+                        },
+                        
+                        '&:before, &:after': { borderBottom: 'none' }
+                      }}
+                    />
+                    <Icon onClick={()=>setShowPassword(!showPassword)} sx={{ mr: 1, color: showPassword?'#000':'#ccc' }}>{showPassword?'visibility_outlined':'visibility_off_outlined'}</Icon>
+                  </Stack>
               </InputField>
   
               <Button
