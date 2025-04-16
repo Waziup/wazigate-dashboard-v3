@@ -357,6 +357,7 @@ export default function DeviceSettings() {
                         <Box my={2}>
                             <AddTextShow
                                 name="devAddr"
+                                color={thisDevice.meta.lorawan && thisDevice.meta.lorawan.devAddr && thisDevice.meta.lorawan.devAddr.length > 8 ?"red":"" }
                                 onTextInputChange={handleTextInputChange}
                                 autoGenerateHandler={autoGenerateLoraWANOptions}
                                 textInputValue={thisDevice?.meta.lorawan ? thisDevice.meta.lorawan.devAddr : ''}
@@ -367,6 +368,7 @@ export default function DeviceSettings() {
                                 onTextInputChange={handleTextInputChange}
                                 autoGenerateHandler={autoGenerateLoraWANOptions}
                                 name="nwkSEncKey"
+                                color={ thisDevice.meta.lorawan && thisDevice.meta.lorawan.nwkSEncKey && thisDevice.meta.lorawan.nwkSEncKey.length > 32 ?"red":"" }
                                 textInputValue={thisDevice?.meta.lorawan ? thisDevice?.meta.lorawan.nwkSEncKey : ''}
                                 text={'NwkSKey(Network Session Key)'}
                                 placeholder={'Network Session Key. 32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan ? thisDevice?.meta.lorawan.nwkSEncKey : '')}
@@ -375,13 +377,14 @@ export default function DeviceSettings() {
                                 onTextInputChange={handleTextInputChange}
                                 autoGenerateHandler={autoGenerateLoraWANOptions}
                                 name="appSKey"
+                                color={ thisDevice.meta.lorawan && thisDevice.meta.lorawan.appSKey && thisDevice.meta.lorawan.appSKey.length > 32 ?"red":"" }
                                 textInputValue={thisDevice?.meta.lorawan ? thisDevice?.meta.lorawan.appSKey : ''}
                                 text={'AppKey (App Key)'}
                                 placeholder={'App Key. 32 digits required, got ' + toStringHelper(thisDevice?.meta.lorawan ? thisDevice?.meta.lorawan.appSKey : '')}
                             />
                         </Box>
                         
-                        <Button variant="contained" disabled={!isEdited} fullWidth color="secondary" type="button" onClick={() => handleSubmitEditDevice()}>Save Changes</Button>
+                        <Button variant="contained" disabled={!isEdited || (thisDevice.meta.lorawan && ((thisDevice.meta.lorawan.nwkSEncKey && thisDevice.meta.lorawan.nwkSEncKey.length > 32) || (thisDevice.meta.lorawan.appSKey && thisDevice.meta.lorawan.appSKey.length > 32 )|| (thisDevice.meta.lorawan.devAddr && thisDevice.meta.lorawan.devAddr.length > 8))) } fullWidth color="secondary" type="button" onClick={() => handleSubmitEditDevice()}>Save Changes</Button>
                     </Box>
 
                     <Box boxShadow={1} bgcolor={'#fff'} my={2} px={2} py={2} borderRadius={2}>
