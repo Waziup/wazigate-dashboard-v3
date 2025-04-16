@@ -90,6 +90,7 @@ export default function EditeCreateDeviceDialog(props: EditCreateDeviceDialogPro
                                             <AddTextShow
                                                 autoGenerateHandler={autoGenerateLoraWANOptionsHandler}
                                                 name="devAddr"
+                                                color={ device.meta.lorawan.devAddr && device.meta.lorawan.devAddr.length > 8 ?"red":"" }
                                                 onTextInputChange={handleTextInputChangeEditCreateDevice}
                                                 textInputValue={device.meta.lorawan.devAddr}
                                                 text={'Device Addr (Device Address)'}
@@ -98,6 +99,7 @@ export default function EditeCreateDeviceDialog(props: EditCreateDeviceDialogPro
                                             <AddTextShow
                                                 autoGenerateHandler={autoGenerateLoraWANOptionsHandler}
                                                 name="nwkSEncKey"
+                                                color={ (device.meta.lorawan.nwkSEncKey && device.meta.lorawan.nwkSEncKey.length) > 32 ?"red":"" }
                                                 onTextInputChange={handleTextInputChangeEditCreateDevice}
                                                 textInputValue={device.meta.lorawan.nwkSEncKey}
                                                 text={'NwkSKey(Network Session Key)'}
@@ -107,6 +109,7 @@ export default function EditeCreateDeviceDialog(props: EditCreateDeviceDialogPro
                                                 autoGenerateHandler={autoGenerateLoraWANOptionsHandler}
                                                 name="appSKey" onTextInputChange={handleTextInputChangeEditCreateDevice}
                                                 textInputValue={device.meta.lorawan.appSKey}
+                                                color={ (device.meta.lorawan.appSKey &&device.meta.lorawan.appSKey.length) > 32 ?"red":"" }
                                                 text={'AppKey (App Key)'}
                                                 placeholder={'App Key 32 digits required, got ' + toStringHelper(device.meta.lorawan.appSKey)}
                                             />
@@ -119,7 +122,7 @@ export default function EditeCreateDeviceDialog(props: EditCreateDeviceDialogPro
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleToggleModal} variant={'text'} sx={{ mx: 1, color: '#ff0000' }}  color={'info'}>Cancel</Button>
-                    <Button disabled={!device.name} variant="text" type="submit" sx={{color: (!device.name) ? '#d9d9d9' :DEFAULT_COLORS.primary_blue}}>Save Changes</Button>
+                    <Button disabled={!device.name || (device.meta.lorawan && ((device.meta.lorawan.nwkSEncKey && device.meta.lorawan.nwkSEncKey.length > 32) || (device.meta.lorawan.appSKey && device.meta.lorawan.appSKey.length > 32) || (device.meta.lorawan.devAddr && device.meta.lorawan.devAddr.length > 8))) } variant="text" type="submit" sx={{color: (!device.name) ? '#d9d9d9' :DEFAULT_COLORS.primary_blue}}>Save Changes</Button>
                 </DialogActions>
             </Box>
         </Dialog>
