@@ -1,4 +1,4 @@
-import { Button, ButtonOwnProps, SxProps, Theme, Typography } from '@mui/material';
+import { Button, ButtonOwnProps, SxProps, Theme, } from '@mui/material';
 
 interface PrimaryButtonProps {
     title: string;
@@ -18,7 +18,6 @@ export default function PrimaryButton({
     additionStyles = {},
     color = 'info',
     variant = 'contained',
-    textColor = '#fff',
     onClick,
 }: PrimaryButtonProps) {
     return (

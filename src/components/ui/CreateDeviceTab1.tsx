@@ -1,4 +1,4 @@
-import { Box, FormControl, Typography, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, } from "@mui/material";
+import { Box, FormControl, Typography, MenuItem, Select, SelectChangeEvent, TextField, } from "@mui/material";
 import { Device } from "waziup";
 import { InputField } from "../../pages/Login";
 

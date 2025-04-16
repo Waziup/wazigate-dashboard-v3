@@ -1,5 +1,5 @@
 
-import { Box, Button, Card, CardActions, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Tooltip, Typography } from '@mui/material';
+import { Box, Button, CardActions, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Tooltip, Typography } from '@mui/material';
 import RowContainerBetween from '../shared/RowContainerBetween';
 import React, { useContext, useEffect, useState } from 'react';
 import { cInfo, getAllContainers, getContainerLogs, setContainerAction } from '../../utils/systemapi';
@@ -10,7 +10,6 @@ import { capitalizeFirstLetter, lineClamp, removeFirstChar, removeSpecialChars }
 import DockerSVG from '../../assets/docker.svg';
 import SnackbarComponent from '../shared/Snackbar';
 import { DevicesContext } from '../../context/devices.context';
-import { DEFAULT_COLORS } from '../../constants';
 export default function ContainersTabMaintenance() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [containers, setContainers] = React.useState<cInfo[]>([]);
