@@ -166,8 +166,8 @@ function Settings() {
     const [apConn, eth0, address, connectedWifi] = useMemo(() => {
         const apCn = networkDevices.wlan0 ? networkDevices.wlan0.AvailableConnections.find(conn => conn.connection.id === networkDevices.wlan0.ActiveConnectionId) : null
         const eth0 = networkDevices.eth0;
-        const addR = networkDevices.wlan0 ? networkDevices.wlan0.IP4Config.Addresses[0].Address : '';
-        const connId = networkDevices.wlan0 ? networkDevices.wlan0.ActiveConnectionId : '';
+        const addR = (networkDevices.wlan0 && networkDevices.wlan0.IP4Config && Array.isArray(networkDevices.wlan0.IP4Config.Addresses)) ? networkDevices.wlan0.IP4Config.Addresses[0].Address : '';
+        const connId = (networkDevices.wlan0 && networkDevices.wlan0.ActiveConnectionId ) ? networkDevices.wlan0.ActiveConnectionId : '';
         return [apCn, eth0, addR, connId];
     }, [networkDevices]);
     const shutdownHandler = () => {
