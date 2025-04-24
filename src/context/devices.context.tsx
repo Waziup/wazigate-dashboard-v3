@@ -34,7 +34,7 @@ interface ContextValues{
     apps: App[],
     wazigateId: string
     profile: User | null
-    showDialog : ({ title, content,acceptBtnTitle, onAccept, onCancel }: {hideCloseButton?:boolean, title: string, acceptBtnTitle:string,  content: string,   onAccept: ()=>void,onCancel: ()=>void,}) =>void,
+    showDialog : ({ title, content,acceptBtnTitle, onAccept, onCancel }: {hideCloseButton?:boolean, title: string, acceptBtnTitle:string,  content: string,   onAccept: ()=>void | Promise<void>,onCancel: ()=>void,}) =>void,
     closeDialog:()=>void,
     setProfile: (profile:User | null)=>void
     selectedCloud: Cloud | null
@@ -178,18 +178,18 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
         content: '',
         hideCloseButton:false,
         acceptBtnTitle:'',
-        onAccept: ()=>{},
+        onAccept: async ()=>{},
         onCancel: ()=>{},
     });
-    const showDialog = ({ title, content,hideCloseButton, onAccept,acceptBtnTitle, onCancel }: {acceptBtnTitle:string,hideCloseButton?:boolean,  title: string,   content: string, onAccept: ()=>void,onCancel: ()=>void,}) => {
+    const showDialog = ({ title, content,hideCloseButton, onAccept,acceptBtnTitle, onCancel }: {acceptBtnTitle:string,hideCloseButton?:boolean,  title: string,   content: string, onAccept: ()=>void | Promise<void>,onCancel: ()=>void,}) => {
         setDialogState({
             open: true,
             title,
             hideCloseButton: hideCloseButton?hideCloseButton:false,
             acceptBtnTitle,
             content,
-            onAccept(){
-                onAccept()
+            async onAccept(){
+                await onAccept()
                 closeDialog();
             },
             onCancel(){onCancel();closeDialog()},
