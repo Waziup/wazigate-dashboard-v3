@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Button, FormControl, Typography, Icon, MenuItem, Select, SelectChangeEvent, Input, Paper, Theme, useMediaQuery } from "@mui/material";
+import { Box, Breadcrumbs, Button, FormControl, Typography, Icon, MenuItem, Select, SelectChangeEvent, Input, Paper, Theme, useMediaQuery, Snackbar, Alert } from "@mui/material";
 import { Link, useOutletContext, useParams, useNavigate, } from "react-router-dom";
 import { DEFAULT_COLORS } from "../../constants";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
@@ -10,7 +10,6 @@ import { DevicesContext, SensorX } from "../../context/devices.context";
 import React from "react";
 import OntologyKindInput from "../../components/shared/OntologyKindInput";
 import { cleanString } from "../../utils";
-import SnackbarComponent from "../../components/shared/Snackbar";
 import { InputField } from "../Login";
 
 
@@ -302,16 +301,11 @@ export default function DeviceSensorSettings() {
     console.log(rsensor)
     return (
         <>
-            {
-                error ? (
-                    <SnackbarComponent
-                        autoHideDuration={5000}
-                        severity={error.severity}
-                        message={(error.message as Error).message ? (error.message as Error).message : (error.message as string)}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                    />
-                ) : null
-            }
+            <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={error !==null} autoHideDuration={3000} onClose={()=>setError(null)}>
+                <Alert onClose={()=>setError(null)} severity={error ? error.severity:'info'} sx={{ width: '100%' }}>
+                    {error?error.message as string:''}
+                </Alert>
+            </Snackbar>
             <Box>
                 <Box sx={{ px: [2, 4], py: [0, 2], }}>
                     <Typography variant="h5">{sensor?.name} Settings</Typography>

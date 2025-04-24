@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, Tooltip, Typography } from '@mui/material';
+import { Alert, Box, Breadcrumbs, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, Snackbar, Tooltip, Typography } from '@mui/material';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../constants';
 import { Download, FiberNew, } from '@mui/icons-material';
@@ -13,7 +13,6 @@ import { lineClamp, returnAppURL } from '../utils';
 import TextInputField from '../components/shared/TextInputField';
 import MenuComponent from '../components/shared/MenuDropDown';
 import Logo from '../assets/wazilogo.svg';
-import SnackbarComponent from '../components/shared/Snackbar';
 import WaziAppIcon from '../assets/WaziApp.svg';
 import CustomEdgeAppIcon from '../assets/CustomApp.svg';
 import Logo404 from '../assets/search.svg';
@@ -174,7 +173,6 @@ export default function EdgeApplicationsPage() {
         .then((appsr) => {
             setRecommendedApps(appsr);
         })
-        .catch((err)=>{setError({ message: 'Error: '+(err as string).toString(), severity: 'error' })})
     }
     useEffect(() => {
         if (apps.length === 0) {
@@ -434,28 +432,28 @@ export default function EdgeApplicationsPage() {
             title: (running ? 'Stopping' : 'Starting') + ' ' + appId + '?',
             acceptBtnTitle: running ? 'STOP' : 'START',
             content: 'Are you sure you want to ' + (running ? 'stop' : 'start') + ' ' + appId + '?',
-            onAccept() {
+            async onAccept() {
                 const config: StartAppConfig = {
                     action: running ? "stop" : "start",
                     restart: "no"
                 }
-                setLoading(true);
-                window.wazigate.startStopApp(appId, config)
-                    .then(() => {
-                        setError({
-                            message: 'App ' + appId + ' ' + (running ? 'stopped' : 'started') + ' successfully',
-                            severity: 'success'
-                        })
-                        getApps();
-                        setLoading(false);
-                    }).catch(() => {
-                        setError({
-                            message: 'Could not ' + (running ? 'stop' : 'start') + ' ' + appId,
-                            severity: 'error'
-                        })
-                        getApps();
-                        setLoading(false);
-                    })
+                try {
+                    setLoading(true);
+                    await window.wazigate.startStopApp(appId, config)
+                    setError({
+                        message: `App ${appId} ${running ? 'stopped' : 'started'} successfully`,
+                        severity: 'success'
+                    });
+                    getApps();
+                } catch (error) {
+                    setError({
+                        message: `Could not ${running ? 'stop' : 'start'} ${appId}`,
+                        severity: 'error'
+                    });
+                    getApps();
+                } finally {
+                    setLoading(false);
+                }
             },
             onCancel() {
 
@@ -466,12 +464,11 @@ export default function EdgeApplicationsPage() {
         <>
             {
                 error ? (
-                    <SnackbarComponent
-                        autoHideDuration={5000}
-                        severity={error.severity}
-                        message={error && (error).message ? (error.message as Error).message : ''}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                    />
+                    <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={error !==null} autoHideDuration={3000} onClose={()=>setError(null)}>
+                        <Alert onClose={()=>setError(null)} severity={error.severity} sx={{ width: '100%' }}>
+                            {error.message as string}
+                        </Alert>
+                    </Snackbar>
                 ) : null
             }
             {

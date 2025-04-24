@@ -1,4 +1,4 @@
-import { Box, Grid, CardContent, Typography, SelectChangeEvent, Breadcrumbs } from '@mui/material';
+import { Box, Grid, CardContent, Typography, SelectChangeEvent, Breadcrumbs, Snackbar, Alert } from '@mui/material';
 import RowContainerBetween from '../../components/shared/RowContainerBetween';
 import { DEFAULT_COLORS } from '../../constants';
 import { Link, useNavigate, useOutletContext, } from 'react-router-dom';
@@ -11,7 +11,6 @@ import SensorActuatorInfo from '../../components/shared/SensorActuatorInfo';
 import MenuDropDown from '../../components/shared/MenuDropDown';
 import RowContainerNormal from '../../components/shared/RowContainerNormal';
 import DeviceImage from '../../assets/device.png';
-import SnackbarComponent from '../../components/shared/Snackbar';
 import EditeCreateDeviceDialog from '../../components/ui/EditCreateDeviceDialog';
 
 const SortOptions = [
@@ -326,16 +325,11 @@ function Devices() {
     }
     return (
         <>
-            {
-                error ? (
-                    <SnackbarComponent
-                        autoHideDuration={5000}
-                        severity={error.severity}
-                        message={(error.message as Error).message ? (error.message as Error).message : (error.message as string)}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                    />
-                ) : null
-            }
+            <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={error !==null} autoHideDuration={3000} onClose={()=>setError(null)}>
+                <Alert onClose={()=>setError(null)} severity={error ? error.severity:'info'} sx={{ width: '100%' }}>
+                    {error?error.message as string:''}
+                </Alert>
+            </Snackbar>
             <Box sx={{ height: '100%' }}>
                 <EditeCreateDeviceDialog
                     mode={mode}

@@ -1,9 +1,7 @@
-import { Box, Button, } from '@mui/material';
+import { Alert, Box, Button, Snackbar, } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { getContainerLogs, dlContainerLogs, getAllContainers, cInfo } from '../../utils/systemapi';
 import { useEffect, useState } from 'react';
-import SnackbarComponent from '../shared/Snackbar';
-
 export default function LogsTabMaintenance() {
     const [data, setData] = useState<string>('');
     const [sysContainer, setSysContainer] = useState<cInfo | undefined>(undefined);
@@ -77,24 +75,20 @@ export default function LogsTabMaintenance() {
         );
     }
     return (
-
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {
-                error ? (
-                    <SnackbarComponent
-                        autoHideDuration={5000}
-                        severity={error.severity}
-                        message={(error.message as Error).message ? (error.message as Error).message : (error.message as string)}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                    />
-                ) : null
-            }
-            <Box sx={{ bgcolor: 'white', boxShadow: 1, width: '100%', p: 3, borderRadius: 2, position: 'relative', }}>
-                <pre style={{ fontSize: 13, flexWrap: 'wrap', textWrap: 'wrap' }}>
-                    {data}
-                </pre>
+        <>
+            <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={error !==null} autoHideDuration={5000} onClose={()=>setError(null)}>
+                <Alert onClose={()=>setError(null)} severity={error ? error.severity:'info'} sx={{ width: '100%' }}>
+                    {error?error.message as string:''}
+                </Alert>
+            </Snackbar>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box sx={{ bgcolor: 'white', boxShadow: 1, width: '100%', p: 3, borderRadius: 2, position: 'relative', }}>
+                    <pre style={{ fontSize: 13, flexWrap: 'wrap', textWrap: 'wrap' }}>
+                        {data}
+                    </pre>
+                </Box>
+                <Button onClick={downloadLogs} variant='contained' color='secondary' disableElevation sx={{ width: 'auto', alignSelf: 'flex-start' }} startIcon={<DownloadIcon />}>Download Logs</Button>
             </Box>
-            <Button onClick={downloadLogs} variant='contained' color='secondary' disableElevation sx={{ width: 'auto', alignSelf: 'flex-start' }} startIcon={<DownloadIcon />}>Download Logs</Button>
-        </Box>
+        </>
     )
 }

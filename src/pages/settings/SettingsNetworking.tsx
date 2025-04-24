@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, ListItemText, Grid, Icon, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Divider, Alert } from "@mui/material";
+import { Box, Breadcrumbs, ListItemText, Grid, Icon, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Divider, Alert, Snackbar } from "@mui/material";
 import { Link, useOutletContext } from "react-router-dom";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
 import RowContainerNormal from "../../components/shared/RowContainerNormal";
@@ -14,7 +14,6 @@ import { DevicesContext } from "../../context/devices.context";
 import Backdrop from "../../components/Backdrop";
 import WaziLogo from '../../assets/wazilogo.svg';
 import { nameForState, orderAccessPointsByStrength } from "../../utils";
-import SnackbarComponent from "../../components/shared/Snackbar";
 import { InputField } from "../Login";
 
 export default function SettingsNetworking() {
@@ -329,16 +328,12 @@ export default function SettingsNetworking() {
     };
     return (
         <>
-            {
-                error ? (
-                    <SnackbarComponent
-                        autoHideDuration={5000}
-                        severity={error.severity}
-                        message={(error.message as Error).message ? (error.message as Error).message : (error.message as string)}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                    />
-                ) : null
-            }
+            <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={error !==null} autoHideDuration={3000} onClose={()=>setError(null)}>
+                <Alert onClose={()=>setError(null)} severity={error ? error.severity:'info'} sx={{ width: '100%' }}>
+                    {error?error.message as string:''}
+                </Alert>
+            </Snackbar>
+            
             {
                 loading ? (
                     <Backdrop>

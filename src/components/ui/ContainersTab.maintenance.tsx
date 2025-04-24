@@ -1,14 +1,12 @@
 
-import { Box, Button, CardActions, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Tooltip, Typography } from '@mui/material';
+import { Alert, Box, Button, CardActions, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Snackbar, Tooltip, Typography } from '@mui/material';
 import RowContainerBetween from '../shared/RowContainerBetween';
 import React, { useContext, useEffect, useState } from 'react';
 import { cInfo, getAllContainers, getContainerLogs, setContainerAction } from '../../utils/systemapi';
 import MenuComponent from '../shared/MenuDropDown';
 import { Android12Switch } from '../shared/Switch';
 import { capitalizeFirstLetter, lineClamp, removeFirstChar, removeSpecialChars } from '../../utils';
-
 import DockerSVG from '../../assets/docker.svg';
-import SnackbarComponent from '../shared/Snackbar';
 import { DevicesContext } from '../../context/devices.context';
 export default function ContainersTabMaintenance() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -70,16 +68,11 @@ export default function ContainersTabMaintenance() {
     };
     return (
         <>
-            {
-                error ? (
-                    <SnackbarComponent
-                        autoHideDuration={5000}
-                        severity={error.severity}
-                        message={(error.message as Error).message ? (error.message as Error).message : (error.message as string)}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                    />
-                ) : null
-            }
+            <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={error !==null} autoHideDuration={5000} onClose={()=>setError(null)}>
+                <Alert onClose={handleClose} severity={error ? error.severity:'info'} sx={{ width: '100%' }}>
+                    {error?error.message as string:''}
+                </Alert>
+            </Snackbar>
             <Dialog fullWidth open={openModal} onClose={() => { setOpenModal(false); setLogs({ success: false, logs: '' }) }}>
                 <DialogTitle>Container Logs</DialogTitle>
                 <DialogContent>

@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, Button, CircularProgress, SelectChangeEvent, Dialog, DialogActions, DialogContent, DialogTitle, Breadcrumbs } from '@mui/material';
+import { Box, Grid, Typography, Button, CircularProgress, SelectChangeEvent, Dialog, DialogActions, DialogContent, DialogTitle, Breadcrumbs, Snackbar, Alert } from '@mui/material';
 import { DEFAULT_COLORS } from '../../constants';
 import { Mode, PowerSettingsNew, RestartAlt } from '@mui/icons-material';
 import { SxProps, Theme } from '@mui/material';
@@ -13,7 +13,6 @@ import { useState, useEffect, useMemo, useContext } from 'react';
 import { setTime, shutdown, reboot, getBuildNr, getTimezoneAuto, getTime, getTimezones, setTimezone, getVersion, } from '../../utils/systemapi';
 import SelectElementString from '../../components/shared/SelectElementString';
 import GridItemEl from '../../components/shared/GridItemElement';
-import SnackbarComponent from '../../components/shared/Snackbar';
 import { DevicesContext } from '../../context/devices.context';
 import InternetIndicator from '../../components/ui/InternetIndicator';
 import Backdrop from '../../components/Backdrop';
@@ -226,11 +225,11 @@ function Settings() {
                     </Backdrop>
                 ) : null
             }
-            {
-                responseMessage ? (
-                    <SnackbarComponent anchorOrigin={{ vertical: 'top', horizontal: 'center' }} severity='success' autoHideDuration={6000} message={responseMessage} />
-                ) : null
-            }
+            <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={responseMessage !==''} autoHideDuration={3000} onClose={()=>setReponseMessage('')}>
+                <Alert onClose={()=>setReponseMessage('')} severity={'info'} sx={{ width: '100%' }}>
+                    {responseMessage}
+                </Alert>
+            </Snackbar>
             <Dialog fullWidth open={modalProps.open && modalProps.title === 'Changing Timezone'} onClose={closeModal}>
                 <DialogTitle>{modalProps.title}</DialogTitle>
                 <DialogContent sx={{ my: 2, overflow: 'auto' }}>

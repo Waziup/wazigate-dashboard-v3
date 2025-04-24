@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Button, Icon, FormControl, Typography, MenuItem, Select, SelectChangeEvent, Paper, Input, Theme, useMediaQuery } from "@mui/material";
+import { Box, Breadcrumbs, Button, Icon, FormControl, Typography, MenuItem, Select, SelectChangeEvent, Paper, Input, Theme, useMediaQuery, Snackbar, Alert } from "@mui/material";
 import { Link, useOutletContext, useParams, useNavigate, } from "react-router-dom";
 import { ArrowForward } from "@mui/icons-material";
 import { useCallback, useContext, useEffect, useState } from "react";
@@ -6,7 +6,6 @@ import { Actuator, Device } from "waziup";
 import React from "react";
 import OntologyKindInput from "../../components/shared/OntologyKindInput";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
-import SnackbarComponent from "../../components/shared/Snackbar";
 import { DEFAULT_COLORS } from "../../constants";
 import { ActuatorX, DevicesContext } from "../../context/devices.context";
 import { cleanString } from "../../utils";
@@ -251,16 +250,11 @@ export default function ActuatorSettings() {
     }
     return (
         <>
-            {
-                error ? (
-                    <SnackbarComponent
-                        autoHideDuration={5000}
-                        severity={error.severity}
-                        message={(error.message as Error).message ? (error.message as Error).message : (error.message as string)}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                    />
-                ) : null
-            }
+            <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={error !==null} autoHideDuration={3000} onClose={()=>setError(null)}>
+                <Alert onClose={()=>setError(null)} severity={error ? error.severity:'info'} sx={{ width: '100%' }}>
+                    {error?error.message as string:''}
+                </Alert>
+            </Snackbar>
             <Box>
                 <Box sx={{ px: [2, 4], py: [0, 2], }}>
                     <Typography variant="h5">{actuator?.name} Settings</Typography>
