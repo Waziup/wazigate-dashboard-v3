@@ -60,6 +60,7 @@ function App() {
                                         <Route path='/devices/:id/actuators/:actuatorId/setting' element={<ActuatorSettings/>}/>
                                         <Route path='/apps' element={<EdgeApplicationsPage/>}/>
                                         <Route path='/apps/:id/:id2/' element={<AppUI/>}/>
+                                        <Route path='/apps/:id' element={<AppUI/>}/>
                                         <Route path='/settings' element={<Settings/>}/>
                                         <Route path='/settings/networking' element={<SettingsNetworking/>}/>
                                         <Route path='/settings/maintenance' element={<SettingsMaintenance/>}/>
