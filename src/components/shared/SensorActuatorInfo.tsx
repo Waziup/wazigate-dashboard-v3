@@ -45,7 +45,7 @@ export default function SensorActuatorInfo({type, text,unit, name,kind, onClick,
                 />
                 <Stack flexDirection='column'>
                     <Typography color={'primary'} variant="subtitle1">{name}</Typography>
-                    <Typography color={'#797979'} variant="caption">Last updated {lastUpdated}</Typography>
+                    <Typography color={'#797979'} variant="caption">{lastUpdated}</Typography>
                 </Stack>
             </Box>
             <Stack flexDirection='row' alignItems={'baseline'}>    
