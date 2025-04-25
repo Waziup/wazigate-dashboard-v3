@@ -174,11 +174,9 @@ export default function DeviceSensorSettings() {
     }, [sensor?.kind, sensor?.meta.kind]);
 
     useEffect(() => {
-        const quantity = sensor?.meta.quantity ? sensor.meta.quantity : sensor?.quantity;
-        if (sensor?.meta.quantity) {
-            setUnitsCondition((ontologies.quantities)[quantity as keyof typeof ontologies.quantities].units);
-        } else if (sensor?.quantity) {
-            setUnitsCondition((ontologies.quantities)[quantity as keyof typeof ontologies.quantities].units);
+        const qty = sensor?.meta.quantity ? sensor.meta.quantity : sensor?.quantity? sensor?.quantity:'';
+        if (qty) {
+            setUnitsCondition((ontologies.quantities)[qty as keyof typeof ontologies.quantities].units);
         } else {
             setUnitsCondition([]);
         }
@@ -297,8 +295,7 @@ export default function DeviceSensorSettings() {
             name: cleanString(event.target.value) as string,
         })
     }
-    console.log(sensor)
-    console.log(rsensor)
+    
     return (
         <>
             <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={error !==null} autoHideDuration={3000} onClose={()=>setError(null)}>
