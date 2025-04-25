@@ -243,15 +243,8 @@ export default function EdgeApplicationsPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     const load = () => {
-        window.wazigate.getApp(appToUninstall ? appToUninstall.id : '').then(setAppToUninstall, (error) => {
-            showDialog({
-                content: error,
-                onAccept: () => { },
-                onCancel: () => { },
-                hideCloseButton: true,
-                acceptBtnTitle: "Close",
-                title: "Error encountered"
-            });
+        window.wazigate.getApp(appToUninstall ? appToUninstall.id : '').then(setAppToUninstall, (err) => {
+            setError({message: 'Error encountered '+err && err.message ? err.message : err as string,severity:"error"})
         });
     };
     useEffect(() => {
@@ -318,14 +311,7 @@ export default function EdgeApplicationsPage() {
                 setAppToUninstall(null);
                 getApps();
             }).catch((err) => {
-                showDialog({
-                    content: 'Could not uninstall ' + appToUninstall?.name + '. ' + err,
-                    onAccept: () => { },
-                    onCancel: () => { },
-                    hideCloseButton: true,
-                    acceptBtnTitle: "Close",
-                    title: "Error encountered"
-                });
+                setError({message: 'Error encountered '+err && err.message ? err.message : err as string,severity:"error"})
             })
         setAppToUninstall(null);
         setUninstLoader(false);
@@ -414,16 +400,7 @@ export default function EdgeApplicationsPage() {
             })
             .catch((err) => {
                 setLoading(false);
-                showDialog({
-                    content: err,
-                    onAccept: () => {
-
-                    },
-                    hideCloseButton: true,
-                    onCancel: () => { },
-                    acceptBtnTitle: "Close",
-                    title: "Error encountered"
-                });
+                setError({ message: 'Error encountered '+err, severity: 'warning' })
                 setShowAppSettings(!showAppSettings);
             });
     }
@@ -446,6 +423,7 @@ export default function EdgeApplicationsPage() {
                     });
                     getApps();
                 } catch (error) {
+                    console.log(error)
                     setError({
                         message: `Could not ${running ? 'stop' : 'start'} ${appId}`,
                         severity: 'error'

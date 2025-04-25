@@ -103,14 +103,7 @@ function Devices() {
                 })
                 getDevicesFc();
             }).catch(err => {
-                showDialog({
-                    content: err,
-                    onAccept: () => { },
-                    onCancel: () => { },
-                    title: "Error encountered",
-                    acceptBtnTitle: "Close",
-                    hideCloseButton: true,
-                });
+                setError({message: 'Error encountered'+err && err.message ? err.message : err as string,severity:"error"})
             });
     }
     const handleTextInputChangeEditCreateDevice = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,14 +157,7 @@ function Devices() {
                         })
                     })
                     .catch(err => {
-                        showDialog({
-                            content: err,
-                            onAccept: () => { },
-                            onCancel: () => { },
-                            acceptBtnTitle: "Close",
-                            hideCloseButton: true,
-                            title: "Error encountered"
-                        });
+                        setError({message: 'Error encountered: '+err && err.message ? err.message : err as string,severity:"error"})
                     })
             },
             onCancel() { },
@@ -225,14 +211,7 @@ function Devices() {
                     getDevicesFc();
                     return;
                 }).catch(err => {
-                    showDialog({
-                        content: err,
-                        onAccept: () => { },
-                        onCancel: () => { },
-                        acceptBtnTitle: "Close",
-                        title: "Error encountered",
-                        hideCloseButton: true,
-                    });
+                    setError({message: 'Error encountered '+err && err.message ? err.message : err as string,severity:"error"})
                 });
                 setMode('create')
             }
@@ -250,14 +229,7 @@ function Devices() {
                     });
                     return;
                 }).catch(err => {
-                    showDialog({
-                        content: err,
-                        onAccept: () => { },
-                        onCancel: () => { },
-                        hideCloseButton: true,
-                        acceptBtnTitle: "Close",
-                        title: "Error encountered"
-                    });
+                    setError({message: err && err.message ? err.message : err as string,severity:"error"})
                 });
                 setMode('create')
             }

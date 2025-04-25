@@ -118,14 +118,7 @@ export default function SettingsNetworking() {
                 });
             })
                 .catch((err) => {
-                    showDialog({
-                        title: "Error encountered",
-                        content: err && err.message ? err.message : err as string,
-                        acceptBtnTitle: "CLOSE",
-                        hideCloseButton: true,
-                        onAccept: () => { },
-                        onCancel: () => { },
-                    });
+                    setError({message: err && err.message ? err.message : err as string,severity:"error"})
                     setLoading(false);
                 });
         } else {
@@ -170,14 +163,7 @@ export default function SettingsNetworking() {
             })
             .catch((err) => {
                 setSaving(false);
-                showDialog({
-                    title: "Error encountered",
-                    content: err,
-                    acceptBtnTitle: "CLOSE",
-                    hideCloseButton: true,
-                    onAccept: () => { },
-                    onCancel: () => { },
-                });
+                setError({message: err && err.message ? err.message : err as string,severity:"error"});
             });
     }
     const submitConf = (event: React.FormEvent) => {
@@ -197,14 +183,7 @@ export default function SettingsNetworking() {
             });
         })
             .catch((err) => {
-                showDialog({
-                    title: "Error encountered",
-                    content: err,
-                    acceptBtnTitle: "CLOSE",
-                    hideCloseButton: true,
-                    onAccept: () => { },
-                    onCancel: () => { },
-                });
+                setError({message:'Error encountered '+ err && err.message ? err.message : err as string,severity:"error"})
             });
     };
     const switchToAPMode = () => {
@@ -268,21 +247,14 @@ export default function SettingsNetworking() {
             .catch((error) => {
                 setLoading(false)
                 setScanLoading(false)
-                showDialog({
-                    title: "Error encountered",
-                    content: error,
-                    acceptBtnTitle: "CLOSE",
-                    hideCloseButton: true,
-                    onAccept: () => { },
-                    onCancel: () => { },
-                });
+                setError({message: 'Error encountered'+error && error.message ? error.message : error as string,severity:"error"})
             });
     };
     const submitSSID = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formEl = document.getElementById('submitform') as HTMLFormElement;
         const data = {
-            SSID: formEl.SSID.value,
+            ssid: formEl.SSID.value,
             password: formEl.password.value,
         }
         showDialog({
