@@ -5,10 +5,13 @@ import { Menu, SettingsOutlined } from '@mui/icons-material';
 import RowContainerBetween from '../shared/RowContainerBetween';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { DevicesContext } from '../../context/devices.context';
+import { tokenChecker } from '../../utils/systemapi';
 function Layout() {
     const {setAccessToken, setProfile} = useContext(DevicesContext);
     const navigate = useNavigate();
-    const isAuthorized =useCallback(() => {
+    const isAuthorized =useCallback(async() => {
+        const tk = window.sessionStorage.getItem("token");
+        await tokenChecker(tk)
         fetch("sys/uptime")
         .then((resp)=>{
             if(resp.status === 401){

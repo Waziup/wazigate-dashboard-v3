@@ -18,11 +18,11 @@ function getTokenExpiry(token: string): number{
         return 0
     }
 }
-function isTokenExpiringSoon(token: string, buffer: number = 120000): boolean{
+function isTokenExpiringSoon(token: string, buffer: number = 180000): boolean{
     const expiry = getTokenExpiry(token);
     return Date.now() >= (expiry - buffer)
 }
-async function tokenChecker(token: string | null){
+export async function tokenChecker(token: string | null){
     if(!token) return ''
     if (isTokenExpiringSoon(token as string)) {
         try {
