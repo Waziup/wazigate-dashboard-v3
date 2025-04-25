@@ -78,13 +78,13 @@ export default function ContainersTabMaintenance() {
                 <DialogContent>
                     {
                         logs.success ? (
-                            <Box p={1} overflow={'auto'} height={200} bgcolor={'#000'}>
+                            <Box p={1} overflow={'auto'} height={300} bgcolor={'#000'}>
                                 <pre style={{ fontSize: 13, color: '#fff', flexWrap: 'wrap', textWrap: 'wrap' }}>
                                     {logs.logs}
                                 </pre>
                             </Box>
                         ) : (
-                            <Box p={1} overflow={'auto'} height={200} bgcolor={'#fff'}>
+                            <Box p={1} overflow={'auto'} height={300} bgcolor={'#fff'}>
                                 <pre style={{ fontSize: 18, fontWeight: 900, color: '#ff0000', flexWrap: 'wrap', textWrap: 'wrap' }}>
                                     {logs.logs}
                                 </pre>
