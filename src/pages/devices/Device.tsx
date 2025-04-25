@@ -437,7 +437,7 @@ function DeviceSettings() {
                                                     open={open}
                                                     modified={sens.time ? sens.time : sens.modified}
                                                     anchorEl={anchorEl}
-                                                    icon={(sens.meta && sens.meta.icon) ? sens.meta.icon : ''}
+                                                    icon={(sens.meta && sens.meta.kind) ? sens.meta.icon : ''}
                                                     kind={(sens.meta && sens.meta.kind) ? sens.meta.kind : (sens as SensorX).kind ? (sens as SensorX).kind : 'AirThermometer'}
                                                     handleClose={handleClose}
                                                     handleClickMenu={handleClickMenu}

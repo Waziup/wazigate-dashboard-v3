@@ -4,7 +4,6 @@ import BasicTable from "../components/ui/BasicTable";
 import React, { useContext, useMemo, FC, useCallback } from "react";
 import { DEFAULT_COLORS } from "../constants";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
-import MobileDashboard from "../components/layout/MobileDashboard";
 import RowContainerNormal from "../components/shared/RowContainerNormal";
 import RowContainerBetween from "../components/shared/RowContainerBetween";
 import { DevicesContext } from "../context/devices.context";

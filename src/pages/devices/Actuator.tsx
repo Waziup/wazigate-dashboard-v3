@@ -151,7 +151,7 @@ export default function Actuator() {
                                 <Stack>
                                     <SVGIcon style={{ width: 32, height: 32 }} src={`${OntologiesIcons}#${actuator?.meta.icon}`} />
                                     <Typography gutterBottom sx={{ ...lineClamp(1) }}>{actuator?.name}</Typography>
-                                    <Typography variant='subtitle2' gutterBottom sx={{ color: 'text.secondary', ...lineClamp(2) }}>{`Type: ${actuator?.meta.Kind} `}</Typography>
+                                    <Typography variant='subtitle2' gutterBottom sx={{ color: 'text.secondary', ...lineClamp(2) }}>{`Type: ${actuator?.meta.kind} `}</Typography>
                                 </Stack>
                                 <Typography variant="h4" >
                                     {Math.round(actuator?.value * 100) / 100}

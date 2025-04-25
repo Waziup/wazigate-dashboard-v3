@@ -155,7 +155,7 @@ export default function DeviceSensor() {
                                 <Stack>
                                     <SVGIcon style={{ width: 32, height: 32 }} src={`${OntologiesIcons}#${sensor?.meta.icon}`} />
                                     <Typography gutterBottom sx={{ ...lineClamp(1) }}>{sensor?.name}</Typography>
-                                    <Typography variant='subtitle2' gutterBottom sx={{ color: 'text.secondary', ...lineClamp(2) }}>{`Type: ${sensor?.meta.Kind} `}</Typography>
+                                    <Typography variant='subtitle2' gutterBottom sx={{ color: 'text.secondary', ...lineClamp(2) }}>{`Type: ${sensor?.meta.kind} `}</Typography>
                                 </Stack>
                                 <Typography variant="h4" >
                                     {Math.round(sensor?.value * 100) / 100}
