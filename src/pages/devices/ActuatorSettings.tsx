@@ -130,12 +130,10 @@ export default function ActuatorSettings() {
         }
     }, [actuator?.kind, actuator?.meta]);
     React.useEffect(() => {
-        const quantity = actuator?.meta.quantity ? actuator.meta.quantity : actuator?.quantity;
-        if (actuator?.meta && actuator?.meta.quantity) {
-            setUnitsCondition((ontologies.quantities)[quantity as keyof typeof ontologies.quantities].units);
-        } else if (actuator?.quantity) {
-            setUnitsCondition((ontologies.quantities)[quantity as keyof typeof ontologies.quantities].units);
-        } else {
+        const qty = actuator?.meta.quantity ? actuator.meta.quantity : actuator?.quantity? actuator.quantity:'';
+        if (qty) {
+            setUnitsCondition((ontologies.quantities)[qty as keyof typeof ontologies.quantities].units);
+        }else {
             setUnitsCondition([]);
         }
     }, [actuator?.meta, actuator?.quantity])
