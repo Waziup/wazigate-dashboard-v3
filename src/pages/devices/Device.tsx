@@ -176,6 +176,7 @@ function DeviceSettings() {
             .then(() => {
                 handleToggleModal();
                 getDevice();
+                getDevicesFc();
                 setNewSensOrAct(initialState);
                 setModalEls('', '');
             })

@@ -41,7 +41,7 @@ export default function ContainersTabMaintenance() {
                 setContainerAction(containerId, action)
                     .then((msg) => {
                         setError({
-                            message: "Started successfully:\n " + msg,
+                            message: action+" successful:\n " + msg,
                             severity: 'success'
                         });
                         getAllContainers().then((cInfo) => {

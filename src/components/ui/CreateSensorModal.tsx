@@ -36,7 +36,7 @@ export default function CreateSensorModal({ newSensOrAct, handleSelectChange }: 
                     name="kind"
                 />
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', my: 1, justifyContent: 'start' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', my: 1, justifyContent: 'space-between' }}>
                 <SelectElementString
                     conditions={quantitiesCondition}
                     handleChange={(event: SelectChangeEvent<string>) => handleSelectChange('quantity', event.target.value)}
