@@ -236,6 +236,7 @@ export default function DeviceSensorSettings() {
                     window.wazigate.setSensorName(id as string, sensor?.id as string, sensor?.name as string).then(() => {
                         init();
                         getDevicesFc();
+                        setError({message:"Name updated successfully",severity:'success'})
                     }).catch((err) => {
                         setError({
                             message: "Error: " + err,
@@ -279,6 +280,7 @@ export default function DeviceSensorSettings() {
                 window.wazigate.deleteSensor(id as string, sensor?.id as string).then(() => {
                     getDevicesFc();
                     navigate('/devices/' + id)
+                    setError({message:sensor?.name+" removed successfully",severity:'success'})
                 }).catch((err) => {
                     setError({
                         message: "Error: " + err,

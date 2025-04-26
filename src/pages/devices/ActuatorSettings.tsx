@@ -190,6 +190,7 @@ export default function ActuatorSettings() {
                     window.wazigate.setActuatorName(id as string, actuator?.id as string, actuator?.name as string).then(() => {
                         init();
                         getDevicesFc()
+                        setError({message:"Name updated successfully",severity:'success'})
                     }).catch((err) => {
                         setError({
                             message: "Error: " + err,
@@ -210,6 +211,7 @@ export default function ActuatorSettings() {
                     window.wazigate.setActuatorMeta(id as string, actuator?.id as string, actuator?.meta as Actuator['meta']).then(() => {
                         init();
                         getDevicesFc()
+                        setError({message:"Fields updated successfully",severity:'success'})
                     }).catch((err) => {
                         setError({
                             message: "Error: " + err,
@@ -230,6 +232,7 @@ export default function ActuatorSettings() {
                 window.wazigate.deleteActuator(id as string, actuator?.id as string).then(() => {
                     getDevicesFc()
                     navigate('/devices/' + id)
+                    setError({message:actuator?.name+" removed successfully",severity:'success'})
                 }).catch((err) => {
                     setError({
                         message: "Error: " + err,
