@@ -412,13 +412,12 @@ export default function EdgeApplicationsPage() {
             async onAccept() {
                 const config: StartAppConfig = {
                     action: running ? "stop" : "start",
-                    restart: "no"
                 }
                 try {
                     setLoading(true);
-                    await window.wazigate.startStopApp(appId, config)
+                    const rsff = await window.wazigate.startStopApp(appId, config)
                     setError({
-                        message: `App ${appId} ${running ? 'stopped' : 'started'} successfully`,
+                        message: rsff+ " successful",
                         severity: 'success'
                     });
                     getApps();
