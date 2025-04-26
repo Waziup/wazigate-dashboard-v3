@@ -15,6 +15,7 @@ interface AddTextProps {
     autoGenerateHandler?: (title: "devAddr" | "nwkSEncKey" | "appSKey") => void;
 }
 
+
 export default function AddTextShow({
     text,
     isReadOnly,
@@ -28,14 +29,31 @@ export default function AddTextShow({
     textInputValue,
 }: AddTextProps) {
     const [msg,setMsg] = useState("Copy to clipboard")
-    function copyToClipboard(text: string | undefined) {
-        navigator.clipboard.writeText(text??'')
-        .then(() =>{
+    const unsecuredCopyToClipboard = (text: string) => { 
+        const textArea = document.createElement("textarea"); 
+        textArea.value=text; 
+        document.body.appendChild(textArea); 
+        textArea.focus();textArea.select(); 
+        try{
             setMsg("Copied to clipboard 👍👍");
-        })
-        .catch(err => {
-            setMsg("Could not copy "+err.toString())
-        });
+            document.execCommand('copy')
+        }catch(err){
+            setMsg("Could not copy "+(err as unknown as string).toString())
+        }
+        document.body.removeChild(textArea)
+    };
+    function copyToClipboard(text: string | undefined) {
+        if (window.isSecureContext && navigator.clipboard) {
+            navigator.clipboard.writeText(text??'')
+            .then(() =>{
+                setMsg("Copied to clipboard 👍👍");
+            })
+            .catch(err => {
+                setMsg("Could not copy "+err.toString())
+            });
+        }else{
+            unsecuredCopyToClipboard(text??'');
+        }
     }
     return (
         <>
