@@ -12,7 +12,6 @@ import CreateActuatorModal from "../../components/ui/CreateActuatorModal";
 import { Android12Switch } from "../../components/shared/Switch";
 import SensorActuatorItem from "../../components/shared/SensorActuatorItem";
 import { BrowserNotSupported, Settings } from "@mui/icons-material";
-import Logo404 from '../../assets/search.svg';
 import { InputField } from "../Login";
 
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -66,7 +65,6 @@ function DeviceSettings() {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [newSensOrAct, setNewSensOrAct] = useState<{ name: string, unitSymbol?: string, kind: string, icon: string, quantity: string, unit?: string }>(initialState);
     const [device, setDevice] = useState<Device | null>(null);
-    const [isError, setIsError] = useState<boolean>(false);
     const [modalProps, setModalProps] = useState<{ title: string, placeholder: string }>({ title: '', placeholder: '' });
     const { getDevicesFc, showDialog } = useContext(DevicesContext)
     const { id } = useParams();
@@ -76,21 +74,10 @@ function DeviceSettings() {
 
     const getDevice = useCallback(async () => {
         await window.wazigate.getDevice(id)
-            .then((dev) => {
-                setDevice(dev);
-            })
-            .catch((err) => {
-                showDialog({
-                    content: err,
-                    onAccept: () => { },
-                    onCancel: () => { },
-                    acceptBtnTitle: "CLOSE",
-                    hideCloseButton: true,
-                    title: "Error encountered"
-                });
-                setIsError(true);
-            })
-    }, [id, showDialog]);
+        .then((dev) => {
+            setDevice(dev);
+        })
+    }, [id]);
 
     useLayoutEffect(() => {
         getDevice();
@@ -228,16 +215,6 @@ function DeviceSettings() {
         });
     }
 
-    if (isError) {
-        return (
-            <Box display='flex' flexDirection='column' justifyContent='center' height='100%' alignItems='center'>
-                <img src={Logo404} style={{ filter: 'invert(80%) sepia(0%) saturate(0%) brightness(85%)', width: 140, height: 140 }} alt="Search Icon" />
-                <Typography>Hi there</Typography>
-                <Typography>Error Encountered while fetching, refresh.</Typography>
-            </Box>
-        )
-    }
-
     const handleSwitchChange = (actuatorId: string, value: boolean | number) => {
         window.wazigate.addActuatorValue(id as string, actuatorId, !value)
             .then(() => {
@@ -266,6 +243,13 @@ function DeviceSettings() {
     const selectHandler = (e: SelectChangeEvent) => {
         setNewSensOrAct(initialState);
         setModalEls(e.target.value === 'actuator' ? 'actuator' : 'sensor', e.target.value)
+    }
+    if (device===null) {
+        return(
+            <Box display='flex' flexDirection='column' justifyContent='center' height='100%' alignItems='center'>
+                <Typography>Getting device...</Typography>
+            </Box>
+        )
     }
 
     return (
@@ -423,6 +407,7 @@ function DeviceSettings() {
                                         ) : (
                                             device?.sensors.map((sens) => (
                                                 <SensorActuatorItem
+                                                    key={sens.id}
                                                     errorCallback={(msg) => {
                                                         showDialog({
                                                             title: 'Error Encountered',
@@ -484,6 +469,7 @@ function DeviceSettings() {
                                         device?.actuators?.map((act) => {
                                             return (
                                                 <SensorActuatorItem
+                                                    key={act.id}
                                                     errorCallback={(msg) => { showDialog({ acceptBtnTitle: "CLOSE", hideCloseButton: true, content: msg, onAccept: () => { }, onCancel: () => { }, title: 'Error Encountered' }) }}
                                                     type={"actuator"}
                                                     callbackFc={() => { getDevice(); getDevicesFc(); }}
