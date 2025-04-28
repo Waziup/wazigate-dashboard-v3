@@ -413,7 +413,7 @@ export default function SettingsNetworking() {
                                 <InputField label="Password">
                                     <Input
                                         placeholder="****"
-                                        name="password"
+                                        name="token"
                                         type="password"
                                         fullWidth
                                         onInput={handleInputChange}
