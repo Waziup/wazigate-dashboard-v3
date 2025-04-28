@@ -10,7 +10,7 @@ import { Settings } from "@mui/icons-material";
 import SVGIcon from "../../components/shared/SVGIcon";
 import OntologiesIcons from '../../assets/ontologies.svg';
 import SensorActuatorValuesChartPlot from "../../components/shared/SensorActuatorValuesChartPlot";
-
+import ontologies from '../../assets/ontologies.json';
 
 
 export default function Actuator() {
@@ -101,6 +101,9 @@ export default function Actuator() {
             })
         });
     }, [getActuatorValues, id, actuatorId]);
+    const iconPath = actuator && (actuator.meta.kind || (actuator as Actuator & {kind:string}).kind) && ontologies.actingDevices[actuator.meta.kind as keyof typeof ontologies.actingDevices]
+                    ? ontologies.actingDevices[actuator.meta.kind as keyof typeof ontologies.actingDevices].icon
+                    : 'motor'
     return (
         <Box sx={{ height: '100%', overflowY: 'auto', px: [2, 4], py: [0, 2], }}>
             <RowContainerBetween>
@@ -154,9 +157,9 @@ export default function Actuator() {
                         <CardContent>
                             <Box display='flex' justifyContent='space-between' alignItems='center'>
                                 <Stack>
-                                    <SVGIcon style={{ width: 32, height: 32 }} src={`${OntologiesIcons}#${actuator?.meta.icon}`} />
+                                    <SVGIcon style={{ width: 32, height: 32 }} src={`${OntologiesIcons}#${actuator?.meta.icon || iconPath}`} />
                                     <Typography gutterBottom sx={{ ...lineClamp(1) }}>{actuator?.name}</Typography>
-                                    <Typography variant='subtitle2' gutterBottom sx={{ color: 'text.secondary', ...lineClamp(2) }}>{`Type: ${actuator?.meta.Kind} `}</Typography>
+                                    <Typography variant='subtitle2' gutterBottom sx={{ color: 'text.secondary', ...lineClamp(2) }}>{`Type: ${actuator?.meta.kind} `}</Typography>
                                 </Stack>
                                 <Typography variant="h4" >
                                     {Math.round(actuator?.value * 100) / 100}

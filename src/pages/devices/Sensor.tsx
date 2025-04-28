@@ -10,7 +10,7 @@ import { Settings } from "@mui/icons-material";
 import SVGIcon from "../../components/shared/SVGIcon";
 import OntologiesIcons from '../../assets/ontologies.svg';
 import SensorActuatorValuesChartPlot from "../../components/shared/SensorActuatorValuesChartPlot";
-
+import ontologies from '../../assets/ontologies.json';
 
 export default function DeviceSensor() {
     function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
@@ -90,6 +90,11 @@ export default function DeviceSensor() {
         setValues(valuesTable);
     }
 
+    
+    const iconPath = sensor && (sensor.meta.kind || (sensor as Sensor & {kind:string}).kind) && ontologies.sensingDevices[sensor.meta.kind as keyof typeof ontologies.sensingDevices]
+                    ? ontologies.sensingDevices[sensor.meta.kind as keyof typeof ontologies.sensingDevices].icon
+                    : 'temperature';
+
     useLayoutEffect(() => {
         window.wazigate.getDevice(id).then((deviceResponse) => {
             const sensor = deviceResponse.sensors.find((sensor) => sensor.id === sensorId);
@@ -157,9 +162,9 @@ export default function DeviceSensor() {
                         <CardContent>
                             <Box display='flex' justifyContent='space-between' alignItems='center'>
                                 <Stack>
-                                    <SVGIcon style={{ width: 32, height: 32 }} src={`${OntologiesIcons}#${sensor?.meta.icon}`} />
+                                    <SVGIcon style={{ width: 32, height: 32 }} src={`${OntologiesIcons}#${sensor?.meta.icon || iconPath}`} />
                                     <Typography gutterBottom sx={{ ...lineClamp(1) }}>{sensor?.name}</Typography>
-                                    <Typography variant='subtitle2' gutterBottom sx={{ color: 'text.secondary', ...lineClamp(2) }}>{`Type: ${sensor?.meta.Kind} `}</Typography>
+                                    <Typography variant='subtitle2' gutterBottom sx={{ color: 'text.secondary', ...lineClamp(2) }}>{`Type: ${sensor?.meta.kind ||""} `}</Typography>
                                 </Stack>
                                 <Typography variant="h4" >
                                     {Math.round(sensor?.value * 100) / 100}
