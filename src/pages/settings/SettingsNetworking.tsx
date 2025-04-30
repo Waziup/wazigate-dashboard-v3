@@ -335,7 +335,7 @@ export default function SettingsNetworking() {
                             {/* Cloud Information box */}
                             <Box px={2}>
                                 <RowContainerNormal additionStyles={{ alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <Typography >Active Sync</Typography>
+                                    <Typography>Sync {selectedCloud?.paused?"Inactive":"Active"}</Typography>
                                     <Android12Switch
                                         sx={{ m: 0 }}
                                         checked={!selectedCloud?.paused}
