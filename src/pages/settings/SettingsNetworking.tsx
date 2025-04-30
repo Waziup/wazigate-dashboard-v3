@@ -9,7 +9,6 @@ import { getWiFiScan, setConf as setConfFc, AccessPoint, getConf, setWiFiConnect
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import GridItemEl from "../../components/shared/GridItemElement";
 import { Cloud } from "waziup";
-import MenuComponent from "../../components/shared/MenuDropDown";
 import { DevicesContext } from "../../context/devices.context";
 import Backdrop from "../../components/Backdrop";
 import WaziLogo from '../../assets/wazilogo.svg';
@@ -63,28 +62,7 @@ export default function SettingsNetworking() {
         } as Cloud);
         sethasUnsavedChanges(true);
     };
-    const handleRenameClick = () => {
-        const oldName = selectedCloud?.name || selectedCloud?.id;
-        const newCloudName = prompt("New cloud name:", oldName);
-        if (newCloudName) {
-            setSelectedCloud({
-                ...selectedCloud,
-                name: newCloudName
-            } as Cloud);
-            window.wazigate.set(`clouds/${selectedCloud?.id}/name`, newCloudName).then(() => {
-                // OK
-            }, (err) => {
-                setError({
-                    message: "Cannot change cloud name:\n " + err,
-                    severity: 'warning'
-                });
-                setSelectedCloud({
-                    ...selectedCloud,
-                    name: oldName
-                } as Cloud);
-            })
-        }
-    }
+    
     const handleSaveClick = async () => {
         if (hasUnsavedChanges) {
             setLoading(true);
@@ -352,16 +330,6 @@ export default function SettingsNetworking() {
                                         />
                                     </Box>
                                 </RowContainerNormal>
-                                <MenuComponent
-                                    open={false}
-                                    menuItems={[
-                                        {
-                                            text: 'Rename',
-                                            icon: 'edit',
-                                            clickHandler: handleRenameClick
-                                        }
-                                    ]}
-                                />
                             </RowContainerBetween>
 
                             {/* Cloud Information box */}
