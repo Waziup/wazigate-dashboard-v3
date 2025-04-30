@@ -50,6 +50,13 @@ export default function SettingsNetworking() {
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const name = event.target.name;
         const value = event.target.value;
+        if(selectedCloud?.paused === false){
+            setError({
+                severity:"error",
+                message:"Cannot change values when Sync is active, disable it"
+            })
+            return;
+        }
         setSelectedCloud({
             ...selectedCloud,
             [name]: value
@@ -416,6 +423,7 @@ export default function SettingsNetworking() {
                                         name="token"
                                         type="password"
                                         fullWidth
+                                        
                                         onInput={handleInputChange}
                                         value={selectedCloud?.token}
                                         sx={{
