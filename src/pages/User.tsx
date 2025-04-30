@@ -172,7 +172,7 @@ function User() {
                     <form onSubmit={handleSubmit(saveProfile)}>
                         <Typography sx={{ fontWeight: 200, fontSize: 13, mx: 1, my: .5, color: '#9CA4AB' }}></Typography>
                         <Box p={2}>
-                            <InputField label="User Name" mendatory>
+                            <InputField label="Display Name" mendatory>
                                 <Input
                                     type={'text'}
                                     onChange={onTextInputChange}
