@@ -103,19 +103,19 @@ export default function ActuatorSettings() {
     const addActuatorValueSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         window.wazigate.addActuatorValue(id as string, actuatorId as string, actuatorValue)
-            .then(() => {
-                setError({
-                    message: 'Actuator value added successfully',
-                    severity: 'success'
-                });
-                setActuatorValue(undefined);
-                getDevicesFc();
-            }).catch((err) => {
-                setError({
-                    message: "Error: " + err,
-                    severity: 'error'
-                });
+        .then(() => {
+            setError({
+                message: 'Actuator value added successfully',
+                severity: 'success'
             });
+            setActuatorValue(undefined);
+            getDevicesFc();
+        }).catch((err) => {
+            setError({
+                message: "Error: " + err,
+                severity: 'error'
+            });
+        });
     }
     const [quantitiesCondition, setQuantitiesCondition] = React.useState<string[]>([]);
     const [unitsCondition, setUnitsCondition] = React.useState<string[]>([]);
@@ -440,7 +440,7 @@ export default function ActuatorSettings() {
                                 name="name"
                                 placeholder='Actuator value'
                                 required
-                                value={actuatorValue}
+                                value={actuatorValue??''}
                                 onInput={onInputChange}
                                 sx={{ width: '100%', mr: 2 }}
                             />
