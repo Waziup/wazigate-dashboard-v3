@@ -171,9 +171,7 @@ export default function Actuator() {
 
                             <Typography variant="subtitle2" color={'text.primary'} fontWeight={400}>
                                 {
-                                    actuator?.modified
-                                        ? `${time_ago(new Date(actuator.modified).toISOString())}`
-                                        : 'Last updated: N/A'
+                                    actuator ? time_ago(new Date(actuator.time ? actuator.time as Date : actuator.modified).toISOString()).toString() ?? '' : ''
                                 }
                             </Typography>
                         </CardContent>

@@ -176,9 +176,7 @@ export default function DeviceSensor() {
 
                             <Typography variant="subtitle2" color={'text.primary'} fontWeight={400}>
                                 {
-                                    sensor?.modified
-                                        ? time_ago(new Date(sensor.modified).toISOString()).toString()
-                                        : 'Last updated: N/A'
+                                    sensor ? time_ago(new Date(sensor.time ? sensor.time : sensor.modified).toISOString()).toString() ?? '' : ''
                                 }
                             </Typography>
                         </CardContent>
