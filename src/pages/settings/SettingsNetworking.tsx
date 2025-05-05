@@ -1,12 +1,12 @@
-import { Box, Breadcrumbs, ListItemText, Grid, Icon, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar } from "@mui/material";
+import { Box, Breadcrumbs, ListItemText, Grid, Icon, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar, Divider } from "@mui/material";
 import { Link, useOutletContext } from "react-router-dom";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
 import RowContainerNormal from "../../components/shared/RowContainerNormal";
 import { ChangeCircleSharp } from "@mui/icons-material";
 import { Android12Switch } from "../../components/shared/Switch";
 // import PrimaryButton from "../../components/shared/PrimaryButton";
-import { getWiFiScan, setConf as setConfFc, AccessPoint, getConf, setWiFiConnect, WifiReq, setAPMode } from "../../utils/systemapi";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import { getWiFiScan, setConf as setConfFc, AccessPoint, getConf, setWiFiConnect, WifiReq, setAPMode,setAPInfo } from "../../utils/systemapi";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import GridItemEl from "../../components/shared/GridItemElement";
 import { Cloud } from "waziup";
 import { DevicesContext } from "../../context/devices.context";
@@ -22,6 +22,7 @@ export default function SettingsNetworking() {
     const [error, setError] = useState<{ message: Error | null | string, severity: "error" | "warning" | "info" | "success" } | null>(null);
     const [selectedWifi, setSelectedWifi] = useState<AccessPoint & { password?: string } | undefined>(undefined);
     const { networkDevices, selectedCloud, setNetWorkDevices, setSelectedCloud, showDialog } = useContext(DevicesContext)
+    const [rSelectedCloud,setRSelectedCloud]=useState<Cloud | null>(null)
     const scan = () => {
         setScanLoading(true);
         getWiFiScan()
@@ -47,6 +48,7 @@ export default function SettingsNetworking() {
         roled_halt_timeout: undefined
     });
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log("===========I was called=========")
         const name = event.target.name;
         const value = event.target.value;
         if(selectedCloud?.paused === false){
@@ -62,7 +64,43 @@ export default function SettingsNetworking() {
         } as Cloud);
         sethasUnsavedChanges(true);
     };
-    
+    const handleSaveClickConfirm =async ()=>{
+        console.log(rSelectedCloud)
+        console.log(selectedCloud)
+        if (rSelectedCloud?.username !==selectedCloud?.username || rSelectedCloud?.token !== selectedCloud?.token) {
+            showDialog({
+                title: "Change Sync details",
+                content: (
+                    <Box>
+                        <Alert icon={<></>} severity="warning">
+                            <pre>
+                                It seems that you are changing the WaziCloud Sync account details. {"\n"}
+                                Be careful, the WaziGate will NOT change the owner of the devices and gateway{"\n"}
+                                instances that have been created on the WaziCloud.{"\n"}
+                                They still belong to the previous account owner!{"\n"}
+                                If you want to use a new WaziCloud account on this gateway{"\n"}
+                                You need to either:{"\n"}
+                                1. Logging with the old account on the WaziCloud and{"\n"} 
+                                delete devices and gateways instances{"\n"}
+                                2. OR contact an admin{"\n"} 
+                                (who will delete the devices and gateways instances on the WaziCloud).{"\n"}
+                                After this, the WaziGate will recreate the new devices{"\n"} 
+                                and gateway instances on the WaziCloud under your account.{"\n"}
+                            </pre>
+                        </Alert>
+
+                    </Box>
+                ),
+                acceptBtnTitle: "EDIT",
+                onAccept: async ()=>{
+                    await handleSaveClick();
+                },
+                onCancel: () => { },
+            });
+        } else{
+            await handleSaveClick()
+        }
+    }
     const handleSaveClick = async () => {
         if (hasUnsavedChanges) {
             setLoading(true);
@@ -171,6 +209,21 @@ export default function SettingsNetworking() {
                 setError({message:'Error encountered '+ err && err.message ? err.message : err as string,severity:"error"})
             });
     };
+    const switchToAPIModeConfirm =()=>{
+        showDialog({
+            title: "Activating hotspot",
+            content:(
+                <Alert icon={<></>} severity="warning">
+                    <pre>
+                        IF YOU'RE CONNECTED TO ACCESS POINT YOU WILL LOOSE CONNECTION.
+                    </pre>
+                </Alert>
+            ),
+            acceptBtnTitle: "CLOSE",
+            onAccept: switchToAPMode,
+            onCancel: () => { },
+        });
+    }
     const switchToAPMode = () => {
         showDialog({
             title: "Switch AP mode",
@@ -193,7 +246,7 @@ export default function SettingsNetworking() {
             onCancel: () => { },
         });
     };
-    const fcInit = () => {
+    const fcInit =useCallback(() => {
         getConf().then((cf) => {
             setConf({
                 ...cf,
@@ -212,10 +265,31 @@ export default function SettingsNetworking() {
                 roled_halt_timeout: undefined
             });
         });
-    }
+        setRSelectedCloud(selectedCloud)
+    },[selectedCloud]);
     useEffect(() => {
         fcInit();
-    }, []);
+    }, [fcInit]);
+    const submitHandlerConfirm = async (event: React.FormEvent)=>{
+        showDialog({
+            title: "Connecting to wifi ",
+            content: (
+                <Alert icon={<></>} severity="warning">
+                    <pre>
+                        If you connect to this wifi you will loose connection
+                    </pre>
+                </Alert>
+            ),
+            acceptBtnTitle: "CONNECT",
+            onAccept: async ()=>{
+                await submitHandler(event)
+            },
+            onCancel: () => { 
+                setExpandedWifi(null)
+                setSelectedWifi(undefined);
+            },
+        });
+    }
     const submitHandler = async (event: React.FormEvent) => {
         event.preventDefault();
         const data: WifiReq = {
@@ -224,56 +298,57 @@ export default function SettingsNetworking() {
             autoConnect: true
         }
         setScanLoading(true)
+        setLoading(true);
         setWiFiConnect(data).then(() => {
+            setError({message:"You can now close this page and connect to your wifi then access this interface at wazigate.local. If the password was wrong, it will still open the access point, reconnect to it and enter a correct password.",severity:"success"})
             setScanLoading(false)
             setSelectedWifi(undefined);
-            setLoading(true);
-        })
-            .catch((error) => {
-                setLoading(false)
-                setScanLoading(false)
-                setError({message: 'Error encountered'+error && error.message ? error.message : error as string,severity:"error"})
-            });
+            setLoading(false);
+        }).catch((error) => {
+            setLoading(false)
+            setScanLoading(false)
+            setError({message: 'Error encountered'+error && error.message ? error.message : error as string,severity:"error"})
+        });
     };
-    // const submitSSID = (event: React.FormEvent<HTMLFormElement>) => {
-    //     event.preventDefault();
-    //     const formEl = document.getElementById('submitform') as HTMLFormElement;
-    //     const data = {
-    //         ssid: formEl.SSID.value,
-    //         password: formEl.password.value,
-    //     }
-    //     showDialog({
-    //         title: "Access point settings",
-    //         content: 'Are you sure you want to change the Access Point settings?',
-    //         acceptBtnTitle: "OK",
-    //         onAccept: () => {
-    //             setAPInfo(data)
-    //                 .then((msg) => {
-    //                     setError({
-    //                         message: "Success: \n " + msg,
-    //                         severity: 'success'
-    //                     });
-    //                 }).catch((error) => {
-    //                     setError({
-    //                         message: error,
-    //                         severity: 'warning'
-    //                     });
-    //                 });
-    //         },
-    //         onCancel: () => { },
-    //     });
-    // };
+    const submitSSID = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const formEl = document.getElementById('submitform') as HTMLFormElement;
+        const data = {
+            ssid: formEl.SSID.value,
+            password: formEl.password.value,
+        }
+        showDialog({
+            title: "Access point settings",
+            content: 'Are you sure you want to change the Access Point settings?',
+            acceptBtnTitle: "OK",
+            onAccept: () => {
+                setAPInfo(data)
+                    .then((msg) => {
+                        setError({
+                            message: "Success: \n " + msg,
+                            severity: 'success'
+                        });
+                    }).catch((error) => {
+                        setError({
+                            message: error,
+                            severity: 'warning'
+                        });
+                    });
+            },
+            onCancel: () => { },
+        });
+    };
     useEffect(() => {
         scan();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const [apConn, eth0, stateName] = useMemo(() => {
-        // const accessName = networkDevices.wlan0 ? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP") : null
+    const [apConn, eth0,accessName, stateName] = useMemo(() => {
+        const accessName = networkDevices.wlan0 ? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP") : null
         const apCn = networkDevices?.wlan0 ? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === networkDevices.wlan0.ActiveConnectionId) : null
         const eth0 = networkDevices?.eth0;
         const stateName = networkDevices.wlan0 ? nameForState(networkDevices.wlan0.State) : ''
-        return [apCn, eth0,  stateName];
+        return [apCn, eth0, accessName,  stateName];
     }, [networkDevices]);
 
 
@@ -285,7 +360,7 @@ export default function SettingsNetworking() {
     };
     return (
         <>
-            <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={error !==null} autoHideDuration={3000} onClose={()=>setError(null)}>
+            <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={error !==null} autoHideDuration={5000} onClose={()=>setError(null)}>
                 <Alert onClose={()=>setError(null)} severity={error ? error.severity:'info'} sx={{ width: '100%' }}>
                     {error?error.message as string:''}
                 </Alert>
@@ -407,7 +482,7 @@ export default function SettingsNetworking() {
                                     disabled={!hasUnsavedChanges}
                                     color="secondary"
                                     variant="contained"
-                                    onClick={handleSaveClick}
+                                    onClick={handleSaveClickConfirm}
                                 // startIcon={<Icon sx={{ fontSize: 20, mr: 1 }}>save</Icon>}
                                 >
                                     Save Changes
@@ -418,7 +493,7 @@ export default function SettingsNetworking() {
                         <GridItemEl text={'Access Point Settings'} icon={'key'}>
                             <Box sx={{ display: 'flex', flexDirection: matches ? 'row' : 'column', alignItems: 'center' }}>
                                 <Box width={'100%'} borderRadius={1} p={2} m={1}>
-                                    {/* <form id="submitform" onSubmit={submitSSID}>
+                                    <form id="submitform" onSubmit={submitSSID}>
 
                                         <InputField label="Access Point SSID" mendatory>
                                             <Input
@@ -447,12 +522,12 @@ export default function SettingsNetworking() {
                                             />
                                         </InputField>
                                         <Button sx={{ mt: 2 }} fullWidth color="secondary" variant="contained" type="submit">Save Changes</Button>
-                                    </form> */}
+                                    </form>
+                                    <Divider sx={{my:4}} />
                                     <Box display='flex' flexDirection='column' gap={1}>
                                         <Alert severity="warning">Activate the WaziGate Hotspot in order to connect to your gateway</Alert>
-                                        <Button title="Switch" onClick={switchToAPMode} variant="outlined" color="secondary" startIcon={<ChangeCircleSharp />}>ACTIVATE HOTSPOT</Button>
+                                        <Button title="Switch" onClick={switchToAPIModeConfirm} variant="outlined" color="secondary" startIcon={<ChangeCircleSharp />}>ACTIVATE HOTSPOT</Button>
                                     </Box>
-
                                 </Box>
                             </Box>
                         </GridItemEl>
@@ -600,7 +675,7 @@ export default function SettingsNetworking() {
                                                                 <Typography variant="body2">Max bit-rate: {wifi.maxBitrate}</Typography>
 
                                                                 <Box sx={{ mt: 1, }}>
-                                                                    <form onSubmit={submitHandler}>
+                                                                    <form onSubmit={submitHandlerConfirm}>
                                                                         <InputField label="Access Point Password" mendatory>
                                                                             <Input
                                                                                 id="password"
