@@ -1,11 +1,11 @@
-import { Box, Breadcrumbs, ListItemText, Grid, Icon, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Divider, Alert, Snackbar } from "@mui/material";
+import { Box, Breadcrumbs, ListItemText, Grid, Icon, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar } from "@mui/material";
 import { Link, useOutletContext } from "react-router-dom";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
 import RowContainerNormal from "../../components/shared/RowContainerNormal";
 import { ChangeCircleSharp } from "@mui/icons-material";
 import { Android12Switch } from "../../components/shared/Switch";
 // import PrimaryButton from "../../components/shared/PrimaryButton";
-import { getWiFiScan, setConf as setConfFc, AccessPoint, getConf, setWiFiConnect, WifiReq, setAPMode, setAPInfo } from "../../utils/systemapi";
+import { getWiFiScan, setConf as setConfFc, AccessPoint, getConf, setWiFiConnect, WifiReq, setAPMode } from "../../utils/systemapi";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import GridItemEl from "../../components/shared/GridItemElement";
 import { Cloud } from "waziup";
@@ -235,45 +235,45 @@ export default function SettingsNetworking() {
                 setError({message: 'Error encountered'+error && error.message ? error.message : error as string,severity:"error"})
             });
     };
-    const submitSSID = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const formEl = document.getElementById('submitform') as HTMLFormElement;
-        const data = {
-            ssid: formEl.SSID.value,
-            password: formEl.password.value,
-        }
-        showDialog({
-            title: "Access point settings",
-            content: 'Are you sure you want to change the Access Point settings?',
-            acceptBtnTitle: "OK",
-            onAccept: () => {
-                setAPInfo(data)
-                    .then((msg) => {
-                        setError({
-                            message: "Success: \n " + msg,
-                            severity: 'success'
-                        });
-                    }).catch((error) => {
-                        setError({
-                            message: error,
-                            severity: 'warning'
-                        });
-                    });
-            },
-            onCancel: () => { },
-        });
-    };
+    // const submitSSID = (event: React.FormEvent<HTMLFormElement>) => {
+    //     event.preventDefault();
+    //     const formEl = document.getElementById('submitform') as HTMLFormElement;
+    //     const data = {
+    //         ssid: formEl.SSID.value,
+    //         password: formEl.password.value,
+    //     }
+    //     showDialog({
+    //         title: "Access point settings",
+    //         content: 'Are you sure you want to change the Access Point settings?',
+    //         acceptBtnTitle: "OK",
+    //         onAccept: () => {
+    //             setAPInfo(data)
+    //                 .then((msg) => {
+    //                     setError({
+    //                         message: "Success: \n " + msg,
+    //                         severity: 'success'
+    //                     });
+    //                 }).catch((error) => {
+    //                     setError({
+    //                         message: error,
+    //                         severity: 'warning'
+    //                     });
+    //                 });
+    //         },
+    //         onCancel: () => { },
+    //     });
+    // };
     useEffect(() => {
         scan();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const [apConn, eth0, accessName, stateName] = useMemo(() => {
-        const accessName = networkDevices.wlan0 ? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP") : null
+    const [apConn, eth0, stateName] = useMemo(() => {
+        // const accessName = networkDevices.wlan0 ? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP") : null
         const apCn = networkDevices?.wlan0 ? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === networkDevices.wlan0.ActiveConnectionId) : null
         const eth0 = networkDevices?.eth0;
         const stateName = networkDevices.wlan0 ? nameForState(networkDevices.wlan0.State) : ''
-        return [apCn, eth0, accessName, stateName];
+        return [apCn, eth0,  stateName];
     }, [networkDevices]);
 
 
@@ -418,7 +418,7 @@ export default function SettingsNetworking() {
                         <GridItemEl text={'Access Point Settings'} icon={'key'}>
                             <Box sx={{ display: 'flex', flexDirection: matches ? 'row' : 'column', alignItems: 'center' }}>
                                 <Box width={'100%'} borderRadius={1} p={2} m={1}>
-                                    <form id="submitform" onSubmit={submitSSID}>
+                                    {/* <form id="submitform" onSubmit={submitSSID}>
 
                                         <InputField label="Access Point SSID" mendatory>
                                             <Input
@@ -447,13 +447,10 @@ export default function SettingsNetworking() {
                                             />
                                         </InputField>
                                         <Button sx={{ mt: 2 }} fullWidth color="secondary" variant="contained" type="submit">Save Changes</Button>
-                                    </form>
-
-                                    <Divider sx={{ my: 4 }} />
-
+                                    </form> */}
                                     <Box display='flex' flexDirection='column' gap={1}>
-                                        <Alert severity="warning">Connect to Wazigate Hotspot after pressing the button to manage your gateway over WiFi.</Alert>
-                                        <Button title="Switch" onClick={switchToAPMode} variant="outlined" color="secondary" startIcon={<ChangeCircleSharp />}>Switch</Button>
+                                        <Alert severity="warning">Activate the WaziGate Hotspot in order to connect to your gateway</Alert>
+                                        <Button title="Switch" onClick={switchToAPMode} variant="outlined" color="secondary" startIcon={<ChangeCircleSharp />}>ACTIVATE HOTSPOT</Button>
                                     </Box>
 
                                 </Box>
