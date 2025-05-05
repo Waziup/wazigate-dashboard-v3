@@ -1,13 +1,12 @@
 import { Dialog, DialogTitle, DialogContent, DialogContentText,DialogActions, Button } from '@mui/material';
 
 import { DEFAULT_COLORS } from '../../constants';
-
 interface Props{
     open: boolean,
     title: string,
     acceptBtnTitle: string
     hideCloseButton: boolean,
-    content: string,
+    content: string | React.ReactNode,
     onAccept:()=>void,
     onCancel:()=>void,
 }
@@ -24,9 +23,15 @@ export default function GlobalDialog({open,title,acceptBtnTitle,hideCloseButton,
         <Dialog fullWidth open={open} onClose={handleCancel}>
             <DialogTitle>{title}</DialogTitle>
             <DialogContent sx={{my:2,}} >
-                <DialogContentText sx={{my:1}}>
-                    {content}
-                </DialogContentText>
+                {
+                    typeof content ==='string'?(
+                        <DialogContentText sx={{my:1}}>
+                            {content}
+                        </DialogContentText>
+                    ):(
+                        content
+                    )
+                }
             </DialogContent>
             <DialogActions>
                 {
