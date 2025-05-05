@@ -169,25 +169,23 @@ export default function SettingsNetworking() {
         }
         setSaving(true);
         const timer = new Promise(resolve => setTimeout(resolve, 2000));
-        await window.wazigate.setCloudPaused(selectedCloud?.id as string, !checked)
-            .then(async () => {
-                showDialog({
-                    title: "Success",
-                    content: `Sync ${checked ? 'activated' : 'deactivated'}.`,
-                    acceptBtnTitle: "CLOSE",
-                    hideCloseButton: true,
-                    onAccept: () => { },
-                    onCancel: () => { },
-                });
-                setNetWorkDevices()
-                timer.then(() => {
-                    setSaving(false);
-                })
-            })
-            .catch((err) => {
-                setSaving(false);
-                setError({message: err && err.message ? err.message : err as string,severity:"error"});
+        await window.wazigate.setCloudPaused(selectedCloud?.id as string, !checked).then(async () => {
+            showDialog({
+                title: "Success",
+                content: `Sync ${checked ? 'activated' : 'deactivated'}.`,
+                acceptBtnTitle: "CLOSE",
+                hideCloseButton: true,
+                onAccept: () => { },
+                onCancel: () => { },
             });
+            setNetWorkDevices()
+            timer.then(() => {
+                setSaving(false);
+            })
+        }).catch((err) => {
+            setSaving(false);
+            setError({message: err && err.message ? err.message : err as string,severity:"error"});
+        });
     }
     const submitConf = (event: React.FormEvent) => {
         event.preventDefault();
@@ -204,14 +202,14 @@ export default function SettingsNetworking() {
                 onAccept: () => { },
                 onCancel: () => { },
             });
-        })
-            .catch((err) => {
-                setError({message:'Error encountered '+ err && err.message ? err.message : err as string,severity:"error"})
-            });
+        }).catch((err) => {
+            setError({message:'Error encountered '+ err && err.message ? err.message : err as string,severity:"error"})
+        });
     };
-    const switchToAPIModeConfirm =()=>{
+    
+    const switchToAPMode = () => {
         showDialog({
-            title: "Activating hotspot",
+            title: "Activating Hotspot",
             content:(
                 <Alert icon={<></>} severity="warning">
                     <pre>
@@ -219,15 +217,6 @@ export default function SettingsNetworking() {
                     </pre>
                 </Alert>
             ),
-            acceptBtnTitle: "CLOSE",
-            onAccept: switchToAPMode,
-            onCancel: () => { },
-        });
-    }
-    const switchToAPMode = () => {
-        showDialog({
-            title: "Switch AP mode",
-            content: 'Are you sure you want to switch to AP Mode?',
             acceptBtnTitle: "SWITCH",
             onAccept: () => {
                 setAPMode().then(() => {
@@ -235,13 +224,12 @@ export default function SettingsNetworking() {
                         message: "Switched to AP Mode\n ",
                         severity: 'success'
                     });
-                })
-                    .catch((error) => {
-                        setError({
-                            message: error,
-                            severity: 'error'
-                        });
+                }).catch((error) => {
+                    setError({
+                        message: error,
+                        severity: 'error'
                     });
+                });
             },
             onCancel: () => { },
         });
@@ -270,7 +258,8 @@ export default function SettingsNetworking() {
     useEffect(() => {
         fcInit();
     }, [fcInit]);
-    const submitHandlerConfirm = async (event: React.FormEvent)=>{
+    const submitHandler = async (event: React.FormEvent) => {
+        event.preventDefault();
         showDialog({
             title: "Connecting to wifi ",
             content: (
@@ -281,33 +270,29 @@ export default function SettingsNetworking() {
                 </Alert>
             ),
             acceptBtnTitle: "CONNECT",
-            onAccept: async ()=>{
-                await submitHandler(event)
+            onAccept: ()=>{
+                const data: WifiReq = {
+                    ssid: selectedWifi?.ssid as string,
+                    password: selectedWifi?.password,
+                    autoConnect: true
+                }
+                setScanLoading(true)
+                setLoading(true);
+                setWiFiConnect(data).then(() => {
+                    setError({message:"You can now close this page and connect to your wifi then access this interface at wazigate.local. If the password was wrong, it will still open the access point, reconnect to it and enter a correct password.",severity:"success"})
+                    setScanLoading(false)
+                    setSelectedWifi(undefined);
+                    setLoading(false);
+                }).catch((error) => {
+                    setLoading(false)
+                    setScanLoading(false)
+                    setError({message: 'Error encountered'+error && error.message ? error.message : error as string,severity:"error"})
+                });
             },
             onCancel: () => { 
                 setExpandedWifi(null)
                 setSelectedWifi(undefined);
             },
-        });
-    }
-    const submitHandler = async (event: React.FormEvent) => {
-        event.preventDefault();
-        const data: WifiReq = {
-            ssid: selectedWifi?.ssid as string,
-            password: selectedWifi?.password,
-            autoConnect: true
-        }
-        setScanLoading(true)
-        setLoading(true);
-        setWiFiConnect(data).then(() => {
-            setError({message:"You can now close this page and connect to your wifi then access this interface at wazigate.local. If the password was wrong, it will still open the access point, reconnect to it and enter a correct password.",severity:"success"})
-            setScanLoading(false)
-            setSelectedWifi(undefined);
-            setLoading(false);
-        }).catch((error) => {
-            setLoading(false)
-            setScanLoading(false)
-            setError({message: 'Error encountered'+error && error.message ? error.message : error as string,severity:"error"})
         });
     };
     const submitSSID = (event: React.FormEvent<HTMLFormElement>) => {
@@ -526,7 +511,7 @@ export default function SettingsNetworking() {
                                     <Divider sx={{my:4}} />
                                     <Box display='flex' flexDirection='column' gap={1}>
                                         <Alert severity="warning">Activate the WaziGate Hotspot in order to connect to your gateway</Alert>
-                                        <Button title="Switch" onClick={switchToAPIModeConfirm} variant="outlined" color="secondary" startIcon={<ChangeCircleSharp />}>ACTIVATE HOTSPOT</Button>
+                                        <Button title="Switch" onClick={switchToAPMode} variant="outlined" color="secondary" startIcon={<ChangeCircleSharp />}>ACTIVATE HOTSPOT</Button>
                                     </Box>
                                 </Box>
                             </Box>
@@ -675,7 +660,7 @@ export default function SettingsNetworking() {
                                                                 <Typography variant="body2">Max bit-rate: {wifi.maxBitrate}</Typography>
 
                                                                 <Box sx={{ mt: 1, }}>
-                                                                    <form onSubmit={submitHandlerConfirm}>
+                                                                    <form onSubmit={submitHandler}>
                                                                         <InputField label="Access Point Password" mendatory>
                                                                             <Input
                                                                                 id="password"
