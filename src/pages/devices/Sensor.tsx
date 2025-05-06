@@ -43,12 +43,9 @@ export default function DeviceSensor() {
                 setGraphValues(values);
                 const valuesTable = (res as { time: string, value: number }[]).map((value) => {
                     const date = new Date(value.time);
-                    const hours = String(date.getUTCHours()).padStart(2, '0');
-
-                    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
                     return {
                         value: Math.round(value.value * 100) / 100,
-                        modified: `${date.getFullYear()}-${(date.getMonth() + 1)}-${date.getDate()} ${hours}:${minutes}`
+                        modified: date.toLocaleString()
                     }
                 })
                 setValues(valuesTable);
