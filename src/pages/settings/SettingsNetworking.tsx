@@ -41,6 +41,7 @@ export default function SettingsNetworking() {
     const [saving, setSaving] = useState(false);
     const [loading, setLoading] = useState(false);
     const [hasUnsavedChanges, sethasUnsavedChanges] = useState(false);
+    const [accessPointInfo,setAccessPointInfo] = useState<{password: string,name:string}| null>(null)
     const [conf, setConf] = useState<{ rfan_trigger_temp: number | undefined,  fan_trigger_temp: number | undefined, oled_halt_timeout: number | undefined,roled_halt_timeout: number | undefined }>({
         fan_trigger_temp: undefined,
         rfan_trigger_temp: undefined,
@@ -478,7 +479,7 @@ export default function SettingsNetworking() {
                         <GridItemEl text={'Access Point Settings'} icon={'key'}>
                             <Box sx={{ display: 'flex', flexDirection: matches ? 'row' : 'column', alignItems: 'center' }}>
                                 <Box width={'100%'} borderRadius={1} p={2} m={1}>
-                                    <form id="submitform" onSubmit={submitSSID}>
+                                    <form  onSubmit={submitSSID}>
 
                                         <InputField label="Access Point SSID" mendatory>
                                             <Input
@@ -486,7 +487,8 @@ export default function SettingsNetworking() {
                                                 fullWidth
                                                 placeholder="Enter SSID"
                                                 name="SSID"
-                                                value={accessName ? atob(accessName["802-11-wireless"]?.ssid as string) : ""}
+                                                value={accessPointInfo?.name}
+                                                onInput={(e: React.ChangeEvent<HTMLInputElement>)=>{setAccessPointInfo({name:e.target.value, password: accessPointInfo?.password || ""})}}
                                                 sx={{
                                                     borderBottom: '1px solid #D5D6D8',
                                                     '&:before, &:after': { borderBottom: 'none' }
@@ -500,6 +502,8 @@ export default function SettingsNetworking() {
                                                 placeholder="Enter password"
                                                 name="password"
                                                 fullWidth
+                                                value={accessPointInfo?.password}
+                                                onInput={(e: React.ChangeEvent<HTMLInputElement>)=>{setAccessPointInfo({name: accessPointInfo?.name || "", password: e.target.value})}}
                                                 sx={{
                                                     borderBottom: '1px solid #D5D6D8',
                                                     '&:before, &:after': { borderBottom: 'none' }
