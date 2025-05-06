@@ -254,7 +254,7 @@ export default function SensorTable({ values, fetchMoreData, title }: Props) {
   const [orderBy, setOrderBy] = React.useState<keyof Data>('values');
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(7);
   const [showMore, setShowMore] = React.useState(false);
   const handleRequestSort = (
     _event: React.MouseEvent<unknown>,
