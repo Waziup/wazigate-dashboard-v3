@@ -151,7 +151,7 @@ export async function setAPInfo(r: AccessPointRequest) {
         body: JSON.stringify(r),
     });
     if (!resp.ok) await failResp(resp);
-    return await resp.json();
+    return;
 }
 
 //
