@@ -1,5 +1,5 @@
-import { Box, Breadcrumbs, ListItemText, Grid, Icon, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar, Divider } from "@mui/material";
-import { Link, useOutletContext } from "react-router-dom";
+import { Box, Breadcrumbs, ListItemText, Grid, Icon, Theme, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar, Divider, useMediaQuery } from "@mui/material";
+import { Link } from "react-router-dom";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
 import RowContainerNormal from "../../components/shared/RowContainerNormal";
 import { ChangeCircleSharp } from "@mui/icons-material";
@@ -16,7 +16,8 @@ import { nameForState, orderAccessPointsByStrength } from "../../utils";
 import { InputField } from "../Login";
 
 export default function SettingsNetworking() {
-    const [matches] = useOutletContext<[matches: boolean]>();
+
+    const matches = useMediaQuery((theme: Theme) => theme.breakpoints.up('sm'));
     const [scanLoading, setScanLoading] = useState<boolean>(false);
     const [wifiList, setWifiList] = useState<AccessPoint[]>([]);
     const [error, setError] = useState<{ message: Error | null | string, severity: "error" | "warning" | "info" | "success" } | null>(null);
@@ -24,6 +25,9 @@ export default function SettingsNetworking() {
     const { networkDevices, selectedCloud, setNetWorkDevices, setSelectedCloud, showDialog } = useContext(DevicesContext)
     const [rSelectedCloud,setRSelectedCloud]=useState<Cloud | null>(null)
     const scan = () => {
+        if (!networkDevices) {
+            setNetWorkDevices()
+        }
         setScanLoading(true);
         getWiFiScan()
             .then((res) => {
@@ -298,28 +302,28 @@ export default function SettingsNetworking() {
     };
     const submitSSID = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const formEl = document.getElementById('submitform') as HTMLFormElement;
         const data = {
-            ssid: formEl.SSID.value,
-            password: formEl.password.value,
+            ssid: accessPointInfo?.name,
+            password: accessPointInfo?.password
         }
         showDialog({
             title: "Access point settings",
             content: 'Are you sure you want to change the Access Point settings?',
             acceptBtnTitle: "OK",
-            onAccept: () => {
-                setAPInfo(data)
-                    .then((msg) => {
-                        setError({
-                            message: "Success: \n " + msg,
-                            severity: 'success'
-                        });
-                    }).catch((error) => {
-                        setError({
-                            message: error,
-                            severity: 'warning'
-                        });
+            onAccept:async  () => {
+                setAPInfo(data).then(()=>{
+                    setError({
+                        message: "Successfully configured",
+                        severity: 'success'
                     });
+                    setNetWorkDevices()
+                }).catch((error) => {
+                    setError({
+                        message: error,
+                        severity: 'warning'
+                    });
+                });
+                setAccessPointInfo(null)
             },
             onCancel: () => { },
         });
@@ -329,12 +333,20 @@ export default function SettingsNetworking() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const [apConn, eth0,accessName, stateName] = useMemo(() => {
+    const [apConn, eth0, stateName] = useMemo(() => {
         const accessName = networkDevices.wlan0 ? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP") : null
+        if(accessName){
+            setAccessPointInfo({
+                ...accessPointInfo,
+                name: accessName ? atob(accessName["802-11-wireless"]?.ssid as string) : "",
+                password: accessPointInfo?.password || ""
+            })
+        }
         const apCn = networkDevices?.wlan0 ? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === networkDevices.wlan0.ActiveConnectionId) : null
         const eth0 = networkDevices?.eth0;
         const stateName = networkDevices.wlan0 ? nameForState(networkDevices.wlan0.State) : ''
-        return [apCn, eth0, accessName,  stateName];
+        return [apCn, eth0, stateName];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [networkDevices]);
 
 
