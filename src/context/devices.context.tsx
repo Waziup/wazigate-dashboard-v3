@@ -143,14 +143,14 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     const [networkDevices, setNetWorkDevices] = useState<Devices>({});
     const [selectedCloud, setSelectedCloud] = useState<Cloud | null>(null);
     const [wazigateId, setWazigateId] = useState<string>(''); 
-    const setNetWorkDevicesFc = useCallback(async ()=>{
-        window.wazigate.getClouds().then((clouds) => {
+    const setNetWorkDevicesFc = async ()=>{
+        await window.wazigate.getClouds().then((clouds) => {
             const waziupCloud = Object.values(clouds)? clouds['waziup']: null;
             setSelectedCloud(waziupCloud);
         });
         const netWorkDevs = await getNetworkDevices();
         setNetWorkDevices(netWorkDevs);
-    },[]);
+    };
     const setAccessToken = useCallback(async (accessToken:string)=>{
         window.sessionStorage.setItem('token',accessToken as unknown as string);
         setToken(accessToken);
@@ -165,12 +165,12 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
                 window.wazigate.reconnectMQTT();
                 getApps();
                 getDevices();
-                setNetWorkDevicesFc();
+                await setNetWorkDevicesFc();
                 loadProfile();
             }
         }
         fc();
-    },[getDevices, setAccessToken, setNetWorkDevicesFc, token]);
+    },[getDevices, setAccessToken, token]);
 
     const [dialogState, setDialogState] = useState<{open: boolean,title: string, content: React.ReactNode | string, hideCloseButton: boolean, acceptBtnTitle: string,onAccept:()=>void,onCancel:()=>void}>({
         open: false,
