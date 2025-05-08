@@ -11,6 +11,7 @@ import React from "react";
 import OntologyKindInput from "../../components/shared/OntologyKindInput";
 import { cleanString } from "../../utils";
 import { InputField } from "../Login";
+import { ArrowForward } from "@mui/icons-material";
 
 
 export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -160,6 +161,25 @@ export default function DeviceSensorSettings() {
     useEffect(() => {
         init();
     }, [init]);
+    const [sensorValue, setSensorValue] = useState<number | undefined>(undefined);
+    const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => { setSensorValue(Number(e.target.value)) }
+    const addSensorValueSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        window.wazigate.addSensorValue(id as string, sensorId as string, sensorValue)
+        .then(() => {
+            setError({
+                message: 'Sensor value added successfully',
+                severity: 'success'
+            });
+            setSensorValue(undefined);
+            getDevicesFc();
+        }).catch((err) => {
+            setError({
+                message: "Error: " + err,
+                severity: 'error'
+            });
+        });
+    }
 
     const [quantitiesCondition, setQuantitiesCondition] = React.useState<string[]>([]);
     const [unitsCondition, setUnitsCondition] = React.useState<string[]>([]);
@@ -435,6 +455,21 @@ export default function DeviceSensorSettings() {
 
                         </Box>
 
+                        <Paper sx={{ p: 2, width: '100%' }}>
+                            <Typography variant="h6">Add sensor value</Typography>
+                            <form onSubmit={addSensorValueSubmit} style={{ display: 'flex', flexDirection: 'row', }}>
+                                <Input
+                                    type="number"
+                                    name="name"
+                                    placeholder='Sensor value'
+                                    required
+                                    value={sensorValue??''}
+                                    onInput={onInputChange}
+                                    sx={{ width: '100%', mr: 2 }}
+                                />
+                                <Button type="submit" color="secondary" disableElevation startIcon={<ArrowForward />} variant={'contained'}>Push</Button>
+                            </form>
+                        </Paper>
                         <Paper sx={{ p: 2, }}>
                             <Typography variant="h6" sx={{ mb: 2, color: '#DE3629' }}>Danger Zone</Typography>
                             <Box display='flex' flexDirection={['column', 'row']} alignItems='center' gap={1}>
