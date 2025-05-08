@@ -3,7 +3,7 @@ import { DEFAULT_COLORS } from '../../constants';
 import { Mode, PowerSettingsNew, RestartAlt } from '@mui/icons-material';
 import { SxProps, Theme } from '@mui/material';
 import RowContainerBetween from '../../components/shared/RowContainerBetween';
-import { Link, useOutletContext } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -54,8 +54,8 @@ function Settings() {
 
     const [modalProps, setModalProps] = useState<{ open: boolean, title: string, }>({ open: false, title: '' });
     const [timezones, setTimezones] = useState<string[]>([]);
-    const { wazigateId, networkDevices, showDialog } = useContext(DevicesContext);
-
+    const { wazigateId, networkDevices, setProfile, setAccessToken, showDialog } = useContext(DevicesContext);
+    const navigate = useNavigate()
     const submitTime = () => {
         setLoading(true)
         const date_and_time = convTime(data?.time as Date);
@@ -173,10 +173,21 @@ function Settings() {
         showDialog({
             title: "Shut down",
             acceptBtnTitle: "SHUTDOWN",
-            content: "Are you sure you want to shutdown?",
-            onAccept() {
-                shutdown();
+            content: (
+                <Alert icon={<></>} severity="warning">
+                    <pre>
+                        ARE YOU SURE YOU WANT TO SHUTDOWN THE GATEWAY? {'\n'}
+                        IF YOU PROCEED, YOU WILL LOOSE CONNECTION {`\n`}
+                    </pre>
+                </Alert>
+            ),
+            onAccept: async()=> {
+                await shutdown();
+                setProfile(null);
+                setAccessToken('');
+                navigate('/')
                 window.close();
+                location.reload()
             },
             onCancel() { },
         })
@@ -205,10 +216,21 @@ function Settings() {
         showDialog({
             title: "Reboot",
             acceptBtnTitle: "REBOOT",
-            content: "Are you sure you want to reboot?",
-            onAccept() {
-                reboot();
+            content: (
+                <Alert icon={<></>} severity="warning">
+                    <pre>
+                        ARE YOU SURE YOU WANT TO REBOOT THE GATEWAY? {'\n'}
+                        IF YOU PROCEED, YOU WILL LOOSE CONNECTION {`\n`}
+                    </pre>
+                </Alert>
+            ),
+            onAccept: async() =>{
+                await reboot();
+                setProfile(null);
+                setAccessToken('');
+                navigate('/')
                 window.close();
+                location.reload()
             },
             onCancel() { },
         });
