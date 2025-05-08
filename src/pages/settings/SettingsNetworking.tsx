@@ -1,11 +1,11 @@
-import { Box, Breadcrumbs, ListItemText, Grid, Icon, Theme, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar, Divider, useMediaQuery } from "@mui/material";
+import { Box, Breadcrumbs, ListItemText, Grid, Icon, Theme, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar, Divider, useMediaQuery, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
 import RowContainerNormal from "../../components/shared/RowContainerNormal";
 import { ChangeCircleSharp } from "@mui/icons-material";
 import { Android12Switch } from "../../components/shared/Switch";
 // import PrimaryButton from "../../components/shared/PrimaryButton";
-import { getWiFiScan, setConf as setConfFc, AccessPoint, getConf, setWiFiConnect, WifiReq, setAPMode,setAPInfo } from "../../utils/systemapi";
+import { getWiFiScan, setConf as setConfFc, AccessPoint, getConf, setWiFiConnect, WifiReq, setAPMode,setAPInfo, removeWifi } from "../../utils/systemapi";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import GridItemEl from "../../components/shared/GridItemElement";
 import { Cloud } from "waziup";
@@ -299,7 +299,38 @@ export default function SettingsNetworking() {
                 setSelectedWifi(undefined);
             },
         });
-    };
+    }
+    const forget = (wifiSSID: string) => {
+        showDialog({
+            title: `Forget ${wifiSSID}?`,
+            content: (
+                <Alert icon={<></>} severity="warning">
+                    <pre>
+                    ARE YOU SURE YOU WANT TO FORGET {wifiSSID.toUpperCase()}? {'\n'}
+                    IF YOU PROCEED, YOU WILL LOOSE CONNECTION {`\n`}
+                    </pre>
+                </Alert>
+            ),
+            acceptBtnTitle: "FORGET",
+            onAccept: ()=>{
+                setScanLoading(true)
+                setLoading(true);
+                removeWifi(wifiSSID).then(() => {
+                    setError({message:"You can now close this page and connect to your wifi then access this interface at wazigate.local. If the password was wrong, it will still open the access point, reconnect to it and enter a correct password.",severity:"success"})
+                    setScanLoading(false)
+                    setLoading(false);
+                }).catch((error) => {
+                    setLoading(false)
+                    setScanLoading(false)
+                    setError({message: 'Error encountered'+error && error.message ? error.message : error as string,severity:"error"})
+                });
+            },
+            onCancel: () => { 
+                setExpandedWifi(null)
+                setSelectedWifi(undefined);
+            },
+        });
+    }
     const submitSSID = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = {
@@ -335,6 +366,8 @@ export default function SettingsNetworking() {
 
     const [apConn, eth0, stateName] = useMemo(() => {
         const accessName = networkDevices.wlan0 ? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP") : null
+        console.log(accessName)
+        console.log(networkDevices.wlan0 && networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === "WAZIGATE-AP"))
         if(accessName){
             setAccessPointInfo({
                 ...accessPointInfo,
@@ -592,24 +625,31 @@ export default function SettingsNetworking() {
                                 <WifiOutlined sx={IconStyle} />
                                 <Typography color={'#212529'} fontWeight={500}>Available Wifi</Typography>
                             </Box> */}
-                            <Box p={1}>
-                                <Icon color="info">{'signal_wifi_4_bar_outlined'} </Icon>
-                                <Typography>
-                                    {
-                                        (apConn && apConn.connection.id === 'WAZIGATE-AP') ? (
-                                            <Typography>{stateName} - Access Point Mode</Typography>
-                                        ) : (apConn) ? (
-                                            <Typography>Connected to {"  "}
-                                                {
-                                                    apConn ? atob(apConn["802-11-wireless"]?.ssid as string) : "No network"
-                                                }
-                                            </Typography>
-                                        ) : (eth0 && eth0.IP4Config) ? (
-                                            <Typography>Connected to Ethernet</Typography>
-                                        ) : (<Typography>Not connected </Typography>)
-                                    }
-                                </Typography>
-                            </Box>
+                            <Stack direction={'row'} borderBottom={'1px solid #ccc'} px={2} alignItems='center'>
+                                <RowContainerNormal >
+                                    <Icon color="info">{'signal_wifi_4_bar_outlined'}</Icon>
+                                    <Typography ml={1}>
+                                        {
+                                            (apConn && apConn.connection.id === 'WAZIGATE-AP') ? (
+                                                <Typography>{stateName} - Access Point Mode</Typography>
+                                            ) : (apConn) ? (
+                                                <Typography>Connected to {"  "}
+                                                    {
+                                                        apConn ? atob(apConn["802-11-wireless"]?.ssid as string) : "No network"
+                                                    }
+                                                </Typography>
+                                            ) : (eth0 && eth0.IP4Config) ? (
+                                                <Typography>Connected to Ethernet</Typography>
+                                            ) : (<Typography>Not connected </Typography>)
+                                        }
+                                    </Typography>
+                                </RowContainerNormal>
+                                {
+                                    (apConn && apConn.connection.id !== 'WAZIGATE-AP')? (
+                                        <Button onClick={()=>{forget(apConn ? atob(apConn["802-11-wireless"]?.ssid as string) : "No network")}} variant={'text'}>Forget</Button>
+                                    ):null
+                                }
+                            </Stack>
                             <Box sx={{}}>
                                 <Box sx={{ overflowY: 'auto', height: 380 }}>
                                     {scanLoading ? (
