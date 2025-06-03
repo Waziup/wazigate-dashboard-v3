@@ -18,9 +18,9 @@ import SettingsNetworking from './pages/settings/SettingsNetworking'
 import SettingsMaintenance from './pages/settings/SettingsMaintenance';
 import AppUI from './pages/App';
 import { useContext } from 'react'
-import { DevicesContext } from './context/devices.context'
 import Actuator from './pages/devices/Actuator'
 import ActuatorSettings from './pages/devices/ActuatorSettings'
+import { GlobalContext } from './context/global.context'
 function App() {
     const theme = createTheme({
         palette: {
@@ -38,7 +38,7 @@ function App() {
             },
         },
     });
-    const { token } = useContext(DevicesContext);
+    const { token } = useContext(GlobalContext);
     const creds = window.sessionStorage.getItem("creds");
     return (
         <ThemeProvider theme={theme}>

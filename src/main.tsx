@@ -4,7 +4,7 @@ import App from './App.tsx'
 import './index.css';
 import * as waziup from 'waziup';
 import 'material-icons/iconfont/material-icons.css';
-import { DevicesProvider } from './context/devices.context.tsx';
+import WazigateProvider from './context/index.tsx';
 import { WaziGateApiUrl } from './constants/index.ts';
 declare global {
     interface Window {
@@ -26,9 +26,9 @@ waziup.connect({
     console.log('Connected to Wazigate API')
     ReactDOM.createRoot(document.getElementById('root')!).render(
         <React.StrictMode>
-            <DevicesProvider>
+            <WazigateProvider>
                 <App />
-            </DevicesProvider>
+            </WazigateProvider>
         </React.StrictMode>,
     )
 }).catch(()=>{
