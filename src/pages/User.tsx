@@ -8,9 +8,9 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import Backdrop from "../components/Backdrop";
 import { AccountCircle } from '@mui/icons-material'
 // import Logo from '../assets/wazilogo.svg';
-import { DevicesContext } from "../context/devices.context";
 import { Link } from "react-router-dom";
 import { InputField } from "./Login";
+import { GlobalContext } from "../context/global.context";
 
 interface User {
     id?: string
@@ -61,7 +61,7 @@ function User() {
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up('sm'));
     const [loading, setLoading] = useState(false);
-    const { profile, setProfile, loadProfile, showDialog, closeDialog } = useContext(DevicesContext);
+    const { profile, setProfile, loadProfile, showDialog, closeDialog } = useContext(GlobalContext);
     const [rProfile,] = useState<User | null>(profile);
     const [err, setErr] = useState(false);
     const [msg, setMsg] = useState("");

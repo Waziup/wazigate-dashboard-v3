@@ -11,6 +11,7 @@ import { DEFAULT_COLORS } from "../../constants";
 import BoxDownload from '../../assets/box_download.svg';
 import { DropDownCreateDeviceTab1 } from "../../components/ui/CreateDeviceTab1";
 import { InputField } from "../Login";
+import { GlobalContext } from "../../context/global.context";
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: SelectChangeEvent<string>) => void,
     title: string,
@@ -53,7 +54,8 @@ export default function DeviceSettings() {
         event.preventDefault();
         console.info('You clicked a breadcrumb.');
     }
-    const { codecsList, devices, getDevicesFc, showDialog } = useContext(DevicesContext);
+    const { codecsList, devices, getDevicesFc } = useContext(DevicesContext);
+    const { showDialog } = useContext(GlobalContext);
     const { id } = useParams();
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
     const [matches] = useOutletContext<[matches: boolean, matchesMd: boolean]>();

@@ -5,7 +5,7 @@ import { Link, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { DEFAULT_COLORS } from '../../constants';
 import NoImageProfile from '../shared/NoImageProfile';
 import WaziGateSVG from '../../assets/wazigate.svg';
-import { DevicesContext } from '../../context/devices.context';
+import { GlobalContext } from '../../context/global.context';
 export const IconStyle: SxProps<Theme> = {
     color: 'inherit',
     mr: 1,
@@ -107,7 +107,7 @@ function Sidebar({ matchesMd }: { matchesMd: boolean }) {
     };
     const navigate = useNavigate();
     const location = useLocation().pathname;
-    const { setProfile, setAccessToken, showDialog, closeDialog } = useContext(DevicesContext);
+    const { setProfile, setAccessToken, showDialog, closeDialog } = useContext(GlobalContext);
     const handleLogout = () => {
         showDialog({
             content: "Are you sure you want to logout? ",

@@ -11,6 +11,8 @@ import { DevicesContext } from "../context/devices.context";
 import { App, Device } from "waziup";
 import { allActiveDevices, appChecker, capitalizeFirstLetter, countActiveApp, orderByLastUpdated, returnAppURL } from "../utils";
 import InternetIndicator from "../components/ui/InternetIndicator";
+import { AppsContext } from "../context/apps.context";
+import { SettingsContext } from "../context/settings.context";
 
 interface ItemProps {
     title: string;
@@ -134,7 +136,9 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
 export const NormalText = ({ title }: { title: string }) => (<Typography color={DEFAULT_COLORS.navbar_dark}>{title}</Typography>)
 
 function Dashboard() {
-    const { devices, networkDevices, selectedCloud, apps } = useContext(DevicesContext);
+    const { devices } = useContext(DevicesContext);
+    const { networkDevices, selectedCloud, } = useContext(SettingsContext);
+    const { apps } = useContext(AppsContext);
     const [matches] = useOutletContext<[matches: boolean]>();
     const [apConn, eth0] = useMemo(() => {
         const apCn = networkDevices?.wlan0 ? networkDevices?.wlan0.AvailableConnections.find(conn => conn.connection.id === networkDevices.wlan0.ActiveConnectionId) : null

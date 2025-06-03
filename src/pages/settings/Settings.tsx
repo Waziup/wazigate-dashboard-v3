@@ -13,9 +13,10 @@ import { useState, useEffect, useMemo, useContext } from 'react';
 import { setTime, shutdown, reboot, getBuildNr, getTimezoneAuto, getTime, getTimezones, setTimezone, getVersion, } from '../../utils/systemapi';
 import SelectElementString from '../../components/shared/SelectElementString';
 import GridItemEl from '../../components/shared/GridItemElement';
-import { DevicesContext } from '../../context/devices.context';
 import InternetIndicator from '../../components/ui/InternetIndicator';
 import Backdrop from '../../components/Backdrop';
+import { GlobalContext } from '../../context/global.context';
+import { SettingsContext } from '../../context/settings.context';
 // const IconStyle: SxProps<Theme> = { fontSize: 20, mr: 2, color: DEFAULT_COLORS.primary_black };
 const GridItem = ({ bgcolor, additionStyles, md, children, }: { xs: number, md: number, matches: boolean, bgcolor?: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode }) => (
     <Grid sx={{ bgcolor: bgcolor ? '#fff' : '', ...additionStyles }} bgcolor={bgcolor ? '#fff' : ''} item md={md} lg={5.8} xl={5.8} sm={5.8} xs={12} my={1} >
@@ -54,7 +55,8 @@ function Settings() {
 
     const [modalProps, setModalProps] = useState<{ open: boolean, title: string, }>({ open: false, title: '' });
     const [timezones, setTimezones] = useState<string[]>([]);
-    const { wazigateId, networkDevices, setProfile, setAccessToken, showDialog } = useContext(DevicesContext);
+    const {  networkDevices } = useContext(SettingsContext);
+    const { wazigateId, setProfile, setAccessToken, showDialog } = useContext(GlobalContext);
     const navigate = useNavigate()
     const submitTime = () => {
         setLoading(true)

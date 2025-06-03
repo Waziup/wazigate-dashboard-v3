@@ -9,11 +9,12 @@ import { getWiFiScan, setConf as setConfFc, AccessPoint, getConf, setWiFiConnect
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import GridItemEl from "../../components/shared/GridItemElement";
 import { Cloud } from "waziup";
-import { DevicesContext } from "../../context/devices.context";
 import Backdrop from "../../components/Backdrop";
 import WaziLogo from '../../assets/wazilogo.svg';
 import { nameForState, orderAccessPointsByStrength } from "../../utils";
 import { InputField } from "../Login";
+import { SettingsContext } from "../../context/settings.context";
+import { GlobalContext } from "../../context/global.context";
 
 export default function SettingsNetworking() {
 
@@ -22,7 +23,8 @@ export default function SettingsNetworking() {
     const [wifiList, setWifiList] = useState<AccessPoint[]>([]);
     const [error, setError] = useState<{ message: Error | null | string, severity: "error" | "warning" | "info" | "success" } | null>(null);
     const [selectedWifi, setSelectedWifi] = useState<AccessPoint & { password?: string } | undefined>(undefined);
-    const { networkDevices, selectedCloud, setNetWorkDevices, setSelectedCloud, showDialog } = useContext(DevicesContext)
+    const { showDialog } = useContext(GlobalContext)
+    const { networkDevices, selectedCloud, setNetWorkDevices, setSelectedCloud } = useContext(SettingsContext)
     const [rSelectedCloud,setRSelectedCloud]=useState<Cloud | null>(null)
     const scan = () => {
         if (!networkDevices) {

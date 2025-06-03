@@ -5,8 +5,8 @@ import { Alert, Box, Button, FormControl, Icon, Input, Snackbar, Stack, Typograp
   import { useForm, SubmitHandler } from 'react-hook-form';
   import * as yup from 'yup';
   import { useContext, useState } from 'react';
-  import { DevicesContext } from '../context/devices.context';
   import Logo from '../assets/wazigate.svg';
+import { GlobalContext } from '../context/global.context';
   
   interface RegistrationInput {
     username: string;
@@ -43,7 +43,7 @@ import { Alert, Box, Button, FormControl, Icon, Input, Snackbar, Stack, Typograp
     const { handleSubmit, register } = useForm<RegistrationInput>({
       resolver: yupResolver(schema),
     });
-    const { setAccessToken } = useContext(DevicesContext);
+    const { setAccessToken } = useContext(GlobalContext);
   
     const onSubmit: SubmitHandler<RegistrationInput> = async (data) => {
       try {

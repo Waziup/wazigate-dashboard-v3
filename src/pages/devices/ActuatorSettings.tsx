@@ -12,6 +12,7 @@ import { cleanString } from "../../utils";
 import ontologies from "../../assets/ontologies.json";
 import DiscreteMarks from "../../components/ui/DiscreteMarks";
 import { InputField } from "../Login";
+import { GlobalContext } from "../../context/global.context";
 export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (e: SelectChangeEvent<string>) => void,
     title: string,
@@ -56,7 +57,8 @@ export default function ActuatorSettings() {
     const [actuator, setActuator] = useState<ActuatorX | null>(null);
     const [rActuator, setRemoteActuator] = useState<ActuatorX | null>(null);
     const [error, setError] = useState<{ message: Error | null | string, severity: "error" | "warning" | "info" | "success" } | null>(null);
-    const { getDevicesFc, showDialog } = useContext(DevicesContext);
+    const { getDevicesFc } = useContext(DevicesContext);
+    const {  showDialog } = useContext(GlobalContext);
     const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
     const handleToggleEnableSwitch = () => {

@@ -7,13 +7,13 @@ import MenuComponent from '../shared/MenuDropDown';
 import { Android12Switch } from '../shared/Switch';
 import { capitalizeFirstLetter, lineClamp, removeFirstChar, removeSpecialChars } from '../../utils';
 import DockerSVG from '../../assets/docker.svg';
-import { DevicesContext } from '../../context/devices.context';
+import { GlobalContext } from '../../context/global.context';
 export default function ContainersTabMaintenance() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [containers, setContainers] = React.useState<cInfo[]>([]);
     const [logs, setLogs] = useState<{ success: boolean, logs: string }>({ success: false, logs: '' });
     const [openModal, setOpenModal] = useState(false);
-    const { showDialog } = useContext(DevicesContext)
+    const { showDialog } = useContext(GlobalContext)
     const open = Boolean(anchorEl);
     const [error, setError] = useState<{ message: Error | null | string, severity: "error" | "warning" | "info" | "success" } | null>(null);
     const handleClickMenu = (id: string) => {

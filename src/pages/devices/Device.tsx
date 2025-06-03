@@ -13,6 +13,7 @@ import { Android12Switch } from "../../components/shared/Switch";
 import SensorActuatorItem from "../../components/shared/SensorActuatorItem";
 import { BrowserNotSupported, Settings } from "@mui/icons-material";
 import { InputField } from "../Login";
+import { GlobalContext } from "../../context/global.context";
 
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: SelectChangeEvent<string>) => void,
@@ -66,7 +67,8 @@ function DeviceSettings() {
     const [newSensOrAct, setNewSensOrAct] = useState<{ name: string, unitSymbol?: string, kind: string, icon: string, quantity: string, unit?: string }>(initialState);
     const [device, setDevice] = useState<Device | null>(null);
     const [modalProps, setModalProps] = useState<{ title: string, placeholder: string }>({ title: '', placeholder: '' });
-    const { getDevicesFc, showDialog } = useContext(DevicesContext)
+    const { getDevicesFc } = useContext(DevicesContext)
+    const {showDialog} = useContext(GlobalContext)
     const { id } = useParams();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);

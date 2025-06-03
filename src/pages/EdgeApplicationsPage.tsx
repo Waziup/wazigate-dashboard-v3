@@ -5,7 +5,6 @@ import { Download, FiberNew, } from '@mui/icons-material';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { StartAppConfig, type App } from 'waziup';
-import { DevicesContext } from '../context/devices.context';
 import CustomApp from '../components/CustomApp';
 import { SelectElement } from './devices/DeviceSettings';
 import { LoadingButton } from '@mui/lab';
@@ -18,6 +17,8 @@ import CustomEdgeAppIcon from '../assets/CustomApp.svg';
 import Logo404 from '../assets/search.svg';
 import RowContainerNormal from '../components/shared/RowContainerNormal';
 import PrimaryIconButton from '../components/shared/PrimaryIconButton';
+import { GlobalContext } from '../context/global.context';
+import { AppsContext } from '../context/apps.context';
 
 type App1 = App & {
     description: string
@@ -142,7 +143,8 @@ export default function EdgeApplicationsPage() {
     const open = Boolean(anchorEl)
     const [modalProps, setModalProps] = useState<{ open: boolean, title: string, children: React.ReactNode, otherArgs?: string }>({ open: false, title: '', children: null, otherArgs: '' });
     const handleClose = () => { setAnchorEl(null) };
-    const { apps, getApps, showDialog } = useContext(DevicesContext);
+    const { apps, getApps, } = useContext(AppsContext);
+    const { showDialog } = useContext(GlobalContext);
     const [recommendedApps, setRecommendedApps] = useState<RecomendedApp[]>([]);
     const [logs, setLogs] = useState<{ logs: string, done: boolean, error?: string }>({ logs: '', done: false, error: undefined });
     const logsRef = React.useRef<string>('');

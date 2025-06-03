@@ -12,6 +12,7 @@ import OntologyKindInput from "../../components/shared/OntologyKindInput";
 import { cleanString } from "../../utils";
 import { InputField } from "../Login";
 import { ArrowForward } from "@mui/icons-material";
+import { GlobalContext } from "../../context/global.context";
 
 
 export interface HTMLSelectPropsString extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -60,7 +61,8 @@ export default function DeviceSensorSettings() {
     const [device, setDevice] = useState<Device | null>(null);
     const [rsensor, setRemotesensor] = useState<SensorX | null>(null);
     const [error, setError] = useState<{ message: Error | null | string, severity: "error" | "warning" | "info" | "success" } | null>(null);
-    const { getDevicesFc, showDialog } = useContext(DevicesContext);
+    const { getDevicesFc } = useContext(DevicesContext);
+    const { showDialog } = useContext(GlobalContext);
     const [graphValues, setGraphValues] = useState<{ y: number, x: string }[]>([]);
     const [values, setValues] = useState<{ value: number | string, modified: string }[]>([]);
     const navigate = useNavigate();

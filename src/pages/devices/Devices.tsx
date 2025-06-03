@@ -12,6 +12,7 @@ import MenuDropDown from '../../components/shared/MenuDropDown';
 import RowContainerNormal from '../../components/shared/RowContainerNormal';
 import DeviceImage from '../../assets/device.png';
 import EditeCreateDeviceDialog from '../../components/ui/EditCreateDeviceDialog';
+import { GlobalContext } from '../../context/global.context';
 
 const SortOptions = [
     { id: '1', name: 'Date Created' },
@@ -38,7 +39,8 @@ function Devices() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
-    const { devices, wazigateId, getDevicesFc, sortDevices, showDialog } = useContext(DevicesContext);
+    const { devices, getDevicesFc, sortDevices, } = useContext(DevicesContext);
+    const { wazigateId, showDialog } = useContext(GlobalContext);
     const [selectedDevice, setSelectedDevice] = useState<null | Device>(null);
     const [mode, setMode] = useState<"edit" | "create">("create");
     const [error, setError] = useState<{ message: Error | null | string, severity: "error" | "warning" | "info" | "success" } | null>(null);

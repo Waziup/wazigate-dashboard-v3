@@ -4,10 +4,10 @@ import Sidebar from './Sidebar';
 import { Menu, SettingsOutlined } from '@mui/icons-material';
 import RowContainerBetween from '../shared/RowContainerBetween';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { DevicesContext } from '../../context/devices.context';
 import { tokenChecker } from '../../utils/systemapi';
+import { GlobalContext } from '../../context/global.context';
 function Layout() {
-    const {setAccessToken, setProfile} = useContext(DevicesContext);
+    const {setAccessToken, setProfile} = useContext(GlobalContext);
     const navigate = useNavigate();
     const isAuthorized =useCallback(async() => {
         const tk = window.sessionStorage.getItem("token");
