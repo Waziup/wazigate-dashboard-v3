@@ -1,7 +1,6 @@
-import { createContext, useCallback, useEffect,useState } from "react";
-import { App, Cloud ,ID, Value, Device, Meta } from "waziup";
-import { Devices,getNetworkDevices } from "../utils/systemapi";
-import GlobalDialog from "../components/shared/GlobalDialog";
+import { createContext, useCallback, useContext, useEffect,useState } from "react";
+import { ID, Value, Device, Meta } from "waziup";
+import { GlobalContext } from "./global.context";
 export type SensorX =  {
     id: ID;
     name: string;
@@ -31,78 +30,21 @@ type DeviceX = Device & {
 }
 interface ContextValues{
     devices: DeviceX[]
-    apps: App[],
-    wazigateId: string
-    profile: User | null
-    showDialog : ({ title, content,acceptBtnTitle, onAccept, onCancel }: {hideCloseButton?:boolean, title: string, acceptBtnTitle:string,  content: React.ReactNode | string,   onAccept: ()=>void | Promise<void>,onCancel: ()=>void,}) =>void,
-    closeDialog:()=>void,
-    setProfile: (profile:User | null)=>void
-    selectedCloud: Cloud | null
-    setSelectedCloud:(cl: Cloud | null)=>void
     getDevicesFc:()=>void,
-    setAppsFc:(apps:App[])=>void,
-    getApps:()=>void,
-    loadProfile: ()=>void,
     sortDevices: (order:'1'|'2'|'3'|'4')=>void,
     codecsList?:{id:string,name:string}[] | null,
-    addApp:(app:App)=>void
-    token:string
-    networkDevices: Devices
-    setNetWorkDevices:()=>void
-    setAccessToken:(token:string) =>void
-}
-interface User {
-    id?: string
-    name: string;
-    username:string;
-    password: string;
-    newPassword: string;
-    newPasswordConfirm: string;
 }
 export const DevicesContext = createContext<ContextValues>({
     devices:[],
-    apps:[],
-    wazigateId:'',
-    selectedCloud:null,
-    setSelectedCloud:()=>{},
-    showDialog:()=>{},
-    closeDialog:()=>{},
     sortDevices:()=>{},
-    profile: null,
-    loadProfile: ()=>{},
-    setProfile: ()=>{},
     getDevicesFc:()=> {},
-    setAppsFc: ()=> {},
-    getApps:()=> {},
-    addApp:()=> {},
     codecsList:[],
-    token:'',
-    setAccessToken:()=> {},
-    networkDevices: {},
-    setNetWorkDevices:()=>{},
 });
 
 export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     const [devices, setDevices] = useState<DeviceX[]>([]);
-    const [token,setToken] = useState<string>(()=>{
-        const token = window.sessionStorage.getItem('token');
-        if(token){
-            return token;
-        }
-        return '';
-    });
-    const [profile,setProfile] = useState<User | null>(null);
-    const setAppsFc = ((apps:App[])=>setApps(apps));
-    const [apps, setApps] = useState<App[]>([]);
-    const addApp = (app:App)=>{
-        setApps([...apps,app]);
-    }
-    const getApps = ()=>{
-        window.wazigate.getApps().then((res)=>{
-            const appFiltered = res.filter((a)=> !(a.id.includes("wazigate"))); // remove wazigate apps
-            setApps(appFiltered);
-        });
-    }
+    const {token} = useContext(GlobalContext)
+    
     const sortDevices=(order:'1'|'2'|'3'|'4')=>{
         if(order==="1"){
             // sort devices by date created
@@ -127,78 +69,15 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
             setDevices(devFilter as DeviceX[]);
         });
     },[]);
-    const setProfileFc = (profile:User | null)=>{
-        setProfile(profile);
-    }
-    const loadProfile = () => {
-        window.wazigate.getProfile().then((res) => {
-            setProfile({
-                ...res,
-                newPasswordConfirm: '',
-            });
-        }).catch((err) => {
-            console.error(err);
-        });
-    }
-    const [networkDevices, setNetWorkDevices] = useState<Devices>({});
-    const [selectedCloud, setSelectedCloud] = useState<Cloud | null>(null);
-    const [wazigateId, setWazigateId] = useState<string>(''); 
-    const setNetWorkDevicesFc = async ()=>{
-        await window.wazigate.getClouds().then((clouds) => {
-            const waziupCloud = Object.values(clouds)? clouds['waziup']: null;
-            setSelectedCloud(waziupCloud);
-        });
-        const netWorkDevs = await getNetworkDevices();
-        setNetWorkDevices(netWorkDevs);
-    };
-    const setAccessToken = useCallback(async (accessToken:string)=>{
-        window.sessionStorage.setItem('token',accessToken as unknown as string);
-        setToken(accessToken);
-        // window.localStorage.removeItem('token');
-    },[]);
     useEffect(()=>{
         const fc = async () => {
             if(token){
-                setAccessToken(token);
-                await window.wazigate.setToken(token);
-                await window.wazigate.getID().then(setWazigateId);
-                window.wazigate.reconnectMQTT();
-                getApps();
                 getDevices();
-                await setNetWorkDevicesFc();
-                loadProfile();
             }
         }
         fc();
-    },[getDevices, setAccessToken, token]);
+    },[getDevices, token]);
 
-    const [dialogState, setDialogState] = useState<{open: boolean,title: string, content: React.ReactNode | string, hideCloseButton: boolean, acceptBtnTitle: string,onAccept:()=>void,onCancel:()=>void}>({
-        open: false,
-        title: '',
-        content: '',
-        hideCloseButton:false,
-        acceptBtnTitle:'',
-        onAccept: async ()=>{},
-        onCancel: ()=>{},
-    });
-    const showDialog = ({ title, content,hideCloseButton, onAccept,acceptBtnTitle, onCancel }: {acceptBtnTitle:string,hideCloseButton?:boolean,  title: string,   content: React.ReactNode | string, onAccept: ()=>void | Promise<void>,onCancel: ()=>void,}) => {
-        setDialogState({
-            open: true,
-            title,
-            hideCloseButton: hideCloseButton?hideCloseButton:false,
-            acceptBtnTitle,
-            content,
-            async onAccept(){
-                await onAccept()
-                closeDialog();
-            },
-            onCancel(){onCancel();closeDialog()},
-        });
-    };
-    
-    const closeDialog = () => {
-        setDialogState({ ...dialogState, open: false });
-    };
     useEffect(() => {
         if(token){
             loadCodecsList();
@@ -214,30 +93,13 @@ export const DevicesProvider = ({children}:{children:React.ReactNode})=>{
     }
     const value={
         devices,
-        apps,
         getDevicesFc:getDevices,
-        setAppsFc,
-        getApps,
-        profile,
-        wazigateId,
-        networkDevices,
-        setNetWorkDevices:setNetWorkDevicesFc,
-        addApp,
         sortDevices,
-        loadProfile,
-        setSelectedCloud,
-        setProfile:setProfileFc,
-        token,
-        selectedCloud,
-        setAccessToken,
         codecsList,
-        showDialog,
-        closeDialog
     }
     return(
         <DevicesContext.Provider value={value}>
             {children}
-            <GlobalDialog {...dialogState} />
         </DevicesContext.Provider>
     )
 };
