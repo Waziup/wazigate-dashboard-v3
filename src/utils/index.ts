@@ -130,7 +130,7 @@ export function removeFirstChar(value:string,capitalize?:boolean){
 export function returnAppURL(app:App): string{
     if(app.id.includes('lora')){
         return `/apps/waziup/${app.name}`;
-    }else if(app.waziapp.menu){
+    }else if(app.waziapp && app.waziapp.menu){
         return removeFirstChar(Object.values(app.waziapp.menu? app.waziapp.menu:[]).length>0?Object.values(app.waziapp.menu? app.waziapp.menu:[])[0].href:'')
     }else{
         return ''
