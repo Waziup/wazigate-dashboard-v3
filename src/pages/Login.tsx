@@ -47,6 +47,7 @@ import { GlobalContext } from '../context/global.context';
   
     const onSubmit: SubmitHandler<RegistrationInput> = async (data) => {
       try {
+        window.wazigate.setToken("");
         window.wazigate.authToken(data.username, data.password)
           .then((res) => {
             setAccessToken(res);
