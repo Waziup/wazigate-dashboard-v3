@@ -110,6 +110,13 @@ export async function setTimezone(data: string) {
 
 export type Devices = Record<string, Device>;
 
+
+export interface VPNStatus {
+	connected: boolean
+	message: string
+	error?: string
+}
+
 export async function getNetworkDevices(): Promise<Devices> {
     const token = window.sessionStorage.getItem("token");
     await tokenChecker(token)
@@ -117,7 +124,29 @@ export async function getNetworkDevices(): Promise<Devices> {
     if (!resp.ok) await failResp(resp);
     return await resp.json();
 }
-
+export async function enableDisableVPN(enable: boolean): Promise<VPNStatus> {
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch(URL + `net/vpn`, {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            enabled: enable,
+        })
+    });
+    if (!resp.ok) await failResp(resp);
+    return await resp.json();
+}
+export async function getVpnStatus(): Promise<VPNStatus> {
+    const token = window.sessionStorage.getItem("token");
+    await tokenChecker(token)
+    const resp = await fetch(URL + `net/vpn`, {  headers: {Authorization: 'Bearer ' + token},});
+    if (!resp.ok) await failResp(resp);
+    return await resp.json();
+}
 //
 
 export type APInfo = {
