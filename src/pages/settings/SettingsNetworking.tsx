@@ -1,11 +1,12 @@
-import { Box, Breadcrumbs, ListItemText, Grid, Icon, Theme, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar, Divider, useMediaQuery, Stack } from "@mui/material";
+import { Box, Breadcrumbs, ListItemText, Grid, Icon, Theme, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar, Divider, useMediaQuery, Stack, styled } from "@mui/material";
 import { Link } from "react-router-dom";
+import {ExpandMore, ArrowForwardIosSharp} from '@mui/icons-material';
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
 import RowContainerNormal from "../../components/shared/RowContainerNormal";
 import { ChangeCircleSharp } from "@mui/icons-material";
 import { Android12Switch } from "../../components/shared/Switch";
 // import PrimaryButton from "../../components/shared/PrimaryButton";
-import { getWiFiScan, setConf as setConfFc, AccessPoint, getConf, setWiFiConnect, WifiReq, setAPMode,setAPInfo, removeWifi } from "../../utils/systemapi";
+import { getWiFiScan, setConf as setConfFc, AccessPoint, getConf, setWiFiConnect, enableDisableVPN, WifiReq, setAPMode,setAPInfo, removeWifi } from "../../utils/systemapi";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import GridItemEl from "../../components/shared/GridItemElement";
 import { Cloud } from "waziup";
@@ -15,7 +16,43 @@ import { nameForState, orderAccessPointsByStrength } from "../../utils";
 import { InputField } from "../Login";
 import { SettingsContext } from "../../context/settings.context";
 import { GlobalContext } from "../../context/global.context";
+import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
+import MuiAccordionSummary, {
+  AccordionSummaryProps,
+  accordionSummaryClasses,
+} from '@mui/material/AccordionSummary';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
+const Accordion = styled((props: AccordionProps) => (<MuiAccordion disableGutters elevation={0} square {...props} />))(({ theme }) => ({
+    border: `1px solid ${theme.palette.divider}`,
+    marginTop:5,
+    '&:not(:last-child)': {
+        borderBottom: `1px solid #499dff`,
+    },
+    '&::before': {
+        display: 'none',
+    },
+}));
 
+const AccordionSummary = styled((props: AccordionSummaryProps) => (<MuiAccordionSummary  expandIcon={<ArrowForwardIosSharp sx={{ fontSize: '0.9rem' }} />}  {...props}/>))(({ theme }) => ({
+    backgroundColor: 'none',
+    flexDirection: 'row',
+    justifyContent:'space-between',
+    [`& .${accordionSummaryClasses.expandIconWrapper}.${accordionSummaryClasses.expanded}`]:
+        {
+            transform: 'rotate(90deg)',
+        },
+    [`& .${accordionSummaryClasses.content}`]: {
+        marginLeft: theme.spacing(1),
+    },
+    ...theme.applyStyles('dark', {
+        backgroundColor: 'flex',
+    }),
+}));
+
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+  padding: theme.spacing(2),
+  borderTop: '1px solid rgba(0, 0, 0, .125)',
+}));
 export default function SettingsNetworking() {
 
     const matches = useMediaQuery((theme: Theme) => theme.breakpoints.up('sm'));
@@ -508,6 +545,41 @@ export default function SettingsNetworking() {
                                         }}
                                     />
                                 </InputField>
+                                <Accordion disableGutters sx={{p:0,bgcolor:'transparent',borderBottomLeftRadius: 0,borderTop:'none', borderBottRightRadius: 0,border:'none',borderRadius:'0px',}} elevation={0}>
+                                    <AccordionSummary expandIcon={<ExpandMore />} sx={{p:.5,border:'none',borderTop:'none'}} aria-controls="panel1-content" id="panel1-header" >
+                                        <Typography component="span">Advanced Settings</Typography>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <InputField label="REST Address" mendatory>
+                                            <Input
+                                                fullWidth
+                                                placeholder="Enter REST address"
+                                                name="rest"
+                                                onInput={handleInputChange}
+                                                value={selectedCloud?.rest}
+                                                required={false}
+                                                sx={{
+                                                    borderBottom: '1px solid #D5D6D8',
+                                                    '&:before, &:after': { borderBottom: 'none' }
+                                                }}
+                                            />
+                                        </InputField>
+                                        <InputField label="MQTT Address" mendatory>
+                                            <Input
+                                                fullWidth
+                                                placeholder="Enter MQTT address"
+                                                name="mqtt"
+                                                onInput={handleInputChange}
+                                                value={selectedCloud?.mqtt}
+                                                required={false}
+                                                sx={{
+                                                    borderBottom: '1px solid #D5D6D8',
+                                                    '&:before, &:after': { borderBottom: 'none' }
+                                                }}
+                                            />
+                                        </InputField>
+                                    </AccordionDetails>
+                                </Accordion>
 
                                 <Button
                                     sx={{ mt: 2 }}
