@@ -61,7 +61,7 @@ export default function SettingsNetworking() {
     const [error, setError] = useState<{ message: Error | null | string, severity: "error" | "warning" | "info" | "success" } | null>(null);
     const [selectedWifi, setSelectedWifi] = useState<AccessPoint & { password?: string } | undefined>(undefined);
     const { showDialog } = useContext(GlobalContext)
-    const { networkDevices, selectedCloud, setNetWorkDevices, setSelectedCloud } = useContext(SettingsContext)
+    const { networkDevices, selectedCloud, vpnStatus, setNetWorkDevices, setSelectedCloud } = useContext(SettingsContext)
     const [rSelectedCloud,setRSelectedCloud]=useState<Cloud | null>(null)
     const scan = () => {
         if (!networkDevices) {
@@ -222,13 +222,34 @@ export default function SettingsNetworking() {
                 onAccept: () => { },
                 onCancel: () => { },
             });
-            setNetWorkDevices()
+            await setNetWorkDevices()
             timer.then(() => {
                 setSaving(false);
             })
         }).catch((err) => {
             setSaving(false);
             setError({message: err && err.message ? err.message : err as string,severity:"error"});
+        });
+    }
+    const handleEnableDisableVPN=async (checked:boolean)=>{
+        showDialog({
+            title: "Confirm",
+            content: `Do you wish to ${checked?'enable':'disable'} VPN?`,
+            acceptBtnTitle: checked?"ENABLE": "DISABLE",
+            onAccept: async() => {
+                try {
+                    setLoading(true)
+                    const re = await enableDisableVPN(checked)
+                    await setNetWorkDevices()
+                    setError({message: re.message,severity:"success"});
+                    setLoading(false)
+                } catch (error) {
+                    await setNetWorkDevices()
+                    setLoading(false)
+                    setError({message: error && (error as {error: string}).error ? (error as {error: string}).error : (error as string).toString(),severity:"error"});
+                }
+            },
+            onCancel: () => { },
         });
     }
     const submitConf = (event: React.FormEvent) => {
@@ -381,12 +402,12 @@ export default function SettingsNetworking() {
             content: 'Are you sure you want to change the Access Point settings?',
             acceptBtnTitle: "OK",
             onAccept:async  () => {
-                setAPInfo(data).then(()=>{
+                setAPInfo(data).then(async ()=>{
                     setError({
                         message: "Successfully configured",
                         severity: 'success'
                     });
-                    setNetWorkDevices()
+                    await setNetWorkDevices()
                 }).catch((error) => {
                     setError({
                         message: error,
@@ -488,35 +509,15 @@ export default function SettingsNetworking() {
                                         color="secondary"
                                     />
                                 </RowContainerNormal>
-
-                                <InputField label="REST Address" mendatory>
-                                    <Input
-                                        fullWidth
-                                        placeholder="Enter REST address"
-                                        name="rest"
-                                        onInput={handleInputChange}
-                                        value={selectedCloud?.rest}
-                                        required
-                                        sx={{
-                                            borderBottom: '1px solid #D5D6D8',
-                                            '&:before, &:after': { borderBottom: 'none' }
-                                        }}
+                                <RowContainerNormal additionStyles={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <Typography>VPN {vpnStatus?.connected?"Active":"Inactive"}</Typography>
+                                    <Android12Switch
+                                        sx={{ m: 0 }}
+                                        checked={vpnStatus?.connected}
+                                        onChange={(_e,checked)=>handleEnableDisableVPN(checked)}
+                                        color="secondary"
                                     />
-                                </InputField>
-                                <InputField label="MQTT Address" mendatory>
-                                    <Input
-                                        fullWidth
-                                        placeholder="Enter MQTT address"
-                                        name="mqtt"
-                                        onInput={handleInputChange}
-                                        value={selectedCloud?.mqtt}
-                                        required
-                                        sx={{
-                                            borderBottom: '1px solid #D5D6D8',
-                                            '&:before, &:after': { borderBottom: 'none' }
-                                        }}
-                                    />
-                                </InputField>
+                                </RowContainerNormal>
                                 <InputField label="User Name">
                                     <Input
                                         fullWidth
