@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, ListItemText, Grid, Icon, Theme, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar, Divider, useMediaQuery, Stack, styled } from "@mui/material";
+import { Box, Breadcrumbs, ListItemText, Grid, Icon, Theme, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar, Divider, useMediaQuery, Stack, styled, Tooltip } from "@mui/material";
 import { Link } from "react-router-dom";
 import {ExpandMore, ArrowForwardIosSharp} from '@mui/icons-material';
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
@@ -105,7 +105,7 @@ export default function SettingsNetworking() {
         setSelectedCloud({
             ...selectedCloud,
             [name]: value
-        } as Cloud);
+        } as Cloud &{registered: boolean});
         sethasUnsavedChanges(true);
     };
     const handleSaveClickConfirm =async ()=>{
@@ -232,6 +232,10 @@ export default function SettingsNetworking() {
         });
     }
     const handleEnableDisableVPN=async (checked:boolean)=>{
+        if(!selectedCloud?.registered){
+            setError({message: "Enable sync to activate VPN",severity:"error"});
+            return
+        }
         showDialog({
             title: "Confirm",
             content: `Do you wish to ${checked?'enable':'disable'} VPN?`,
@@ -509,15 +513,32 @@ export default function SettingsNetworking() {
                                         color="secondary"
                                     />
                                 </RowContainerNormal>
-                                <RowContainerNormal additionStyles={{ alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <Typography>VPN {vpnStatus?.connected?"Active":"Inactive"}</Typography>
-                                    <Android12Switch
-                                        sx={{ m: 0 }}
-                                        checked={vpnStatus?.connected}
-                                        onChange={(_e,checked)=>handleEnableDisableVPN(checked)}
-                                        color="secondary"
-                                    />
-                                </RowContainerNormal>
+                                    <RowContainerNormal additionStyles={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <Typography color={!(selectedCloud?.registered)?'rgba(0,0,0,.2)':''} >VPN {vpnStatus?.connected?"Active":"Inactive"}</Typography>
+                                        <Tooltip title={!(selectedCloud?.registered)?"Enable sync to activate VPN":""}>
+                                            
+                                            <Android12Switch
+                                                sx={{ 
+                                                    m: 0,
+                                                    '& .MuiSwitch-switchBase': {
+                                                        opacity: selectedCloud?.registered ? 1:.2, 
+                                                        '&.Mui-checked': {
+                                                            opacity: 1,
+                                                        },
+                                                    },
+                                                    '& .MuiSwitch-thumb': {
+                                                        opacity: selectedCloud?.registered? 0.8: .7, 
+                                                    },
+                                                    '& .MuiSwitch-track': {
+                                                        opacity: selectedCloud?.registered ? 0.42: .2,
+                                                    }, 
+                                                }}
+                                                checked={vpnStatus?.connected}
+                                                onChange={(_e,checked)=>handleEnableDisableVPN(checked)}
+                                                color="secondary"
+                                            />
+                                        </Tooltip>
+                                    </RowContainerNormal>
                                 <InputField label="User Name">
                                     <Input
                                         fullWidth
