@@ -3,8 +3,8 @@ import { Cloud } from "waziup";
 import { Devices,getNetworkDevices, getVpnStatus, VPNStatus } from "../utils/systemapi";
 import { GlobalContext } from "./global.context";
 interface ContextValues{
-    selectedCloud: Cloud | null
-    setSelectedCloud:(cl: Cloud | null)=>void
+    selectedCloud: Cloud &{registered: boolean} | null
+    setSelectedCloud:(cl: Cloud &{registered: boolean} | null)=>void
     networkDevices: Devices
     vpnStatus: VPNStatus | null
     setNetWorkDevices:()=>Promise<void>
@@ -21,12 +21,12 @@ export const SettingsContext = createContext<ContextValues>({
 export const SettingsProvider = ({children}:{children:React.ReactNode})=>{
     const {token} = useContext(GlobalContext)
     const [networkDevices, setNetWorkDevices] = useState<Devices>({});
-    const [selectedCloud, setSelectedCloud] = useState<Cloud | null>(null);
+    const [selectedCloud, setSelectedCloud] = useState<Cloud &{registered: boolean} | null>(null);
     const [vpnStatus, setVPNStatus] = useState<VPNStatus | null>(null);
     const setNetWorkDevicesFc = async ()=>{
         await window.wazigate.getClouds().then((clouds) => {
             const waziupCloud = Object.values(clouds)? clouds['waziup']: null;
-            setSelectedCloud(waziupCloud);
+            setSelectedCloud(waziupCloud as Cloud &{registered: boolean});
         });
         const netWorkDevs = await getNetworkDevices();
         const vpnStatus = await getVpnStatus()
