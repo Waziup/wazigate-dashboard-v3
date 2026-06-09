@@ -70,16 +70,21 @@ function getComparator<Key extends keyof any>(
 // stableSort() brings sort stability to non-modern browsers (notably IE11). If you
 // only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
 // with exampleArray.slice().sort(exampleComparator)
-function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
+function stableSort<T>(array: readonly T[],_orderBy: keyof Data, _comparator: (a: T, b: T) => number) {
+    //   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
+    //   stabilizedThis.sort((a, b) => {
+    //     const order = comparator(a[0], b[0]);
+    //     if (order !== 0) {
+    //       return order;
+    //     }
+    //     if(orderBy==="name"){
+    //         return new Date(e) - new Date(b.date);
+    //     }
+
+    //     return a[1] - b[1];
+    //   });
+    //   return stabilizedThis.map((el) => el[0]);
+    return array
 }
 
 interface HeadCell {
@@ -112,7 +117,7 @@ const headCells: readonly HeadCell[] = [
 
 interface EnhancedTableProps {
   numSelected: number;
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
+//   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
   orderBy: string;
@@ -120,11 +125,11 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const { order, orderBy, onRequestSort } =
+  const { order, orderBy, } =
     props;
   const createSortHandler =
-    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
+    (_property: keyof Data) => (_event: React.MouseEvent<unknown>) => {
+    //   onRequestSort(event, property);
     };
 
   return (
@@ -250,20 +255,20 @@ export default function SensorTable({ values, fetchMoreData, title }: Props) {
     const nextItem = arr[idx + 1] ? arr[idx + 1] : arr[idx];
     return createData(idx + 1, v.modified, v.value, v.value > nextItem.value ? 'trending_up' : v.value === nextItem.value ? 'trending_flat' : 'trending_down')
   }), [values]);
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof Data>('values');
+  const [order, _setOrder] = React.useState<Order>('asc');
+  const [orderBy, _setOrderBy] = React.useState<keyof Data>('name');
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(7);
   const [showMore, setShowMore] = React.useState(false);
-  const handleRequestSort = (
-    _event: React.MouseEvent<unknown>,
-    property: keyof Data,
-  ) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
+//   const handleRequestSort = (
+//     _event: React.MouseEvent<unknown>,
+//     property: keyof Data,
+//   ) => {
+//     const isAsc = orderBy === property && order === 'asc';
+//     setOrder(isAsc ? 'desc' : 'asc');
+//     setOrderBy(property);
+//   };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -315,9 +320,8 @@ export default function SensorTable({ values, fetchMoreData, title }: Props) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-  const visibleRows = React.useMemo(
-    () =>
-      stableSort(rows, getComparator(order, orderBy)).slice(
+  const visibleRows = React.useMemo(() =>
+      stableSort(rows,orderBy, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       ),
@@ -329,7 +333,7 @@ export default function SensorTable({ values, fetchMoreData, title }: Props) {
     <Box>
       <EnhancedTableToolbar
         title={title}
-        handleRequestSort={handleRequestSort}
+        handleRequestSort={()=>{}}
         numSelected={selected.length}
       />
       <TableContainer>
@@ -343,7 +347,7 @@ export default function SensorTable({ values, fetchMoreData, title }: Props) {
             order={order}
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
-            onRequestSort={handleRequestSort}
+            // onRequestSort={handleRequestSort}
             rowCount={rows.length}
           />
           <TableBody>
