@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, ListItemText, Grid, Icon, Theme, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar, Divider, useMediaQuery, Stack, styled, Tooltip } from "@mui/material";
+import { Box, Breadcrumbs, ListItemText, Grid, Icon, Theme, Link as MuiLink, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar, Divider, useMediaQuery, Stack, styled, Tooltip } from "@mui/material";
 import { Link } from "react-router-dom";
 import {ExpandMore, ArrowForwardIosSharp} from '@mui/icons-material';
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
@@ -60,7 +60,7 @@ export default function SettingsNetworking() {
     const [wifiList, setWifiList] = useState<AccessPoint[]>([]);
     const [error, setError] = useState<{ message: Error | null | string, severity: "error" | "warning" | "info" | "success" } | null>(null);
     const [selectedWifi, setSelectedWifi] = useState<AccessPoint & { password?: string } | undefined>(undefined);
-    const { showDialog } = useContext(GlobalContext)
+    const { showDialog,wazigateId } = useContext(GlobalContext)
     const { networkDevices, selectedCloud, vpnStatus, setNetWorkDevices, setSelectedCloud } = useContext(SettingsContext)
     const [rSelectedCloud,setRSelectedCloud]=useState<Cloud | null>(null)
     const scan = () => {
@@ -513,6 +513,7 @@ export default function SettingsNetworking() {
                                         color="secondary"
                                     />
                                 </RowContainerNormal>
+                                <>
                                     <RowContainerNormal additionStyles={{ alignItems: 'center', justifyContent: 'space-between' }}>
                                         <Typography color={!(selectedCloud?.registered)?'rgba(0,0,0,.2)':''} >VPN {vpnStatus?.connected?"Active":"Inactive"}</Typography>
                                         <Tooltip title={!(selectedCloud?.registered)?"Enable sync to activate VPN":""}>
@@ -539,6 +540,16 @@ export default function SettingsNetworking() {
                                             />
                                         </Tooltip>
                                     </RowContainerNormal>
+                                    {
+                                        vpnStatus?.connected ? (
+                                            <Typography>
+                                                <MuiLink href={`http://vpn.waziup.org/gateway-${wazigateId}`} target="_blank" rel="noopener noreferrer" sx={{ textDecoration: "underline",cursor: "pointer", color: "primary.main" }}>
+                                                    Gateway access
+                                                </MuiLink>
+                                            </Typography>
+                                        ):null
+                                    }
+                                </>
                                 <InputField label="User Name">
                                     <Input
                                         fullWidth
