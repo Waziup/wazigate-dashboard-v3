@@ -1,5 +1,6 @@
 import { createContext, useCallback, useEffect, useState } from "react"
 import GlobalDialog from "../components/shared/GlobalDialog"
+import { WaziGateApiUrl } from "../constants";
 
 interface ContextValues{
     wazigateId: string
@@ -59,6 +60,29 @@ export const GlobalProvider = ({children}:{children:React.ReactNode})=>{
         setToken(accessToken);
         // window.localStorage.removeItem('token');
     },[]);
+    const refreshToken = async () => {
+        try {
+            const token = sessionStorage.getItem("token");
+
+            const tokenResp = await fetch(WaziGateApiUrl + "/auth/retoken", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!tokenResp.ok) {
+                throw new Error(`Failed to refresh token: ${tokenResp.statusText}`);
+            }
+
+            const tokenText: string = await tokenResp.json();
+
+            sessionStorage.setItem("token", tokenText);
+            window.wazigate.setToken(tokenText);
+        } catch (error) {
+            console.error("Error refreshing token", error);
+        }
+    };
     useEffect(()=>{
         const fc = async () => {
             if(token){
@@ -71,6 +95,11 @@ export const GlobalProvider = ({children}:{children:React.ReactNode})=>{
         }
         fc();
     },[ setAccessToken, token]);
+    useEffect(() => {
+        if (!token) return;
+        const intervalId = setInterval(refreshToken, 8 * 60 * 1000);
+        return () => clearInterval(intervalId);
+    }, [token]);
     
     const [dialogState, setDialogState] = useState<{open: boolean,title: string, content: React.ReactNode | string, hideCloseButton: boolean, acceptBtnTitle: string,onAccept:()=>void,onCancel:()=>void}>({
         open: false,
