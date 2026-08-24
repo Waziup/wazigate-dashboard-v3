@@ -1,0 +1,7 @@
+node_modules
+.env
+.eslintrc.js
+.gitignore
+postcss.config.js
+tailwind.config.js
+commitlint.config.js
