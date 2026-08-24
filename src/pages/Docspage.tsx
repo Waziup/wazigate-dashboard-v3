@@ -54,7 +54,7 @@ function Docspage() {
         {
             title: 'Contact Us',
             description: 'Reach out to us. Send an email for more information and clarification',
-            path: 'mailto:admin@waziup.org',
+            path: 'mailto:contact@waziup.org',
             icon: <MailOutline sx={{ my: 1 }} />,
         },
     ];
