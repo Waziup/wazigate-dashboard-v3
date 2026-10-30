@@ -21,6 +21,7 @@ import { useContext } from 'react'
 import Actuator from './pages/devices/Actuator'
 import ActuatorSettings from './pages/devices/ActuatorSettings'
 import { GlobalContext } from './context/global.context'
+import { withBasePath } from './constants'
 function App() {
     const theme = createTheme({
         palette: {
@@ -59,14 +60,15 @@ function App() {
                                         <Route path='/devices/:id/actuators/:actuatorId' element={<Actuator/>}/>
                                         <Route path='/devices/:id/actuators/:actuatorId/setting' element={<ActuatorSettings/>}/>
                                         <Route path='/apps' element={<EdgeApplicationsPage/>}/>
+                                        {/* Apps set their own hash routes and navigate freely, keep them all in the frame */}
+                                        <Route path='/apps/:id/*' element={<AppUI/>}/>
                                         <Route path='/apps/:id/:id2/' element={<AppUI/>}/>
-                                        <Route path='/apps/:id' element={<AppUI/>}/>
                                         <Route path='/settings' element={<Settings/>}/>
                                         <Route path='/settings/networking' element={<SettingsNetworking/>}/>
                                         <Route path='/settings/maintenance' element={<SettingsMaintenance/>}/>
                                         <Route path='/user' element={<User/>}/>
                                         <Route path='/help' element={<Docspage/>}/>
-                                        <Route path='/docs' element={<Box sx={{overflow:'hidden',height:'100vh'}}><iframe width="100%" height="100%" className="app" src="/docs/" /></Box>}/>
+                                        <Route path='/docs' element={<Box sx={{overflow:'hidden',height:'100vh'}}><iframe width="100%" height="100%" className="app" src={withBasePath('/docs/')} title="API documentation" /></Box>}/>
                                         <Route path='*' element={<div>Not Found</div>}/>
                                     </Route>
                                 </Route>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Breadcrumbs, Card, CardActions, CardContent, Stack, Tooltip, Typography } from '@mui/material';
 import { DataObject, DescriptionOutlined, Language, MailOutline } from '@mui/icons-material';
 import { Link, To, } from 'react-router-dom';
-import { DEFAULT_COLORS } from '../constants';
+import { DEFAULT_COLORS, withBasePath } from '../constants';
 import { lineClamp } from '../utils';
 
 interface CardProps {
@@ -42,13 +42,13 @@ function Docspage() {
         {
             title: 'Wazigate Edge Documentation',
             description: 'Checkout the Edge API Documentation to learn how you can manage the gateway interfaces',
-            path: '/docs/',
+            path: withBasePath('/docs/'),
             icon: <DescriptionOutlined sx={{ my: 1 }} />,
         },
         {
             title: 'System API Documentation',
             description: 'Checkout the Wazigate System API Documentation to learn how you can interact with Wazigate system features',
-            path: '/apps/waziup.wazigate-system/docs/',
+            path: withBasePath('/apps/waziup.wazigate-system/docs/'),
             icon: <DataObject sx={{ my: 1 }} />,
         },
         {

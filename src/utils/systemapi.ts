@@ -1,4 +1,4 @@
-import { WaziGateApiUrl } from '../constants/index.ts'; 
+import { WaziGateApiUrl, withBasePath } from '../constants/index.ts';  
 
 const URL = WaziGateApiUrl + "/apps/waziup.wazigate-system/";
 
@@ -422,7 +422,7 @@ export async function getUpdateStatus() {
 export async function getVersion() {
     const token = window.sessionStorage.getItem("token");
     await tokenChecker(token)
-    const resp = await fetch("version", {headers: {Authorization: 'Bearer ' + token}});
+    const resp = await fetch(withBasePath("version"), {headers: {Authorization: 'Bearer ' + token}});
 
     if (!resp.ok) await failResp(resp);
     return await resp.text();
@@ -431,7 +431,7 @@ export async function getVersion() {
 export async function getBuildNr() {
     const token = window.sessionStorage.getItem("token");
     await tokenChecker(token)
-    const resp = await fetch("/buildnr", {headers: {Authorization: 'Bearer ' + token}});
+    const resp = await fetch(withBasePath("/buildnr"), {headers: {Authorization: 'Bearer ' + token}});
 
     if (!resp.ok) await failResp(resp);
     return await resp.text();

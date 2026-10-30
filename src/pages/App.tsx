@@ -1,18 +1,16 @@
-import { Box } from '@mui/material';
 import { useLocation } from 'react-router-dom'
+import { withBasePath } from '../constants';
 
-const removeLeadingLashes = (path: string)=>{
-    if (path.startsWith("/")) {
-        return path.replace(/^\/+/, "");
-    }
-    return path;
-}
+const removeTrailingSlash = (path: string) =>
+    path.length > 1 ? path.replace(/\/+$/, '') : path
 
+// The app is rendered from this path (e.g. /apps/waziup.wazigate-system or
+// /apps/waziup.wazigate-system/net/wifi). It is routed to the gateway as is,
+// with the sub-path the dashboard is served from in front of it.
 export default function AppUI() {
-    const {pathname}=useLocation()
+    const { pathname, search, hash } = useLocation()
+    const src = removeTrailingSlash(pathname) + search + hash
     return (
-        <Box sx={{overflowY:'hidden',height:'100%'}}>
-            <iframe src={removeLeadingLashes(pathname)} title="Apps" width="100%" height="100%"></iframe>
-        </Box>
+        <iframe src={withBasePath(src)} title="Apps" width="100%" height="100%"></iframe>
     )
 }
