@@ -36,8 +36,12 @@
     <script>
     window.onload = function() {
       // Begin Swagger UI call region
+      // Resolve the spec against this page, not against the browser URL:
+      // the docs can be embedded under any gateway sub-path (e.g. /gateway-<id>/docs/)
+      // and the spec must always be loaded from <this directory>/openapi.json.
+      const specURL = new URL("openapi.json", window.location.href).href;
       const ui = SwaggerUIBundle({
-        url: "openapi.json",
+        url: specURL,
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [
