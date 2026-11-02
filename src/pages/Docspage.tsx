@@ -2,18 +2,19 @@ import React from 'react';
 import { Box, Breadcrumbs, Card, CardActions, CardContent, Stack, Tooltip, Typography } from '@mui/material';
 import { DataObject, DescriptionOutlined, Language, MailOutline } from '@mui/icons-material';
 import { Link, To, } from 'react-router-dom';
-import { DEFAULT_COLORS, withBasePath } from '../constants';
+import { DEFAULT_COLORS } from '../constants';
 import { lineClamp } from '../utils';
 
 interface CardProps {
     title: string;
     description: string;
-    path: To;
-    newTab?: boolean;
+    path: To | string;
+    /** path is a real URL (absolute or withBasePath) to open, not a route of this SPA */
+    external?: boolean;
     icon?: React.ReactNode;
 }
 
-const CardComponent = ({ description, path, title, newTab, icon }: CardProps) => (
+const CardComponent = ({ title, description, path, external, icon }: CardProps) => (
     <Card elevation={1} sx={{ width: ['100%', 350] }}>
         <CardContent>
             {icon}
@@ -23,9 +24,15 @@ const CardComponent = ({ description, path, title, newTab, icon }: CardProps) =>
             </Tooltip>
         </CardContent>
         <CardActions>
-            <Link to={path} target={newTab ? '_blank' : undefined} style={{ textDecoration: 'none', cursor: 'pointer', padding: 6, }}>
-                <Typography variant='button' sx={{ color: DEFAULT_COLORS.primary_blue }}>LEARN MORE</Typography>
-            </Link>
+            {external ? (
+                <a href={path as string} target='_blank' rel='noopener noreferrer' style={{ textDecoration: 'none', cursor: 'pointer', padding: 6, }}>
+                    <Typography variant='button' sx={{ color: DEFAULT_COLORS.primary_blue }}>LEARN MORE</Typography>
+                </a>
+            ) : (
+                <Link to={path as To} style={{ textDecoration: 'none', cursor: 'pointer', padding: 6, }}>
+                    <Typography variant='button' sx={{ color: DEFAULT_COLORS.primary_blue }}>LEARN MORE</Typography>
+                </Link>
+            )}
         </CardActions>
     </Card>
 );
@@ -37,18 +44,23 @@ function Docspage() {
             description: 'Checkout the wazigate Documentation on Wazilab and learn more about the gateway',
             path: 'https://lab.waziup.io/resources/waziup-e-v/wazigate',
             icon: <Language sx={{ my: 1 }} />,
-            newTab: true,
+            external: true,
         },
         {
             title: 'Wazigate Edge Documentation',
             description: 'Checkout the Edge API Documentation to learn how you can manage the gateway interfaces',
-            path: withBasePath('/docs/'),
+            // Rendered inside the dashboard by the /docs route, which prefixes the
+            // sub-path itself - so this stays a plain route of the SPA.
+            path: '/docs',
             icon: <DescriptionOutlined sx={{ my: 1 }} />,
         },
         {
             title: 'System API Documentation',
             description: 'Checkout the Wazigate System API Documentation to learn how you can interact with Wazigate system features',
-            path: withBasePath('/apps/waziup.wazigate-system/docs/'),
+            // Rendered inside the dashboard by the /apps/:id/* route. The trailing
+            // slash is required: the gateway forwards the rest of the path to the
+            // app, and /apps/<id>/docs (no slash) answers 502.
+            path: '/apps/waziup.wazigate-system/docs/',
             icon: <DataObject sx={{ my: 1 }} />,
         },
         {
