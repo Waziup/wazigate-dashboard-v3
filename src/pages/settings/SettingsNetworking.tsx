@@ -543,7 +543,7 @@ export default function SettingsNetworking() {
                                     {
                                         vpnStatus?.connected ? (
                                             <Typography>
-                                                <MuiLink href={`http://vpn.waziup.org/gateway-${wazigateId}`} target="_blank" rel="noopener noreferrer" sx={{ textDecoration: "underline",cursor: "pointer", color: "primary.main", float: "right" }}>
+                                                <MuiLink href={`http://vpn.waziup.org/gateway-${wazigateId}/`} target="_blank" rel="noopener noreferrer" sx={{ textDecoration: "underline",cursor: "pointer", color: "primary.main", float: "right" }}>
                                                     Gateway VPN access
                                                 </MuiLink>
                                             </Typography>
