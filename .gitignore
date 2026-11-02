@@ -27,3 +27,4 @@ dist-ssr
 changes.txt
 src/app
 /system_apps/*
+.env
