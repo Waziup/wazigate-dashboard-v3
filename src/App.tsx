@@ -21,6 +21,7 @@ import { useContext } from 'react'
 import Actuator from './pages/devices/Actuator'
 import ActuatorSettings from './pages/devices/ActuatorSettings'
 import { GlobalContext } from './context/global.context'
+import { SidebarProvider } from './context/sidebar.context'
 import { withBasePath } from './constants'
 function App() {
     const theme = createTheme({
@@ -45,6 +46,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <Box bgcolor={'#F0F2F5'}>
                 <HashRouter>
+                    <SidebarProvider>
                     <Routes>
                         {
                             (token && creds) ? (
@@ -78,6 +80,7 @@ function App() {
                         }
                         <Route  path='*' element={<Login/>}  />
                     </Routes>
+                    </SidebarProvider>
                 </HashRouter>
             </Box>
         </ThemeProvider>
