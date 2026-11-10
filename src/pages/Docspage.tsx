@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Breadcrumbs, Card, CardActions, CardContent, Stack, Tooltip, Typography } from '@mui/material';
 import { DataObject, DescriptionOutlined, Language, MailOutline } from '@mui/icons-material';
+import PageHeader from '../components/layout/PageHeader';
 import { Link, To, } from 'react-router-dom';
 import { DEFAULT_COLORS } from '../constants';
 import { lineClamp } from '../utils';
@@ -72,19 +73,19 @@ function Docspage() {
     ];
 
     return (
-        <Box sx={{ px: [2, 4], py: [0, 2], height: '100%' }}>
-            <Box>
-                <Typography variant='h5'>Help</Typography>
-                <Box role="presentation" onClick={() => { }}>
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <PageHeader
+                title="Help & Feedback"
+                breadcrumbs={
                     <Breadcrumbs aria-label="breadcrumb">
                         <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                             <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300, }} state={{ title: 'Devices' }} color="inherit" to="/">Home</Link>
                         </Typography>
                         <Typography color="text.primary" sx={{ color: 'black', textDecoration: 'none', fontWeight: 300, }}>Wazigate Help</Typography>
                     </Breadcrumbs>
-                </Box>
-            </Box>
-            <Box mt={2}>
+                }
+            />
+            <Box sx={{ px: [2, 4], py: [0, 2], flex: 1, minHeight: 0, overflowY: 'auto' }} mt={2}>
                 <Stack mt={2} alignItems="center" flexWrap="wrap" direction="row" gap={2}>
                     {docs.map((doc, index) => (
                         <CardComponent key={index} {...doc} />

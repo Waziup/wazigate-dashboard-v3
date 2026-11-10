@@ -1,4 +1,5 @@
 import { Avatar, Box, Breadcrumbs, Card, CardContent, Grid, Paper, Stack, Typography, styled } from "@mui/material";
+import PageHeader from "../components/layout/PageHeader";
 import { CloudOff, Wifi, CloudQueue, SearchOff, } from '@mui/icons-material';
 import BasicTable from "../components/ui/BasicTable";
 import React, { useContext, useMemo, FC, useCallback } from "react";
@@ -153,10 +154,10 @@ function Dashboard() {
         <>
             {
                 matches ? (
-                    <Box sx={{ px: 4, py: 2, height: '100%', overflowY: 'hidden' }}>
-                        <Box>
-                            <Typography variant="h5">Gateway Dashboard</Typography>
-                            <Box role="presentation" onClick={() => { }}>
+                    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        <PageHeader
+                            title="Gateway Dashboard"
+                            breadcrumbs={
                                 <Breadcrumbs aria-label="breadcrumb">
                                     <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                                         <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color='text.secondary' to="/">
@@ -164,8 +165,9 @@ function Dashboard() {
                                         </Link>
                                     </Typography>
                                 </Breadcrumbs>
-                            </Box>
-                        </Box>
+                            }
+                        />
+                        <Box sx={{ px: 4, py: 2, flex: 1, minHeight: 0, overflowY: 'auto' }}>
                         <Stack direction={'row'} mt={2} spacing={2}>
                             <InfoCard icon={selectedCloud?.paused ? (<CloudOff sx={{ my:1, color: '#D9D9D9' }} />) : (<CloudQueue sx={{ my:1, color: 'black' }} />)} path='/settings/networking' onClick={onClick} title="Cloud Synchronization">
                                 <Typography variant="subtitle2" color='text.secondary' fontWeight={300}>
@@ -213,6 +215,7 @@ function Dashboard() {
                                 <AppStatus apps={apps ? apps.slice(-5) : []} />
                             </Grid>
                         </Grid>
+                        </Box>
                     </Box>
                 ) : (
                     <Box sx={{ height: '100%', overflowY: 'auto' }}>

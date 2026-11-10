@@ -1,5 +1,6 @@
 import { Alert, Box, Breadcrumbs, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, ListSubheader, MenuItem, Select, SelectChangeEvent, Snackbar, Tooltip, Typography } from '@mui/material';
 import RowContainerBetween from '../components/shared/RowContainerBetween';
+import PageHeader from '../components/layout/PageHeader';
 import { DEFAULT_COLORS } from '../constants';
 import { Download, FiberNew, } from '@mui/icons-material';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
@@ -680,22 +681,21 @@ export default function EdgeApplicationsPage() {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Box onClick={() => { open ? handleClose() : null }} sx={{ px: [2, 4], py: [0, 2], overflowY: 'auto', height: '100%' }}>
-                <RowContainerBetween>
-                    <Box >
-                        <Typography variant='h5'>Apps</Typography>
-                        <div role="presentation" onClick={() => { }}>
-                            <Breadcrumbs aria-label="breadcrumb">
-                                <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
-                                    <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color="inherit" to="/">
-                                        Home
-                                    </Link>
-                                </Typography>
-                                <p style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} color="text.primary">Apps</p>
-                            </Breadcrumbs>
-                        </div>
-                    </Box>
-                </RowContainerBetween>
+            <Box onClick={() => { open ? handleClose() : null }} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <PageHeader
+                    title="Apps"
+                    breadcrumbs={
+                        <Breadcrumbs aria-label="breadcrumb">
+                            <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                                <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                    Home
+                                </Link>
+                            </Typography>
+                            <p style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} color="text.primary">Apps</p>
+                        </Breadcrumbs>
+                    }
+                />
+                <Box sx={{ px: [2, 4], py: [0, 2], flex: 1, minHeight: 0, overflowY: 'auto' }}>
                 <PrimaryIconButton onClick={()=>setInstallAppDialogOpen(!installAppDialogOpen)} additionStyles={{mt:3}} color="secondary" title="Install App" iconName="add" />
                 {/* {
                     matches?(
@@ -778,6 +778,7 @@ export default function EdgeApplicationsPage() {
 
                     {/* test section  */}
                 </Grid>
+                </Box>
             </Box>
         </>
     );

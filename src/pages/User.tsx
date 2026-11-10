@@ -1,6 +1,7 @@
 import { Save } from "@mui/icons-material";
 import { Alert, Box, Breadcrumbs, Button, CircularProgress, Input, ListItemText, Paper, Snackbar, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DEFAULT_COLORS } from "../constants";
+import PageHeader from "../components/layout/PageHeader";
 import { useContext, useCallback, useEffect, useState } from "react";
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -143,10 +144,10 @@ function User() {
                 </Alert>
             </Snackbar>
 
-            <Box sx={{ px: matches ? 4 : 1, py: [0, 2], width: '100%', position: 'relative', height: '100%', }}>
-                <Box>
-                    <Typography variant="h5">Profile</Typography>
-                    <Box role="presentation" onClick={() => { }}>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <PageHeader
+                    title="Profile"
+                    breadcrumbs={
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                                 <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color="inherit" to="/">
@@ -157,8 +158,9 @@ function User() {
                                 Profile
                             </p>
                         </Breadcrumbs>
-                    </Box>
-                </Box>
+                    }
+                />
+                <Box sx={{ px: matches ? 4 : 1, py: [0, 2], width: '100%', position: 'relative', flex: 1, minHeight: 0, overflowY: 'auto' }}>
 
                 <Paper sx={{ mt: 2, borderRadius: 2, bgcolor: 'white', width: ['100%', '50%'] }}>
                     <Box sx={{ display: 'flex', py: 2, width: '100%', borderBottom: '1px solid #D5D6D8', alignItems: 'center', }}>
@@ -262,6 +264,7 @@ function User() {
                         </Box>
                     </form>
                 </Paper>
+                </Box>
             </Box>
         </>
     );
