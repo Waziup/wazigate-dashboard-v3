@@ -100,13 +100,20 @@ const NavigationSmall = ({ path, otherItem, icon, onClick, iconColor }: Navigati
     )
 }
 
-function Sidebar({ matchesMd }: { matchesMd: boolean }) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function Sidebar({ matchesMd: _matchesMd, expanded = true, onExpand }: { matchesMd: boolean, expanded?: boolean, onExpand?: () => void }) {
+    // show icons only when the sidebar is squeezed (and not expanded as an overlay)
+    const collapsed = !expanded;
     const [open, setOpen] = React.useState(false);
     const handleClick = () => {
         setOpen(!open);
     };
     const navigate = useNavigate();
     const location = useLocation().pathname;
+    // close the settings submenu when the route changes
+    React.useEffect(() => {
+        setOpen(false);
+    }, [location]);
     const { setProfile, setAccessToken, showDialog, closeDialog } = useContext(GlobalContext);
     const handleLogout = () => {
         showDialog({
@@ -123,11 +130,13 @@ function Sidebar({ matchesMd }: { matchesMd: boolean }) {
     }
     return (
         <Box position={'relative'} width={'100%'} height={'100%'} display={'flex'} flexDirection={'column'} alignItems={'center'}>
-            <Box my={1} width={'100%'} display={'flex'} alignItems={'center'} justifyContent={'center'} py={1} borderBottom={'0.05px solid rgba(255, 255, 255, 0.4)'}>
-                <Box component={'img'} width={'70%'} src={WaziGateSVG} mb={1} height={50} />
-            </Box>
+            {!collapsed && (
+                <Box my={1} width={'100%'} display={'flex'} alignItems={'center'} justifyContent={'center'} py={1} pr={4} boxSizing={'border-box'} borderBottom={'0.05px solid rgba(255, 255, 255, 0.4)'}>
+                    <Box component={'img'} width={'70%'} src={WaziGateSVG} mb={1} height={50} />
+                </Box>
+            )}
             {
-                !matchesMd ? (
+                !collapsed ? (
 
                     <>
                         <List sx={{ width: '100%' }} component="nav" aria-labelledby="nested-list-subheader">
@@ -172,7 +181,7 @@ function Sidebar({ matchesMd }: { matchesMd: boolean }) {
                                 <NavigationItem
                                     location={location}
                                     path={'/settings'}
-                                    onClick={() => setOpen(!open)} // Toggle collapse state
+                                    onClick={() => { if (collapsed) { onExpand?.(); } else { setOpen(!open); } }}
                                     icon="settings_two_tone"
                                     iconColor={
                                         location === '/settings' ||
