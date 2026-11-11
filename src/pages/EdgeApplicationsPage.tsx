@@ -753,7 +753,7 @@ export default function EdgeApplicationsPage() {
                                             <Box sx={{ px: 1 }}>
                                                 {
                                                     app.state && app.state.running ? (
-                                                        <Link style={{ width: '100%' }} to={returnAppURL(app)} >
+                                                        <Link style={{ width: '100%' }} to={returnAppURL(app)} state={{ title: app.name }} >
                                                             <Button disabled={app.state ? !app.state.running : true} variant='text' color='secondary' fullWidth sx={{ my: 1, bgcolor: '#e8f0fd' }}>OPEN</Button>
                                                         </Link>
                                                     ) : (

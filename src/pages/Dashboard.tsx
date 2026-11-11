@@ -91,7 +91,7 @@ const AppStatus = ({ apps }: { apps: App[] }) => (
                     const [imageError, setImageError] = React.useState(false);
                     const handleImageError = () => { setImageError(true) }
                     return (
-                        <Link to={returnAppURL(app)} style={{ textDecoration: 'none', color: 'black', cursor: 'pointer' }} key={index}>
+                        <Link to={returnAppURL(app)} state={{ title: app.name }} style={{ textDecoration: 'none', color: 'black', cursor: 'pointer' }} key={index}>
                             <RowContainerBetween additionStyles={{ px: 2, ":hover": { bgcolor: '#f5f5f5', cursor: 'pointer', } }} key={index}>
                                 <RowContainerNormal>
                                     {

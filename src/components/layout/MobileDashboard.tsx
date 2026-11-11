@@ -128,7 +128,7 @@ export default function MobileDashboard({onClick,activeDevices,totalDevices, apC
                     {
                         apps.length>0?apps.map((app, id) => {
                             return(
-                            <Box onClick={() => {!(app.id.includes("wazigate-system"))? navigate(returnAppURL(app)):'/' }} key={id} sx={{ cursor: 'pointer', ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, borderBottom: '1px solid #E2E2E2', width: '95%', height: '100%', position: 'relative', px: 1, bgcolor: 'white', }}>
+                            <Box onClick={() => {!(app.id.includes("wazigate-system"))? navigate(returnAppURL(app), { state: { title: app.name } }):'/' }} key={id} sx={{ cursor: 'pointer', ":hover": { bgcolor: 'rgba(0,0,0,.1)' }, borderBottom: '1px solid #E2E2E2', width: '95%', height: '100%', position: 'relative', px: 1, bgcolor: 'white', }}>
                                 <RowContainerBetween>
                                     <RowContainerNormal >
                                         {
