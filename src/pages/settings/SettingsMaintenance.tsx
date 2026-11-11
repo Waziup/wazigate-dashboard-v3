@@ -6,6 +6,7 @@ import ResourcesTabMaintenance from "../../components/ui/ResourcesTab.maintenanc
 import SSHTabMaintenance from "../../components/ui/SSHTab.maintenance";
 import ContainersTabMaintenance from "../../components/ui/ContainersTab.maintenance";
 import ExportTabMaintenance from "../../components/ui/ExportTab.maintenance";
+import PageHeader from "../../components/layout/PageHeader";
 import LogsTabMaintenance from "../../components/ui/LogsTab.maintenance";
 
 
@@ -55,14 +56,19 @@ const SettingsMaintenance: React.FC = () => {
     const TabComponent = tabs[activeTab].component;
 
     return (
-        <Box sx={{ px: matches ? 4 : 2, py: [0, 2], }}>
-            <Typography variant="h5">Maintenance</Typography>
-            <Breadcrumbs>
-                <Typography component={Link} to="/settings" sx={{ textDecoration: 'none', fontWeight: 300,  }}>
-                    Settings
-                </Typography>
-                <Typography sx={{ fontWeight: 300 }}>Maintenance</Typography>
-            </Breadcrumbs>
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <PageHeader
+                title="Maintenance"
+                breadcrumbs={
+                    <Breadcrumbs>
+                        <Typography component={Link} to="/settings" sx={{ textDecoration: 'none', fontWeight: 300,  }}>
+                            Settings
+                        </Typography>
+                        <Typography sx={{ fontWeight: 300 }}>Maintenance</Typography>
+                    </Breadcrumbs>
+                }
+            />
+            <Box sx={{ px: matches ? 4 : 2, py: [0, 2], flex: 1, minHeight: 0, overflowY: 'auto' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={parseInt(activeTab)} onChange={handleTabChange} aria-label="basic tabs example">
                     {Object.entries(tabs).map(([key, tab],idx) => (
@@ -72,6 +78,7 @@ const SettingsMaintenance: React.FC = () => {
             </Box>
 
             {isPending ? <PendingTab /> : <TabComponent matches={matches} />}
+            </Box>
         </Box>
     );
 };

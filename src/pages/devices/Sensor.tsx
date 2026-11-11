@@ -1,9 +1,10 @@
 import { Box, Typography, Breadcrumbs, Button, Theme, useMediaQuery, Paper, Stack, Card, CardContent } from "@mui/material";
+import PageHeader from "../../components/layout/PageHeader";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import type { Device, Sensor } from "waziup";
 import { Link } from "react-router-dom";
-import RowContainerBetween from "../../components/shared/RowContainerBetween";
+
 import SensorTable from "../../components/ui/DeviceTable";
 import { cleanString, lineClamp, time_ago } from "../../utils";
 import { Settings } from "@mui/icons-material";
@@ -13,9 +14,6 @@ import SensorActuatorValuesChartPlot from "../../components/shared/SensorActuato
 import ontologies from '../../assets/ontologies.json';
 
 export default function DeviceSensor() {
-    function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
-        event.preventDefault();
-    }
     const [device, setDevice] = useState<Device | null>(null);
     const [sensor, setSensor] = useState<Sensor | null>(null)
     const [values, setValues] = useState<{ value: number | string, modified: string }[]>([]);
@@ -107,32 +105,31 @@ export default function DeviceSensor() {
     }, [getGraphValues, id, sensorId]);
 
     return (
-        <Box sx={{ height: '100%', overflowY: 'auto', px: [2, 4], py: [0, 2], }}>
-            <RowContainerBetween>
-                <Box>
-                    <Typography variant="h5">{sensor?.name}</Typography>
-                    <Box role="presentation" onClick={handleClick}>
-                        <Breadcrumbs aria-label="breadcrumb">
-                            <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
-                                <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/">
-                                    Home
-                                </Link>
-                            </Typography>
-                            <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
-                                <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/devices">
-                                    Devices
-                                </Link>
-                            </Typography>
-                            <Typography fontSize={14} sx={{ fontWeight: '300', ":hover": { textDecoration: 'underline' } }} color="text.primary">
-                                <Link style={{ fontSize: 14, fontWeight: '300', textDecoration: 'none', color: 'inherit' }} to={`/devices/${device?.id}`}>
-                                    {device?.name}
-                                </Link>
-                            </Typography>
-                            <Typography fontSize={14} fontWeight={300} color="inherit">sensors <span style={{ fontSize: 14, color: 'inherit', fontWeight: 500 }}>/</span>  {cleanString(sensor?.name)}</Typography>
-                        </Breadcrumbs>
-                    </Box>
-                </Box>
-            </RowContainerBetween>
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <PageHeader
+                title={sensor?.name || 'Sensor'}
+                breadcrumbs={
+                    <Breadcrumbs aria-label="breadcrumb">
+                        <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                            <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/">
+                                Home
+                            </Link>
+                        </Typography>
+                        <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                            <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/devices">
+                                Devices
+                            </Link>
+                        </Typography>
+                        <Typography fontSize={14} sx={{ fontWeight: '300', ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                            <Link style={{ fontSize: 14, fontWeight: '300', textDecoration: 'none', color: 'inherit' }} to={`/devices/${device?.id}`}>
+                                {device?.name}
+                            </Link>
+                        </Typography>
+                        <Typography fontSize={14} fontWeight={300} color="inherit">sensors <span style={{ fontSize: 14, color: 'inherit', fontWeight: 500 }}>/</span>  {cleanString(sensor?.name)}</Typography>
+                    </Breadcrumbs>
+                }
+            />
+            <Box sx={{ px: [2, 4], py: [0, 2], flex: 1, minHeight: 0, overflowY: 'auto' }}>
 
             <Box my={2} >
                 {isTablet && <Button
@@ -205,7 +202,7 @@ export default function DeviceSensor() {
                     </Paper>
                 </Box>
             </Box>
-
+            </Box>
         </Box>
     );
 }

@@ -1,4 +1,5 @@
 import { Box, Breadcrumbs, Button, Icon, FormControl, Typography, MenuItem, Select, SelectChangeEvent, Paper, Input, Theme, useMediaQuery, Snackbar, Alert } from "@mui/material";
+import PageHeader from "../../components/layout/PageHeader";
 import { Link, useOutletContext, useParams, useNavigate, } from "react-router-dom";
 import { ArrowForward } from "@mui/icons-material";
 import { useCallback, useContext, useEffect, useState } from "react";
@@ -258,12 +259,12 @@ export default function ActuatorSettings() {
                     {error?error.message as string:''}
                 </Alert>
             </Snackbar>
-            <Box>
-                <Box sx={{ px: [2, 4], py: [0, 2], }}>
-                    <Typography variant="h5">{actuator?.name} Settings</Typography>
-                    <Box role="presentation" onClick={() => { }}>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <PageHeader
+                    title={`${actuator?.name || 'Actuator'} Settings`}
+                    breadcrumbs={
                         <Breadcrumbs aria-label="breadcrumb">
-                            <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                            <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                                 <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/">
                                     Home
                                 </Link>
@@ -298,9 +299,9 @@ export default function ActuatorSettings() {
                             </Typography>
                             <Typography fontSize={14}>settings</Typography>
                         </Breadcrumbs>
-                    </Box>
-                </Box>
-
+                    }
+                />
+                <Box sx={{ px: [2, 4], py: [0, 2], flex: 1, minHeight: 0, overflowY: 'auto' }}>
                 <Box sx={{ borderTopRightRadius: 2, display: 'flex', flexDirection: 'column', px: [2, 4], gap: 2, mb: 2, height: 'auto', width: '100%' }}  >
                     <Box boxShadow={1} borderRadius={2} p={2} width={['100%', undefined, '80%', '50%']}>
                         <Typography variant="h6">Actuator settings</Typography>
@@ -460,6 +461,7 @@ export default function ActuatorSettings() {
                             <Button variant="outlined" color="error" fullWidth={isMobile} onClick={deleteActuator}> Delete </Button>
                         </Box>
                     </Paper>
+                </Box>
                 </Box>
             </Box>
         </>

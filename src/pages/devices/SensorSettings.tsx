@@ -1,4 +1,5 @@
 import { Box, Breadcrumbs, Button, FormControl, Typography, Icon, MenuItem, Select, SelectChangeEvent, Input, Paper, Theme, useMediaQuery, Snackbar, Alert } from "@mui/material";
+import PageHeader from "../../components/layout/PageHeader";
 import { Link, useOutletContext, useParams, useNavigate, } from "react-router-dom";
 import { DEFAULT_COLORS } from "../../constants";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
@@ -327,12 +328,12 @@ export default function DeviceSensorSettings() {
                     {error?error.message as string:''}
                 </Alert>
             </Snackbar>
-            <Box>
-                <Box sx={{ px: [2, 4], py: [0, 2], }}>
-                    <Typography variant="h5">{sensor?.name} Settings</Typography>
-                    <Box role="presentation" onClick={() => { }}>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <PageHeader
+                    title={`${sensor?.name || 'Sensor'} Settings`}
+                    breadcrumbs={
                         <Breadcrumbs aria-label="breadcrumb">
-                            <Typography fontSize={14} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
+                            <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                                 <Link style={{ fontSize: 14, textDecoration: 'none', color: 'black', fontWeight: '300' }} color="black" to="/">
                                     Home
                                 </Link>
@@ -367,8 +368,9 @@ export default function DeviceSensorSettings() {
                             </Typography>
                             <Typography fontSize={14}>settings</Typography>
                         </Breadcrumbs>
-                    </Box>
-                </Box>
+                    }
+                />
+                <Box sx={{ px: [2, 4], py: [0, 2], flex: 1, minHeight: 0, overflowY: 'auto' }}>
 
                 <Box display='flex' flexDirection={['column', 'row']} py={2}>
                     <Box sx={{ borderTopRightRadius: 2, display: 'flex', flexDirection: 'column', px: [2, 4], gap: 2, mb: 2, height: 'auto', width: ['100%', undefined, '50%'] }} >
@@ -486,6 +488,7 @@ export default function DeviceSensorSettings() {
                     </Box>
 
 
+                </Box>
                 </Box>
             </Box>
         </>

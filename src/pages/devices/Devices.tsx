@@ -1,5 +1,6 @@
 import { Box, Grid, CardContent, Typography, SelectChangeEvent, Breadcrumbs, Snackbar, Alert } from '@mui/material';
 import RowContainerBetween from '../../components/shared/RowContainerBetween';
+import PageHeader from '../../components/layout/PageHeader';
 import { DEFAULT_COLORS } from '../../constants';
 import { Link, useNavigate, useOutletContext, } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
@@ -320,25 +321,22 @@ function Devices() {
                     changeEditMakeLoraWANDevice={changeEditMakeLoraWANDevice}
                     autoGenerateLoraWANOptionsHandler={autoGenerateLoraWANOptions}
                 />
-                <Box sx={{ px: matches ? 4 : 2, py: [0, 2], width: '100%', height: '100%' }}>
-                    <RowContainerBetween >
-                        <Box>
-                            <Typography variant='h5'>Devices</Typography>
-                            <div role="presentation" onClick={() => { }}>
-                                <Breadcrumbs aria-label="breadcrumb">
-                                    <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
-                                        <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color="inherit" to="/">
-                                            Home
-                                        </Link>
-                                    </Typography>
-                                    <Typography style={{ textDecoration: 'none', fontWeight: 300 }} color="text.primary">
-                                        Devices
-                                    </Typography>
-                                </Breadcrumbs>
-                            </div>
-                        </Box>
-
-                    </RowContainerBetween>
+                <PageHeader
+                    title="Devices"
+                    breadcrumbs={
+                        <Breadcrumbs aria-label="breadcrumb">
+                            <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                                <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                    Home
+                                </Link>
+                            </Typography>
+                            <Typography style={{ textDecoration: 'none', fontWeight: 300 }} color="text.primary">
+                                Devices
+                            </Typography>
+                        </Breadcrumbs>
+                    }
+                />
+                <Box sx={{ px: matches ? 4 : 2, py: [0, 2], width: '100%', flex: 1, minHeight: 0, overflowY: 'auto' }}>
                     <RowContainerBetween additionStyles={{ my: 2 }}>
                         {/* {
                             matches ? (

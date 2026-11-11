@@ -1,5 +1,6 @@
 import { Box, Breadcrumbs, ListItemText, Grid, Icon, Theme, Link as MuiLink, Typography, CircularProgress, Grow, LinearProgress,Button,  Input, Alert, Snackbar, Divider, useMediaQuery, Stack, styled, Tooltip } from "@mui/material";
 import { Link } from "react-router-dom";
+import PageHeader from "../../components/layout/PageHeader";
 import {ExpandMore, ArrowForwardIosSharp} from '@mui/icons-material';
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
 import RowContainerNormal from "../../components/shared/RowContainerNormal";
@@ -468,10 +469,10 @@ export default function SettingsNetworking() {
                     </Backdrop>
                 ) : null
             }
-            <Box sx={{ px: matches ? 4 : 2, py: [0, 2],}} >
-                <Box>
-                    <Typography typography='h5'>Networks</Typography>
-                    <Box role="presentation" >
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <PageHeader
+                    title="Networks"
+                    breadcrumbs={
                         <Breadcrumbs aria-label="breadcrumb">
                             <Typography fontSize={14} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
                                 <Link style={{ color: 'black', textDecoration: 'none', fontWeight: '300', fontSize: 16 }} state={{ title: 'Devices' }} color="inherit" to="/settings">
@@ -482,8 +483,9 @@ export default function SettingsNetworking() {
                                 Networks
                             </Typography>
                         </Breadcrumbs>
-                    </Box>
-                </Box>
+                    }
+                />
+                <Box sx={{ px: matches ? 4 : 2, py: [0, 2], flex: 1, minHeight: 0, overflowY: 'auto' }}>
                 <Grid container spacing={2} mt={1}>
                     <Grid item xs={12} lg={6}>
                         <GridItemEl text={selectedCloud?.name as string} icon={'cloud'} additionStyles={{ paddingBottom: 2 }} >
@@ -886,6 +888,7 @@ export default function SettingsNetworking() {
                         </GridItemEl>
                     </Grid>
                 </Grid>
+                </Box>
             </Box>
         </>
     )

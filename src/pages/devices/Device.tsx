@@ -14,6 +14,7 @@ import SensorActuatorItem from "../../components/shared/SensorActuatorItem";
 import { BrowserNotSupported, Settings } from "@mui/icons-material";
 import { InputField } from "../Login";
 import { GlobalContext } from "../../context/global.context";
+import PageHeader from "../../components/layout/PageHeader";
 
 export interface HTMLSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
     handleChange: (event: SelectChangeEvent<string>) => void,
@@ -85,10 +86,6 @@ function DeviceSettings() {
         getDevice();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
-        event.preventDefault();
-    }
 
     const setModalEls = (title: string, placeholder: string) => {
         setModalProps({ title, placeholder });
@@ -334,36 +331,31 @@ function DeviceSettings() {
                 {/* </Box> */}
             </Dialog>
 
-            <Box sx={{ px: [2, 4], py: [0, 2], position: 'relative', overflowY: device ? (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0 ? 'hidden' : 'auto' : 'hidden', height: '100%' }}>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <PageHeader
+                    title={device?.name || 'Device'}
+                    breadcrumbs={
+                        <Breadcrumbs aria-label="breadcrumb">
+                            <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                                <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                    Home
+                                </Link>
+                            </Typography>
+                            <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                                <Link style={{ color: 'black', textDecoration: 'none', fontWeight: '300', fontSize: 16 }} state={{ title: 'Devices' }} color="inherit" to="/devices">
+                                    Devices
+                                </Link>
+                            </Typography>
+                            <Typography sx={{  textDecoration: 'none', fontWeight: 300,  }} color="text.primary">
+                                {device ? device.name.length > 10 ? device.name.slice(0, 10) + '....' : device?.name : ''}
+                            </Typography>
+                        </Breadcrumbs>
+                    }
+                />
+                <Box sx={{ px: [2, 4], py: [0, 2], position: 'relative', flex: 1, minHeight: 0, overflowY: device ? (device?.actuators as Actuator[])?.length === 0 && device?.sensors.length === 0 ? 'hidden' : 'auto' : 'hidden' }}>
                 <RowContainerBetween>
                     <Box>
-                        <Typography variant="h5" color={'black'}>{device?.name}</Typography>
-                        <Box role="presentation" onClick={handleClick}>
-                            <Breadcrumbs aria-label="breadcrumb">
-                                <Typography fontSize={16} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
-                                    <Link style={{ color: 'black',textDecoration:'none',fontWeight:'300',fontSize:16 }} state={{ title: 'Devices' }} color="inherit" to="/">
-                                        Home
-                                    </Link>
-                                </Typography>
-                                <Typography fontSize={16} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
-                                    <Link style={{ color: 'black', textDecoration: 'none', fontWeight: '300', fontSize: 16 }} state={{ title: 'Devices' }} color="inherit" to="/devices">
-                                        Devices
-                                    </Link>
-                                </Typography>
-                                <Typography sx={{  textDecoration: 'none', fontWeight: 300,  }} color="text.primary">
-                                    {device ? device.name.length > 10 ? device.name.slice(0, 10) + '....' : device?.name : ''}
-                                </Typography>
-                            </Breadcrumbs>
-                        </Box>
                     </Box>
-                    {/* {
-                        matches ? (
-                            <Box>
-                                <PrimaryIconButton hideText={!matches} title="Device Settings" iconName="settingstwotone" onClick={() => { navigate(`/devices/${device?.id}/setting`) }} />
-                                <PrimaryIconButton hideText={!matches} title="New Interface" iconName="add" onClick={handleToggleModal} />
-                            </Box>
-                        ) : null
-                    } */}
                 </RowContainerBetween>
 
                 <Box display='flex' gap={1} my={2}>
@@ -518,6 +510,7 @@ function DeviceSettings() {
                             </Box>
                         ) : null
                     }
+                </Box>
                 </Box>
             </Box>
         </>

@@ -1,5 +1,6 @@
 import { Box, Grid, Typography, Button, CircularProgress, SelectChangeEvent, Dialog, DialogActions, DialogContent, DialogTitle, Breadcrumbs, Snackbar, Alert } from '@mui/material';
 import { DEFAULT_COLORS } from '../../constants';
+import PageHeader from '../../components/layout/PageHeader';
 import { Mode, PowerSettingsNew, RestartAlt } from '@mui/icons-material';
 import { SxProps, Theme } from '@mui/material';
 import RowContainerBetween from '../../components/shared/RowContainerBetween';
@@ -290,23 +291,24 @@ function Settings() {
                     <Button autoFocus onClick={submitTime} sx={{ mx: 2, color: DEFAULT_COLORS.primary_blue, }} type='submit' variant="text" color="success" >SAVE</Button>
                 </DialogActions>
             </Dialog>
-            <Box sx={{ px: matches ? 4 : 2, py: [0, 2], overflowY: 'auto', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' }, height: '100%' }}>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <PageHeader
+                    title="Settings"
+                    breadcrumbs={
+                        <Breadcrumbs aria-label="breadcrumb">
+                            <Typography  sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                                <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                    Home
+                                </Link>
+                            </Typography>
+                            <Typography style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} color="text.primary">
+                                Settings
+                            </Typography>
+                        </Breadcrumbs>
+                    }
+                />
+                <Box sx={{ px: matches ? 4 : 2, py: [0, 2], overflowY: 'auto', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' }, flex: 1, minHeight: 0 }}>
                 <Box>
-                    <Box>
-                        <Typography variant='h5'>Settings</Typography>
-                        <Box role="presentation" onClick={() => { }}>
-                            <Breadcrumbs aria-label="breadcrumb">
-                                <Typography  sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
-                                    <Link style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} state={{ title: 'Devices' }} color="inherit" to="/">
-                                        Home
-                                    </Link>
-                                </Typography>
-                                <Typography style={{ color: 'black', textDecoration: 'none', fontWeight: 300 }} color="text.primary">
-                                    Settings
-                                </Typography>
-                            </Breadcrumbs>
-                        </Box>
-                    </Box>
                     {/* {
                         matches ? <Typography sx={{ my: 2, fontSize: 13, color: DEFAULT_COLORS.secondary_black }}>Configure settings for wazigate</Typography> : null
                     } */}
@@ -445,6 +447,7 @@ function Settings() {
                         </GridItemEl>
                     </GridItem>
                 </Grid>
+                </Box>
             </Box>
         </>
     );

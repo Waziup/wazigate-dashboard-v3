@@ -5,8 +5,9 @@ import { useContext, useEffect, useState } from "react";
 import AddTextShow from "../../components/shared/AddTextInput";
 import type { Device, } from "waziup";
 import { DevicesContext } from "../../context/devices.context";
-import { devEUIGenerateFc, lineClamp, toStringHelper } from "../../utils";
+import { devEUIGenerateFc, toStringHelper } from "../../utils";
 import RowContainerBetween from "../../components/shared/RowContainerBetween";
+import PageHeader from "../../components/layout/PageHeader";
 import { DEFAULT_COLORS } from "../../constants";
 import BoxDownload from '../../assets/box_download.svg';
 import { DropDownCreateDeviceTab1 } from "../../components/ui/CreateDeviceTab1";
@@ -50,10 +51,6 @@ export const SelectElement = ({ handleChange, title, conditions, isDisabled, my,
  * dialog on changing timezone also have option for saving it, don't save on select
  */
 export default function DeviceSettings() {
-    function handleClick(event: React.MouseEvent<Element, MouseEvent>) {
-        event.preventDefault();
-        console.info('You clicked a breadcrumb.');
-    }
     const { codecsList, devices, getDevicesFc } = useContext(DevicesContext);
     const { showDialog } = useContext(GlobalContext);
     const { id } = useParams();
@@ -299,40 +296,39 @@ export default function DeviceSettings() {
     // }
     return (
         <>
-            <Box sx={{ px: [2, 4], py: [0, 2], height: '100%', overflowY: 'auto', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' } }}>
-                <RowContainerBetween>
-                    <Box>
-                        <Typography sx={{ ...lineClamp(1) }} variant="h5" >{thisDevice?.name} Settings</Typography>
-                        <div role="presentation" onClick={handleClick}>
-                            <Breadcrumbs aria-label="breadcrumb">
-                                <Typography fontSize={matches?15:12} sx={{":hover":{textDecoration:'underline'}}} color="text.primary">
-                                    <Link style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }} state={{ title: 'Devices' }} color="inherit" to="/">
-                                        Home
-                                    </Link>
-                                </Typography>
-                                <Typography fontSize={matches ? 15 : 12} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
-                                    <Link style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }} state={{ title: 'Devices' }} color="inherit" to="/devices">
-                                        Devices
-                                    </Link>
-                                </Typography>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <PageHeader
+                    title={`${thisDevice?.name || 'Device'} Settings`}
+                    breadcrumbs={
+                        <Breadcrumbs aria-label="breadcrumb">
+                            <Typography fontSize={matches?15:12} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                                <Link style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }} state={{ title: 'Devices' }} color="inherit" to="/">
+                                    Home
+                                </Link>
+                            </Typography>
+                            <Typography fontSize={matches ? 15 : 12} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                                <Link style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }} state={{ title: 'Devices' }} color="inherit" to="/devices">
+                                    Devices
+                                </Link>
+                            </Typography>
 
-                                <Typography fontSize={matches ? 15 : 12} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
-                                    <Link
-                                        color="inherit"
-                                        state={{ title: thisDevice?.name }}
-                                        to={`/devices/${id}`}
-                                        style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }}
-                                    >
-                                        {thisDevice?.name ? thisDevice.name : ''}
-                                    </Link>
-                                </Typography>
-                                <Typography fontSize={matches ? 15 : 12} color="text.primary">
-                                    Settings
-                                </Typography>
-                            </Breadcrumbs>
-                        </div>
-                    </Box>
-                </RowContainerBetween>
+                            <Typography fontSize={matches ? 15 : 12} sx={{ ":hover": { textDecoration: 'underline' } }} color="text.primary">
+                                <Link
+                                    color="inherit"
+                                    state={{ title: thisDevice?.name }}
+                                    to={`/devices/${id}`}
+                                    style={{ color: '#292F3F', fontSize: 15, textDecoration: 'none' }}
+                                >
+                                    {thisDevice?.name ? thisDevice.name : ''}
+                                </Link>
+                            </Typography>
+                            <Typography fontSize={matches ? 15 : 12} color="text.primary">
+                                Settings
+                            </Typography>
+                        </Breadcrumbs>
+                    }
+                />
+                <Box sx={{ px: [2, 4], py: [0, 2], flex: 1, minHeight: 0, overflowY: 'auto', scrollbarWidth: '.5rem', "::-webkit-slider-thumb": { backgroundColor: 'transparent' } }}>
                 <Box width={['100%', '50%']} my={2}>
                     <Box boxShadow={1} bgcolor={'#fff'} my={1} px={2} pb={2} borderRadius={2} >
                         <FormControl sx={{ my: 1, width: '100%', }}>
@@ -418,6 +414,7 @@ export default function DeviceSettings() {
                             <Button variant="outlined" color="error" fullWidth={isMobile} onClick={handleDeleteDevice}> Delete </Button>
                         </Box>
                     </Paper>
+                </Box>
                 </Box>
             </Box>
         </>
