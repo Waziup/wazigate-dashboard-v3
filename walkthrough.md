@@ -4,14 +4,14 @@ This are steps on how to replace the running new on wazigate with the new UI
 ## Installation
 1. clone the repo from github `git clone https://github.com/Waziup/wazigate-dashboard-v3\`
 2. `cd wazigate-dashboard-v3`
-3. `npm install --force`
+3. `yarn install`
 
 After all the dependencies are installed we proceed
 
 ## Build the project
 Insde the repo of wazigate, we build the UI
 ```bash
-    npm run build --force --reset-cache
+    yarn build
 ```
 A dist folder will be generated. If you are on linux we can zip the folder.
 ```bash

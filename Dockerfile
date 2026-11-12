@@ -1,8 +1,8 @@
 FROM node:alpine3.19 as production
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install --force
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 COPY . .
-RUN npm run build
+RUN yarn build
 EXPOSE 5173
-CMD ["npm", "run", "preview"]
+CMD ["yarn", "preview"]

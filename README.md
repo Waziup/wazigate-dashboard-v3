@@ -5,9 +5,9 @@ This is the application repository for the wazigate dashboard version 3, feel fr
 ## Installation
 
 - To install and run the development version of the app, clone the repository
-- use either pnpm, yarn or npm to install dependencies
-- ```npm install```
-- Then run the development ``npm run dev``
+- use yarn to install dependencies
+- ```yarn install```
+- Then run the development ``yarn dev``
 
 
 ## Docker
@@ -27,7 +27,7 @@ You can develop on the dashboard locally on your PC, linking it to a remote Wazi
 Run it like this:
 ```
 export VITE_WAZIGATE_API_URL=http://wazigate-dashboard.staging.waziup.io
-npm run dev
+yarn dev
 ```
 
 Then, you need to open the interface inyou browser, without CORS protections.
