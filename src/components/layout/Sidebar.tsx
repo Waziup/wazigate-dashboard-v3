@@ -110,9 +110,10 @@ function Sidebar({ matchesMd: _matchesMd, expanded = true, onExpand }: { matches
     };
     const navigate = useNavigate();
     const location = useLocation().pathname;
-    // close the settings submenu when the route changes
+    // open the settings submenu when entering a settings route, close it when leaving.
+    // re-clicking Settings while already on a settings route toggles it (see the nav item).
     React.useEffect(() => {
-        setOpen(false);
+        setOpen(location.startsWith('/settings'));
     }, [location]);
     const { setProfile, setAccessToken, showDialog, closeDialog } = useContext(GlobalContext);
     const handleLogout = () => {
@@ -181,7 +182,16 @@ function Sidebar({ matchesMd: _matchesMd, expanded = true, onExpand }: { matches
                                 <NavigationItem
                                     location={location}
                                     path={'/settings'}
-                                    onClick={() => { if (collapsed) { onExpand?.(); } else { setOpen(!open); } }}
+                                    onClick={() => {
+                                        if (collapsed) {
+                                            // squeezed: expand the sidebar so the submenu can be seen
+                                            onExpand?.();
+                                        } else if (location.startsWith('/settings')) {
+                                            // already on a settings page: let the click toggle the submenu
+                                            setOpen(!open);
+                                        }
+                                        // otherwise navigating to /settings opens it via the effect
+                                    }}
                                     icon="settings_two_tone"
                                     iconColor={
                                         location === '/settings' ||
