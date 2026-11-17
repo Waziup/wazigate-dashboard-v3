@@ -8,6 +8,7 @@ import ContainersTabMaintenance from "../../components/ui/ContainersTab.maintena
 import ExportTabMaintenance from "../../components/ui/ExportTab.maintenance";
 import PageHeader from "../../components/layout/PageHeader";
 import LogsTabMaintenance from "../../components/ui/LogsTab.maintenance";
+import ImportTabMaintenance from "../../components/ui/ImportTab.maintenance";
 
 
 interface TabConfig {
@@ -16,11 +17,18 @@ interface TabConfig {
     icon?: string | React.ReactNode;
 }
 
+const ExportImportTabMaintenance: React.FC<{ matches?: boolean }> = ({ matches }) => (
+    <Box>
+        <ExportTabMaintenance matches={matches} />
+        <ImportTabMaintenance matches={matches} />
+    </Box>
+);
+
 const tabs: Record<string, TabConfig> = {
     '0': { title: 'Resources', component: ResourcesTabMaintenance, icon: 'folder_copy' },
     '1': { title: 'SSH', component: SSHTabMaintenance, icon: 'terminal_outlined' },
     '2': { title: 'Logs', component: LogsTabMaintenance, icon: 'description' },
-    '3': { title: 'Export', component: ExportTabMaintenance, icon: 'download' },
+    '3': { title: 'Export / Import', component: ExportImportTabMaintenance, icon: 'import_export' },
     '4':{title:'Docker Containers', component: ContainersTabMaintenance, icon:''}
 };
 

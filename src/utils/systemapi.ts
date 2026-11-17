@@ -546,3 +546,36 @@ export async function reboot() {
 
 
 //
+
+/*--------------*/
+
+export type ImportMode = 'merge' | 'replace';
+
+/** Summary returned by POST /importtree (see api/import.go). */
+export interface ImportReport {
+  mode: ImportMode;
+  devicesCreated: number;
+  devicesMerged: number;
+  devicesReplaced: number;
+  sensorsCreated: number;
+  actuatorsCreated: number;
+  valuesImported: number;
+  valuesSkipped: number;
+  errors: string[];
+}
+
+/** Uploads a ZIP archive created by "Export as CSV files tree" (GET /exporttree). */
+export async function importTree(file: File, mode: ImportMode): Promise<ImportReport> {
+  await tokenChecker(window.sessionStorage.getItem("token"));
+  const token = window.sessionStorage.getItem("token"); // might have been refreshed
+  const resp = await fetch(WaziGateApiUrl + "/importtree?mode=" + mode, {
+    method: "POST",
+    headers: {
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'application/zip',
+    },
+    body: file,
+  });
+  if (!resp.ok) await failResp(resp);
+  return await resp.json();
+}

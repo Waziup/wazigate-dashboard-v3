@@ -10,7 +10,7 @@ import { InputField } from '../../pages/Login';
 interface Props {
     matches?: boolean
 }
-const GridItem = ({ children, xs, md, additionStyles }: { xs: number, md: number, spacing?: number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode, }) => (
+export const GridItem = ({ children, xs, md, additionStyles }: { xs: number, md: number, spacing?: number, matches: boolean, additionStyles?: SxProps<Theme>, children: React.ReactNode, }) => (
     <Grid item xs={xs} md={md} spacing={3} sx={{ borderRadius: 2, my: 1, mr: 2, ...additionStyles }}  >
         {children}
     </Grid>
@@ -23,7 +23,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 const IconStyle: SxProps<Theme> = {mr:1 , color: DEFAULT_COLORS.primary_black };
 
-const GridItemEl = ({ children, text, additionStyles, icon }: { additionStyles?: SxProps<Theme>, text: string, children: React.ReactNode, icon: string }) => (
+export const GridItemEl = ({ children, text, additionStyles, icon }: { additionStyles?: SxProps<Theme>, text: string, children: React.ReactNode, icon: string }) => (
     <Item sx={{ boxShadow: 0, ...additionStyles }}>
         <Box sx={{ display: 'flex', borderTopLeftRadius: 5, borderTopRightRadius: 5, border: '.5px solid #d8d8d8', bgcolor: '#F7F7F7', alignItems: 'center' }} p={1} >
             <Icon sx={IconStyle}>{icon}</Icon>

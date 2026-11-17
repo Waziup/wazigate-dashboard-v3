@@ -39,6 +39,10 @@
       "description": "Clouds and Synchronization"
     },
     {
+      "name": "Export & Import",
+      "description": "Export and import of all devices, sensors, actuators and their values"
+    },
+    {
       "name": "System",
       "description": "System Information"
     }
@@ -2216,6 +2220,191 @@
         }
       }
     },
+    "/exportall": {
+      "get": {
+        "tags": [
+          "Export & Import"
+        ],
+        "summary": "Export as one CSV File",
+        "description": "Exports the values of all sensors and actuators of all devices into one CSV file. Every sensor/actuator gets two columns, one for the timestamps and one for the values:\n\n* Row 1: device ID | sensor/actuator ID\n* Row 2: device name | `{sensor/actuator name} / {kind}`\n* Following rows: time (RFC3339, seconds, gateway time zone) | value (JSON)\n\nColumns have different lengths, depending on the number of values. This file contains no metadata and does not distinguish sensors from actuators, so it can not be imported with `POST /importtree`.",
+        "responses": {
+          "200": {
+            "description": "CSV file with two columns per sensor/actuator.",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "example": "6627a2b1e1a3f2,temperature,6627a2b1e1a3f2,humidity\nWeather Station,Temperature / AirThermometer,Weather Station,Humidity / AirHumiditySensor\n2024-05-13T13:00:00+02:00,21.5,2024-05-13T13:00:00+02:00,64\n2024-05-13T13:10:00+02:00,21.7,2024-05-13T13:10:00+02:00,63\n"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "The export could not be created."
+          }
+        }
+      }
+    },
+    "/exportbins": {
+      "get": {
+        "tags": [
+          "Export & Import"
+        ],
+        "summary": "Export as Time Bins",
+        "description": "Exports all sensors and actuators into one CSV table with fixed time intervals (bins), e.g. as input for machine learning. For each bin and sensor/actuator the average of all numeric values within that bin is written, non-numeric values are ignored and bins without values are left empty.\n\n* Row 1: empty | `{device ID}; {sensor/actuator ID} / {device name}; {sensor/actuator name} / {kind}` per sensor/actuator\n* Following rows: start time of the bin (RFC3339, gateway time zone) | average per sensor/actuator (5 decimals)\n\nAll query parameters are required.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "description": "Start of the first bin. Must be UTC with exactly three fractional digits, as created by JavaScript's `Date.toISOString()`.",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2024-05-13T00:00:00.000Z"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "description": "End of the export (exclusive), same format as `from`.",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2024-05-14T00:00:00.000Z"
+            }
+          },
+          {
+            "in": "query",
+            "name": "duration",
+            "required": true,
+            "description": "Size of one bin as Go duration, e.g. `600s`, `10m` or `1h`.",
+            "schema": {
+              "type": "string",
+              "example": "10m"
+            }
+          },
+          {
+            "in": "query",
+            "name": "check",
+            "required": true,
+            "description": "Omit outliers: ignore values that deviate more than 20% from the average of the current bin.",
+            "schema": {
+              "type": "boolean",
+              "example": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV file with one row per bin and one column per sensor/actuator.",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "example": ",6627a2b1e1a3f2; temperature / Weather Station; Temperature / AirThermometer,6627a2b1e1a3f2; humidity / Weather Station; Humidity / AirHumiditySensor\n2024-05-13T02:00:00+02:00,21.50000,64.00000\n2024-05-13T02:10:00+02:00,21.70000,\n"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "A query parameter is missing or malformed, or the export could not be created."
+          }
+        }
+      }
+    },
+    "/exporttree": {
+      "get": {
+        "tags": [
+          "Export & Import"
+        ],
+        "summary": "Export as CSV Tree",
+        "description": "Exports all devices of this gateway with their sensors, actuators, metadata and all recorded values as a ZIP archive of CSV files. The archive can be imported into this or another gateway with `POST /importtree`.\n\nArchive layout:\n\n```\nexportTree/\n├── devices.csv                    id, name, created, modified, meta (JSON)\n└── {deviceID}/\n    ├── sensors.csv                id, name, created, modified, meta (JSON)\n    ├── actuators.csv              id, name, created, modified, meta (JSON)\n    └── {sensorID | actuatorID}/\n        └── values.csv             time (RFC3339, seconds), value (JSON)\n```\n\nCSV files have no header row. Meta columns and values are JSON encoded, e.g. a string value is written as `\"text\"`.",
+        "responses": {
+          "200": {
+            "description": "ZIP archive containing the CSV tree.",
+            "content": {
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "The export could not be created."
+          }
+        }
+      }
+    },
+    "/importtree": {
+      "post": {
+        "tags": [
+          "Export & Import"
+        ],
+        "summary": "Import CSV Tree",
+        "description": "Imports a ZIP archive created by `GET /exporttree`, e.g. to move data from one gateway to another or to set up test data. Devices, sensors and actuators keep their IDs, names and metadata.\n\nThe archive does not need to have the `exportTree/` prefix, the folder containing `devices.csv` is used as root.\n\nNotes:\n* Creation and modification dates are set to the time of the import.\n* The device of this gateway itself is never deleted, it is always merged.\n* Imported entities and values are flagged for cloud synchronization like any other new data.\n* Errors of single devices, sensors or actuators do not abort the import, they are listed in `errors`.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "mode",
+            "description": "How devices that already exist on this gateway are handled:\n* `merge` - Keep existing devices, add missing sensors and actuators, and add only values that are not present yet (same second and same value). Importing the same archive twice is idempotent.\n* `replace` - Delete existing devices with the same ID, including all their values, and import them again.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "merge",
+                "replace"
+              ],
+              "default": "merge"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "ZIP archive as created by `GET /exporttree`. Either as raw request body or as form upload in the field `file`.",
+          "required": true,
+          "content": {
+            "application/zip": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Import finished. Check `errors` for entities that could not be imported.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportReport"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid `mode`, the body is not a ZIP archive, `devices.csv` is missing or a CSV file is malformed."
+          }
+        }
+      }
+    },
     "/sys/uptime": {
       "get": {
         "tags": [
@@ -2405,6 +2594,65 @@
               }
             }
           }
+        }
+      },
+      "ImportReport": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "merge",
+              "replace"
+            ],
+            "description": "The import mode that was used."
+          },
+          "devicesCreated": {
+            "type": "integer",
+            "description": "Devices that did not exist and were created."
+          },
+          "devicesMerged": {
+            "type": "integer",
+            "description": "Devices that already existed and were merged."
+          },
+          "devicesReplaced": {
+            "type": "integer",
+            "description": "Devices that already existed and were deleted and created again."
+          },
+          "sensorsCreated": {
+            "type": "integer",
+            "description": "Sensors that were created."
+          },
+          "actuatorsCreated": {
+            "type": "integer",
+            "description": "Actuators that were created."
+          },
+          "valuesImported": {
+            "type": "integer",
+            "description": "Sensor and actuator values that were written."
+          },
+          "valuesSkipped": {
+            "type": "integer",
+            "description": "Values that were skipped because they already exist (merge mode)."
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Entities that could not be imported."
+          }
+        },
+        "example": {
+          "mode": "merge",
+          "devicesCreated": 2,
+          "devicesMerged": 1,
+          "devicesReplaced": 0,
+          "sensorsCreated": 5,
+          "actuatorsCreated": 1,
+          "valuesImported": 12873,
+          "valuesSkipped": 340,
+          "errors": []
         }
       }
     }
